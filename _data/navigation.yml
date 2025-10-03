@@ -14,8 +14,8 @@ main:
   - title: "People"
     url: /people/
     
-  - title: "Album"
-    url: /album/
+  - title: "アルバム (日)"
+    url: /ja/album/
     
   - title: "Access"
     url: /access/

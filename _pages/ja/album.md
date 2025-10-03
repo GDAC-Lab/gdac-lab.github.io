@@ -9,14 +9,14 @@ lang_ref: album
 
 {% include base_path %}
 
-## フォトアルバム
+## 📸 フォトアルバム
 
-このページは現在準備中です。
+現在、外部ブログへのリンクを準備中です。
 
-*Under construction.*
+今しばらくお待ちください。
 
 ---
 
-**言語:** [English](/album/) | [日本語](#)
+*Currently preparing a link to an external blog. Please wait.*
 
 
