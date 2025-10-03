@@ -16,13 +16,15 @@
             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
           <li class="masthead__menu-item persist">
+            <span style="white-space: nowrap;">
             {% if page.lang == 'ja' %}
-              <a href="{{ page.url | replace: '/ja/', '/' }}" style="text-decoration: none;">EN</a> <span style="margin: 0 0.2em;">|</span> <span style="font-weight: bold;">日本語</span>
+              <a href="{{ page.url | replace: '/ja/', '/' }}" style="text-decoration: none;">EN</a> <span style="margin: 0 0.3em;">|</span> <strong>日本語</strong>
             {% elsif page.lang == 'en' %}
-              <span style="font-weight: bold;">EN</span> <span style="margin: 0 0.2em;">|</span> <a href="/ja{{ page.url }}" style="text-decoration: none;">日本語</a>
+              <strong>EN</strong> <span style="margin: 0 0.3em;">|</span> <a href="/ja{{ page.url }}" style="text-decoration: none;">日本語</a>
             {% else %}
-              <span style="font-weight: bold;">EN</span> <span style="margin: 0 0.2em;">|</span> <a href="/ja/" style="text-decoration: none;">日本語</a>
+              <strong>EN</strong> <span style="margin: 0 0.3em;">|</span> <a href="/ja/" style="text-decoration: none;">日本語</a>
             {% endif %}
+            </span>
           </li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
