@@ -15,6 +15,15 @@
             {% endif %}
             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
+          <li class="masthead__menu-item persist">
+            {% if page.lang == 'ja' %}
+              <a href="{{ page.url | replace: '/ja/', '/' }}">EN</a> | <a href="#"><strong>日本語</strong></a>
+            {% elsif page.lang == 'en' %}
+              <a href="#"><strong>EN</strong></a> | <a href="/ja{{ page.url }}">日本語</a>
+            {% else %}
+              <a href="#"><strong>EN</strong></a> | <a href="/ja/">日本語</a>
+            {% endif %}
+          </li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
           </li>
