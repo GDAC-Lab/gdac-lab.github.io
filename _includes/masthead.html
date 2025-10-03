@@ -6,14 +6,20 @@
       <nav id="site-nav" class="greedy-nav">
         <button><div class="navicon"></div></button>
         <ul class="visible-links">
-          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{{ base_path }}/">{{ site.title }}</a></li>
+          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{% if page.lang == 'ja' %}{{ base_path }}/ja/{% else %}{{ base_path }}/{% endif %}">{{ site.title }}</a></li>
           {% for link in site.data.navigation.main %}
             {% if link.url contains 'http' %}
               {% assign domain = '' %}
+              {% assign url = link.url %}
             {% else %}
               {% assign domain = base_path %}
+              {% if page.lang == 'ja' and link.url != '/publications/' %}
+                {% assign url = link.url | prepend: '/ja' %}
+              {% else %}
+                {% assign url = link.url %}
+              {% endif %}
             {% endif %}
-            <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
+            <li class="masthead__menu-item"><a href="{{ domain }}{{ url }}">{{ link.title }}</a></li>
           {% endfor %}
           <li class="masthead__menu-item persist">{% if page.lang == 'ja' %}<a href="{{ page.url | replace: '/ja/', '/' }}" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;">EN</a><span style="display: inline; margin: 0 0.5rem;">|</span><span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;">日本語</span>{% elsif page.lang == 'en' %}<span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;">EN</span><span style="display: inline; margin: 0 0.5rem;">|</span><a href="/ja{{ page.url }}" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;">日本語</a>{% else %}<span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;">EN</span><span style="display: inline; margin: 0 0.5rem;">|</span><a href="/ja/" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;">日本語</a>{% endif %}</li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
