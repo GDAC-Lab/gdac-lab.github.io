@@ -9,10 +9,10 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "default" # Currently available options are "default", "air"
-title                    : "Your Name / Site Title"
+title                    : "Nagoya Institute of Technology, Department of Engineering"
 title_separator          : "-"
-name                     : &name "Your Name"
-description              : &description "Your Name's academic portfolio"   # Update this with a general description of your site, this is the default if not overridden by a page
+name                     : &name "GDAC Lab"
+description              : &description "Geometric Dynamics, Autonomy, and Control Laboratory"   # Update this with a general description of your site, this is the default if not overridden by a page
 url                      : https://gdac-lab.github.io # The base hostname & protocol for your site e.g. "https://[your GitHub username].github.io",
                                                            # or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
@@ -24,13 +24,13 @@ repository               : "gdac-lab/gdac-lab.github.io"
 author:
   # Biographic information
   avatar           : "profile.png"
-  name             : "Your Sidebar Name"
-  name_ja          : "あなたの名前"
+  name             : "GDAC Lab"
+  name_ja          : "仲野研究室"
   pronouns         : # example: "she/her"  
-  bio              : "Short biography for the left-hand sidebar"
-  bio_ja           : "左サイドバーの簡単な自己紹介"
-  location         : "Earth"
-  employer         : "Red Brick University"
+  bio              : "Geometric Dynamics, Autonomy, and Control Laboratory"
+  bio_ja           : "制御理論について研究しています。"
+  location         : "Nagoya, Japan"
+  employer         : "Nagoya Institute of Technology"
   uri              : # URL
   email            : "none@example.org" 
 
