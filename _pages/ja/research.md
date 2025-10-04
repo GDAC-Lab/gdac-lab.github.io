@@ -13,8 +13,4 @@ lang_ref: research
 
 *ここに研究内容を追加してください。*
 
----
-
-**言語:** [English](/research/) | [日本語](#)
-
 

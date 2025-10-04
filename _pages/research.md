@@ -13,8 +13,4 @@ lang_ref: research
 
 *Please add your research content here.*
 
----
-
-**Language:** [English](#) | [日本語](/ja/research/)
-
 

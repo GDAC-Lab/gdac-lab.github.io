@@ -15,8 +15,6 @@ lang_ref: album
 
 今しばらくお待ちください。
 
----
-
 *Currently preparing a link to an external blog. Please wait.*
 
 

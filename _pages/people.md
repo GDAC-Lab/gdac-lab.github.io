@@ -13,8 +13,4 @@ lang_ref: people
 
 *Please add information about lab members here.*
 
----
-
-**Language:** [English](#) | [日本語](/ja/people/)
-
 
