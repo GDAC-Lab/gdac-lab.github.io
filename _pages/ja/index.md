@@ -9,14 +9,10 @@ redirect_from:
   - /ja/about.html
 ---
 
-こちらはAcademic Pagesテンプレートを使用した学術用ウェブサイトのトップページです。
+## GDAC研究室へようこそ
 
-## サイト概要
+Geometric Dynamics, Autonomy, and Control Laboratory（GDAC Lab）では、制御理論について研究しています。
 
-*ここにサイトの説明を追加してください。*
-
----
-
-**言語:** [English](/) | [日本語](#)
+*ここに研究室の詳しい説明を追加してください。*
 
 
