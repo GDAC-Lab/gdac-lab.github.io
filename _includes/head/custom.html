@@ -14,4 +14,20 @@
 <link rel="icon" href="/images/favicon.ico"/>
 <meta name="theme-color" content="#ffffff"/>
 
+<!-- Language switcher responsive icons -->
+<style>
+  /* Show Font Awesome icons on desktop, hide emoji */
+  .lang-icon-desktop { display: inline; }
+  .lang-icon-mobile { display: none; }
+  
+  /* Show emoji on mobile, hide Font Awesome icons */
+  @media (max-width: 768px) {
+    .lang-icon-desktop { display: none; }
+    .lang-icon-mobile { 
+      display: inline; 
+      font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+    }
+  }
+</style>
+
 <!-- end custom head snippets -->
