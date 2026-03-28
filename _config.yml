@@ -13,8 +13,7 @@ title                    : "GDAC Lab"
 title_separator          : "-"
 name                     : &name "GDAC Lab"
 description              : &description "Geometric Dynamics, Autonomy, and Control Laboratory"   # Update this with a general description of your site, this is the default if not overridden by a page
-url                      : https://pages.gdaclab.web.nitech.ac.jp # The base hostname & protocol for your site e.g. "https://[your GitHub username].github.io",
-                                                           # or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"
+url                      : https://gdaclab.web.nitech.ac.jp # Must match the live host (see CNAME). Wrong host breaks absolute links and assets.
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "gdac-lab/gdac-lab.github.io"
 
@@ -23,7 +22,7 @@ repository               : "gdac-lab/gdac-lab.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
+  avatar           : "favicon.svg" # Lab photo: add images/profile.png and set to "profile.png" if preferred
   name             : "GDAC Lab"
   name_ja          : "仲野研究室"
   pronouns         : # example: "she/her"  
