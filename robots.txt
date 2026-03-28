@@ -1,1 +1,1 @@
-Sitemap: https://pages.gdaclab.web.nitech.ac.jp/sitemap.xml
+Sitemap: https://gdaclab.web.nitech.ac.jp/sitemap.xml
