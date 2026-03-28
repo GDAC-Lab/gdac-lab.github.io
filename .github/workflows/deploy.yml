@@ -1,0 +1,32 @@
+name: Build and Deploy to Plesk
+on:
+  push:
+    branches:
+      - master # リポジトリのメインブランチが main の場合は main に書き換えてください
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+
+      - name: Build Jekyll site
+        run: |
+          gem install bundler
+          bundle install
+          bundle exec jekyll build
+
+      - name: Deploy to plesk-deploy branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: plesk-deploy
