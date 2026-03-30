@@ -44,6 +44,16 @@ def yaml_sq(s: str) -> str:
     return str(s).replace("'", "''")
 
 
+# Hiragana / Katakana / CJK Unified Ideographs — rough language tag for publication lists
+_TITLE_JA_RE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff]")
+
+
+def title_language(title: str) -> str:
+    if not title:
+        return "en"
+    return "ja" if _TITLE_JA_RE.search(title) else "en"
+
+
 def html_esc(s: str) -> str:
     return (
         str(s)
@@ -239,12 +249,14 @@ def write_md(
     paperurl: str,
     citation: str,
     extra_body: str,
+    plang: str = "en",
 ) -> None:
     front = [
         "---",
         f"title: '{yaml_sq(title)}'",
         "collection: publications",
         "category: preprints",
+        f"lang: {plang}",
         f"permalink: /publication/{date_iso}-pp-{slug_suffix}",
         f"date: {date_iso}",
         f"venue: '{yaml_sq(venue)}'",
@@ -296,6 +308,7 @@ def sync_doi(doi: str) -> None:
                     paperurl=f"https://doi.org/{doi}" if doi else url,
                     citation=cite,
                     extra_body=f"Synced from arXiv (DOI [{doi}](https://doi.org/{doi})).",
+                    plang=title_language(meta["title"]),
                 )
                 return
         print(f"[preprint] skip DOI (not in Crossref / arXiv): {doi}", file=sys.stderr)
@@ -321,6 +334,7 @@ def sync_doi(doi: str) -> None:
         paperurl=purl,
         citation=cite,
         extra_body=f"Metadata from [Crossref](https://doi.org/{doi}) (auto-generated).",
+        plang=title_language(title),
     )
 
 
@@ -349,6 +363,7 @@ def sync_arxiv_id(aid: str) -> None:
         paperurl=meta["url"],
         citation=cite,
         extra_body=f"Metadata from [arXiv](https://arxiv.org/abs/{meta['arxiv_id']}) (auto-generated).",
+        plang=title_language(meta["title"]),
     )
 
 
