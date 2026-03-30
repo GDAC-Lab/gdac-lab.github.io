@@ -16,6 +16,8 @@ description              : &description "Geometric Dynamics, Autonomy, and Contr
 url                      : https://gdaclab.web.nitech.ac.jp # Must match the live host (see CNAME). Wrong host breaks absolute links and assets.
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "gdac-lab/gdac-lab.github.io"
+# Source for automated _publications (scripts/fetch_researchmap_publications.py)
+researchmap_url          : "https://researchmap.jp/satoshi-nakano?lang=english"
 
 # Site Author - The following control what appear as part of the author content on the side bar.
 #               If a field is blank the icon and link will not appear, otherwise it will be shown.

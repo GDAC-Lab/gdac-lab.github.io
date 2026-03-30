@@ -11,6 +11,10 @@ lang_ref: publications
   <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
 {% endif %}
 
+{% if site.researchmap_url %}
+  <p class="wordwrap">The list below is imported from <a href="{{ site.researchmap_url }}">researchmap</a> whenever this site is built. An automated job also refreshes it from researchmap <strong>about once a week</strong> (Mondays 00:00 UTC). The canonical, up-to-date record is always the researchmap profile.</p>
+{% endif %}
+
 {% include base_path %}
 
 <!-- New style rendering if publication categories are defined -->

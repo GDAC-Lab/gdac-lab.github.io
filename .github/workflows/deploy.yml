@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Fetch publications from researchmap
+        run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

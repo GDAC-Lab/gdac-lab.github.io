@@ -1,6 +1,27 @@
 # Ignore the contents of the _site directory and other cache directories
 _site/
+.jekyll-cache/
 .sass-cache/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local secrets (if you add API keys for scripts later)
+.env
+.env.*
+
+# Python (markdown_generator, scripts)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs
+*.log
 
 # Ignore the directory for local files during development
 local/

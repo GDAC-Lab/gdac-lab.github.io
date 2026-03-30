@@ -1,0 +1,38 @@
+# Refresh _publications from researchmap and push to master if changed.
+# Pushes trigger deploy.yml (Jekyll → plesk-deploy).
+
+name: Researchmap publication sync
+
+on:
+  schedule:
+    # Weekly: Monday 00:00 UTC (09:00 JST). Edit cron if you prefer another slot.
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: researchmap-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch publications from researchmap
+        run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _publications/*-rm-*.md
+          if git diff --staged --quiet; then
+            echo "No publication changes from researchmap."
+            exit 0
+          fi
+          git commit -m "chore: sync publications from researchmap"
+          git push origin HEAD:master
