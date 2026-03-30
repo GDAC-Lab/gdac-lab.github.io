@@ -262,6 +262,8 @@ def write_md(
     ]
     if paperurl:
         front.append(f"paperurl: '{yaml_sq(paperurl)}'")
+    if authors:
+        front.append(f"authors: '{yaml_sq(authors)}'")
     front.append(f"citation: '{yaml_sq(citation)}'")
     front.append("---")
     path = PUB_DIR / f"{date_iso}-pp-{slug_suffix}.md"

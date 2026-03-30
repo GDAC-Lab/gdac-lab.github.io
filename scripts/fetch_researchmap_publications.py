@@ -194,6 +194,8 @@ def write_publication(repo_root: Path, item: dict, slug: str) -> None:
         front.append(f"venue: '{yaml_single_quote(venue)}'")
     if purl:
         front.append(f"paperurl: '{yaml_single_quote(purl)}'")
+    if authors:
+        front.append(f"authors: '{yaml_single_quote(authors)}'")
     front.append(f"citation: '{yaml_single_quote(cite)}'")
     front.extend(["---", ""])
 

@@ -1,0 +1,14 @@
+{% comment %}
+  doc: post or page (collection publications). Uses doc.authors or parses doc.citation before first '('.
+{% endcomment %}
+{% assign d = include.doc %}
+{% assign _pl = include.plang | default: 'en' %}
+{% assign _auth = "" %}
+{% if d.authors and d.authors != "" %}
+  {% assign _auth = d.authors %}
+{% elsif d.citation and d.citation != "" %}
+  {% assign _auth = d.citation | split: '(' | first | strip %}
+{% endif %}
+{% if _auth %}
+<p class="publication-authors">{% if _pl == 'ja' %}著者:{% else %}Authors:{% endif %} {{ _auth }}</p>
+{% endif %}

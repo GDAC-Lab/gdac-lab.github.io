@@ -11,10 +11,9 @@
   color: var(--global-text-color-light);
 }
 
-/* Running index on Publications / 論文一覧 (tight gap before title; no min-width) */
+/* Running index on Publications / 論文一覧; gap after number is a literal half-width space in HTML */
 .publication-index {
   display: inline;
-  margin-right: 0.2em;
   font-weight: 600;
   color: var(--global-text-color-light);
 }
@@ -31,6 +30,18 @@
 
 .publication-link-sep {
   color: var(--global-text-color-light);
+}
+
+.publication-authors {
+  margin: 0.35em 0 0;
+  font-size: $type-size-6;
+  color: var(--global-text-color-light);
+  line-height: 1.45;
+}
+
+.archive__item-title .publication-title-text {
+  font-weight: inherit;
+  color: inherit;
 }
 
 .archive {
