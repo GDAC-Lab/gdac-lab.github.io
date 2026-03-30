@@ -15,18 +15,20 @@ lang_ref: publications_ja
   {% assign min_pub_y = current_y | minus: pub_years | plus: 1 %}
 {% endif %}
 
+<p class="wordwrap"><strong>英語の文献一覧</strong>は <a href="{{ base_path }}/publications/">Publications（英語ページ）</a> をご覧ください。</p>
+
+<p class="wordwrap">このページでは、英語ページとは<strong>別に</strong>、日本語の文献のみを下記にまとめています。{% if pub_years > 0 %}カテゴリ区分と直近<strong>{{ pub_years }}年分</strong>を掲載するルールは英語ページと同じです。{% else %}カテゴリ区分などの扱いは英語ページと同じです。{% endif %}</p>
+
 {% if site.author.googlescholar %}
   <div class="wordwrap">Google Scholar のプロフィールからも論文一覧を参照できます：<a href="{{site.author.googlescholar}}">Google Scholar</a>。</div>
 {% endif %}
 
 {% if site.researchmap_url %}
-  <p class="wordwrap">以下の一覧はサイトビルド時に <a href="{{ site.researchmap_url }}">researchmap</a> から取り込まれます。自動ジョブが<strong>週に約1回</strong>（月曜 00:00 UTC）researchmap から更新します。正確な最新情報は常に researchmap のプロフィールをご覧ください。</p>
+  <p class="wordwrap">一覧はサイトビルド時に <a href="{{ site.researchmap_url }}">researchmap</a> から取り込まれます。自動ジョブが<strong>週に約1回</strong>（月曜 00:00 UTC）researchmap から更新します。正確な最新情報は常に researchmap のプロフィールをご覧ください。</p>
 {% endif %}
 
 {% if site.researchmap_url and pub_years > 0 %}
-  <p class="wordwrap">直近<strong>{{ pub_years }}年分</strong>（{{ min_pub_y }}年〜{{ current_y }}年）のみを掲載しています。それ以前の文献は <a href="{{ site.researchmap_url }}">researchmap</a> をご覧ください。英語の文献は <a href="{{ base_path }}/publications/">英語の論文一覧</a> に掲載しています。</p>
-{% else %}
-  <p class="wordwrap">英語の文献は <a href="{{ base_path }}/publications/">英語の論文一覧</a> をご覧ください。</p>
+  <p class="wordwrap">直近<strong>{{ pub_years }}年分</strong>（{{ min_pub_y }}年〜{{ current_y }}年）のみを掲載しています。それ以前の文献は <a href="{{ site.researchmap_url }}">researchmap</a> をご覧ください。</p>
 {% endif %}
 
 {% if site.data.preprint_sources %}

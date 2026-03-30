@@ -24,9 +24,9 @@ lang_ref: publications
 {% endif %}
 
 {% if site.researchmap_url and pub_years > 0 %}
-  <p class="wordwrap">Only the <strong>last {{ pub_years }} years</strong> ({{ min_pub_y }}–{{ current_y }}) are shown here. For older publications, see <a href="{{ site.researchmap_url }}">researchmap</a>. Japanese-language publications are listed on the <a href="{{ base_path }}/ja/publications/">Japanese publications page</a>.</p>
+  <p class="wordwrap">Only the <strong>last {{ pub_years }} years</strong> ({{ min_pub_y }}–{{ current_y }}) are shown here. For older publications, see <a href="{{ site.researchmap_url }}">researchmap</a>. Japanese-language publications are listed <strong>separately</strong> on the <a href="{{ base_path }}/ja/publications/">Japanese publications page</a> (same categories and year window).</p>
 {% else %}
-  <p class="wordwrap">Japanese-language publications are listed on the <a href="{{ base_path }}/ja/publications/">Japanese publications page</a>.</p>
+  <p class="wordwrap">Japanese-language publications are listed <strong>separately</strong> on the <a href="{{ base_path }}/ja/publications/">Japanese publications page</a>.</p>
 {% endif %}
 
 {% if site.data.preprint_sources %}

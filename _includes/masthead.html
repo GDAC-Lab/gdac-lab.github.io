@@ -20,7 +20,9 @@
               {% assign url = link.url %}
             {% else %}
               {% assign domain = base_path %}
-              {% if page.lang == 'ja' and link.url != '/publications/' %}
+              {% if page.lang == 'ja' and link.url == '/publications/' %}
+                {% assign url = '/ja/publications/' %}
+              {% elsif page.lang == 'ja' %}
                 {% assign url = link.url | prepend: '/ja' %}
               {% else %}
                 {% assign url = link.url %}

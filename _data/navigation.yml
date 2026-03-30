@@ -5,13 +5,9 @@
 # prevent it from being included in the site.
 
 main:
-  - title: "Publications (EN)"
-    title_ja: "論文 (EN)"
+  - title: "Publications"
+    title_ja: "論文"
     url: /publications/
-
-  - title: "Publications (JA)"
-    title_ja: "論文 (日本語)"
-    url: /ja/publications/
 
   - title: "Research"
     title_ja: "研究テーマ"
