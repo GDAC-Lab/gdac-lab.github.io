@@ -9,6 +9,10 @@ main:
     title_ja: "論文 (EN)"
     url: /publications/
 
+  - title: "Publications (JA)"
+    title_ja: "論文 (日本語)"
+    url: /ja/publications/
+
   - title: "Research"
     title_ja: "研究テーマ"
     url: /research/

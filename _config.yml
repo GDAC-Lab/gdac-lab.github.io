@@ -86,14 +86,18 @@ author:
 publication_category:
   books:
     title: 'Books'
+    title_ja: '著書'
   manuscripts:
-    title: 'Journal Articles'    
+    title: 'Journal Articles'
+    title_ja: '学術論文（掲載誌）'
   conferences:
     title: 'Conference Papers'
+    title_ja: '会議論文'
   preprints:
     title: 'Preprints'
+    title_ja: 'プレプリント'
 
-# Subheadings when a category has both English and Japanese publications (see front matter `lang: en` / `lang: ja`)
+# Legacy (EN/JA split pages no longer use combined language sub-headings here)
 publication_language_labels:
   en: "English"
   ja: "日本語"
