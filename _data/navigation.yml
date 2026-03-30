@@ -6,16 +6,21 @@
 
 main:
   - title: "Publications (EN)"
+    title_ja: "論文 (EN)"
     url: /publications/
 
   - title: "Research"
+    title_ja: "研究テーマ"
     url: /research/
 
   - title: "People"
+    title_ja: "メンバー"
     url: /people/
     
   - title: "アルバム (日)"
+    title_ja: "アルバム"
     url: /ja/album/
     
   - title: "Access"
+    title_ja: "アクセス"
     url: /access/
