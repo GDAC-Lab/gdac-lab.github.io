@@ -7,12 +7,24 @@ lang: en
 lang_ref: publications
 ---
 
+{% assign pub_years = site.publication_list_last_n_years | default: 5 %}
+{% assign current_y = site.time | date: "%Y" | plus: 0 %}
+{% if pub_years == 0 %}
+  {% assign min_pub_y = 0 %}
+{% else %}
+  {% assign min_pub_y = current_y | minus: pub_years | plus: 1 %}
+{% endif %}
+
 {% if site.author.googlescholar %}
   <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
 {% endif %}
 
 {% if site.researchmap_url %}
   <p class="wordwrap">The list below is imported from <a href="{{ site.researchmap_url }}">researchmap</a> whenever this site is built. An automated job also refreshes it from researchmap <strong>about once a week</strong> (Mondays 00:00 UTC). The canonical, up-to-date record is always the researchmap profile.</p>
+{% endif %}
+
+{% if site.researchmap_url and pub_years > 0 %}
+  <p class="wordwrap">Only the <strong>last {{ pub_years }} years</strong> ({{ min_pub_y }}–{{ current_y }}) are shown here. For older publications, see <a href="{{ site.researchmap_url }}">researchmap</a>.</p>
 {% endif %}
 
 {% if site.data.preprint_sources %}
@@ -32,26 +44,70 @@ lang_ref: publications
     {% if posts_cat.size == 0 %}
       {% continue %}
     {% endif %}
+    {% assign recent_in_cat = 0 %}
+    {% for p in posts_cat %}
+      {% assign py = p.date | date: "%Y" | plus: 0 %}
+      {% if pub_years == 0 or py >= min_pub_y %}
+        {% assign recent_in_cat = recent_in_cat | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+    {% if recent_in_cat == 0 %}
+      {% continue %}
+    {% endif %}
+
     <h2>{{ category[1].title }}</h2><hr />
+
     {% assign posts_ja = posts_cat | where: "lang", "ja" %}
     {% assign posts_en = posts_cat | where_exp: "p", "p.lang != 'ja'" %}
+
+    {% assign posts_en_recent = 0 %}
+    {% for post in posts_en %}
+      {% assign py = post.date | date: "%Y" | plus: 0 %}
+      {% if pub_years == 0 or py >= min_pub_y %}
+        {% assign posts_en_recent = posts_en_recent | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+    {% assign posts_ja_recent = 0 %}
+    {% for post in posts_ja %}
+      {% assign py = post.date | date: "%Y" | plus: 0 %}
+      {% if pub_years == 0 or py >= min_pub_y %}
+        {% assign posts_ja_recent = posts_ja_recent | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+
     {% if posts_en.size > 0 and posts_ja.size > 0 %}
-      <h3 class="publication-lang-heading">{{ site.publication_language_labels.en | default: "English" }}</h3>
-      {% for post in posts_en reversed %}
-        {% include archive-single.html %}
-      {% endfor %}
-      <h3 class="publication-lang-heading">{{ site.publication_language_labels.ja | default: "日本語" }}</h3>
-      {% for post in posts_ja reversed %}
-        {% include archive-single.html %}
-      {% endfor %}
+      {% if posts_en_recent > 0 %}
+        <h3 class="publication-lang-heading">{{ site.publication_language_labels.en | default: "English" }}</h3>
+        {% for post in posts_en reversed %}
+          {% assign post_year = post.date | date: "%Y" | plus: 0 %}
+          {% if pub_years == 0 or post_year >= min_pub_y %}
+            {% include archive-single.html %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if posts_ja_recent > 0 %}
+        <h3 class="publication-lang-heading">{{ site.publication_language_labels.ja | default: "日本語" }}</h3>
+        {% for post in posts_ja reversed %}
+          {% assign post_year = post.date | date: "%Y" | plus: 0 %}
+          {% if pub_years == 0 or post_year >= min_pub_y %}
+            {% include archive-single.html %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
     {% else %}
       {% for post in posts_cat reversed %}
-        {% include archive-single.html %}
+        {% assign post_year = post.date | date: "%Y" | plus: 0 %}
+        {% if pub_years == 0 or post_year >= min_pub_y %}
+          {% include archive-single.html %}
+        {% endif %}
       {% endfor %}
     {% endif %}
   {% endfor %}
 {% else %}
   {% for post in site.publications reversed %}
-    {% include archive-single.html %}
+    {% assign post_year = post.date | date: "%Y" | plus: 0 %}
+    {% if pub_years == 0 or post_year >= min_pub_y %}
+      {% include archive-single.html %}
+    {% endif %}
   {% endfor %}
 {% endif %}

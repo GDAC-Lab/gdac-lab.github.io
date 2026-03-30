@@ -98,6 +98,10 @@ publication_language_labels:
   en: "English"
   ja: "日本語"
 
+# Publications index: only the last N calendar years are listed (inclusive). Set to 0 to list all years.
+# Older works: see researchmap_url on the Publications page.
+publication_list_last_n_years: 5
+
 # Site Settings
 teaser                   :  # filename of teaser fallback teaser image placed in /images/ for social media previews
 breadcrumbs              : false # true, false (default)
