@@ -248,7 +248,6 @@ def write_md(
     authors: str,
     paperurl: str,
     citation: str,
-    extra_body: str,
     plang: str = "en",
 ) -> None:
     front = [
@@ -264,9 +263,9 @@ def write_md(
     if paperurl:
         front.append(f"paperurl: '{yaml_sq(paperurl)}'")
     front.append(f"citation: '{yaml_sq(citation)}'")
-    front.extend(["---", "", extra_body.strip(), ""])
+    front.append("---")
     path = PUB_DIR / f"{date_iso}-pp-{slug_suffix}.md"
-    path.write_text("\n".join(front), encoding="utf-8")
+    path.write_text("\n".join(front) + "\n", encoding="utf-8")
 
 
 def build_citation(authors: str, year: str, title: str, venue: str) -> str:
@@ -307,7 +306,6 @@ def sync_doi(doi: str) -> None:
                     authors=meta["authors"] or "—",
                     paperurl=f"https://doi.org/{doi}" if doi else url,
                     citation=cite,
-                    extra_body=f"Synced from arXiv (DOI [{doi}](https://doi.org/{doi})).",
                     plang=title_language(meta["title"]),
                 )
                 return
@@ -333,7 +331,6 @@ def sync_doi(doi: str) -> None:
         authors=authors,
         paperurl=purl,
         citation=cite,
-        extra_body=f"Metadata from [Crossref](https://doi.org/{doi}) (auto-generated).",
         plang=title_language(title),
     )
 
@@ -362,7 +359,6 @@ def sync_arxiv_id(aid: str) -> None:
         authors=meta["authors"] or "—",
         paperurl=meta["url"],
         citation=cite,
-        extra_body=f"Metadata from [arXiv](https://arxiv.org/abs/{meta['arxiv_id']}) (auto-generated).",
         plang=title_language(meta["title"]),
     )
 

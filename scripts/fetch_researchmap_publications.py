@@ -197,15 +197,8 @@ def write_publication(repo_root: Path, item: dict, slug: str) -> None:
     front.append(f"citation: '{yaml_single_quote(cite)}'")
     front.extend(["---", ""])
 
-    body = (
-        f"Metadata imported from [researchmap](https://researchmap.jp/{slug}) "
-        f"(record `{rm_id}`)."
-    )
-    if purl:
-        body += f" [DOI / link]({purl})."
-
     out = repo_root / "_publications" / f"{date_iso}-rm-{rm_id}.md"
-    out.write_text("\n".join(front) + "\n" + body + "\n", encoding="utf-8")
+    out.write_text("\n".join(front) + "\n", encoding="utf-8")
 
 
 def remove_generated(repo_root: Path) -> None:
