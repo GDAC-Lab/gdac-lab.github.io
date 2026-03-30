@@ -29,6 +29,18 @@
     margin-top: 0.35em;
   }
 
+  /* Optional note directly under a section title (e.g. master's undergrad supplement) */
+  h3 + p {
+    font-size: $type-size-6;
+    line-height: 1.45;
+    color: var(--global-text-color-light);
+    margin-bottom: 0.65em;
+  }
+
+  h3 + p + ul {
+    margin-top: 0.2em;
+  }
+
   h2 + h3 {
     margin-top: 0.85em;
   }
@@ -48,6 +60,21 @@
 
   li strong {
     font-weight: 600;
+  }
+
+  /* Optional detail lines (e.g. undergraduate history under a master's entry) */
+  li > ul {
+    margin: 0.2em 0 0.5em;
+    padding-left: 1rem;
+    list-style: none;
+    border-left: 2px solid var(--global-border-color);
+  }
+
+  li > ul > li {
+    margin: 0.15em 0 0;
+    font-size: $type-size-6;
+    line-height: 1.45;
+    color: var(--global-text-color-light);
   }
 
   p {

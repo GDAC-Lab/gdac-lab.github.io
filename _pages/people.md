@@ -21,19 +21,24 @@ lang_ref: people
 ## Lab members
 
 ### Master's students
-- **Katsuki Matsunaga** — from April 2026
+
+- **Katsuki Matsunaga** — Master's program: from April 2026
+  - *Undergraduate in this lab*: October 2024 – March 2026
 
 ### Undergraduate students
 - **Kyuta Kawai** — from September 2025
 - **Keisuke Sano** — from September 2025
 - **Eita Sugiyama** — from September 2025
 
+### Co-advised students
+- **Itsuki Asada** — Primary supervisor: Prof. Manabu Yamada · from April 2025
+  - *Undergraduate in this lab*: October 2023 – March 2025
+- **Yuki Dotaka** — Primary supervisor: Prof. Manabu Yamada · from April 2025
+
 </div>
 
 <!--
-  ---------------------------------------------------------------------------
-  Templates (not rendered). Copy into the body above.
-  ---------------------------------------------------------------------------
+  Editor templates (not rendered).
 
   Faculty:
   ### Full name — Job title
@@ -41,6 +46,13 @@ lang_ref: people
   - **Affiliation**:
   - **Office** (optional):
 
-  Master's / Undergraduate (one line per person):
+  Master's — nested line ONLY if bachelor's was in this lab:
+  - **Name** — Master's program: from Month YYYY
+    - *Undergraduate in this lab*: Month YYYY – Month YYYY
+
+  Undergraduate:
   - **Name** — from Month YYYY
+
+  Co-advised:
+  - **Name** — Primary supervisor: Prof. <Name> · from Month YYYY
 -->
