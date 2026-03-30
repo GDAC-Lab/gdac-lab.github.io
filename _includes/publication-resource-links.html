@@ -1,0 +1,43 @@
+{% comment %}
+  Primary link + optional DOI text, slides, BibTeX. plang: page language (en|ja).
+{% endcomment %}
+{% assign _pl = include.plang | default: 'en' %}
+{% assign pu = include.paperurl %}
+{% assign su = include.slidesurl %}
+{% assign bu = include.bibtexurl %}
+{% if pu or su or bu %}
+<p class="publication-resource-links">
+  {% if pu %}
+    {% assign _doi_id = "" %}
+    {% if pu contains "//doi.org/" %}
+      {% assign _doi_id = pu | split: "//doi.org/" | last | split: "?" | first %}
+    {% elsif pu contains "//dx.doi.org/" %}
+      {% assign _doi_id = pu | split: "//dx.doi.org/" | last | split: "?" | first %}
+    {% endif %}
+    {% if _doi_id %}
+      {% capture _doi_resolved %}https://doi.org/{{ _doi_id }}{% endcapture %}
+      {% if _pl == 'ja' %}
+        <a href="{{ pu }}">出版元ページ</a><span class="publication-doi-inline">（DOI: <a href="{{ _doi_resolved }}">{{ _doi_id }}</a>）</span>
+      {% else %}
+        <a href="{{ pu }}">Publisher page</a><span class="publication-doi-inline"> (DOI: <a href="{{ _doi_resolved }}">{{ _doi_id }}</a>)</span>
+      {% endif %}
+    {% elsif pu contains "arxiv.org" %}
+      <a href="{{ pu }}">arXiv</a>
+    {% else %}
+      {% if _pl == 'ja' %}
+        <a href="{{ pu }}">全文・公式ページ</a>
+      {% else %}
+        <a href="{{ pu }}">Full text</a>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+  {% if su %}
+    {% if pu %}<span class="publication-link-sep"> | </span>{% endif %}
+    <a href="{{ su }}">{% if _pl == 'ja' %}スライド{% else %}Slides{% endif %}</a>
+  {% endif %}
+  {% if bu %}
+    {% if pu or su %}<span class="publication-link-sep"> | </span>{% endif %}
+    <a href="{{ bu }}">BibTeX</a>
+  {% endif %}
+</p>
+{% endif %}

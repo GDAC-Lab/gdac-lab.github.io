@@ -20,6 +20,20 @@
   color: var(--global-text-color-light);
 }
 
+.publication-resource-links {
+  font-size: $type-size-6;
+  margin-top: 0.35em;
+}
+
+.publication-doi-inline {
+  color: var(--global-text-color-light);
+  white-space: nowrap;
+}
+
+.publication-link-sep {
+  color: var(--global-text-color-light);
+}
+
 .archive {
   margin-bottom: 2em;
 
