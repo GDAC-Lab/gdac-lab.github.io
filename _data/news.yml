@@ -1,15 +1,11 @@
 # News / お知らせ (shown on EN and JA home pages, newest first).
 # Fields per item:
-#   date: YYYY-MM-DD (required)
-#   title: fallback title if title_en / title_ja omitted
-#   title_en, title_ja: optional per-language titles
-#   body: fallback body (Markdown OK in body / body_en / body_ja)
-#   body_en, body_ja: optional
+#   date: YYYY-MM-DD (required for display)
+#   title, title_en, title_ja: all optional (short items can use body_* only)
+#   body, body_en, body_ja: optional (Markdown); at least one of title/body/link should be set
 #   link: optional URL (external or on this site)
 #   link_label_en, link_label_ja: optional; default "Read more" / 「詳細」
 items:
   - date: "2026-03-28"
-    title_en: "News section on the home page"
-    title_ja: "ホームページにお知らせ欄を追加しました"
-    body_en: "Short announcements for the laboratory will appear here. Edit `_data/news.yml` to add or change items."
-    body_ja: "研究室からの短いお知らせをここに掲載できます。項目の追加・編集は `_data/news.yml` で行ってください。"
+    body_en: "Added a **News** section on the home page. Edit `_data/news.yml` to post updates—titles are optional for short notices."
+    body_ja: "ホームに**お知らせ**欄を追加しました。短い投稿は `body_en` / `body_ja` のみでも問題ありません（タイトルは省略可）。`_data/news.yml` を編集してください。"

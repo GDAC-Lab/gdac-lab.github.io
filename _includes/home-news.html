@@ -6,23 +6,27 @@
   <h2 id="home-news-heading" class="home-news__heading">{% if page.lang == 'ja' %}お知らせ{% else %}News{% endif %}</h2>
   <ul class="home-news__list">
     {% for item in _sorted limit: 8 %}
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="{{ item.date }}">{{ item.date | date: "%Y-%m-%d" }}</time>
       {% if page.lang == 'ja' %}
-        {% assign _ntitle = item.title_ja | default: item.title %}
-        {% assign _nbody = item.body_ja | default: item.body %}
+        {% assign _ntitle = item.title_ja | default: item.title | strip %}
+        {% assign _nbody = item.body_ja | default: item.body | strip %}
         {% assign _llab = item.link_label_ja | default: '詳細' %}
       {% else %}
-        {% assign _ntitle = item.title_en | default: item.title %}
-        {% assign _nbody = item.body_en | default: item.body %}
+        {% assign _ntitle = item.title_en | default: item.title | strip %}
+        {% assign _nbody = item.body_en | default: item.body | strip %}
         {% assign _llab = item.link_label_en | default: 'Read more' %}
       {% endif %}
-      {% if _ntitle %}<h3 class="home-news__title">{{ _ntitle }}</h3>{% endif %}
-      {% if _nbody %}<div class="home-news__body">{{ _nbody | markdownify }}</div>{% endif %}
+      {% if item.date %}
+        {% if _ntitle != "" or _nbody != "" or item.link and item.link != "" %}
+    <li class="home-news__item{% unless _ntitle %} home-news__item--no-title{% endunless %}">
+      <time class="home-news__date" datetime="{{ item.date }}">{{ item.date | date: "%Y-%m-%d" }}</time>
+      {% if _ntitle != "" %}<h3 class="home-news__title">{{ _ntitle }}</h3>{% endif %}
+      {% if _nbody != "" %}<div class="home-news__body">{{ _nbody | markdownify }}</div>{% endif %}
       {% if item.link and item.link != "" %}
         <p class="home-news__link-wrap"><a href="{{ item.link }}" class="home-news__more">{{ _llab }}</a></p>
       {% endif %}
     </li>
+        {% endif %}
+      {% endif %}
     {% endfor %}
   </ul>
 </section>

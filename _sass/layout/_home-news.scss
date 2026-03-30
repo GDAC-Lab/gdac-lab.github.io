@@ -45,6 +45,11 @@
   line-height: 1.35;
 }
 
+/* Title omitted: date flows into body */
+.home-news__item--no-title .home-news__body {
+  margin-top: 0.15rem;
+}
+
 .home-news__body {
   margin: 0;
   font-size: $type-size-6;
