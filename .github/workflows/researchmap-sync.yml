@@ -25,14 +25,19 @@ jobs:
       - name: Fetch publications from researchmap
         run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
 
+      - name: Sync preprints (DOI / arXiv)
+        run: python3 scripts/sync_preprints_from_sources.py
+        env:
+          CROSSREF_CONTACT_EMAIL: ${{ vars.CROSSREF_CONTACT_EMAIL }}
+
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _publications/*-rm-*.md
+          git add _publications/*-rm-*.md _publications/*-pp-*.md
           if git diff --staged --quiet; then
-            echo "No publication changes from researchmap."
+            echo "No publication file changes."
             exit 0
           fi
-          git commit -m "chore: sync publications from researchmap"
+          git commit -m "chore: sync publications (researchmap + preprints)"
           git push origin HEAD:master

@@ -15,6 +15,11 @@ jobs:
       - name: Fetch publications from researchmap
         run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
 
+      - name: Sync preprints (DOI / arXiv from _data/preprint_sources.json)
+        run: python3 scripts/sync_preprints_from_sources.py
+        env:
+          CROSSREF_CONTACT_EMAIL: ${{ vars.CROSSREF_CONTACT_EMAIL }}
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

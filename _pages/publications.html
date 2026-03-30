@@ -15,6 +15,14 @@ lang_ref: publications
   <p class="wordwrap">The list below is imported from <a href="{{ site.researchmap_url }}">researchmap</a> whenever this site is built. An automated job also refreshes it from researchmap <strong>about once a week</strong> (Mondays 00:00 UTC). The canonical, up-to-date record is always the researchmap profile.</p>
 {% endif %}
 
+{% if site.data.preprint_sources %}
+  {% assign _nd = site.data.preprint_sources.dois | size %}
+  {% assign _na = site.data.preprint_sources.arxiv_ids | size %}
+  {% if _nd > 0 or _na > 0 %}
+    <p class="wordwrap">Some items under <strong>Preprints</strong> are filled from <a href="https://www.crossref.org">Crossref</a> (DOI) and <a href="https://arxiv.org">arXiv</a> metadata whenever the site is built.</p>
+  {% endif %}
+{% endif %}
+
 {% include base_path %}
 
 <!-- New style rendering if publication categories are defined -->
