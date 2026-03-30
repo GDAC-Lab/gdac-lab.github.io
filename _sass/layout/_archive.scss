@@ -11,11 +11,10 @@
   color: var(--global-text-color-light);
 }
 
-/* Running index on Publications / 論文一覧 */
+/* Running index on Publications / 論文一覧 (tight gap before title; no min-width) */
 .publication-index {
-  display: inline-block;
-  min-width: 1.75em;
-  margin-right: 0.35em;
+  display: inline;
+  margin-right: 0.2em;
   font-weight: 600;
   color: var(--global-text-color-light);
 }
