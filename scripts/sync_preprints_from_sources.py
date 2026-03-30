@@ -5,17 +5,26 @@
 #
 # Edit preprint_sources.json ("dois" / "arxiv_ids"), then run this script (or rely on CI).
 # Manual preprints: add normal .md in _publications with category: preprints (no "-pp-" in filename).
+#
+# arXiv rate limits: default 3.5s between arXiv API calls (override: ARXIV_MIN_INTERVAL_SEC).
+# 429 responses are retried with backoff.
 
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+# arXiv API: aim for at most one request per ~3s (shared CI IPs hit 429 easily).
+_ARXIV_MIN_INTERVAL_SEC = float(os.environ.get("ARXIV_MIN_INTERVAL_SEC", "3.5"))
+_ARXIV_NEXT_MONO = 0.0
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = REPO_ROOT / "_data" / "preprint_sources.json"
@@ -50,6 +59,41 @@ def remove_generated() -> None:
         p.unlink()
 
 
+def _arxiv_throttle() -> None:
+    global _ARXIV_NEXT_MONO
+    now = time.monotonic()
+    wait = _ARXIV_NEXT_MONO - now
+    if wait > 0:
+        time.sleep(wait)
+    _ARXIV_NEXT_MONO = time.monotonic() + _ARXIV_MIN_INTERVAL_SEC
+
+
+def urlopen_with_retry(req: urllib.request.Request, timeout: float = 60) -> object:
+    """Retry on 429 / 503 (arXiv, Crossref rate limits)."""
+    backoff = 5.0
+    last_err: Exception | None = None
+    for attempt in range(6):
+        try:
+            return urllib.request.urlopen(req, timeout=timeout)
+        except urllib.error.HTTPError as e:
+            last_err = e
+            if e.code not in (429, 503) or attempt >= 5:
+                raise
+            ra = e.headers.get("Retry-After") if e.headers else None
+            try:
+                wait = float(ra)
+            except (TypeError, ValueError):
+                wait = backoff
+            wait = max(3.0, wait)
+            print(
+                f"[preprint] HTTP {e.code} ({req.full_url}), sleep {wait:.1f}s retry {attempt + 1}/5",
+                file=sys.stderr,
+            )
+            time.sleep(wait)
+            backoff = min(backoff * 1.5, 90.0)
+    raise last_err  # pragma: no cover
+
+
 def crossref_fetch(doi: str) -> dict | None:
     enc = urllib.parse.quote(doi.strip(), safe="")
     url = f"https://api.crossref.org/works/{enc}"
@@ -58,7 +102,7 @@ def crossref_fetch(doi: str) -> dict | None:
         headers={"User-Agent": user_agent(), "Accept": "application/json"},
     )
     try:
-        with urllib.request.urlopen(req, timeout=45) as resp:
+        with urlopen_with_retry(req) as resp:
             payload = json.load(resp)
     except urllib.error.HTTPError as e:
         if e.code == 404:
@@ -139,11 +183,17 @@ def arxiv_id_from_doi(doi: str) -> str | None:
 
 
 def arxiv_fetch(arxiv_id: str) -> dict | None:
+    _arxiv_throttle()
     aid = arxiv_id.strip().replace("arxiv:", "")
     url = f"https://export.arxiv.org/api/query?id_list={urllib.parse.quote(aid)}"
     req = urllib.request.Request(url, headers={"User-Agent": user_agent()})
-    with urllib.request.urlopen(req, timeout=45) as resp:
-        xml = resp.read()
+    try:
+        with urlopen_with_retry(req) as resp:
+            xml = resp.read()
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return None
+        raise
     root = ET.fromstring(xml)
     entry = root.find("atom:entry", ATOM_NS)
     if entry is None:
