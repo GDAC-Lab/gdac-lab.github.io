@@ -2,6 +2,15 @@
    ARCHIVE
    ========================================================================== */
 
+/* Subheadings under Books / Journal / etc. when splitting by publication language */
+.publication-lang-heading {
+  margin: 1.25em 0 0.35em;
+  font-size: $type-size-5;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--global-text-color-light);
+}
+
 .archive {
   margin-bottom: 2em;
 

@@ -25,26 +25,33 @@ lang_ref: publications
 
 {% include base_path %}
 
-<!-- New style rendering if publication categories are defined -->
 {% if site.publication_category %}
-  {% for category in site.publication_category  %}
-    {% assign title_shown = false %}
-    {% for post in site.publications reversed %}
-      {% if post.category != category[0] %}
-        {% continue %}
-      {% endif %}
-      {% unless title_shown %}
-        <h2>{{ category[1].title }}</h2><hr />
-        {% assign title_shown = true %}
-      {% endunless %}
-      {% include archive-single.html %}
-    {% endfor %}
+  {% for category in site.publication_category %}
+    {% assign cat_key = category[0] %}
+    {% assign posts_cat = site.publications | where: "category", cat_key %}
+    {% if posts_cat.size == 0 %}
+      {% continue %}
+    {% endif %}
+    <h2>{{ category[1].title }}</h2><hr />
+    {% assign posts_ja = posts_cat | where: "lang", "ja" %}
+    {% assign posts_en = posts_cat | where_exp: "p", "p.lang != 'ja'" %}
+    {% if posts_en.size > 0 and posts_ja.size > 0 %}
+      <h3 class="publication-lang-heading">{{ site.publication_language_labels.en | default: "English" }}</h3>
+      {% for post in posts_en reversed %}
+        {% include archive-single.html %}
+      {% endfor %}
+      <h3 class="publication-lang-heading">{{ site.publication_language_labels.ja | default: "日本語" }}</h3>
+      {% for post in posts_ja reversed %}
+        {% include archive-single.html %}
+      {% endfor %}
+    {% else %}
+      {% for post in posts_cat reversed %}
+        {% include archive-single.html %}
+      {% endfor %}
+    {% endif %}
   {% endfor %}
 {% else %}
   {% for post in site.publications reversed %}
     {% include archive-single.html %}
   {% endfor %}
 {% endif %}
-
-
-

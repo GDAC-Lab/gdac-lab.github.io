@@ -44,6 +44,17 @@ def html_escape_attr(s: str) -> str:
     )
 
 
+def paper_language(paper_title: dict | None) -> str:
+    """Primary record language for display grouping (en if any English title exists)."""
+    if not paper_title or not isinstance(paper_title, dict):
+        return "en"
+    if (paper_title.get("en") or "").strip():
+        return "en"
+    if (paper_title.get("ja") or "").strip():
+        return "ja"
+    return "en"
+
+
 def pick_localized(obj: dict | None, prefer: tuple[str, ...] = ("en", "ja")) -> str:
     if not obj or not isinstance(obj, dict):
         return ""
@@ -156,6 +167,7 @@ def write_publication(repo_root: Path, item: dict, slug: str) -> None:
     title = pick_localized(item.get("paper_title"))
     if not title:
         return
+    plang = paper_language(item.get("paper_title"))
 
     authors = format_authors(item)
     pub_raw = item.get("publication_date")
@@ -174,6 +186,7 @@ def write_publication(repo_root: Path, item: dict, slug: str) -> None:
         f"title: '{yaml_single_quote(title)}'",
         "collection: publications",
         f"category: {category}",
+        f"lang: {plang}",
         f"permalink: {permalink}",
         f"date: {date_iso}",
     ]

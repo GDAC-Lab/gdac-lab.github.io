@@ -93,6 +93,11 @@ publication_category:
   preprints:
     title: 'Preprints'
 
+# Subheadings when a category has both English and Japanese publications (see front matter `lang: en` / `lang: ja`)
+publication_language_labels:
+  en: "English"
+  ja: "日本語"
+
 # Site Settings
 teaser                   :  # filename of teaser fallback teaser image placed in /images/ for social media previews
 breadcrumbs              : false # true, false (default)
