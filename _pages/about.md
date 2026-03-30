@@ -14,3 +14,5 @@ redirect_from:
 The Geometric Dynamics, Autonomy, and Control Laboratory (GDAC Lab) conducts research on control theory.
 
 *Please add a detailed description of the laboratory here.*
+
+{% include home-news.html %}

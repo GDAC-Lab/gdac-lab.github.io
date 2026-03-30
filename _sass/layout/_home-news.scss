@@ -1,0 +1,70 @@
+/* Homepage news / お知らせ */
+.home-news {
+  margin: 2rem 0 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--global-border-color);
+}
+
+.home-news__heading {
+  margin: 0 0 0.85rem;
+  font-size: $type-size-4;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.home-news__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-news__item {
+  margin: 0 0 1.25rem;
+  padding: 0 0 1.15rem;
+  border-bottom: 1px solid var(--global-border-color);
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.home-news__date {
+  display: block;
+  margin: 0 0 0.25rem;
+  font-size: $type-size-6;
+  color: var(--global-text-color-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.home-news__title {
+  margin: 0 0 0.35rem;
+  font-size: $type-size-5;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.home-news__body {
+  margin: 0;
+  font-size: $type-size-6;
+  line-height: 1.55;
+  color: var(--global-text-color);
+
+  p {
+    margin: 0 0 0.5em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.home-news__link-wrap {
+  margin: 0.5rem 0 0;
+  font-size: $type-size-6;
+}
+
+.home-news__more {
+  font-weight: 500;
+}
