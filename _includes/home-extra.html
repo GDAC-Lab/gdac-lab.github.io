@@ -1,0 +1,48 @@
+{% include base_path %}
+
+{% if page.lang == 'ja' %}
+<p class="home-progress-notice"><strong>サイト整備中です。</strong>写真や研究室の詳しい紹介、学生向けの詳細ページなどを順次追加していきます。研究内容・メンバー・論文・研究室の場所については、下記のリンクからご覧いただけます。</p>
+
+<section class="home-at-a-glance" aria-labelledby="home-at-a-glance-heading">
+  <h2 id="home-at-a-glance-heading" class="home-at-a-glance__title">サイトのご案内</h2>
+  <ul class="home-at-a-glance__list">
+    <li><a href="{{ base_path }}/ja/research/">研究内容</a> — テーマの概要</li>
+    <li><a href="{{ base_path }}/ja/people/">メンバー</a> — 教員・学生</li>
+    <li><a href="{{ base_path }}/ja/publications/">論文・著作（日本語）</a> / <a href="{{ base_path }}/publications/">Publications (EN)</a></li>
+    <li><a href="{{ base_path }}/ja/access/">アクセス</a> — 所在地・交通</li>
+  </ul>
+</section>
+
+<section class="home-for-students" aria-labelledby="home-for-students-heading">
+  <h2 id="home-for-students-heading" class="home-at-a-glance__title">学生の皆さんへ</h2>
+  <p class="home-for-students__body">配属・見学・連絡方法など、<strong>希望者向けの詳しい案内は準備中</strong>です。研究の雰囲気を知るには <a href="{{ base_path }}/ja/research/">研究内容</a> と <a href="{{ base_path }}/ja/people/">メンバー</a> をご覧ください。大学の日程・手続きに沿ってお知らせできるよう、順次ページを整えます。</p>
+</section>
+
+<section class="home-visuals-note">
+  <p class="home-visuals-note__text"><strong>写真・ギャラリー</strong>：実験風景や装置の画像は、近日追加予定です。</p>
+</section>
+
+{% else %}
+
+<p class="home-progress-notice"><strong>This site is a work in progress.</strong> We are adding photos, richer lab descriptions, and dedicated student information over time. The links below already cover our research themes, members, publication lists, and how to reach us.</p>
+
+<section class="home-at-a-glance" aria-labelledby="home-at-a-glance-heading">
+  <h2 id="home-at-a-glance-heading" class="home-at-a-glance__title">On this site</h2>
+  <ul class="home-at-a-glance__list">
+    <li><a href="{{ base_path }}/research/">Research</a> — themes and directions</li>
+    <li><a href="{{ base_path }}/people/">People</a> — faculty and students</li>
+    <li><a href="{{ base_path }}/publications/">Publications</a> — papers (EN list) and <a href="{{ base_path }}/ja/publications/">Japanese list</a></li>
+    <li><a href="{{ base_path }}/access/">Access</a> — address and directions</li>
+  </ul>
+</section>
+
+<section class="home-for-students" aria-labelledby="home-for-students-heading">
+  <h2 id="home-for-students-heading" class="home-at-a-glance__title">Prospective students</h2>
+  <p class="home-for-students__body"><strong>Detailed guidance</strong> (visiting, affiliation, how to get in touch) <strong>is in preparation</strong>. To learn what we work on, see <a href="{{ base_path }}/research/">Research</a> and <a href="{{ base_path }}/people/">People</a>. We will align announcements with NITech procedures as pages mature.</p>
+</section>
+
+<section class="home-visuals-note">
+  <p class="home-visuals-note__text"><strong>Photos &amp; media</strong>: lab and experiment imagery will be added in a future update.</p>
+</section>
+
+{% endif %}
