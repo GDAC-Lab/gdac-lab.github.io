@@ -32,7 +32,7 @@ author:
   bio_ja           : "制御理論について研究しています。"
   location         : "Nagoya, Japan"
   employer         : "Nagoya Institute of Technology"
-  uri              : # URL
+  uri              : "https://mcontrol.web.nitech.ac.jp/nakano/" # PI / lab intro (NITech)
   email            : # Add your lab email address here
 
   # Academic websites

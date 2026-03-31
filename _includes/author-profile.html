@@ -35,7 +35,10 @@
         <li class="author__desktop"><i class="fas fa-fw fa-building-columns icon-pad-right" aria-hidden="true"></i>{{ author.employer }}</li>
       {% endif %}
       {% if author.uri %}
-        <li><a href="{{ author.uri }}"><i class="fas fa-fw fa-link icon-pad-right" aria-hidden="true"></i>{{ site.data.ui-text[site.locale].website_label | default: "Website" }}</a></li>
+        <li><a href="{{ author.uri }}" rel="noopener"><i class="fas fa-fw fa-link icon-pad-right" aria-hidden="true"></i>{% if page.lang == 'ja' %}教員・研究室紹介（名工大）{% else %}Faculty page (NITech){% endif %}</a></li>
+      {% endif %}
+      {% if site.researchmap_url %}
+        <li><a href="{{ site.researchmap_url }}" rel="noopener"><i class="fas fa-fw fa-address-card icon-pad-right" aria-hidden="true"></i>researchmap</a></li>
       {% endif %}
       {% if author.email %}
         <li><a href="mailto:{{ author.email }}"><i class="fas fa-fw fa-envelope icon-pad-right" aria-hidden="true"></i>{{ site.data.ui-text[site.locale].email_label | default: "Email" }}</a></li>
