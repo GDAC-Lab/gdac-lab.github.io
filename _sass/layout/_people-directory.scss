@@ -81,6 +81,49 @@
     margin-top: 0.35em;
     margin-bottom: 0.75em;
   }
+
+  /* <details> block for collaborators etc. */
+  .people-directory__collapsible {
+    margin: 1.75em 0 0;
+    max-width: 100%;
+    border: 1px solid var(--global-border-color);
+    border-radius: $border-radius;
+    background-color: var(--global-thead-color);
+  }
+
+  .people-directory__collapsible summary {
+    padding: 0.65rem 1rem;
+    font-size: $type-size-5;
+    font-weight: 600;
+    line-height: 1.35;
+    cursor: pointer;
+    user-select: none;
+    list-style-position: outside;
+
+    &:focus {
+      outline: 2px solid var(--global-link-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .people-directory__collapsible-lead {
+    margin: 0;
+    padding: 0 1rem 0.5rem;
+    font-size: $type-size-6;
+    line-height: 1.5;
+    color: var(--global-text-color-light);
+  }
+
+  .people-directory__collapsible > ul {
+    margin: 0;
+    padding: 0 1rem 0.85rem 1rem;
+  }
+
+  .people-directory__collapsible > ul > li {
+    margin-bottom: 0.4em;
+    font-size: 1em;
+    color: var(--global-text-color);
+  }
 }
 
 /* Faculty email (raster) — People page only; fits content column */

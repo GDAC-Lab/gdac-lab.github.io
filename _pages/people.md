@@ -39,6 +39,14 @@ lang_ref: people
   - *Undergraduate in this lab*: October 2023 – March 2025
 - **Yuki Dotaka** — Primary supervisor: Prof. Manabu Yamada · from April 2025
 
+<details class="people-directory__collapsible">
+<summary>Research collaborators</summary>
+<p class="people-directory__collapsible-lead">Colleagues outside this lab we collaborate with on research (listed separately from students above).</p>
+<ul>
+  <li><strong>(Name)</strong> — affiliation · role or theme (replace this line)</li>
+</ul>
+</details>
+
 </div>
 
 <!--
@@ -59,4 +67,8 @@ lang_ref: people
 
   Co-advised:
   - **Name** — Primary supervisor: Prof. <Name> · from Month YYYY
+
+  Collaborators (expandable block at bottom of page):
+  - Edit the <details> section; use HTML <ul><li> or add rows inside the list.
+  - Optional: add the attribute `open` on <details> to show expanded by default.
 -->
