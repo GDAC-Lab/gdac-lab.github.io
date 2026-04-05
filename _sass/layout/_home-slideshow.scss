@@ -1,4 +1,4 @@
-/* Home placeholder slideshow (replace images in home-slideshow.html later) */
+/* Home carousel: cross-fade + controls (see home-slideshow.js) */
 .home-slideshow {
   margin: 1.75rem 0 1.5rem;
 }
@@ -14,76 +14,55 @@
   color: var(--global-text-color);
 }
 
-.home-slideshow__viewport {
-  overflow: hidden;
+.home-slideshow__frame {
   border-radius: $border-radius;
   border: 1px solid var(--global-border-color);
-  aspect-ratio: 16 / 9;
-  max-height: 26rem;
+  overflow: hidden;
   background: var(--global-thead-color);
 }
 
-.home-slideshow__viewport:hover .home-slideshow__track {
-  animation-play-state: paused;
+.home-slideshow__viewport {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-height: 26rem;
+  outline: none;
 }
 
-.home-slideshow__track {
-  display: flex;
-  height: 100%;
-  width: 300%;
-  animation: home-ss-slide 18s ease-in-out infinite;
+.home-slideshow__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.85s ease-in-out;
+  pointer-events: none;
 }
 
-.home-slideshow__cell {
-  flex: 0 0 calc(100% / 3);
-  width: calc(100% / 3);
-  height: 100%;
-  min-height: 0;
+.home-slideshow__slide.is-active {
+  opacity: 1;
+  z-index: 1;
+  pointer-events: auto;
 }
 
-.home-slideshow__cell img {
+.home-slideshow__slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-@keyframes home-ss-slide {
-  0%,
-  26% {
-    transform: translateX(0);
-  }
-
-  33%,
-  59% {
-    transform: translateX(calc(-100% / 3));
-  }
-
-  66%,
-  92% {
-    transform: translateX(calc(-200% / 3));
-  }
-
-  100% {
-    transform: translateX(0);
-  }
+.home-slideshow__controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-top: 1px solid var(--global-border-color);
+  background: var(--global-bg-color);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .home-slideshow__track {
-    animation: none;
-    width: 100%;
-    transform: none;
-  }
-
-  .home-slideshow__cell {
-    flex: 0 0 100%;
-    width: 100%;
-  }
-
-  .home-slideshow__cell:not(:first-child) {
-    display: none;
-  }
+.home-slideshow__btn {
+  margin-bottom: 0;
+  min-width: 6.5rem;
 }
 
 .home-slideshow__footer {
@@ -91,4 +70,10 @@
   font-size: $type-size-7;
   line-height: 1.45;
   color: var(--global-text-color-light);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-slideshow__slide {
+    transition: none;
+  }
 }
