@@ -5,8 +5,9 @@
   "use strict";
 
   document.addEventListener("DOMContentLoaded", function () {
-    var root = document.querySelector("[data-home-slideshow]");
-    if (!root) return;
+    var root = document.getElementById("home-slideshow");
+    if (!root || root.getAttribute("data-slideshow-ready") === "true") return;
+    root.setAttribute("data-slideshow-ready", "true");
 
     var viewport = root.querySelector(".home-slideshow__viewport");
     var slides = root.querySelectorAll(".home-slideshow__slide");
