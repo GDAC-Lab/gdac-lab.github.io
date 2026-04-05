@@ -41,7 +41,8 @@ author:
   # Academic websites
   academia         : # URL
   arxiv            : # URL
-  googlescholar    : # URL - Add your Google Scholar profile URL here
+  googlescholar    : "https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en"
+  googlescholar_ja : "https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=ja"
   inspire-hep      : # URL
   impactstory      : # URL
   orcid            : # URL - Add your ORCID URL here

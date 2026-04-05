@@ -19,8 +19,9 @@ lang_ref: publications_ja
 
 <p class="wordwrap">このページでは、英語ページとは<strong>別に</strong>、日本語の文献のみを下記にまとめています。{% if pub_years > 0 %}カテゴリ区分と直近<strong>{{ pub_years }}年分</strong>を掲載するルールは英語ページと同じです。{% else %}カテゴリ区分などの扱いは英語ページと同じです。{% endif %}</p>
 
-{% if site.author.googlescholar %}
-  <div class="wordwrap">Google Scholar のプロフィールからも論文一覧を参照できます：<a href="{{site.author.googlescholar}}">Google Scholar</a>。</div>
+{% if site.author.googlescholar_ja or site.author.googlescholar %}
+  {% assign gs_profile = site.author.googlescholar_ja | default: site.author.googlescholar %}
+  <div class="wordwrap">Google Scholar のプロフィールからも論文一覧を参照できます：<a href="{{ gs_profile }}" rel="noopener">Google Scholar</a>。</div>
 {% endif %}
 
 {% if site.researchmap_url %}
