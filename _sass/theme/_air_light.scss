@@ -52,4 +52,7 @@ $sidebar-screen-min-width   : 1024px;
     --global-text-color                 : #{$text};
     --global-text-color-light           : #{$light-primary-color};
     --global-thead-color                : #{$background-lighter};
+    --global-callout-bg                 : #{$background-lighter};
+    --global-callout-text               : #{$text};
+    --global-callout-text-muted         : #{$light-primary-color};
 }

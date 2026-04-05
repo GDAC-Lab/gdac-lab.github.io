@@ -11,6 +11,7 @@ $light-primary-color        : mix(#000, $primary-color, 50%);
 $background                 : #252a34;
 $background-light           : mix(#fff, $background, 20%);
 $background-lighter         : mix(#fff, $background, 90%);
+$callout-surface            : mix(#fff, $background, 12%);
 $text                       : #eaeaea;
 $link                       : mix($primary-color, $text, 40%);
 $link-dark                  : mix(#000, $link, 25%);
@@ -52,4 +53,7 @@ html[data-theme="dark"] {
     --global-text-color                 : #{$text};
     --global-text-color-light           : #{$light-primary-color};
     --global-thead-color                : #{$background-lighter};
+    --global-callout-bg                 : #{$callout-surface};
+    --global-callout-text               : #{$text};
+    --global-callout-text-muted         : #{mix($text, $background, 40%)};
 }

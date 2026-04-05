@@ -11,6 +11,8 @@ $light-gray                 : mix(#fff, $gray, 50%);
 $background                 : #474747;
 $background-light           : mix(#fff, $background, 80%);
 $background-lighter         : mix(#fff, $background, 90%);
+/* Dark panel for callouts (tables still use thead = light tint) */
+$callout-surface            : mix(#fff, $background, 12%);
 $text                       : #ffffff;
 $link                       : #0ea1c5;
 $link-dark                  : mix(#000, $link, 25%);
@@ -51,4 +53,8 @@ html[data-theme="dark"] {
     --global-text-color                 : #{$text};
     --global-text-color-light           : #f3f3f3;
     --global-thead-color                : #{$background-lighter};
+    /* Dark surface + light text (avoid light thead + light body text) */
+    --global-callout-bg                 : #{$callout-surface};
+    --global-callout-text               : #{$text};
+    --global-callout-text-muted         : #{mix($text, $background, 42%)};
 }

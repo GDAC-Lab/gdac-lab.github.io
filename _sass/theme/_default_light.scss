@@ -44,4 +44,8 @@ $sidebar-screen-min-width   : 1024px;
     --global-text-color                 : #{$dark-gray};
     --global-text-color-light           : #{$light-gray};
     --global-thead-color                : #{$lighter-gray};
+    /* Notices / email callout: explicit pairing for readability */
+    --global-callout-bg                 : #{$lighter-gray};
+    --global-callout-text               : #{$dark-gray};
+    --global-callout-text-muted         : #{$light-gray};
 }
