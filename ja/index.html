@@ -313,24 +313,35 @@
 
 <p><strong>セーフティクリティカルな制御</strong>、<strong>SE(3)/SO(3) を用いた幾何的な姿勢制御</strong>、<strong>車輪付きドローンやインフラ点検</strong>への応用などの概要は、<a href="/ja/research/">研究内容</a> でご覧いただけます。</p>
 
-<section class="home-slideshow" aria-labelledby="home-slideshow-heading">
+<section id="home-slideshow" class="home-slideshow" data-home-slideshow="" data-interval="6500" aria-labelledby="home-slideshow-heading" aria-roledescription="carousel">
   <h2 id="home-slideshow-heading" class="home-slideshow__heading visually-hidden">フォトギャラリー</h2>
-  <p class="home-slideshow__wip"><strong>写真は準備中です。</strong>現在はデザイン確認用のサンプル画像を自動で切り替え表示しています。正式な研究室の写真は追って差し替えます。</p>
-  <div class="home-slideshow__viewport">
-    <div class="home-slideshow__track" aria-hidden="true">
-      <div class="home-slideshow__cell">
-        <img src="https://picsum.photos/seed/gdaclab-home-a/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
+  <p class="home-slideshow__wip"><strong>写真は準備中です。</strong>現在はデザイン確認用のサンプル画像を、時間とともにフェードで切り替えています。正式な研究室の写真は追って差し替えます。</p>
+
+  <div class="home-slideshow__frame">
+    <div class="home-slideshow__viewport" id="home-slideshow-viewport" tabindex="0">
+      <div class="home-slideshow__slide is-active" role="group" aria-roledescription="slide" aria-label="1 / 3">
+        <img src="https://picsum.photos/seed/gdaclab-home-a/1400/788" alt="" width="1400" height="788" loading="eager" decoding="async" />
       </div>
-      <div class="home-slideshow__cell">
+      <div class="home-slideshow__slide" role="group" aria-roledescription="slide" aria-hidden="true" aria-label="2 / 3">
         <img src="https://picsum.photos/seed/gdaclab-home-b/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
       </div>
-      <div class="home-slideshow__cell">
+      <div class="home-slideshow__slide" role="group" aria-roledescription="slide" aria-hidden="true" aria-label="3 / 3">
         <img src="https://picsum.photos/seed/gdaclab-home-c/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
       </div>
+    </div>
+    <div class="home-slideshow__controls">
+      <button type="button" class="btn home-slideshow__btn" data-home-slideshow-prev="" aria-controls="home-slideshow-viewport">
+        戻す
+      </button>
+      <button type="button" class="btn home-slideshow__btn" data-home-slideshow-next="" aria-controls="home-slideshow-viewport">
+        送る
+      </button>
     </div>
   </div>
   <p class="home-slideshow__footer">画像は <a href="https://picsum.photos" rel="noopener noreferrer">Lorem Picsum</a> のサンプルです（研究室の実景ではありません）。</p>
 </section>
+
+<script defer="" src="https://gdaclab.web.nitech.ac.jp/assets/js/home-slideshow.js"></script>
 
 <p class="home-progress-notice"><strong>サイト整備中です。</strong>写真や研究室の詳しい紹介、学生向けの詳細ページなどを順次追加していきます。研究内容・メンバー・論文・研究室の場所については、下記のリンクからご覧いただけます。</p>
 

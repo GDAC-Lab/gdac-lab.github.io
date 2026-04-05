@@ -313,24 +313,35 @@
 
 <p>We develop theory and experiments for <strong>safety-critical control</strong>, <strong>geometric methods on SE(3)/SO(3)</strong>, and applications such as <strong>wheeled drones and infrastructure inspection</strong>. A concise overview is on the <a href="/research/">Research</a> page.</p>
 
-<section class="home-slideshow" aria-labelledby="home-slideshow-heading">
+<section id="home-slideshow" class="home-slideshow" data-home-slideshow="" data-interval="6500" aria-labelledby="home-slideshow-heading" aria-roledescription="carousel">
   <h2 id="home-slideshow-heading" class="home-slideshow__heading visually-hidden">Photo gallery</h2>
-  <p class="home-slideshow__wip"><strong>Official lab photos are not ready yet.</strong> Below are temporary sample images for layout preview; we will replace them with real pictures later.</p>
-  <div class="home-slideshow__viewport">
-    <div class="home-slideshow__track" aria-hidden="true">
-      <div class="home-slideshow__cell">
-        <img src="https://picsum.photos/seed/gdaclab-home-a/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
+  <p class="home-slideshow__wip"><strong>Official lab photos are not ready yet.</strong> Below are sample images for layout preview; they cross-fade automatically and can be changed with the buttons.</p>
+
+  <div class="home-slideshow__frame">
+    <div class="home-slideshow__viewport" id="home-slideshow-viewport" tabindex="0">
+      <div class="home-slideshow__slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 3">
+        <img src="https://picsum.photos/seed/gdaclab-home-a/1400/788" alt="" width="1400" height="788" loading="eager" decoding="async" />
       </div>
-      <div class="home-slideshow__cell">
+      <div class="home-slideshow__slide" role="group" aria-roledescription="slide" aria-hidden="true" aria-label="2 of 3">
         <img src="https://picsum.photos/seed/gdaclab-home-b/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
       </div>
-      <div class="home-slideshow__cell">
+      <div class="home-slideshow__slide" role="group" aria-roledescription="slide" aria-hidden="true" aria-label="3 of 3">
         <img src="https://picsum.photos/seed/gdaclab-home-c/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
       </div>
+    </div>
+    <div class="home-slideshow__controls">
+      <button type="button" class="btn home-slideshow__btn" data-home-slideshow-prev="" aria-controls="home-slideshow-viewport">
+        Previous
+      </button>
+      <button type="button" class="btn home-slideshow__btn" data-home-slideshow-next="" aria-controls="home-slideshow-viewport">
+        Next
+      </button>
     </div>
   </div>
   <p class="home-slideshow__footer">Images are sample photos from <a href="https://picsum.photos" rel="noopener noreferrer">Lorem Picsum</a> (not the lab).</p>
 </section>
+
+<script defer="" src="https://gdaclab.web.nitech.ac.jp/assets/js/home-slideshow.js"></script>
 
 <p class="home-progress-notice"><strong>This site is a work in progress.</strong> We are adding photos, richer lab descriptions, and dedicated student information over time. The links below already cover our research themes, members, publication lists, and how to reach us.</p>
 
