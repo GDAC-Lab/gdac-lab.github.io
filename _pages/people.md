@@ -20,6 +20,8 @@ lang_ref: people
 - **researchmap**: [satoshi-nakano](https://researchmap.jp/satoshi-nakano?lang=english)
 - **Faculty page (NITech)**: [mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
 
+{% include people-faculty-email-image.html %}
+
 ## Lab members
 
 ### Master's students

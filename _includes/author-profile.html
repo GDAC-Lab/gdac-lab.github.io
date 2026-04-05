@@ -40,18 +40,7 @@
       {% if site.researchmap_url %}
         <li><a href="{{ site.researchmap_url }}" rel="noopener"><i class="fas fa-fw fa-address-card icon-pad-right" aria-hidden="true"></i>researchmap</a></li>
       {% endif %}
-      {% if author.email_image and author.email_image != "" %}
-        <li class="author__email-image-item">
-          <span class="author__email-image-heading"><i class="fas fa-fw fa-envelope icon-pad-right" aria-hidden="true"></i>{% if page.lang == 'ja' %}メール{% else %}Email{% endif %}</span>
-          <img
-            class="author__email-image"
-            src="{{ author.email_image | prepend: '/images/' | prepend: base_path }}"
-            alt="{% if page.lang == 'ja' %}研究室連絡先のメールアドレス（スパム対策のため画像で表示しています。表示を拡大するか、手入力でご利用ください。）{% else %}Lab email address (shown as an image to reduce automated harvesting; zoom or type manually.){% endif %}"
-            loading="lazy"
-            decoding="async" />
-          <p class="author__email-image-note">{% if page.lang == 'ja' %}スパム対策のため、メールアドレスは画像で表示しています。お手数ですが表示をよく確認し、<strong>間違いのないよう手入力</strong>で書き写してください。{% else %}For spam protection, the address is shown as an image. Please look closely and <strong>type it by hand</strong> into your mail app so every character is correct.{% endif %}</p>
-        </li>
-      {% elsif author.email %}
+      {% if author.email %}
         <li><a href="mailto:{{ author.email }}"><i class="fas fa-fw fa-envelope icon-pad-right" aria-hidden="true"></i>{{ site.data.ui-text[site.locale].email_label | default: "Email" }}</a></li>
       {% endif %}
 

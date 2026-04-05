@@ -82,3 +82,36 @@
     margin-bottom: 0.75em;
   }
 }
+
+/* Faculty email (raster) — People page only; fits content column */
+.people-directory .people-faculty-email {
+  margin: 1rem 0 1.25rem;
+  padding: 0.85rem 1rem;
+  max-width: 22rem;
+  border: 1px solid var(--global-border-color);
+  border-radius: $border-radius;
+  background-color: var(--global-thead-color);
+}
+
+.people-directory .people-faculty-email__label {
+  margin: 0 0 0.4rem;
+  font-size: $type-size-6;
+}
+
+.people-directory .people-faculty-email__img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+.people-directory .people-faculty-email__note {
+  margin: 0.5rem 0 0;
+  font-size: $type-size-7;
+  line-height: 1.45;
+  color: var(--global-text-color-light);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}

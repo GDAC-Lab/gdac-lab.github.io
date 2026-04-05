@@ -33,9 +33,9 @@ author:
   location         : "Nagoya, Japan"
   employer         : "Nagoya Institute of Technology"
   uri              : "https://mcontrol.web.nitech.ac.jp/nakano/" # PI / lab intro (NITech)
-  # Email: either plain `email` (mailto in HTML — easy for scrapers) OR `email_image` below.
-  email            : # used only if email_image is unset
-  # Raster under /images/ (path relative to /images/). No mailto when set.
+  # Email: plain `email` adds a mailto link in the sidebar. `email_image` is shown only on People (教員 block).
+  email            : # used only if email_image is unset, for sidebar mailto
+  # Raster under /images/ (path relative to /images/). Shown on /people/ and /ja/people/ only.
   email_image      : "nakano-email.png"
 
   # Academic websites

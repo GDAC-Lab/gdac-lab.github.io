@@ -1,0 +1,15 @@
+{% comment %} Faculty contact email as image (People page only). Uses site.author.email_image. {% endcomment %}
+{% include base_path %}
+{% assign _img = site.author.email_image %}
+{% if _img and _img != "" %}
+<div class="people-faculty-email">
+  <p class="people-faculty-email__label"><strong>{% if page.lang == 'ja' %}メール{% else %}Email{% endif %}</strong></p>
+  <img
+    class="people-faculty-email__img"
+    src="{{ _img | prepend: '/images/' | prepend: base_path }}"
+    alt="{% if page.lang == 'ja' %}連絡先メールアドレス（スパム対策のため画像表示）{% else %}Contact email (shown as image for spam protection){% endif %}"
+    loading="lazy"
+    decoding="async" />
+  <p class="people-faculty-email__note">{% if page.lang == 'ja' %}スパム対策のため、メールアドレスは画像で表示しています。お手数ですが表示をよく確認し、<strong>間違いのないよう手入力</strong>で書き写してください。{% else %}For spam protection, the address is shown as an image. Please look closely and <strong>type it by hand</strong> into your mail app so every character is correct.{% endif %}</p>
+</div>
+{% endif %}

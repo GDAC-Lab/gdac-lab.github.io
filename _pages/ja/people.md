@@ -20,6 +20,8 @@ lang_ref: people
 - **researchmap**: [仲野 聡史（researchmap）](https://researchmap.jp/satoshi-nakano)
 - **教員・研究室紹介（名工大）**: [mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
 
+{% include people-faculty-email-image.html %}
+
 ## ラボメンバー
 
 ### 修士学生
