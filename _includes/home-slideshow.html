@@ -1,0 +1,19 @@
+{% comment %} Placeholder slideshow on home; replace image URLs in this file when real photos are ready. {% endcomment %}
+<section class="home-slideshow" aria-labelledby="home-slideshow-heading">
+  <h2 id="home-slideshow-heading" class="home-slideshow__heading visually-hidden">{% if page.lang == 'ja' %}フォトギャラリー{% else %}Photo gallery{% endif %}</h2>
+  <p class="home-slideshow__wip">{% if page.lang == 'ja' %}<strong>写真は準備中です。</strong>現在はデザイン確認用のサンプル画像を自動で切り替え表示しています。正式な研究室の写真は追って差し替えます。{% else %}<strong>Official lab photos are not ready yet.</strong> Below are temporary sample images for layout preview; we will replace them with real pictures later.{% endif %}</p>
+  <div class="home-slideshow__viewport">
+    <div class="home-slideshow__track" aria-hidden="true">
+      <div class="home-slideshow__cell">
+        <img src="https://picsum.photos/seed/gdaclab-home-a/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
+      </div>
+      <div class="home-slideshow__cell">
+        <img src="https://picsum.photos/seed/gdaclab-home-b/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
+      </div>
+      <div class="home-slideshow__cell">
+        <img src="https://picsum.photos/seed/gdaclab-home-c/1400/788" alt="" width="1400" height="788" loading="lazy" decoding="async" />
+      </div>
+    </div>
+  </div>
+  <p class="home-slideshow__footer">{% if page.lang == 'ja' %}画像は <a href="https://picsum.photos" rel="noopener noreferrer">Lorem Picsum</a> のサンプルです（研究室の実景ではありません）。{% else %}Images are sample photos from <a href="https://picsum.photos" rel="noopener noreferrer">Lorem Picsum</a> (not the lab).{% endif %}</p>
+</section>

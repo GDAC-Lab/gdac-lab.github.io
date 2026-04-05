@@ -15,6 +15,8 @@ redirect_from:
 
 **セーフティクリティカルな制御**、**SE(3)/SO(3) を用いた幾何的な姿勢制御**、**車輪付きドローンやインフラ点検**への応用などの概要は、[研究内容]({{ site.baseurl }}/ja/research/) でご覧いただけます。
 
+{% include home-slideshow.html %}
+
 {% include home-extra.html %}
 
 {% include home-news.html %}
