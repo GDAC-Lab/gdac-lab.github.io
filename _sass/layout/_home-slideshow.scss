@@ -23,23 +23,35 @@
 
 .home-slideshow__viewport {
   position: relative;
+  width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 26rem;
   outline: none;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.home-slideshow__slide {
+/* Stronger selectors so page-level rules cannot flatten the stack */
+section.home-slideshow .home-slideshow__viewport .home-slideshow__slide {
   position: absolute;
   inset: 0;
+  margin: 0;
   opacity: 0;
+  visibility: hidden;
   z-index: 0;
-  transition: opacity 0.85s ease-in-out;
+  transition:
+    opacity 0.85s ease-in-out,
+    visibility 0s linear 0.85s;
   pointer-events: none;
 }
 
-.home-slideshow__slide.is-active {
+section.home-slideshow .home-slideshow__viewport .home-slideshow__slide.is-active {
   opacity: 1;
+  visibility: visible;
   z-index: 1;
+  transition:
+    opacity 0.85s ease-in-out,
+    visibility 0s;
   pointer-events: auto;
 }
 
@@ -73,7 +85,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-slideshow__slide {
+  section.home-slideshow .home-slideshow__viewport .home-slideshow__slide {
     transition: none;
   }
 }
