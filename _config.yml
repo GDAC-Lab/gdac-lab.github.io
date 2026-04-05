@@ -33,7 +33,10 @@ author:
   location         : "Nagoya, Japan"
   employer         : "Nagoya Institute of Technology"
   uri              : "https://mcontrol.web.nitech.ac.jp/nakano/" # PI / lab intro (NITech)
-  email            : # Add your lab email address here
+  # Email: either plain `email` (mailto in HTML — easy for scrapers) OR `email_image` below.
+  email            : # used only if email_image is unset
+  # Raster under /images/ (path relative to /images/). No mailto when set.
+  email_image      : "nakano-email.png"
 
   # Academic websites
   academia         : # URL
