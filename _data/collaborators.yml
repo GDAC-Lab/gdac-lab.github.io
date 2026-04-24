@@ -99,3 +99,8 @@ items:
     internal: true
     affiliation_en: "Nagoya Institute of Technology"
     affiliation_ja: "名古屋工業大学"
+
+  - name_en: "Sheikh A. Tahmid"
+    name_ja: "Sheikh A. Tahmid"
+    affiliation_en: "University of Waterloo, Canada"
+    affiliation_ja: "University of Waterloo, Canada"
