@@ -127,11 +127,12 @@
   }
 }
 
-/* Faculty email (raster) — People page only; fits content column */
+/* Faculty email (raster) — People page only; intrinsic image size (avoid stretching tiny PNGs) */
 .people-directory .people-faculty-email {
   margin: 1rem 0 1.25rem;
   padding: 0.85rem 1rem;
-  max-width: 22rem;
+  width: fit-content;
+  max-width: min(22rem, 100%);
   border: 1px solid var(--global-border-color);
   border-radius: $border-radius;
   background-color: var(--global-callout-bg, var(--global-thead-color));
@@ -150,7 +151,7 @@
 
 .people-directory .people-faculty-email__img {
   display: block;
-  width: 100%;
+  width: auto;
   max-width: 100%;
   height: auto;
   border-radius: 2px;
@@ -173,5 +174,29 @@ html[data-theme="dark"] .people-directory .people-faculty-email__img {
 
   strong {
     color: var(--global-callout-text, var(--global-text-color));
+  }
+}
+
+/* Lab group photo — between faculty block and member lists */
+.people-directory .people-directory__group-photo {
+  margin: 0 0 1.5rem;
+
+  img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+    border-radius: $border-radius;
+    border: 1px solid var(--global-border-color);
+    box-sizing: border-box;
+  }
+
+  figcaption {
+    margin: 0.5rem 0 0;
+    font-size: $type-size-6;
+    line-height: 1.45;
+    color: var(--global-text-color-light);
   }
 }

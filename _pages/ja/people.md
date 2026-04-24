@@ -22,6 +22,8 @@ lang_ref: people
 
 {% include people-faculty-email-image.html %}
 
+{% include people-group-photo.html %}
+
 ## ラボメンバー
 
 ### 修士学生

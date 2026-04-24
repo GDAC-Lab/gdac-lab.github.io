@@ -24,7 +24,7 @@ researchmap_url          : "https://researchmap.jp/satoshi-nakano?lang=english"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "favicon.svg" # Lab photo: add images/profile.png and set to "profile.png" if preferred
+  avatar           : "lab/group-photo.jpg" # Sidebar image (also on home slideshow via _includes/home-slideshow.html)
   name             : "GDAC Lab"
   name_ja          : "仲野研究室"
   pronouns         : # example: "she/her"  

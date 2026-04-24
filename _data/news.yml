@@ -6,9 +6,9 @@
 #   link: optional URL (external or on this site)
 #   link_label_en, link_label_ja: optional; default "Read more" / 「詳細」
 items:
+  - date: "2026-04-24"
+    body_en: "We have published a **group photo** of lab members on the home page and in the sidebar."
+    body_ja: "**研究室メンバーの集合写真**を、ホームページおよび各ページ左のサイドバーに掲載しました。"
   - date: "2026-03-30"
     body_en: "Our **laboratory website is now public.** We will update publications, people, and news here as they change."
     body_ja: "**研究室のウェブページを公開しました。** 論文・メンバー・お知らせなど、随時更新していきます。"
-  - date: "2026-03-28"
-    body_en: "Added a **News** section on the home page. Edit `_data/news.yml` to post updates—titles are optional for short notices."
-    body_ja: "ホームに**お知らせ**欄を追加しました。短い投稿は `body_en` / `body_ja` のみでも問題ありません（タイトルは省略可）。`_data/news.yml` を編集してください。"

@@ -14,7 +14,10 @@
     var prevBtn = root.querySelector("[data-home-slideshow-prev]");
     var nextBtn = root.querySelector("[data-home-slideshow-next]");
     var n = slides.length;
-    if (!viewport || n === 0 || !prevBtn || !nextBtn) return;
+    if (!viewport || n === 0) return;
+    /* Single static slide: markup already marks .is-active */
+    if (n === 1) return;
+    if (!prevBtn || !nextBtn) return;
 
     var intervalMs = parseInt(root.getAttribute("data-interval") || "6500", 10);
     if (intervalMs < 2000) intervalMs = 2000;

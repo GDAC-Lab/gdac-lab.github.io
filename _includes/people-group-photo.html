@@ -1,0 +1,20 @@
+{% comment %} Group photo on People pages; image path follows site.author.avatar (local under /images/ or absolute URL). {% endcomment %}
+{% include base_path %}
+{% assign _gp = site.author.avatar | default: "lab/group-photo.jpg" %}
+{% if _gp contains "://" %}
+  {% assign _gp_src = _gp %}
+{% else %}
+  {% assign _gp_src = _gp | prepend: "/images/" | prepend: base_path %}
+{% endif %}
+<figure class="people-directory__group-photo">
+  <img
+    src="{{ _gp_src }}"
+    alt="{% if page.lang == 'ja' %}{{ site.author.name_ja | default: site.author.name }}のメンバー集合写真{% else %}{{ site.author.name }} — group photo{% endif %}"
+    width="1600"
+    height="900"
+    loading="lazy"
+    decoding="async" />
+  <figcaption>
+    {% if page.lang == 'ja' %}研究室メンバーの集合写真{% else %}Group photo of lab members{% endif %}
+  </figcaption>
+</figure>

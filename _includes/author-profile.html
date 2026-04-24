@@ -8,9 +8,9 @@
 
   <div class="author__avatar">
     {% if author.avatar contains "://" %}
-    	<img src="{{ author.avatar }}" alt="{{ author.name }}"  fetchpriority="high" />
+    	<img src="{{ author.avatar }}" alt="{% if page.lang == 'ja' %}{{ author.name_ja | default: author.name }}のメンバー集合写真{% else %}{{ author.name }} — group photo{% endif %}" fetchpriority="high" />
     {% else %}
-    	<img src="{{ author.avatar | prepend: "/images/" | prepend: base_path }}" class="author__avatar" alt="{{ author.name }}"  fetchpriority="high" />
+    	<img src="{{ author.avatar | prepend: "/images/" | prepend: base_path }}" class="author__avatar" alt="{% if page.lang == 'ja' %}{{ author.name_ja | default: author.name }}のメンバー集合写真{% else %}{{ author.name }} — group photo{% endif %}" fetchpriority="high" />
     {% endif %}
   </div>
 

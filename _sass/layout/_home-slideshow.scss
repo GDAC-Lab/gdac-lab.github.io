@@ -7,11 +7,16 @@
   margin: 0;
 }
 
-.home-slideshow__wip {
+.home-slideshow__intro {
   margin: 0 0 0.85rem;
   font-size: $type-size-6;
   line-height: 1.55;
   color: var(--global-text-color);
+}
+
+/* One slide: prev/next not needed (see home-slideshow.js early exit) */
+.home-slideshow--single .home-slideshow__controls {
+  display: none;
 }
 
 .home-slideshow__frame {
@@ -75,13 +80,6 @@ section.home-slideshow .home-slideshow__viewport .home-slideshow__slide.is-activ
 .home-slideshow__btn {
   margin-bottom: 0;
   min-width: 6.5rem;
-}
-
-.home-slideshow__footer {
-  margin: 0.5rem 0 0;
-  font-size: $type-size-7;
-  line-height: 1.45;
-  color: var(--global-text-color-light);
 }
 
 @media (prefers-reduced-motion: reduce) {
