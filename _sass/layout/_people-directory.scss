@@ -107,6 +107,16 @@
     }
   }
 
+  .people-directory__collapsible summary .people-directory__collapsible-summary-hint {
+    font-weight: 400;
+    font-size: $type-size-6;
+    color: var(--global-callout-text-muted, var(--global-text-color-light));
+  }
+
+  .people-directory__collapsible[open] summary .people-directory__collapsible-summary-hint {
+    display: none;
+  }
+
   .people-directory__collapsible-lead {
     margin: 0;
     padding: 0 1rem 0.5rem;

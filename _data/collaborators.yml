@@ -1,0 +1,66 @@
+# Research collaborators on People / メンバー pages (see _includes/people-collaborators.html).
+# Optional per person: url (omit or leave empty for no link).
+items:
+  - name_en: "Emanuele Garone"
+    name_ja: "Emanuele Garone"
+    affiliation_en: "Université libre de Bruxelles, Belgium"
+    affiliation_ja: "Université libre de Bruxelles, Belgium"
+
+  - name_en: "Kazumune Hashimoto"
+    name_ja: "橋本 和宗"
+    affiliation_en: "Osaka University"
+    affiliation_ja: "大阪大学"
+    url: "https://sites.google.com/view/kazumunehashimotoupdate/"
+
+  - name_en: "Takeshi Hatanaka"
+    name_ja: "畑中 健志"
+    affiliation_en: "Institute of Science Tokyo"
+    affiliation_ja: "東京科学大学"
+
+  - name_en: "Tatsuya Ibuki"
+    name_ja: "伊吹 竜也"
+    affiliation_en: "Meiji University"
+    affiliation_ja: "明治大学"
+
+  - name_en: "Kou Miyamoto"
+    name_ja: "宮本 晧"
+    affiliation_en: "Shimizu Corporation"
+    affiliation_ja: "清水建設株式会社"
+
+  - name_en: "Gennaro Notomista"
+    name_ja: "Gennaro Notomista"
+    affiliation_en: "University of Waterloo, Canada"
+    affiliation_ja: "University of Waterloo, Canada"
+
+  - name_en: "Noboru Sakamoto"
+    name_ja: "坂本 登"
+    affiliation_en: "Nanzan University"
+    affiliation_ja: "南山大学"
+    url: "https://www.st.nanzan-u.ac.jp/info/sakanobo/index.html"
+
+  - name_en: "Takahiro Sasaki"
+    name_ja: "佐々木 貴広"
+    affiliation_en: "Japan Aerospace Exploration Agency (JAXA)"
+    affiliation_ja: "宇宙航空研究開発機構（JAXA）"
+    url: "https://researchmap.jp/jaxasaki"
+
+  - name_en: "Mitsuji Sampei"
+    name_ja: "三平 満司"
+    affiliation_en: "Institute of Science Tokyo"
+    affiliation_ja: "東京科学大学"
+
+  - name_en: "Jinhua She"
+    name_ja: "佘 錦華"
+    affiliation_en: "Tokyo University of Technology"
+    affiliation_ja: "東京工科大学"
+
+  - name_en: "Xun Shen"
+    name_ja: "瀋 迅"
+    affiliation_en: "Tokyo University of Agriculture and Technology"
+    affiliation_ja: "東京農工大学"
+    url: "https://sites.google.com/view/xunshen/home"
+
+  - name_en: "Manabu Yamada"
+    name_ja: "山田 学"
+    affiliation_en: "Nagoya Institute of Technology"
+    affiliation_ja: "名古屋工業大学"

@@ -32,22 +32,16 @@ lang_ref: people
   - *Undergraduate in this lab*: October 2024 – March 2026
 
 ### Undergraduate students
-- **Kyuta Kawai** — from September 2025
-- **Keisuke Sano** — from September 2025
-- **Eita Sugiyama** — from September 2025
+- **Kyuta Kawai** — from October 2025
+- **Keisuke Sano** — from October 2025
+- **Eita Sugiyama** — from October 2025
 
 ### Co-advised students
 - **Itsuki Asada** — Primary supervisor: Prof. Manabu Yamada · from April 2025
   - *Undergraduate in this lab*: October 2023 – March 2025
 - **Yuki Dotaka** — Primary supervisor: Prof. Manabu Yamada · from April 2025
 
-<details class="people-directory__collapsible">
-<summary>Research collaborators</summary>
-<p class="people-directory__collapsible-lead">Colleagues outside this lab we collaborate with on research (listed separately from students above).</p>
-<ul>
-  <li><strong>(Name)</strong> — affiliation · role or theme (replace this line)</li>
-</ul>
-</details>
+{% include people-collaborators.html %}
 
 </div>
 
@@ -71,6 +65,6 @@ lang_ref: people
   - **Name** — Primary supervisor: Prof. <Name> · from Month YYYY
 
   Collaborators (expandable block at bottom of page):
-  - Edit the <details> section; use HTML <ul><li> or add rows inside the list.
-  - Optional: add the attribute `open` on <details> to show expanded by default.
+  - Edit `_data/collaborators.yml` (optional `url` per person). Rendered via `people-collaborators.html`.
+  - Collaborators: edit `_data/collaborators.yml`; summary shows “Click to open” when collapsed (`people-collaborators.html`).
 -->

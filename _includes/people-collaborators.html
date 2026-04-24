@@ -1,0 +1,33 @@
+{% comment %} Lists site.data.collaborators.items; optional url per entry in _data/collaborators.yml {% endcomment %}
+{% assign _collab = site.data.collaborators.items %}
+{% if _collab and _collab.size > 0 %}
+<details class="people-directory__collapsible">
+  <summary>
+    <span class="people-directory__collapsible-summary-title">{% if page.lang == 'ja' %}研究協力者{% else %}Research collaborators{% endif %}</span>
+    <span class="people-directory__collapsible-summary-hint">{% if page.lang == 'ja' %}（クリックで開く）{% else %}(Click to open){% endif %}</span>
+  </summary>
+  <p class="people-directory__collapsible-lead">{% if page.lang == 'ja' %}本研究室の学生・教員以外で，共同研究などで協力いただいている方です。{% else %}Colleagues outside this lab we collaborate with on research (listed separately from students above).{% endif %}</p>
+  <ul>
+    {% for item in _collab %}
+      {% assign disp_name = item.name_en %}
+      {% if page.lang == 'ja' and item.name_ja != nil and item.name_ja != '' %}
+        {% assign disp_name = item.name_ja %}
+      {% endif %}
+      {% assign disp_aff = item.affiliation_en %}
+      {% if page.lang == 'ja' %}
+        {% if item.affiliation_ja != nil and item.affiliation_ja != '' %}
+          {% assign disp_aff = item.affiliation_ja %}
+        {% endif %}
+      {% endif %}
+      <li>
+        {% if item.url and item.url != '' %}
+          <strong><a href="{{ item.url }}" rel="noopener noreferrer">{{ disp_name }}</a></strong>
+        {% else %}
+          <strong>{{ disp_name }}</strong>
+        {% endif %}
+        — {{ disp_aff }}
+      </li>
+    {% endfor %}
+  </ul>
+</details>
+{% endif %}

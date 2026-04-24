@@ -32,22 +32,16 @@ lang_ref: people
   - *本研究室学部在籍*: 2024年10月～2026年3月
 
 ### 学部生
-- **川合 球太** — 2025年9月～
-- **佐野 圭亮** — 2025年9月～
-- **杉山 瑛大** — 2025年9月～
+- **川合 球太** — 2025年10月～
+- **佐野 圭亮** — 2025年10月～
+- **杉山 瑛大** — 2025年10月～
 
 ### 副指導学生
 - **浅田 樹** — 主指導: 山田学教授 · 2025年4月～
   - *本研究室学部在籍*: 2023年10月～2025年3月
 - **堂高 友樹** — 主指導: 山田学教授 · 2025年4月～
 
-<details class="people-directory__collapsible">
-<summary>研究協力者</summary>
-<p class="people-directory__collapsible-lead">本研究室の学生・教員以外で，共同研究などで協力いただいている方です（クリックで開きます）。</p>
-<ul>
-  <li><strong>（氏名）</strong> — 所属 · 役割やテーマのメモ（この行を差し替え）</li>
-</ul>
-</details>
+{% include people-collaborators.html %}
 
 </div>
 
@@ -71,6 +65,6 @@ lang_ref: people
   - **氏名** — 主指導: ○○研究室 · YYYY年M月～
 
   研究協力者（ページ末尾の折りたたみ）:
-  - <details> 内のリストを編集（HTML の <ul><li> 推奨）。
-  - 既定で開いた状態にしたい場合は <details open> とする。
+  - `_data/collaborators.yml` を編集（各人の `url` は任意）。表示は `people-collaborators.html`。
+  - 研究協力者は `_data/collaborators.yml` を編集。閉じたとき見出しに「クリックで開く」と表示（`people-collaborators.html`）。
 -->
