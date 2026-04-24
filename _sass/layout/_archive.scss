@@ -28,6 +28,48 @@
   white-space: nowrap;
 }
 
+/* Unobtrusive annotation: visually tied to the paragraph above */
+.publications-page__anno {
+  display: block;
+  margin: -0.2em 0 1rem;
+  padding: 0.15em 0 0.2em 0.75rem;
+  border-left: 2px solid var(--global-border-color);
+  font-size: $type-size-8;
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--global-text-color-light);
+  opacity: 0.9;
+}
+
+.publications-page__anno a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+
+  &:hover {
+    color: var(--global-link-color);
+  }
+}
+
+/* Category jump nav (Journal Articles, Conference Papers, Preprints, …) */
+.publications-page__jump {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.5rem;
+  margin: 0.25em 0 0.75em;
+}
+
+.publications-page__jump-btn {
+  padding: 0.35em 0.75em;
+  font-size: $type-size-6;
+  font-weight: 600;
+}
+
+h2.publications-page__category-heading {
+  scroll-margin-top: calc(#{$masthead-height} + 0.75rem);
+}
+
 .publication-link-sep {
   color: var(--global-text-color-light);
 }

@@ -1,0 +1,43 @@
+{% comment %} Category jump buttons; EN page = non-JA only; JA page = same category anchors for JA+EN combined. {% endcomment %}
+{% if site.publication_category %}
+<nav class="publications-page__jump" aria-label="{% if page.lang == 'ja' %}セクションへ移動{% else %}Jump to section{% endif %}">
+  {% for category in site.publication_category %}
+    {% assign cat_key = category[0] %}
+    {% if page.lang == 'ja' %}
+      {% assign posts_cat_ja = site.publications | where: "category", cat_key | where: "lang", "ja" %}
+      {% assign posts_cat_en = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
+      {% assign cat_jump_title = category[1].title_ja | default: category[1].title %}
+      {% assign recent_in_cat = 0 %}
+      {% for p in posts_cat_ja %}
+        {% assign py = p.date | date: "%Y" | plus: 0 %}
+        {% if pub_years == 0 or py >= min_pub_y %}
+          {% assign recent_in_cat = recent_in_cat | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+      {% for p in posts_cat_en %}
+        {% assign py = p.date | date: "%Y" | plus: 0 %}
+        {% if pub_years == 0 or py >= min_pub_y %}
+          {% assign recent_in_cat = recent_in_cat | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% assign posts_cat = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
+      {% assign cat_jump_title = category[1].title %}
+      {% if posts_cat.size == 0 %}
+        {% continue %}
+      {% endif %}
+      {% assign recent_in_cat = 0 %}
+      {% for p in posts_cat %}
+        {% assign py = p.date | date: "%Y" | plus: 0 %}
+        {% if pub_years == 0 or py >= min_pub_y %}
+          {% assign recent_in_cat = recent_in_cat | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% if recent_in_cat == 0 %}
+      {% continue %}
+    {% endif %}
+    <a href="#publication-{{ cat_key }}" class="btn btn--inverse publications-page__jump-btn">{{ cat_jump_title }}</a>
+  {% endfor %}
+</nav>
+{% endif %}

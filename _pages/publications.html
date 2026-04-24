@@ -15,27 +15,35 @@ lang_ref: publications
   {% assign min_pub_y = current_y | minus: pub_years | plus: 1 %}
 {% endif %}
 
-{% if site.author.googlescholar %}
-  <div class="wordwrap">You can also find my articles on <a href="{{ site.author.googlescholar }}" rel="noopener">my Google Scholar profile</a>.</div>
-{% endif %}
-
-{% if site.researchmap_url %}
-  <p class="wordwrap">The list below is imported from <a href="{{ site.researchmap_url }}">researchmap</a> whenever this site is built. An automated job also refreshes it from researchmap <strong>about once a week</strong> (Mondays 00:00 UTC). The canonical, up-to-date record is always the researchmap profile.</p>
-{% endif %}
-
-{% if site.researchmap_url and pub_years > 0 %}
-  <p class="wordwrap">Only the <strong>last {{ pub_years }} years</strong> ({{ min_pub_y }}–{{ current_y }}) are shown here. For older publications, see <a href="{{ site.researchmap_url }}">researchmap</a>. Japanese-language publications are listed <strong>separately</strong> on the <a href="{{ base_path }}/ja/publications/">Japanese publications page</a> (same categories and year window).</p>
-{% else %}
-  <p class="wordwrap">Japanese-language publications are listed <strong>separately</strong> on the <a href="{{ base_path }}/ja/publications/">Japanese publications page</a>.</p>
-{% endif %}
-
-{% if site.data.preprint_sources %}
-  {% assign _nd = site.data.preprint_sources.dois | size %}
-  {% assign _na = site.data.preprint_sources.arxiv_ids | size %}
-  {% if _nd > 0 or _na > 0 %}
-    <p class="wordwrap">Some items under <strong>Preprints</strong> are filled from <a href="https://www.crossref.org">Crossref</a> (DOI) and <a href="https://arxiv.org">arXiv</a> metadata whenever the site is built.</p>
+<p class="wordwrap">
+  English-language publications are listed below.
+  {% if pub_years > 0 %}
+    Only <strong>{{ min_pub_y }}–{{ current_y }}</strong> (last {{ pub_years }} years) are shown.{% if site.researchmap_url %} Older items: <a href="{{ site.researchmap_url }}">researchmap</a>.{% endif %}
   {% endif %}
+</p>
+
+{% assign _pp_d = 0 %}
+{% assign _pp_a = 0 %}
+{% if site.data.preprint_sources %}
+  {% assign _pp_d = site.data.preprint_sources.dois | size %}
+  {% assign _pp_a = site.data.preprint_sources.arxiv_ids | size %}
 {% endif %}
+{% if site.author.googlescholar or site.researchmap_url or _pp_d > 0 or _pp_a > 0 %}
+  <small class="wordwrap publications-page__anno" role="note">{%- if site.author.googlescholar -%}
+    You can also browse publications on <a href="{{ site.author.googlescholar }}" rel="noopener">Google Scholar</a>.
+  {%- endif -%}
+  {%- if site.researchmap_url -%}
+    {%- if site.author.googlescholar %} {% endif -%}
+    The list below is kept in sync with <a href="{{ site.researchmap_url }}">researchmap</a>, roughly on a weekly basis.
+  {%- endif -%}
+  {%- if _pp_d > 0 or _pp_a > 0 -%}
+    {%- if site.author.googlescholar or site.researchmap_url %} {% endif -%}
+    Some Preprints entries are filled in from <a href="https://www.crossref.org">Crossref</a> or <a href="https://arxiv.org">arXiv</a> metadata when this site is built.
+  {%- endif -%}
+  </small>
+{% endif %}
+
+{% include publications-category-jump.html %}
 
 {% include base_path %}
 
@@ -58,7 +66,7 @@ lang_ref: publications
       {% continue %}
     {% endif %}
 
-    <h2>{{ category[1].title }}</h2><hr />
+    <h2 id="publication-{{ cat_key }}" class="publications-page__category-heading">{{ category[1].title }}</h2><hr />
 
     {% for post in posts_cat reversed %}
       {% assign post_year = post.date | date: "%Y" | plus: 0 %}
