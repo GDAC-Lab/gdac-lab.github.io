@@ -22,9 +22,9 @@ lang_ref: people
 
 {% include people-faculty-email-image.html %}
 
-{% include people-group-photo.html %}
+## 研究室メンバー
 
-## ラボメンバー
+{% include people-group-photo.html %}
 
 ### 修士学生
 
@@ -63,6 +63,8 @@ lang_ref: people
 
   Co-advised (副指導):
   - **氏名** — 主指導: ○○研究室 · YYYY年M月～
+
+  集合写真: `people-group-photo.html` は `## 研究室メンバー` の直後・`### 修士学生` の前。
 
   研究協力者（ページ末尾の折りたたみ）:
   - `_data/collaborators.yml` を編集（各人の `url` は任意）。表示は `people-collaborators.html`。

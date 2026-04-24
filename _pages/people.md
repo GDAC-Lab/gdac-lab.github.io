@@ -22,9 +22,9 @@ lang_ref: people
 
 {% include people-faculty-email-image.html %}
 
-{% include people-group-photo.html %}
-
 ## Lab members
+
+{% include people-group-photo.html %}
 
 ### Master's students
 
@@ -63,6 +63,8 @@ lang_ref: people
 
   Co-advised:
   - **Name** — Primary supervisor: Prof. <Name> · from Month YYYY
+
+  Group photo: `people-group-photo.html` sits under `## Lab members`, above `### Master's students`.
 
   Collaborators (expandable block at bottom of page):
   - Edit `_data/collaborators.yml` (optional `url` per person). Rendered via `people-collaborators.html`.

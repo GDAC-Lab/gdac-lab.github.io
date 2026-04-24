@@ -1,4 +1,4 @@
-{% comment %} Group photo on People pages; image path follows site.author.avatar (local under /images/ or absolute URL). {% endcomment %}
+{% comment %} Group photo under the members section heading on People pages; image from site.author.avatar. {% endcomment %}
 {% include base_path %}
 {% assign _gp = site.author.avatar | default: "lab/group-photo.jpg" %}
 {% if _gp contains "://" %}
