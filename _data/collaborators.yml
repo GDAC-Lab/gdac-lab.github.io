@@ -23,6 +23,12 @@ items:
     affiliation_en: "Meiji University"
     affiliation_ja: "明治大学"
 
+  - name_en: "Takumi Ito"
+    name_ja: "伊藤 匠"
+    affiliation_en: "National Institute of Advanced Industrial Science and Technology"
+    affiliation_ja: "産業総合研究所"
+    url: "https://takumito.github.io/"
+
   - name_en: "Kou Miyamoto"
     name_ja: "宮本 晧"
     affiliation_en: "Shimizu Corporation"
