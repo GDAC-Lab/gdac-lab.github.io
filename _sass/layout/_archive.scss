@@ -28,6 +28,12 @@
   white-space: nowrap;
 }
 
+/* Lead paragraph on publications pages: normal whitespace (avoid pre-wrap from .wordwrap) */
+.publications-page__lede {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
 /* Unobtrusive annotation: visually tied to the paragraph above */
 .publications-page__anno {
   display: block;
@@ -39,6 +45,8 @@
   font-weight: 400;
   color: var(--global-text-color-light);
   opacity: 0.9;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .publications-page__anno a {

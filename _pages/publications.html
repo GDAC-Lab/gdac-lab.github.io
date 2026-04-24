@@ -15,7 +15,7 @@ lang_ref: publications
   {% assign min_pub_y = current_y | minus: pub_years | plus: 1 %}
 {% endif %}
 
-<p class="wordwrap">
+<p class="publications-page__lede">
   English-language publications are listed below.
   {% if pub_years > 0 %}
     Only <strong>{{ min_pub_y }}–{{ current_y }}</strong> (last {{ pub_years }} years) are shown.{% if site.researchmap_url %} Older items: <a href="{{ site.researchmap_url }}">researchmap</a>.{% endif %}
@@ -29,7 +29,7 @@ lang_ref: publications
   {% assign _pp_a = site.data.preprint_sources.arxiv_ids | size %}
 {% endif %}
 {% if site.author.googlescholar or site.researchmap_url or _pp_d > 0 or _pp_a > 0 %}
-  <small class="wordwrap publications-page__anno" role="note">{%- if site.author.googlescholar -%}
+  <small class="publications-page__anno" role="note">{%- if site.author.googlescholar -%}
     You can also browse publications on <a href="{{ site.author.googlescholar }}" rel="noopener">Google Scholar</a>.
   {%- endif -%}
   {%- if site.researchmap_url -%}

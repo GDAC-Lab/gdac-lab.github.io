@@ -15,7 +15,7 @@ lang_ref: publications_ja
   {% assign min_pub_y = current_y | minus: pub_years | plus: 1 %}
 {% endif %}
 
-<p class="wordwrap">
+<p class="publications-page__lede">
   {% if pub_years > 0 %}
     区分ごとに掲載し、<strong>{{ min_pub_y }}年〜{{ current_y }}年</strong>（直近{{ pub_years }}年）に掲載された文献に限ります。{% if site.researchmap_url %}それ以前は <a href="{{ site.researchmap_url }}">researchmap</a> をご覧ください。{% endif %}
   {% else %}
@@ -34,7 +34,7 @@ lang_ref: publications_ja
   {% assign _pp_a = site.data.preprint_sources.arxiv_ids | size %}
 {% endif %}
 {% if gs_profile != '' or site.researchmap_url or _pp_d > 0 or _pp_a > 0 %}
-  <small class="wordwrap publications-page__anno" role="note">{%- if gs_profile != '' -%}
+  <small class="publications-page__anno" role="note">{%- if gs_profile != '' -%}
     この一覧のほか、<a href="{{ gs_profile }}" rel="noopener">Google Scholar</a> からも論文をたどれます。
   {%- endif -%}
   {%- if site.researchmap_url -%}
