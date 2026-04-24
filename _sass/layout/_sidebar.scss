@@ -265,4 +265,9 @@
       text-decoration: underline;
     }
   }
+
+  /* <i> defaults to italic; breaks Font Awesome / Academicons glyph alignment */
+  i {
+    font-style: normal;
+  }
 }

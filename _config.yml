@@ -33,6 +33,7 @@ author:
   location         : "Nagoya, Japan"
   employer         : "Nagoya Institute of Technology"
   uri              : "https://mcontrol.web.nitech.ac.jp/nakano/" # PI / lab intro (NITech)
+  pure_url         : "https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/" # PI profile (NITech Pure)
   # Email: plain `email` adds a mailto link in the sidebar. `email_image` is shown only on People (教員 block).
   email            : # used only if email_image is unset, for sidebar mailto
   # Raster under /images/ (path relative to /images/). Shown on /people/ and /ja/people/ only.

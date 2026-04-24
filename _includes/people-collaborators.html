@@ -1,14 +1,36 @@
-{% comment %} Lists site.data.collaborators.items; optional url per entry in _data/collaborators.yml {% endcomment %}
+{% comment %} Lists site.data.collaborators.items; optional url; internal: true = same university as site.author.employer {% endcomment %}
 {% assign _collab = site.data.collaborators.items %}
 {% if _collab and _collab.size > 0 %}
+{% assign _collab_internal = _collab | where: "internal", true %}
+{% assign _collab_external = _collab | where_exp: "item", "item.internal != true" %}
 <details class="people-directory__collapsible">
   <summary>
     <span class="people-directory__collapsible-summary-title">{% if page.lang == 'ja' %}研究協力者{% else %}Research collaborators{% endif %}</span>
     <span class="people-directory__collapsible-summary-hint">{% if page.lang == 'ja' %}（クリックで開く）{% else %}(Click to open){% endif %}</span>
   </summary>
   <p class="people-directory__collapsible-lead">{% if page.lang == 'ja' %}本研究室の学生・教員以外で，共同研究などで協力いただいている方です。{% else %}Colleagues outside this lab we collaborate with on research (listed separately from students above).{% endif %}</p>
+  {% if _collab_internal.size > 0 %}
+  <h4 class="people-directory__collapsible-subheading">{% if page.lang == 'ja' %}学内{% else %}At {{ site.author.employer }}{% endif %}</h4>
   <ul>
-    {% for item in _collab %}
+    {% for item in _collab_internal %}
+      {% assign disp_name = item.name_en %}
+      {% if page.lang == 'ja' and item.name_ja != nil and item.name_ja != '' %}
+        {% assign disp_name = item.name_ja %}
+      {% endif %}
+      <li>
+        {% if item.url and item.url != '' %}
+          <strong><a href="{{ item.url }}" rel="noopener noreferrer">{{ disp_name }}</a></strong>
+        {% else %}
+          <strong>{{ disp_name }}</strong>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if _collab_external.size > 0 %}
+  <h4 class="people-directory__collapsible-subheading">{% if page.lang == 'ja' %}学外{% else %}Other institutions{% endif %}</h4>
+  <ul>
+    {% for item in _collab_external %}
       {% assign disp_name = item.name_en %}
       {% if page.lang == 'ja' and item.name_ja != nil and item.name_ja != '' %}
         {% assign disp_name = item.name_ja %}
@@ -29,5 +51,6 @@
       </li>
     {% endfor %}
   </ul>
+  {% endif %}
 </details>
 {% endif %}

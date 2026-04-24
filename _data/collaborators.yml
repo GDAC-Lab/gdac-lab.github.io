@@ -1,5 +1,6 @@
 # Research collaborators on People / メンバー pages (see _includes/people-collaborators.html).
 # Optional per person: url (omit or leave empty for no link).
+# internal: true — same university as the lab (名古屋工業大学 / site.author.employer); omit or false for 学外.
 items:
   - name_en: "Emanuele Garone"
     name_ja: "Emanuele Garone"
@@ -61,7 +62,40 @@ items:
     affiliation_ja: "東京農工大学"
     url: "https://sites.google.com/view/xunshen/home"
 
+  - name_en: "Noboru Chikami"
+    name_ja: "千頭 昇"
+    internal: true
+    affiliation_en: "Nagoya Institute of Technology"
+    affiliation_ja: "名古屋工業大学"
+
+  - name_en: "Masakazu Muto"
+    name_ja: "武藤 真和"
+    internal: true
+    affiliation_en: "Nagoya Institute of Technology"
+    affiliation_ja: "名古屋工業大学"
+    url: "https://complex-fluids.web.nitech.ac.jp/"
+
+  - name_en: "Misa Ohashi"
+    name_ja: "大橋 美佐"
+    internal: true
+    affiliation_en: "Nagoya Institute of Technology"
+    affiliation_ja: "名古屋工業大学"
+
+  - name_en: "Shusuke Otabe"
+    name_ja: "小田部 秀介"
+    internal: true
+    affiliation_en: "Nagoya Institute of Technology"
+    affiliation_ja: "名古屋工業大学"
+
+  - name_en: "Masahiro Suzuki"
+    name_ja: "鈴木 政尋"
+    internal: true
+    affiliation_en: "Nagoya Institute of Technology"
+    affiliation_ja: "名古屋工業大学"
+    url: "http://suzuki.web.nitech.ac.jp/"
+
   - name_en: "Manabu Yamada"
     name_ja: "山田 学"
+    internal: true
     affiliation_en: "Nagoya Institute of Technology"
     affiliation_ja: "名古屋工業大学"

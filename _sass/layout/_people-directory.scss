@@ -125,6 +125,19 @@
     color: var(--global-callout-text-muted, var(--global-text-color-light));
   }
 
+  .people-directory__collapsible-subheading {
+    margin: 0.5em 0 0.35em;
+    padding: 0 1rem;
+    font-size: $type-size-6;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--global-callout-text, var(--global-text-color));
+  }
+
+  .people-directory__collapsible-subheading:first-of-type {
+    margin-top: 0;
+  }
+
   .people-directory__collapsible > ul {
     margin: 0;
     padding: 0 1rem 0.85rem 1rem;
