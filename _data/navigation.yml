@@ -17,8 +17,9 @@ main:
     title_ja: "メンバー"
     url: /people/
     
-  - title: "Album"
-    title_ja: "アルバム"
+  # Japanese-only Blogger; label shows (外部). Same wording on EN/JA nav.
+  - title: "アルバム（外部）"
+    title_ja: "アルバム（外部）"
     url: "https://gdaclab.blogspot.com/"
     
   - title: "Access"
