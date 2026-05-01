@@ -4,17 +4,10 @@ title: "アルバム"
 permalink: /ja/album/
 author_profile: true
 lang: ja
-lang_ref: album
 ---
 
 {% include base_path %}
 
 ## 📸 フォトアルバム
 
-現在、外部ブログへのリンクを準備中です。
-
-今しばらくお待ちください。
-
-*Currently preparing a link to an external blog. Please wait.*
-
-
+研究室の写真・イベント・日常などは、[仲野研究室（Blogger）](https://gdaclab.blogspot.com/){:target="_blank" rel="noopener noreferrer"} をご覧ください。

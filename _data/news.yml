@@ -7,8 +7,11 @@
 #   link_label_en, link_label_ja: optional; default "Read more" / 「詳細」
 items:
   - date: "2026-04-24"
-    body_en: "We have published a **group photo** of lab members on the home page and in the sidebar."
-    body_ja: "**研究室メンバーの集合写真**を、ホームページおよび各ページ左のサイドバーに掲載しました。"
+    body_en: "Yuki's paper has been accepted to ASCC!"
+    body_ja: "堂高君の論文が ASCC にアクセプトされました！"
+  - date: "2026-04-24"
+    body_en: "We have published a group photo of lab members on the home page and in the sidebar."
+    body_ja: "研究室メンバーの集合写真を、ホームページおよび各ページ左のサイドバーに掲載しました。"
   - date: "2026-03-30"
-    body_en: "Our **laboratory website is now public.** We will update publications, people, and news here as they change."
-    body_ja: "**研究室のウェブページを公開しました。** 論文・メンバー・お知らせなど、随時更新していきます。"
+    body_en: "Our laboratory website is now public. We will update publications, people, and news here as they change."
+    body_ja: "研究室のウェブページを公開しました。論文・メンバー・お知らせなど、随時更新していきます。"
