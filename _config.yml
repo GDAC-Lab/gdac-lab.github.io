@@ -39,6 +39,12 @@ author:
   # Raster under /images/ (path relative to /images/). Shown on /people/ and /ja/people/ only.
   email_image      : "nakano-email.png"
 
+  # Names emphasised in publication author lists so a reader can find the lab's
+  # own members at a glance (see _includes/publication-entry.html).
+  highlight_names:
+    - "Satoshi Nakano"
+    - "仲野聡史"
+
   # Academic websites
   academia         : # URL
   arxiv            : # URL

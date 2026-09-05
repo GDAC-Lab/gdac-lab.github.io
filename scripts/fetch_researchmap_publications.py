@@ -166,7 +166,8 @@ def venue_line(item: dict) -> str:
         bits.append(f"pp. {start}–{end}")
     elif start:
         bits.append(f"p. {start}")
-    return ". ".join(bits) if bits else "Unknown venue"
+    # Comma-separated: periods here read as sentence breaks inside the venue.
+    return ", ".join(bits) if bits else "Unknown venue"
 
 
 def category_for(item: dict, unknown_types: set[str]) -> str:

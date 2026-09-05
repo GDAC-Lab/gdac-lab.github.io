@@ -17,9 +17,9 @@
     {% if _doi_id %}
       {% capture _doi_resolved %}https://doi.org/{{ _doi_id }}{% endcapture %}
       {% if _pl == 'ja' %}
-        <a href="{{ pu }}">出版元ページ</a><span class="publication-doi-inline">（DOI: <a href="{{ _doi_resolved }}">{{ _doi_id }}</a>）</span>
+        <a href="{{ pu }}">出版元ページ</a><span class="publication-link-sep" aria-hidden="true">·</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
       {% else %}
-        <a href="{{ pu }}">Publisher page</a><span class="publication-doi-inline"> (DOI: <a href="{{ _doi_resolved }}">{{ _doi_id }}</a>)</span>
+        <a href="{{ pu }}">Publisher page</a><span class="publication-link-sep" aria-hidden="true">·</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
       {% endif %}
     {% elsif pu contains "arxiv.org" %}
       <a href="{{ pu }}">arXiv</a>
@@ -32,11 +32,11 @@
     {% endif %}
   {% endif %}
   {% if su %}
-    {% if pu %}<span class="publication-link-sep"> | </span>{% endif %}
+    {% if pu %}<span class="publication-link-sep" aria-hidden="true">·</span>{% endif %}
     <a href="{{ su }}">{% if _pl == 'ja' %}スライド{% else %}Slides{% endif %}</a>
   {% endif %}
   {% if bu %}
-    {% if pu or su %}<span class="publication-link-sep"> | </span>{% endif %}
+    {% if pu or su %}<span class="publication-link-sep" aria-hidden="true">·</span>{% endif %}
     <a href="{{ bu }}">BibTeX</a>
   {% endif %}
 </p>

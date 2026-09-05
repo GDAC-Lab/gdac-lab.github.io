@@ -68,21 +68,25 @@ lang_ref: publications
 
     <h2 id="publication-{{ cat_key }}" class="publications-page__category-heading">{{ category[1].title }}</h2><hr />
 
-    {% for post in posts_cat reversed %}
+    <ol class="publication-list">
+      {% for post in posts_cat reversed %}
       {% assign post_year = post.date | date: "%Y" | plus: 0 %}
       {% if pub_years == 0 or post_year >= min_pub_y %}
         {% assign pub_counter = pub_counter | plus: 1 %}
-        {% include archive-single.html pub_index=pub_counter %}
+        {% include publication-entry.html pub_index=pub_counter %}
       {% endif %}
     {% endfor %}
+      </ol>
   {% endfor %}
 {% else %}
   {% assign posts_all_en = site.publications | where_exp: "p", "p.lang != 'ja'" %}
-  {% for post in posts_all_en reversed %}
+  <ol class="publication-list">
+      {% for post in posts_all_en reversed %}
     {% assign post_year = post.date | date: "%Y" | plus: 0 %}
     {% if pub_years == 0 or post_year >= min_pub_y %}
       {% assign pub_counter = pub_counter | plus: 1 %}
-      {% include archive-single.html pub_index=pub_counter %}
+      {% include publication-entry.html pub_index=pub_counter %}
     {% endif %}
   {% endfor %}
+      </ol>
 {% endif %}

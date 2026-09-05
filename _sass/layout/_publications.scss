@@ -1,0 +1,161 @@
+/* ==========================================================================
+   PUBLICATION LIST
+   Bibliography layout: a numbered gutter plus one shared left edge, with
+   hierarchy carried by weight, colour and italics rather than large jumps in
+   type size. Sizes stay within one step of body text so the metadata — authors
+   above all — is comfortably readable.
+   ========================================================================== */
+
+$pub-gutter: 2.35rem;
+
+.publication-list {
+  margin: 0 0 2.5rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.publication-entry {
+  display: grid;
+  grid-template-columns: $pub-gutter 1fr;
+  align-items: baseline;
+  margin: 0;
+  padding: 1.15rem 0;
+  list-style: none;
+
+  /* Hairline between entries only — no box, no rule above the first item. */
+  & + & {
+    border-top: 1px solid var(--global-border-color);
+  }
+
+  @include breakpoint(max-width 480px) {
+    grid-template-columns: 1.75rem 1fr;
+  }
+}
+
+.publication-entry__index {
+  padding-right: 0.5rem;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--global-text-color-light);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.publication-entry__body {
+  min-width: 0; /* let long titles and DOIs wrap instead of stretching the grid */
+}
+
+/* --------------------------------------------------------------------- title */
+
+h3.publication-entry__title {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: $sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: 0.002em;
+  color: var(--global-text-color);
+  overflow-wrap: break-word;
+}
+
+/* ------------------------------------------------------------------- authors */
+
+.publication-entry__authors {
+  margin: 0.3rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--global-text-color-light);
+  overflow-wrap: break-word;
+}
+
+/* The lab's own members: normal text colour and a touch of weight, so the name
+   is findable without turning the author list into a row of bold blocks. */
+.publication-entry__author-self {
+  font-weight: 600;
+  color: var(--global-text-color);
+}
+
+/* --------------------------------------------------------------------- venue */
+
+.publication-entry__venue {
+  margin: 0.2rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--global-text-color-light);
+  overflow-wrap: break-word;
+
+  cite {
+    font-style: italic;
+  }
+}
+
+.publication-entry__dot {
+  margin: 0 0.45em;
+  opacity: 0.6;
+}
+
+.publication-entry__year {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------- links */
+
+.publication-entry .publication-resource-links {
+  margin: 0.45rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+
+  a {
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.05em;
+
+    &:hover {
+      border-bottom-color: transparent;
+    }
+  }
+}
+
+/* The DOI is a reference, not a call to action: muted, with the identifier
+   itself carrying the link. */
+.publication-entry .publication-doi-inline {
+  color: var(--global-text-color-light);
+
+  a {
+    color: inherit;
+    border-bottom-color: var(--global-border-color);
+
+    &:hover {
+      color: var(--global-link-color);
+      border-bottom-color: currentColor;
+    }
+  }
+}
+
+.publication-entry .publication-link-sep {
+  margin: 0 0.45em;
+  color: var(--global-text-color-light);
+  opacity: 0.6;
+}
+
+/* Category headings sit closer to their list than the default archive spacing. */
+h2.publications-page__category-heading {
+  margin-bottom: 0.35rem;
+  scroll-margin-top: calc(#{$masthead-height} + 0.75rem);
+}
+
+.publication-lang-heading {
+  margin: 1.5rem 0 0.1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--global-text-color-light);
+}

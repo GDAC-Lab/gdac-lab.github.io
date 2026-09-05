@@ -83,26 +83,30 @@ lang_ref: publications_ja
       {% if recent_in_cat_en > 0 %}
         <h3 class="publication-lang-heading">日本語</h3>
       {% endif %}
+      <ol class="publication-list">
       {% for post in posts_cat_ja reversed %}
         {% assign post_year = post.date | date: "%Y" | plus: 0 %}
         {% if pub_years == 0 or post_year >= min_pub_y %}
           {% assign pub_counter = pub_counter | plus: 1 %}
-          {% include archive-single.html pub_index=pub_counter %}
+          {% include publication-entry.html pub_index=pub_counter %}
         {% endif %}
       {% endfor %}
+      </ol>
     {% endif %}
 
     {% if recent_in_cat_en > 0 %}
       {% if recent_in_cat_ja > 0 %}
         <h3 class="publication-lang-heading">英語</h3>
       {% endif %}
+      <ol class="publication-list">
       {% for post in posts_cat_en reversed %}
         {% assign post_year = post.date | date: "%Y" | plus: 0 %}
         {% if pub_years == 0 or post_year >= min_pub_y %}
           {% assign pub_counter = pub_counter | plus: 1 %}
-          {% include archive-single.html pub_index=pub_counter %}
+          {% include publication-entry.html pub_index=pub_counter %}
         {% endif %}
       {% endfor %}
+      </ol>
     {% endif %}
   {% endfor %}
 {% else %}
@@ -126,24 +130,28 @@ lang_ref: publications_ja
     {% if recent_all_en > 0 %}
       <h3 class="publication-lang-heading">日本語</h3>
     {% endif %}
-    {% for post in posts_all_ja reversed %}
+    <ol class="publication-list">
+      {% for post in posts_all_ja reversed %}
       {% assign post_year = post.date | date: "%Y" | plus: 0 %}
       {% if pub_years == 0 or post_year >= min_pub_y %}
         {% assign pub_counter = pub_counter | plus: 1 %}
-        {% include archive-single.html pub_index=pub_counter %}
+        {% include publication-entry.html pub_index=pub_counter %}
       {% endif %}
     {% endfor %}
+      </ol>
   {% endif %}
   {% if recent_all_en > 0 %}
     {% if recent_all_ja > 0 %}
       <h3 class="publication-lang-heading">英語</h3>
     {% endif %}
-    {% for post in posts_all_en reversed %}
+    <ol class="publication-list">
+      {% for post in posts_all_en reversed %}
       {% assign post_year = post.date | date: "%Y" | plus: 0 %}
       {% if pub_years == 0 or post_year >= min_pub_y %}
         {% assign pub_counter = pub_counter | plus: 1 %}
-        {% include archive-single.html pub_index=pub_counter %}
+        {% include publication-entry.html pub_index=pub_counter %}
       {% endif %}
     {% endfor %}
+      </ol>
   {% endif %}
 {% endif %}

@@ -1,0 +1,52 @@
+{% comment %}
+  One entry in a publication list. Expects `post` from the enclosing loop and an
+  optional `pub_index` for the running number.
+
+  Laid out as a bibliography rather than a blog archive: the running number sits
+  in a gutter and every line of the entry shares one left edge, so the eye can
+  follow a single column down the page. Hierarchy comes from weight, colour and
+  italics — the type sizes stay close to body size, which is what reference lists
+  and publisher listings do. Field labels ("Authors:", "Published in") are
+  dropped; position already says what each line is.
+{% endcomment %}
+{% include base_path %}
+
+{%- assign _pl = page.lang | default: 'en' -%}
+
+{%- comment -%} Authors: prefer the explicit field, else the part of the citation before "(" {%- endcomment -%}
+{%- assign _authors = "" -%}
+{%- if post.authors and post.authors != "" -%}
+  {%- assign _authors = post.authors -%}
+{%- elsif post.citation and post.citation != "" -%}
+  {%- assign _authors = post.citation | split: '(' | first | strip -%}
+{%- endif -%}
+
+{%- comment -%} Emphasise the lab's own names so a reader can scan for them. {%- endcomment -%}
+{%- assign _authors_html = _authors -%}
+{%- if site.author.highlight_names -%}
+  {%- for _name in site.author.highlight_names -%}
+    {%- capture _marked -%}<b class="publication-entry__author-self">{{ _name }}</b>{%- endcapture -%}
+    {%- assign _authors_html = _authors_html | replace: _name, _marked -%}
+  {%- endfor -%}
+{%- endif -%}
+
+<li class="publication-entry" itemscope itemtype="http://schema.org/ScholarlyArticle">
+  {%- if include.pub_index %}
+  <span class="publication-entry__index" aria-hidden="true">{{ include.pub_index }}.</span>
+  {%- endif %}
+  <div class="publication-entry__body">
+    <h3 class="publication-entry__title" itemprop="headline">{{ post.title }}</h3>
+
+    {%- if _authors != "" %}
+    <p class="publication-entry__authors" itemprop="author">{{ _authors_html }}</p>
+    {%- endif %}
+
+    <p class="publication-entry__venue">
+      {%- if post.venue %}<cite itemprop="publisher">{{ post.venue }}</cite>{%- endif -%}
+      {%- if post.venue and post.date %}<span class="publication-entry__dot" aria-hidden="true">·</span>{% endif -%}
+      {%- if post.date %}<span class="publication-entry__year" itemprop="datePublished">{{ post.date | date: "%Y" }}{% if _pl == 'ja' %}年{% endif %}</span>{% endif -%}
+    </p>
+
+    {% include publication-resource-links.html paperurl=post.paperurl slidesurl=post.slidesurl bibtexurl=post.bibtexurl plang=_pl %}
+  </div>
+</li>

@@ -171,10 +171,16 @@ class TestResearchmapParsing(unittest.TestCase):
         _, content = rm.render(paper("6", title_en="Bell's Theorem"), set(), [])
         self.assertIn("title: 'Bell''s Theorem'", content)
 
-    def test_venue_includes_volume_and_pages(self):
+    def test_venue_parts_are_comma_separated(self):
+        """Periods between venue parts read as sentence breaks in the rendered list."""
         item = paper("1")
         item.update({"volume": "12", "starting_page": "3", "ending_page": "9"})
-        self.assertEqual(rm.venue_line(item), "J. Test. vol. 12. pp. 3–9")
+        self.assertEqual(rm.venue_line(item), "J. Test, vol. 12, pp. 3–9")
+
+    def test_venue_single_page(self):
+        item = paper("1")
+        item.update({"starting_page": "7"})
+        self.assertEqual(rm.venue_line(item), "J. Test, p. 7")
 
 
 class TestPagination(unittest.TestCase):
