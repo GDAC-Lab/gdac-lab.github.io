@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788631130">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788634384">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788631130"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788634384"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -167,7 +167,7 @@
             <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
           <li class="masthead__menu-item persist"><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</span><span class="masthead__lang-sep">|</span><a href="https://gdaclab.web.nitech.ac.jp/ja/people/" class="masthead__lang-link"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</a></li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
-            <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
+            <a role="button" aria-label="Toggle light and dark theme"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="Toggle theme"></i></a>
           </li>
         </ul>
         <ul class="hidden-links hidden"></ul>
@@ -206,7 +206,7 @@
   </div>
 
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">Follow</button>
+    <button class="btn btn--inverse">Links</button>
     <ul class="author__urls social-icons">
       <!-- Font Awesome icons / Biographic information  -->
       
@@ -297,10 +297,9 @@
 
   <h3 id="satoshi-nakano--assistant-professor">Satoshi Nakano — Assistant Professor</h3>
   <ul>
-    <li><strong>Position</strong>: Assistant Professor</li>
     <li><strong>Affiliation</strong>: Nagoya Institute of Technology, Department of Engineering</li>
-    <li><strong>Lab room</strong>: Room 1010, Building No. 3, 10th Floor</li>
-    <li><strong>researchmap</strong>: <a href="https://researchmap.jp/satoshi-nakano?lang=english">satoshi-nakano</a></li>
+    <li><strong>Lab room</strong>: Building 3, 10th floor, Room 1010</li>
+    <li><strong>researchmap</strong>: <a href="https://researchmap.jp/satoshi-nakano?lang=english">Satoshi Nakano</a></li>
     <li><strong>Faculty page (NITech)</strong>: <a href="https://mcontrol.web.nitech.ac.jp/nakano/">mcontrol.web.nitech.ac.jp/nakano</a></li>
   </ul>
 
@@ -351,7 +350,7 @@
     <span class="people-directory__collapsible-summary-title">Research collaborators</span>
     <span class="people-directory__collapsible-summary-hint">(Click to open)</span>
   </summary>
-  <p class="people-directory__collapsible-lead">Colleagues outside this lab we collaborate with on research (listed separately from students above).</p>
+  <p class="people-directory__collapsible-lead">Colleagues outside the lab with whom we collaborate on research.</p>
   
   <h4 class="people-directory__collapsible-subheading">At Nagoya Institute of Technology</h4>
   <ul>
@@ -564,11 +563,10 @@
 
   Faculty:
   ### Full name — Job title
-  - **Position**:
   - **Affiliation**:
   - **Office** (optional):
 
-  Master's — nested line ONLY if bachelor's was in this lab:
+  Master's — nested line ONLY if the bachelor's was in this lab:
   - **Name** — Master's program: from Month YYYY
     - *Undergraduate in this lab*: Month YYYY – Month YYYY
 
@@ -580,9 +578,9 @@
 
   Group photo: `people-group-photo.html` sits under `## Lab members`, above `### Master's students`.
 
-  Collaborators (expandable block at bottom of page):
-  - Edit `_data/collaborators.yml` (optional `url` per person). Rendered via `people-collaborators.html`.
-  - Collaborators: edit `_data/collaborators.yml`; summary shows “Click to open” when collapsed (`people-collaborators.html`).
+  Collaborators (expandable block at the bottom of the page):
+  - Edit `_data/collaborators.yml` (optional `url` per person). Rendered by `people-collaborators.html`;
+    the summary shows "Click to open" when collapsed.
 -->
 
   </div>
@@ -593,7 +591,7 @@
       <footer>
         <!-- start custom footer snippets -->
 
-<a href="/sitemap/">Sitemap</a>
+<a href="https://gdaclab.web.nitech.ac.jp/sitemap/">Sitemap</a>
 
 
 
@@ -610,9 +608,7 @@
 
 <div class="page__footer-follow">
   <ul class="social-icons">
-    
-      <li><strong>Follow:</strong></li>
-    
+    <li><strong>Follow:</strong></li>
     
       <li><a href="https://github.com/gdac-lab"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a></li>
     
@@ -623,13 +619,14 @@
 
 
 <div class="page__footer-copyright">
-  &copy; 2026 GDAC Lab, Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />Site last updated 2026-09-06 02:58 JST
+  &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
+  Last updated 2026-09-06 03:53 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788631130"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788634384"></script>
 
 
 

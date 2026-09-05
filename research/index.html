@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788631130">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788634384">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788631130"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788634384"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -167,7 +167,7 @@
             <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
           <li class="masthead__menu-item persist"><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</span><span class="masthead__lang-sep">|</span><a href="https://gdaclab.web.nitech.ac.jp/ja/research/" class="masthead__lang-link"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</a></li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
-            <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
+            <a role="button" aria-label="Toggle light and dark theme"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="Toggle theme"></i></a>
           </li>
         </ul>
         <ul class="hidden-links hidden"></ul>
@@ -206,7 +206,7 @@
   </div>
 
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">Follow</button>
+    <button class="btn btn--inverse">Links</button>
     <ul class="author__urls social-icons">
       <!-- Font Awesome icons / Biographic information  -->
       
@@ -291,7 +291,7 @@
       <h1 class="page__title">Research</h1>
     
     
-<p class="notice">This page outlines our research directions. We refine the descriptions from time to time as our work develops.</p>
+<p class="notice">This page outlines our research directions. The descriptions are revised from time to time as the work develops.</p>
 
 <h2 id="overview">Overview</h2>
 
@@ -299,11 +299,11 @@
 
 <ul>
   <li>The force a motor can produce has an <strong>upper bound</strong>.</li>
-  <li>An observation camera cannot be pointed towards the sun.</li>
+  <li>An observation camera cannot be pointed toward the sun.</li>
   <li>A vehicle running while pressed against a wall can take only a restricted set of attitudes.</li>
 </ul>
 
-<p>In control engineering such limits are called <strong>constraints</strong>. Our research centres on building theory for controlling rotational motion while satisfying constraints, together with verification on real hardware.</p>
+<p>In control engineering, such limits are called <strong>constraints</strong>. Our research centers on building theory for controlling rotational motion while satisfying constraints, together with verification on real hardware.</p>
 
 <p>The principal applications are <strong>satellites</strong> and <strong>drones</strong>.</p>
 
@@ -311,19 +311,19 @@
 
 <h3 id="1-constrained-control-of-rotational-motion">1. Constrained control of rotational motion</h3>
 
-<h4 id="representing-rotation-and-singularities">Representing rotation, and singularities</h4>
+<h4 id="rotation-representations-and-singularities">Rotation representations and singularities</h4>
 
-<p>The position of an object can be expressed by three numbers, x, y and z. Representing its <strong>orientation</strong> is less straightforward.</p>
+<p>The position of an object can be expressed by three numbers, x, y, and z. Representing its <strong>orientation</strong> is less straightforward.</p>
 
-<p>Aircraft attitude is widely described by three angles — pitch, roll and yaw, known as <strong>Euler angles</strong>. This representation has a weakness: at certain attitudes the computation breaks down, a phenomenon known as gimbal lock in aviation and computer graphics.</p>
+<p>Aircraft attitude is commonly described by three angles (pitch, roll, and yaw), known as <strong>Euler angles</strong>. This representation has a weakness: at certain attitudes the computation breaks down, a phenomenon known as gimbal lock in aviation and computer graphics.</p>
 
-<p>Rather than decomposing orientation into three angles, we use a mathematical framework that treats rotation itself directly — the set of rotation matrices, written SO(3). This formulation yields control designs that do not break down at any attitude.</p>
+<p>Rather than decomposing orientation into three angles, we use a mathematical framework that treats rotation itself directly: the set of rotation matrices, written SO(3). This formulation yields control designs that do not break down at any attitude.</p>
 
 <h4 id="guaranteeing-constraints-under-limited-computation">Guaranteeing constraints under limited computation</h4>
 
 <p>A straightforward approach to constraints is to add a mechanism that restricts the motion once a dangerous state is approached. Such an approach, however, provides no <strong>guarantee</strong> that the constraints hold in every situation.</p>
 
-<p>We work with the <strong>Explicit Reference Governor (ERG)</strong> and <strong>control barrier functions (CBFs)</strong>. Rather than redesigning the controller itself, these methods reshape the reference supplied to the controller so that it remains within a safe region, which allows constraint satisfaction to be guaranteed.</p>
+<p>We work with the <strong>Explicit Reference Governor (ERG)</strong> and <strong>control barrier functions (CBFs)</strong>. Rather than redesigning the controller itself, these methods reshape the reference supplied to the controller so that it stays within a safe region, which allows constraint satisfaction to be guaranteed.</p>
 
 <p>A second property is equally important: these methods require no optimization to be solved during operation.</p>
 
@@ -342,14 +342,14 @@
 <p>A satellite changes its attitude while orbiting the Earth, and several constraints apply simultaneously.</p>
 
 <ul>
-  <li>The observation camera must not be pointed towards the sun, as the sensor would be damaged.</li>
+  <li>The observation camera must not be pointed toward the sun, as the sensor would be damaged.</li>
   <li>The communication antenna must remain directed at the ground station.</li>
   <li>The reaction wheels that reorient the spacecraft have an upper bound on the torque they can produce.</li>
 </ul>
 
-<p>Furthermore, an on-board computer must meet mass limits at launch and withstand the radiation environment of space, so its performance is considerably more restricted than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.</p>
+<p>Furthermore, an on-board computer must meet mass limits at launch and withstand the radiation environment of space, so its performance is considerably more limited than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.</p>
 
-<p>The optimization-free methods described above are effective in precisely this setting. We are currently working towards a framework in which several small satellites reorient cooperatively.</p>
+<p>The optimization-free methods described above are effective in precisely this setting. We are currently working toward a framework in which several small satellites reorient cooperatively.</p>
 
 <blockquote>
   <p><strong>JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)</strong> (FY2026–2029, 26K00967)</p>
@@ -357,7 +357,7 @@
   <p>“Constrained cooperative attitude control without online optimization for small satellite formations”</p>
 </blockquote>
 
-<p>This theme is pursued as a collaboration with <a href="https://researchmap.jp/jaxasaki">Takahiro Sasaki</a> (Japan Aerospace Exploration Agency, JAXA) and Prof. <a href="https://www.st.nanzan-u.ac.jp/info/sakanobo/index.html">Noboru Sakamoto</a> (Nanzan University).</p>
+<p>This theme is a collaboration with <a href="https://researchmap.jp/jaxasaki">Takahiro Sasaki</a> of the Japan Aerospace Exploration Agency (JAXA) and Prof. <a href="https://www.st.nanzan-u.ac.jp/info/sakanobo/index.html">Noboru Sakamoto</a> of Nanzan University.</p>
 
 <h4 id="application-control-design-for-three-dimensional-rotation-mechanisms">Application: control design for three-dimensional rotation mechanisms</h4>
 
@@ -367,19 +367,19 @@
 
 <h4 id="a-vehicle-combining-flight-and-ground-locomotion">A vehicle combining flight and ground locomotion</h4>
 
-<p>A drone can fly freely, but its power consumption in flight limits the available operating time, and holding position in the immediate vicinity of a wall without disturbing the attitude is not straightforward.</p>
+<p>A drone can fly freely, but its power consumption in flight limits the operating time, and holding position right next to a wall without disturbing the attitude is not straightforward.</p>
 
 <p>We therefore study <strong>drones equipped with wheels</strong>: the vehicle presses itself against a wall or ceiling, travels on its wheels, and transitions to flight as required.</p>
 
 <figure class="media-figure">
-  <video poster="https://gdaclab.web.nitech.ac.jp/images/research/wall-demo-poster.jpg" width="960" height="360" autoplay="" muted="" loop="" playsinline="" controls="" preload="metadata" aria-label="Simulation of a wheeled drone approaching a wall, making contact, climbing, holding and descending">
+  <video poster="https://gdaclab.web.nitech.ac.jp/images/research/wall-demo-poster.jpg" width="960" height="360" autoplay="" muted="" loop="" playsinline="" controls="" preload="metadata" aria-label="Simulation of a wheeled drone approaching a wall, making contact, climbing, holding, and descending">
     <source src="https://gdaclab.web.nitech.ac.jp/images/research/wall-demo.mp4" type="video/mp4" />
     <source src="https://gdaclab.web.nitech.ac.jp/images/research/wall-demo.webm" type="video/webm" />
   </video>
-  <figcaption>Wall riding in the simulator the lab develops and publishes. Left, a three-quarter view; right, the same run seen from the side: approach, contact, climb, hold and descent. The green sphere is the reference position and the arrows at the wheel–wall interface are the contact forces. An interactive version runs in your browser on the <a href="https://gdaclab.web.nitech.ac.jp/simulator/">Simulator</a> page.</figcaption>
+  <figcaption>Wall riding in the simulator the lab develops and publishes. Left, a three-quarter view; right, the same run seen from the side: approach, contact, climb, hold, and descent. The green sphere is the reference position, and the arrows at the wheel–wall interface are the contact forces. An interactive version runs in your browser on the <a href="https://gdaclab.web.nitech.ac.jp/simulator/">Simulator</a> page.</figcaption>
 </figure>
 
-<p>From a control standpoint this vehicle presents the following difficulties.</p>
+<p>From a control standpoint, this vehicle presents the following difficulties.</p>
 
 <ul>
   <li>The wheels do not slip laterally, so the directions of motion are restricted — a <strong>nonholonomic constraint</strong>.</li>
@@ -387,11 +387,11 @@
   <li>Flight and ground locomotion alternate, so the nature of the dynamics itself changes.</li>
 </ul>
 
-<p>Constraints are again central. To handle the pressing force, the attitudes admissible during contact, and limits on flight altitude, we combine <strong>control barrier functions</strong>, <strong>input–output linearization</strong>, <strong>passivity-based methods</strong> and <strong>model predictive path integral (MPPI) control</strong>.</p>
+<p>Constraints are again central. To handle the pressing force, the attitudes admissible during contact, and limits on flight altitude, we combine <strong>control barrier functions</strong>, <strong>input–output linearization</strong>, <strong>passivity-based methods</strong>, and <strong>model predictive path integral (MPPI) control</strong>.</p>
 
 <h4 id="application-infrastructure-inspection">Application: infrastructure inspection</h4>
 
-<p>Detecting loose or delaminated tiles on tunnels, bridges and building walls is carried out by <strong>hammering inspection</strong>, in which a surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.</p>
+<p>Detecting loose or delaminated tiles on tunnels, bridges, and building walls relies on <strong>hammering inspection</strong>, in which the surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.</p>
 
 <p>Using wheeled drones, we are developing inspection systems for locations that are difficult for people to approach: <strong>hammering inspection of wall tiles</strong>, <strong>inspection of bridge bearings</strong> (the components supporting the bridge girders), and <strong>surveys inside ceiling cavities</strong>.</p>
 
@@ -412,13 +412,13 @@
 <p>We also take part in the following themes as <strong>collaborators</strong>.</p>
 
 <ul>
-  <li><strong>Vibration control of building structures</strong> — suppressing the sway of buildings under earthquakes and wind. Disturbance estimation based on the equivalent-input-disturbance (EID) approach is applied to tuned mass damper design and to the control of base-isolated buildings. <a href="https://doi.org/10.1016/j.conengprac.2024.105853">Representative paper (<em>Control Engineering Practice</em>, 2024)</a></li>
+  <li><strong>Vibration control of building structures</strong> — suppressing the sway of buildings under earthquakes and wind. Disturbance estimation based on the equivalent-input-disturbance (EID) approach is applied to tuned-mass-damper design and to the control of base-isolated buildings. <a href="https://doi.org/10.1016/j.conengprac.2024.105853">Representative paper (<em>Control Engineering Practice</em>, 2024)</a></li>
   <li><strong>Visual feedback control</strong> — estimating the position and orientation of an object from camera images and using them for control. <a href="https://doi.org/10.1080/18824889.2023.2247853">Representative paper (<em>SICE JCMSI</em>, 2023)</a></li>
 </ul>
 
 <p>Our wheeled-drone simulator is publicly available, and the <a href="https://gdaclab.web.nitech.ac.jp/simulator/">Simulator</a> page runs a demo of it in your browser.</p>
 
-<p>A full list of papers is on the <a href="https://gdaclab.web.nitech.ac.jp/publications/">Publications</a> page and our collaborators are listed under <a href="https://gdaclab.web.nitech.ac.jp/people/">People</a>; funding, awards and other details are on the <a href="https://mcontrol.web.nitech.ac.jp/nakano/">faculty page</a>.</p>
+<p>A full list of papers is on the <a href="https://gdaclab.web.nitech.ac.jp/publications/">Publications</a> page, and our collaborators are listed under <a href="https://gdaclab.web.nitech.ac.jp/people/">People</a>. Funding, awards, and other details are on the <a href="https://mcontrol.web.nitech.ac.jp/nakano/">faculty page</a>.</p>
 
   </div>
 </div>
@@ -428,7 +428,7 @@
       <footer>
         <!-- start custom footer snippets -->
 
-<a href="/sitemap/">Sitemap</a>
+<a href="https://gdaclab.web.nitech.ac.jp/sitemap/">Sitemap</a>
 
 
 
@@ -445,9 +445,7 @@
 
 <div class="page__footer-follow">
   <ul class="social-icons">
-    
-      <li><strong>Follow:</strong></li>
-    
+    <li><strong>Follow:</strong></li>
     
       <li><a href="https://github.com/gdac-lab"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a></li>
     
@@ -458,13 +456,14 @@
 
 
 <div class="page__footer-copyright">
-  &copy; 2026 GDAC Lab, Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />Site last updated 2026-09-06 02:58 JST
+  &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
+  Last updated 2026-09-06 03:53 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788631130"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788634384"></script>
 
 
 
