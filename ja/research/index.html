@@ -92,7 +92,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788617834">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788619149">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -100,7 +100,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788617834"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788619149"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -286,21 +286,119 @@
 
 <h2 id="研究概要">研究概要</h2>
 
-<p>本研究室では，<strong>セーフティクリティカルなシステム</strong>に対する<strong>制御理論の構築と実機実証</strong>を柱として，<strong>ロボティクスおよびモビリティ分野</strong>への応用研究を行っています。特に，<strong>非線形システムや拘束系を含む実環境</strong>において，<strong>安全性と性能を両立</strong>する制御手法の設計に取り組んでいます。</p>
+<p>ロボットや人工衛星を目的どおりに動作させるには，機体が<strong>どの方向を向くか</strong>を制御する必要があります。一方で，実際の機械には必ず<strong>守らなければならない制限</strong>が存在します。</p>
+
+<ul>
+  <li>モータが発生できる力には<strong>上限</strong>があります</li>
+  <li>観測用のカメラを<strong>太陽の方向へ向けることはできません</strong></li>
+  <li>壁面に押し付けながら走行する機体は，<strong>取り得る姿勢が限られます</strong></li>
+</ul>
+
+<p>制御工学では，こうした制限を<strong>拘束</strong>と呼びます。本研究室では，<strong>拘束を満たしながら回転運動を制御する</strong>ための理論構築と，実機による検証を研究の中心に据えています。</p>
+
+<p>主な応用先は，<strong>人工衛星</strong>と<strong>ドローン</strong>です。</p>
 
 <h2 id="研究テーマ">研究テーマ</h2>
 
-<h3 id="1-セーフティクリティカル制御">1. セーフティクリティカル制御</h3>
+<h3 id="1-拘束を考慮した回転運動の制御">1. 拘束を考慮した回転運動の制御</h3>
 
-<p>近年，自動運転やドローンなどの普及に伴い，<strong>安全性を保証する制御技術</strong>の重要性が高まっています。本研究では，<strong>制御バリア関数</strong>や<strong>受動性理論</strong>などに基づき，<strong>状態制約や入力制約</strong>を満たしながら<strong>安定性</strong>を保証する制御系設計を行っています。さらに，<strong>外乱やモデル不確かさ</strong>の影響を考慮した<strong>ロバストな制御手法</strong>を構築し，<strong>実機実験</strong>による有効性検証を進めています。</p>
+<h4 id="回転の表現と特異点">回転の表現と特異点</h4>
 
-<h3 id="2-剛体の姿勢制御とその応用">2. 剛体の姿勢制御とその応用</h3>
+<p>物体の位置は x, y, z の 3 つの数で表すことができますが，<strong>向き</strong>の表現はそれほど単純ではありません。</p>
 
-<p>剛体の姿勢運動は<strong>回転群上で記述される非線形ダイナミクス</strong>を有しており，その制御は理論的にも応用的にも重要な課題です。本研究では，<strong>SE(3)</strong> や <strong>SO(3)</strong> といった<strong>幾何学的構造</strong>を考慮した姿勢制御手法の開発に取り組んでいます。これにより，<strong>特異点のない一貫した制御系設計</strong>を実現し，<strong>マルチロータ機やドローンなどでの姿勢同期・追従制御</strong>を中心に，<strong>宇宙機を含む</strong>幅広いプラットフォームへの応用を目指しています。</p>
+<p>航空機の姿勢を，機首の上下・左右の傾き・向きの回転という 3 つの角度で表す方法（<strong>オイラー角</strong>）が広く用いられています。ただしこの表現には，<strong>特定の姿勢において計算が破綻する</strong>という弱点があります。航空分野やコンピュータグラフィックスの分野で「ジンバルロック」と呼ばれる現象です。</p>
 
-<h3 id="3-車輪付きドローンの制御">3. 車輪付きドローンの制御</h3>
+<p>本研究室では，向きを 3 つの角度に分解せず，<strong>回転そのものを直接あつかう</strong>数学的な枠組み（回転行列の集まりであり，SO(3) と表記されます）を用いています。この定式化により，<strong>あらゆる姿勢において破綻しない</strong>制御系設計が可能となります。</p>
 
-<p>本研究室の特徴的なテーマとして，<strong>飛行と接触・走行を融合した車輪付きドローン</strong>の制御があります。このシステムは<strong>非ホロノミック拘束</strong>や<strong>接触力</strong>を伴う複雑なダイナミクスを有しており，従来のドローン制御とは異なるアプローチが必要です。本研究では，<strong>モデル予測制御</strong>や<strong>外乱オブザーバ</strong>，<strong>受動性に基づく手法</strong>などを組み合わせ，<strong>壁面走行</strong>や<strong>障害物回避</strong>，<strong>インフラ点検</strong>といった応用を実現しています。実際に，<strong>橋梁や建築構造物の点検</strong>を目的としたシステム開発にも取り組んでいます。</p>
+<h4 id="拘束の保証と計算負荷">拘束の保証と計算負荷</h4>
+
+<p>拘束を満たすための素朴な方法として，危険な状態に近づいたときに動作を制限する仕組みを後から追加する，という考え方があります。しかしこの方法では，あらゆる状況において拘束が満たされるという<strong>保証</strong>が得られません。</p>
+
+<p>本研究室では，<strong>Explicit Reference Governor（ERG）</strong> および<strong>制御バリア関数（CBF）</strong> に基づく手法を用いています。これらは，制御器そのものを設計し直すのではなく，<strong>制御器に与える目標値を，安全な範囲へあらかじめ加工する</strong>という考え方に立つものです。これにより，拘束の充足を保証することができます。</p>
+
+<p>もう一つの重要な特徴は，<strong>動作中に最適化計算を解く必要がない</strong>という点です。</p>
+
+<p>拘束を扱う代表的な手法であるモデル予測制御は，各時刻において最適化問題を解きます。このため，計算能力の限られた機器では実行が困難になります。これに対して ERG や CBF に基づく手法は，あらかじめ導出しておいた式を評価するだけで済むため，<strong>小型の計算機でも実装できます</strong>。この「最適化を必要としない」枠組みそのものについても，一般的な形で研究を進めています（<a href="https://arxiv.org/abs/2604.04001">arXiv, 2026</a>）。</p>
+
+<p><strong>代表的な成果</strong></p>
+
+<ul>
+  <li><a href="https://doi.org/10.1016/j.automatica.2023.111103">Explicit reference governor on SO(3) for torque and pointing constraint management</a> — <em>Automatica</em>, 2023</li>
+  <li><a href="https://doi.org/10.1109/CDC.2018.8618908">Attitude Constrained Control on SO(3): An Explicit Reference Governor Approach</a> — <em>IEEE CDC</em>, 2018</li>
+  <li><a href="https://arxiv.org/abs/2604.04041">Periodic Event-Triggered Explicit Reference Governor for Constrained Attitude Control on SO(3)</a> — arXiv, 2026</li>
+</ul>
+
+<h4 id="応用小型衛星の姿勢制御">応用：小型衛星の姿勢制御</h4>
+
+<p>人工衛星は，地球を周回しながら姿勢を変更します。この過程では，複数の拘束が同時に課されます。</p>
+
+<ul>
+  <li>観測用のカメラを<strong>太陽の方向へ向けてはなりません</strong>（センサが損傷するためです）</li>
+  <li>通信用のアンテナは<strong>地上局の方向へ向け続ける</strong>必要があります</li>
+  <li>姿勢を変更する装置（リアクションホイール）が発生できる<strong>トルクには上限があります</strong></li>
+</ul>
+
+<p>さらに，衛星に搭載できる計算機は，打ち上げ時の質量制限と宇宙空間の放射線環境への耐性が求められるため，地上の計算機と比べて性能が大きく制限されます。このため，各時刻で最適化問題を解く方式は適用が困難となります。</p>
+
+<p>前節で述べた最適化を必要としない手法は，このような状況において有効に働きます。現在は，<strong>複数の小型衛星が協調して姿勢を変更する</strong>枠組みの構築に取り組んでいます。</p>
+
+<blockquote>
+  <p><strong>科学研究費助成事業 基盤研究(B)</strong>（2026–2029年度，課題番号 26K00967）
+「小型衛星群に対するオンライン最適化を用いない制約付き協調姿勢制御の確立」</p>
+</blockquote>
+
+<p>本テーマは，<a href="https://researchmap.jp/jaxasaki">佐々木 貴広</a> 氏（宇宙航空研究開発機構 JAXA）ならびに <a href="https://www.st.nanzan-u.ac.jp/info/sakanobo/index.html">坂本 登</a> 教授（南山大学）との共同研究として進めています。</p>
+
+<h4 id="応用三次元回転機構の制御系設計">応用：三次元回転機構の制御系設計</h4>
+
+<p>三次元的な回転運動を生み出す機構を対象として，<strong>高精度な回転制御</strong>の実現を目指した制御系設計に，共同研究として取り組んでいます。</p>
+
+<h3 id="2-車輪付きドローンとインフラ点検">2. 車輪付きドローンとインフラ点検</h3>
+
+<h4 id="飛行と走行を融合した機体">飛行と走行を融合した機体</h4>
+
+<p>ドローンは自由に飛行できる一方で，飛行中の消費電力が大きく，稼働時間が制限されます。また，壁面のごく近傍において姿勢を乱さずに停止し続けることは容易ではありません。</p>
+
+<p>そこで本研究室では，<strong>車輪を備えたドローン</strong>を対象としています。壁面や天井に機体を押し付けて車輪で走行し，必要に応じて飛行へ移行する機体です。</p>
+
+<p>この機体は，制御の観点から次のような難しさを伴います。</p>
+
+<ul>
+  <li>車輪は横方向に滑らないため，<strong>運動できる方向が制限されます</strong>（<strong>非ホロノミック拘束</strong>と呼びます）</li>
+  <li>壁面への<strong>押し付け力の調整</strong>が必要です。押し付け力が不足すれば壁面から離れ，過大であれば機体が跳ね返ります</li>
+  <li><strong>飛行状態と走行状態が切り替わる</strong>ため，運動の性質そのものが変化します</li>
+</ul>
+
+<p>ここでも中心となるのは拘束です。押し付け力，接触時に取り得る姿勢，飛行可能な高度といった制限を扱うために，<strong>制御バリア関数</strong>，<strong>入出力線形化</strong>，<strong>受動性に基づく手法</strong>，<strong>モデル予測経路積分制御（MPPI）</strong> などを組み合わせています。</p>
+
+<h4 id="応用インフラ点検">応用：インフラ点検</h4>
+
+<p>トンネルや橋梁，建物の壁面において，タイルの浮きや剥離を調べる作業として，ハンマーで打撃し打撃音を聞き分ける<strong>打音検査</strong>があります。高所での作業には足場の設置が必要となり，費用と危険を伴います。</p>
+
+<p>本研究室では，車輪付きドローンを用いて，<strong>壁面タイルの打音検査</strong>，<strong>橋梁支承部（橋桁を支える部分）の点検</strong>，<strong>天井裏の調査</strong>など，人が接近しにくい場所を対象とした点検システムの開発を進めています。</p>
+
+<p><strong>代表的な成果</strong></p>
+
+<ul>
+  <li><a href="https://doi.org/10.20965/jrm.2024.p1043">Development of Wall Hammering Inspection Systems Using Two-Wheeled Multicopters</a> — <em>Journal of Robotics and Mechatronics</em>, 2024</li>
+  <li><a href="https://doi.org/10.5687/iscie.38.187">入出力線形化による非ホロノミック拘束を有する車輪付きドローンの壁面上での位置追従制御</a> — <em>システム制御情報学会論文誌</em>, 2025</li>
+  <li><a href="https://doi.org/10.1109/IECON58223.2025.11221286">Stable Haptic Shared Autonomy for Wall Landing of Two-Wheeled Drones via Control Barrier Functions</a> — <em>IEEE IECON</em>, 2025</li>
+</ul>
+
+<h4 id="人と協調する制御">人と協調する制御</h4>
+
+<p>すべての動作を自動化するのではなく，<strong>操縦者が機体を操作し，危険な動作のみを制御系が防ぐ</strong>という形態についても研究を進めています。操縦者へ<strong>触覚</strong>を介して拘束の存在を提示しながら，安全性は理論的に保証する仕組みです。</p>
+
+<h2 id="その他の応用共同研究">その他の応用・共同研究</h2>
+
+<p>上記のほか，<strong>共同研究</strong>として次のテーマにも参画しています。</p>
+
+<ul>
+  <li><strong>建築構造物の振動制御</strong> — 地震や風による建物の揺れを抑制する研究です。等価入力外乱（EID）に基づく外乱推定の考え方を，制振ダンパの設計や免震建物の制御へ応用しています。<a href="https://doi.org/10.1016/j.conengprac.2024.105853">代表例（<em>Control Engineering Practice</em>, 2024）</a></li>
+  <li><strong>ビジュアルフィードバック制御</strong> — カメラで取得した画像から対象の位置と姿勢を推定し，制御へ利用する研究です。<a href="https://doi.org/10.1080/18824889.2023.2247853">代表例（<em>SICE JCMSI</em>, 2023）</a></li>
+</ul>
+
+<p>論文の一覧は<a href="https://gdaclab.web.nitech.ac.jp/ja/publications/">こちら</a>，共同研究者は<a href="https://gdaclab.web.nitech.ac.jp/ja/people/">メンバー</a>のページ，外部資金や受賞を含む詳細は<a href="https://mcontrol.web.nitech.ac.jp/nakano/ja/">教員ページ</a>をご覧ください。</p>
 
   </div>
 </div>
@@ -347,7 +445,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788617834"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788619149"></script>
 
 
 

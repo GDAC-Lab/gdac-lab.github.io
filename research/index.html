@@ -92,7 +92,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788617834">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788619149">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -100,7 +100,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788617834"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788619149"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -286,21 +286,119 @@
 
 <h2 id="overview">Overview</h2>
 
-<p>Our group develops <strong>control theory and experimental validation for safety-critical systems</strong>, with applications in <strong>robotics and mobility</strong>. We focus on <strong>nonlinear dynamics and constrained systems in real environments</strong>, aiming to <strong>jointly ensure safety and performance</strong> in controller design.</p>
+<p>Operating a robot or a satellite as intended requires control over <strong>which direction the vehicle points</strong>. At the same time, every real machine carries limits that <strong>must</strong> be respected.</p>
+
+<ul>
+  <li>The force a motor can produce has an <strong>upper bound</strong>.</li>
+  <li>An observation camera <strong>cannot be pointed towards the sun</strong>.</li>
+  <li>A vehicle running while pressed against a wall <strong>can take only a restricted set of attitudes</strong>.</li>
+</ul>
+
+<p>In control engineering such limits are called <strong>constraints</strong>. Our research centres on building theory for <strong>controlling rotational motion while satisfying constraints</strong>, together with verification on real hardware.</p>
+
+<p>The principal applications are <strong>satellites</strong> and <strong>drones</strong>.</p>
 
 <h2 id="research-themes">Research themes</h2>
 
-<h3 id="1-safety-critical-control">1. Safety-critical control</h3>
+<h3 id="1-constrained-control-of-rotational-motion">1. Constrained control of rotational motion</h3>
 
-<p>With the spread of autonomous driving, drones, and related technologies, <strong>control methods with explicit safety guarantees</strong> are increasingly important. We study controller design based on ideas such as <strong>control barrier functions and passivity</strong>, enforcing <strong>state and input constraints</strong> while preserving <strong>stability and safety</strong>. We also build <strong>robust control</strong> approaches that account for <strong>disturbances and model uncertainty</strong>, and we verify effectiveness through <strong>hardware experiments</strong>.</p>
+<h4 id="representing-rotation-and-singularities">Representing rotation, and singularities</h4>
 
-<h3 id="2-rigid-body-attitude-control-and-applications">2. Rigid-body attitude control and applications</h3>
+<p>The position of an object can be expressed by three numbers, x, y and z. Representing its <strong>orientation</strong> is less straightforward.</p>
 
-<p>Attitude motion of a rigid body is described by <strong>nonlinear dynamics on the rotation group</strong>, which makes control both theoretically rich and practically relevant. We develop <strong>attitude control methods that respect geometric structure</strong> on groups such as <strong>SE(3) and SO(3)</strong> to obtain <strong>singularity-free, consistent feedback designs</strong>. A central focus is <strong>attitude synchronization and tracking for multirotors and related aerial platforms</strong>, while <strong>spacecraft and other vehicles</strong> remain an important part of the application scope where the same geometric viewpoint applies.</p>
+<p>Aircraft attitude is widely described by three angles — pitch, roll and yaw, known as <strong>Euler angles</strong>. This representation has a weakness: at certain attitudes <strong>the computation breaks down</strong>, a phenomenon known as gimbal lock in aviation and computer graphics.</p>
 
-<h3 id="3-wheeled-drones-flight-with-contact-and-rolling">3. Wheeled drones (flight with contact and rolling)</h3>
+<p>Rather than decomposing orientation into three angles, we use a mathematical framework that <strong>treats rotation itself directly</strong> — the set of rotation matrices, written SO(3). This formulation yields control designs that <strong>do not break down at any attitude</strong>.</p>
 
-<p>A distinctive theme in our lab is <strong>drones equipped with wheels</strong>, combining <strong>aerial motion with contact and ground locomotion</strong>. These systems involve <strong>nonholonomic constraints, contact forces, and hybrid dynamics</strong>, and require approaches beyond classical multirotor control. We combine tools such as <strong>model predictive control, disturbance observers, and passivity-based methods</strong> to enable behaviors including <strong>wall following, obstacle avoidance, and infrastructure inspection</strong>. This includes system development aimed at <strong>inspection of bridges and built structures</strong>.</p>
+<h4 id="guaranteeing-constraints-under-limited-computation">Guaranteeing constraints under limited computation</h4>
+
+<p>A straightforward approach to constraints is to add a mechanism that restricts the motion once a dangerous state is approached. Such an approach, however, provides no <strong>guarantee</strong> that the constraints hold in every situation.</p>
+
+<p>We work with the <strong>Explicit Reference Governor (ERG)</strong> and <strong>control barrier functions (CBFs)</strong>. Rather than redesigning the controller itself, these methods <strong>reshape the reference supplied to the controller so that it remains within a safe region</strong>, which allows constraint satisfaction to be guaranteed.</p>
+
+<p>A second property is equally important: these methods <strong>require no optimization to be solved during operation</strong>.</p>
+
+<p>Model predictive control, the representative approach to constrained control, solves an optimization problem at every time step, which makes it difficult to run on hardware with limited computational capacity. ERG- and CBF-based methods instead evaluate expressions derived in advance, and can therefore be <strong>implemented on small computers</strong>. We are also studying this optimization-free framework in general form (<a href="https://arxiv.org/abs/2604.04001">arXiv, 2026</a>).</p>
+
+<p><strong>Selected results</strong></p>
+
+<ul>
+  <li><a href="https://doi.org/10.1016/j.automatica.2023.111103">Explicit reference governor on SO(3) for torque and pointing constraint management</a> — <em>Automatica</em>, 2023</li>
+  <li><a href="https://doi.org/10.1109/CDC.2018.8618908">Attitude Constrained Control on SO(3): An Explicit Reference Governor Approach</a> — <em>IEEE CDC</em>, 2018</li>
+  <li><a href="https://arxiv.org/abs/2604.04041">Periodic Event-Triggered Explicit Reference Governor for Constrained Attitude Control on SO(3)</a> — arXiv, 2026</li>
+</ul>
+
+<h4 id="application-attitude-control-of-small-satellites">Application: attitude control of small satellites</h4>
+
+<p>A satellite changes its attitude while orbiting the Earth, and several constraints apply simultaneously.</p>
+
+<ul>
+  <li>The observation camera <strong>must not be pointed towards the sun</strong>, as the sensor would be damaged.</li>
+  <li>The communication antenna <strong>must remain directed at the ground station</strong>.</li>
+  <li>The reaction wheels that reorient the spacecraft have an <strong>upper bound on the torque</strong> they can produce.</li>
+</ul>
+
+<p>Furthermore, an on-board computer must meet mass limits at launch and withstand the radiation environment of space, so its performance is considerably more restricted than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.</p>
+
+<p>The optimization-free methods described above are effective in precisely this setting. We are currently working towards a framework in which <strong>several small satellites reorient cooperatively</strong>.</p>
+
+<blockquote>
+  <p><strong>JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)</strong> (FY2026–2029, 26K00967)
+“Constrained cooperative attitude control without online optimization for small satellite formations”</p>
+</blockquote>
+
+<p>This theme is pursued as a collaboration with <a href="https://researchmap.jp/jaxasaki">Takahiro Sasaki</a> (Japan Aerospace Exploration Agency, JAXA) and Prof. <a href="https://www.st.nanzan-u.ac.jp/info/sakanobo/index.html">Noboru Sakamoto</a> (Nanzan University).</p>
+
+<h4 id="application-control-design-for-three-dimensional-rotation-mechanisms">Application: control design for three-dimensional rotation mechanisms</h4>
+
+<p>We are also engaged in a collaboration on control design for mechanisms that produce three-dimensional rotation, aimed at achieving <strong>high-precision rotational control</strong>.</p>
+
+<h3 id="2-wheeled-drones-and-infrastructure-inspection">2. Wheeled drones and infrastructure inspection</h3>
+
+<h4 id="a-vehicle-combining-flight-and-ground-locomotion">A vehicle combining flight and ground locomotion</h4>
+
+<p>A drone can fly freely, but its power consumption in flight limits the available operating time, and holding position in the immediate vicinity of a wall without disturbing the attitude is not straightforward.</p>
+
+<p>We therefore study <strong>drones equipped with wheels</strong>: the vehicle presses itself against a wall or ceiling, travels on its wheels, and transitions to flight as required.</p>
+
+<p>From a control standpoint this vehicle presents the following difficulties.</p>
+
+<ul>
+  <li>The wheels do not slip laterally, so <strong>the directions of motion are restricted</strong> — a <strong>nonholonomic constraint</strong>.</li>
+  <li>The <strong>pressing force against the wall</strong> must be regulated: too little and the vehicle separates from the surface, too much and it rebounds.</li>
+  <li><strong>Flight and ground locomotion alternate</strong>, so the nature of the dynamics itself changes.</li>
+</ul>
+
+<p>Constraints are again central. To handle the pressing force, the attitudes admissible during contact, and limits on flight altitude, we combine <strong>control barrier functions</strong>, <strong>input–output linearization</strong>, <strong>passivity-based methods</strong> and <strong>model predictive path integral (MPPI) control</strong>.</p>
+
+<h4 id="application-infrastructure-inspection">Application: infrastructure inspection</h4>
+
+<p>Detecting loose or delaminated tiles on tunnels, bridges and building walls is carried out by <strong>hammering inspection</strong>, in which a surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.</p>
+
+<p>Using wheeled drones, we are developing inspection systems for locations that are difficult for people to approach: <strong>hammering inspection of wall tiles</strong>, <strong>inspection of bridge bearings</strong> (the components supporting the bridge girders), and <strong>surveys inside ceiling cavities</strong>.</p>
+
+<p><strong>Selected results</strong></p>
+
+<ul>
+  <li><a href="https://doi.org/10.20965/jrm.2024.p1043">Development of Wall Hammering Inspection Systems Using Two-Wheeled Multicopters</a> — <em>Journal of Robotics and Mechatronics</em>, 2024</li>
+  <li><a href="https://doi.org/10.5687/iscie.38.187">Position tracking control of a wheeled drone on a wall via input–output linearization</a> — <em>Trans. ISCIE</em>, 2025 (in Japanese)</li>
+  <li><a href="https://doi.org/10.1109/IECON58223.2025.11221286">Stable Haptic Shared Autonomy for Wall Landing of Two-Wheeled Drones via Control Barrier Functions</a> — <em>IEEE IECON</em>, 2025</li>
+</ul>
+
+<h4 id="control-shared-with-a-human-operator">Control shared with a human operator</h4>
+
+<p>Rather than automating every action, we also study arrangements in which <strong>the operator commands the vehicle and the control system intervenes only to prevent unsafe motion</strong>. The presence of active constraints is conveyed to the operator through <strong>haptic feedback</strong>, while the safety guarantee itself is established theoretically.</p>
+
+<h2 id="other-applications-and-collaborations">Other applications and collaborations</h2>
+
+<p>We also take part in the following themes as <strong>collaborators</strong>.</p>
+
+<ul>
+  <li><strong>Vibration control of building structures</strong> — suppressing the sway of buildings under earthquakes and wind. Disturbance estimation based on the equivalent-input-disturbance (EID) approach is applied to tuned mass damper design and to the control of base-isolated buildings. <a href="https://doi.org/10.1016/j.conengprac.2024.105853">Representative paper (<em>Control Engineering Practice</em>, 2024)</a></li>
+  <li><strong>Visual feedback control</strong> — estimating the position and orientation of an object from camera images and using them for control. <a href="https://doi.org/10.1080/18824889.2023.2247853">Representative paper (<em>SICE JCMSI</em>, 2023)</a></li>
+</ul>
+
+<p>A full list of papers is on the <a href="https://gdaclab.web.nitech.ac.jp/publications/">Publications</a> page and our collaborators are listed under <a href="https://gdaclab.web.nitech.ac.jp/people/">People</a>; funding, awards and other details are on the <a href="https://mcontrol.web.nitech.ac.jp/nakano/">faculty page</a>.</p>
 
   </div>
 </div>
@@ -347,7 +445,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788617834"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788619149"></script>
 
 
 
