@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788627483">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788628339">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788627483"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788628339"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -293,13 +293,23 @@
     
 <p class="notice">Our wheeled-drone simulator is publicly available. The demo below runs the same physics engine the simulator uses, inside your browser. It is not a recording.</p>
 
-<div class="simdemo" data-sim-root="" data-sim-state="loading" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-strings="{&quot;loading&quot;:&quot;Loading the physics engine…&quot;,&quot;ready&quot;:&quot;Ready.&quot;,&quot;play&quot;:&quot;Play&quot;,&quot;pause&quot;:&quot;Pause&quot;,&quot;contactYes&quot;:&quot;touching the wall&quot;,&quot;contactNo&quot;:&quot;not touching&quot;,&quot;failed&quot;:&quot;The demo could not start in this browser.&quot;}">
+<div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-strings="{&quot;loading&quot;:&quot;Loading the physics engine…&quot;,&quot;ready&quot;:&quot;Ready.&quot;,&quot;play&quot;:&quot;Play&quot;,&quot;pause&quot;:&quot;Pause&quot;,&quot;contactYes&quot;:&quot;touching the wall&quot;,&quot;contactNo&quot;:&quot;not touching&quot;,&quot;failed&quot;:&quot;The demo could not start in this browser.&quot;,&quot;meteredNote&quot;:&quot;This looks like a mobile connection or data-saver mode. Wi-Fi is recommended.&quot;}">
 
   <div class="simdemo__stage">
     <canvas class="simdemo__canvas" data-sim-canvas="" aria-label="3D view of a wheeled drone climbing a wall in simulation" role="img"></canvas>
-    <p class="simdemo__status" data-sim-status="" data-kind="loading" role="status">
-      Loading the physics engine…
-    </p>
+    
+    <div class="simdemo__gate" data-sim-gate="">
+      <img class="simdemo__poster" src="https://gdaclab.web.nitech.ac.jp/images/simulator-poster.jpg" width="1280" height="720" alt="" loading="lazy" decoding="async" />
+      <div class="simdemo__gate-card">
+        <p class="simdemo__gate-title">Load the physics engine?</p>
+        <p class="simdemo__gate-text">
+          Running the demo transfers the WebAssembly build of MuJoCo (<b>about 3.5–12 MB</b>, depending on the server's compression). Your browser caches it, so this happens once.
+        </p>
+        <p class="simdemo__gate-note" data-sim-metered="" hidden=""></p>
+        <button type="button" class="btn simdemo__gate-btn" data-sim-load="">Load and run</button>
+      </div>
+    </div>
+    <p class="simdemo__status" data-sim-status="" data-kind="idle" role="status" hidden=""></p>
   </div>
 
   <noscript>
@@ -375,7 +385,7 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788627483"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788628339"></script>
 
 <h2 id="about-this-demo">About this demo</h2>
 
@@ -409,7 +419,7 @@
 
 <h2 id="requirements">Requirements</h2>
 
-<p>The demo needs a browser with WebGL and WebAssembly. Loading the physics engine transfers a few megabytes, which affects this page only. If it does not run for you, the <a href="https://gdaclab.web.nitech.ac.jp/research/">Research</a> page describes the work in words.</p>
+<p>The demo needs a browser with WebGL and WebAssembly. Loading the physics engine transfers a few megabytes, so nothing is fetched just by opening the page: the transfer starts <strong>only when you press “Load and run”</strong>, happens once, and affects this page only. If it does not run for you, the <a href="https://gdaclab.web.nitech.ac.jp/research/">Research</a> page describes the work in words.</p>
 
   </div>
 </div>
@@ -456,7 +466,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788627483"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788628339"></script>
 
 
 

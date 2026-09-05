@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788627483">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788628339">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788627483"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788628339"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -293,13 +293,23 @@
     
 <p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは，そのシミュレータが使っている物理エンジンをブラウザ上でそのまま動かしたものです。録画ではありません。</p>
 
-<div class="simdemo" data-sim-root="" data-sim-state="loading" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-strings="{&quot;loading&quot;:&quot;物理エンジンを読み込んでいます…&quot;,&quot;ready&quot;:&quot;準備完了。&quot;,&quot;play&quot;:&quot;再生&quot;,&quot;pause&quot;:&quot;一時停止&quot;,&quot;contactYes&quot;:&quot;壁に接触中&quot;,&quot;contactNo&quot;:&quot;非接触&quot;,&quot;failed&quot;:&quot;このブラウザではデモを開始できませんでした。&quot;}">
+<div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-strings="{&quot;loading&quot;:&quot;物理エンジンを読み込んでいます…&quot;,&quot;ready&quot;:&quot;準備完了。&quot;,&quot;play&quot;:&quot;再生&quot;,&quot;pause&quot;:&quot;一時停止&quot;,&quot;contactYes&quot;:&quot;壁に接触中&quot;,&quot;contactNo&quot;:&quot;非接触&quot;,&quot;failed&quot;:&quot;このブラウザではデモを開始できませんでした。&quot;,&quot;meteredNote&quot;:&quot;モバイル回線または通信量節約モードのようです。Wi-Fi でのご利用をおすすめします。&quot;}">
 
   <div class="simdemo__stage">
     <canvas class="simdemo__canvas" data-sim-canvas="" aria-label="車輪付きドローンが壁面を登るシミュレーションの3D表示" role="img"></canvas>
-    <p class="simdemo__status" data-sim-status="" data-kind="loading" role="status">
-      物理エンジンを読み込んでいます…
-    </p>
+    
+    <div class="simdemo__gate" data-sim-gate="">
+      <img class="simdemo__poster" src="https://gdaclab.web.nitech.ac.jp/images/simulator-poster.jpg" width="1280" height="720" alt="" loading="lazy" decoding="async" />
+      <div class="simdemo__gate-card">
+        <p class="simdemo__gate-title">物理エンジンを読み込みますか？</p>
+        <p class="simdemo__gate-text">
+          デモの実行には MuJoCo の WebAssembly 版（<b>約 3.5〜12 MB</b>，サーバの圧縮設定によります）を転送します。ブラウザにキャッシュされるので，転送は初回のみです。
+        </p>
+        <p class="simdemo__gate-note" data-sim-metered="" hidden=""></p>
+        <button type="button" class="btn simdemo__gate-btn" data-sim-load="">読み込んで実行する</button>
+      </div>
+    </div>
+    <p class="simdemo__status" data-sim-status="" data-kind="idle" role="status" hidden=""></p>
   </div>
 
   <noscript>
@@ -375,7 +385,7 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788627483"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788628339"></script>
 
 <h2 id="このデモについて">このデモについて</h2>
 
@@ -409,7 +419,7 @@
 
 <h2 id="動作について">動作について</h2>
 
-<p>デモの実行には WebGL と WebAssembly に対応したブラウザが必要です。物理エンジンの読み込みに数 MB の通信が発生しますが，このページ以外には影響しません。動かない場合は<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページに研究の概要があります。</p>
+<p>デモの実行には WebGL と WebAssembly に対応したブラウザが必要です。物理エンジンの読み込みには数 MB の通信が発生するため，ページを開いただけでは転送せず，<strong>「読み込んで実行する」を押したときに初めて</strong>転送します。転送は初回のみで，このページ以外には影響しません。動かない場合は<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページに研究の概要があります。</p>
 
   </div>
 </div>
@@ -456,7 +466,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788627483"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788628339"></script>
 
 
 
