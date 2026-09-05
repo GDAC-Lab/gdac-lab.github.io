@@ -15,7 +15,13 @@ $indent-var                 : 1.3em;
 
 /* System typefaces */
 $serif                      : Georgia, Times, serif;
-$sans-serif                 : -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+/* System faces first, then the Japanese system faces so that Japanese text on
+   any page (the navigation carries some on every page) is set in a proper
+   Japanese font rather than whatever the browser falls back to. "Yu Gothic
+   Medium" before "Yu Gothic" is the usual workaround for the too-light
+   Windows default; BIZ UDPGothic (Windows 10 1809+) is the most legible of the
+   Windows faces at small sizes and is listed first where it exists. */
+$sans-serif                 : -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "BIZ UDPGothic", "Yu Gothic Medium", "Yu Gothic", Meiryo, "Noto Sans JP", "Noto Sans CJK JP", Arial, sans-serif;
 $monospace                  : Monaco, Consolas, "Lucida Console", monospace;
 
 /* Sans serif typefaces */
@@ -48,7 +54,7 @@ $prose-measure              : 44rem;
 
 $global-font-family         : $sans-serif;
 $header-font-family         : $sans-serif;
-$caption-font-family        : $serif;
+$caption-font-family        : $sans-serif;   /* a serif caption would put Japanese captions in Mincho */
 
 /* ==========================================================================
    Breakpoints

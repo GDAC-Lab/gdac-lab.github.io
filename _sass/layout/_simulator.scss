@@ -410,6 +410,30 @@
     margin-left: 0;
   }
 
+  /* The download card is taller than a 16:9 stage on a phone and was clipped.
+     Take it out of the overlay: the still stays over the canvas area and the
+     card follows in normal flow, full width. */
+  .simdemo__gate {
+    position: static;
+    display: block;
+    padding: 0;
+  }
+
+  .simdemo__poster {
+    top: 0;
+    left: 0;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .simdemo__gate-card {
+    max-width: none;
+    padding: 0.9rem 1rem 1rem;
+    border-width: 1px 0 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
   /* Not enough room over a 200 px-tall canvas: sit under it instead. */
   .simdemo__stage {
     display: flex;

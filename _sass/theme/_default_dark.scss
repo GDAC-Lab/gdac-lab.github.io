@@ -55,6 +55,8 @@ html[data-theme="dark"] {
     --global-code-background-color      : #fafafa;
     --global-code-text-color            : #{$darker-gray};
     --global-fig-caption-color          : #{$light-gray};
+    /* Content images (maps, photos in prose). A white map on the dark ground glares; dim it a little. */
+    --global-image-filter               : brightness(0.88);
     --global-link-color                 : #{$link};
     --global-link-color-hover           : #{$link-hover};
     --global-link-color-visited         : #{$link-visited};

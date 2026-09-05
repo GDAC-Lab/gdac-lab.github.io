@@ -182,6 +182,9 @@
 
   button {
     margin-bottom: 0;
+    /* The button shares a table row with the bio; without this a Japanese
+       label was broken one character per line. */
+    white-space: nowrap;
 
     @include breakpoint($large) {
       display: none;
@@ -249,6 +252,25 @@
 
   li {
     white-space: nowrap;
+
+    /* In the desktop sidebar the list is a narrow column, and a long employer
+       name ("Nagoya Institute of Technology") was clipped mid-word. Let it
+       wrap, with the icon held in a gutter so wrapped lines align under the
+       first one. */
+    @include breakpoint($large) {
+      position: relative;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      padding-left: 1.75em;
+
+      > i,
+      > a > i {
+        position: absolute;
+        left: 0;
+        top: 0.35em;
+        margin-right: 0;
+      }
+    }
   }
 
   a {

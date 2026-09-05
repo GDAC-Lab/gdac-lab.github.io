@@ -7,11 +7,18 @@
   margin: 0;
 }
 
-.home-slideshow__intro {
-  margin: 0 0 0.85rem;
-  font-size: $type-size-6;
+/* Caption under the photo, inside the frame: it belongs to the picture, not
+   to the paragraph above it. */
+/* Doubled selector: .page__content p sets a paragraph margin with higher
+   specificity, which left a blank band under the caption inside the frame. */
+.home-slideshow .home-slideshow__caption {
+  margin: 0;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8125rem;
   line-height: 1.55;
-  color: var(--global-text-color);
+  color: var(--global-text-color-light);
+  border-top: 1px solid var(--global-border-color);
+  background: var(--global-bg-color);
 }
 
 /* One slide: prev/next not needed (see home-slideshow.js early exit) */

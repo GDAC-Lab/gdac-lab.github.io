@@ -8,20 +8,20 @@
   aria-labelledby="home-slideshow-heading"
   aria-roledescription="carousel">
   <h2 id="home-slideshow-heading" class="home-slideshow__heading visually-hidden">{% if page.lang == 'ja' %}フォトギャラリー{% else %}Photo gallery{% endif %}</h2>
-  <p class="home-slideshow__intro">{% if page.lang == 'ja' %}研究室メンバーの集合写真です。{% else %}Group photo of lab members.{% endif %}</p>
 
   <div class="home-slideshow__frame">
     <div class="home-slideshow__viewport" id="home-slideshow-viewport" tabindex="0">
       <div class="home-slideshow__slide is-active" role="group" aria-roledescription="slide" aria-label="{% if page.lang == 'ja' %}1 / 1{% else %}1 of 1{% endif %}">
         <img
           src="{{ base_path }}/images/lab/group-photo.jpg"
-          alt="{% if page.lang == 'ja' %}GDAC研究室のメンバー集合写真{% else %}GDAC Lab group photo{% endif %}"
+          alt="{% if page.lang == 'ja' %}GDAC Lab のメンバー集合写真{% else %}GDAC Lab group photo{% endif %}"
           width="1600"
           height="900"
           loading="eager"
           decoding="async" />
       </div>
     </div>
+    <p class="home-slideshow__caption">{% if page.lang == 'ja' %}研究室メンバーの集合写真{% else %}Group photo of lab members{% endif %}</p>
     <div class="home-slideshow__controls">
       <button type="button" class="btn home-slideshow__btn" data-home-slideshow-prev aria-controls="home-slideshow-viewport">
         {% if page.lang == 'ja' %}戻す{% else %}Previous{% endif %}

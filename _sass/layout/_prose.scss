@@ -152,6 +152,16 @@
     margin: 2.75rem 0;
   }
 
+  /* --- plain markdown images (kramdown wraps them in a paragraph) --------- */
+  > p > img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--global-border-color);
+    border-radius: $border-radius;
+    filter: var(--global-image-filter, none);
+  }
+
   /* --- figures (video or image with a caption) --------------------------- */
   > .media-figure {
     margin: 1.75rem 0 2rem;
@@ -165,6 +175,10 @@
       border: 1px solid var(--global-border-color);
       border-radius: $border-radius;
       background: var(--global-callout-bg, var(--global-thead-color));
+    }
+
+    img {
+      filter: var(--global-image-filter, none);
     }
 
     figcaption {

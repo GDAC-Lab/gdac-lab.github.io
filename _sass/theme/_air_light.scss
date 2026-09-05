@@ -44,6 +44,8 @@ $sidebar-screen-min-width   : 1024px;
     --global-code-background-color      : #fafafa;
     --global-code-text-color            : #{$darker-primary-color};
     --global-fig-caption-color          : #{$light-primary-color};
+    /* Content images (maps, photos in prose). A white map on the dark ground glares; dim it a little. */
+    --global-image-filter               : none;
     --global-link-color                 : #{$link};
     --global-link-color-hover           : #{$link-dark};
     --global-link-color-visited         : #{$link-light};

@@ -41,6 +41,8 @@ $sidebar-screen-min-width   : 1024px;
     --global-code-background-color      : #fafafa;
     --global-code-text-color            : #{$darker-gray};
     --global-fig-caption-color          : #{$muted-gray};
+    /* Content images (maps, photos in prose). A white map on the dark ground glares; dim it a little. */
+    --global-image-filter               : none;
     /* Deeper than the upstream #52adc8, which reaches only 2.6:1 on white. */
     --global-link-color                 : #1f7490;
     --global-link-color-hover           : #{mix(#000, #1f7490, 30%)};
