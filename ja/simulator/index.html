@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788628339">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788629115">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788628339"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788629115"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -310,6 +310,26 @@
       </div>
     </div>
     <p class="simdemo__status" data-sim-status="" data-kind="idle" role="status" hidden=""></p>
+    
+    <div class="simdemo__inset" data-sim-inset="">
+      <svg class="simdemo__pad" viewBox="0 0 165 190" data-sim-pad="" tabindex="0" role="application" aria-label="目標位置パッド（横が壁方向，縦が高さ）" aria-describedby="simdemo-pad-help">
+        <rect class="simdemo__pad-bg" x="0" y="0" width="165" height="190" rx="3" />
+        <rect class="simdemo__pad-allowed" x="20" y="15" width="135" height="140" rx="2" />
+        <rect class="simdemo__pad-floor" x="0" y="186" width="165" height="4" />
+        <rect class="simdemo__pad-wall" x="135" y="0" width="10" height="190" />
+        <line class="simdemo__pad-limit" x1="120" y1="0" x2="120" y2="186" />
+        <text class="simdemo__pad-label" x="147" y="11">壁</text>
+        <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="11">↑ 高さ</text>
+        <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="182">壁方向 →</text>
+        <circle class="simdemo__pad-drone" data-sim-pad-drone="" cx="95" cy="130" r="5" />
+        <circle class="simdemo__pad-target" data-sim-pad-target="" cx="133" cy="60" r="6.5" />
+      </svg>
+      <dl class="simdemo__inset-values" aria-live="polite">
+        <div><dt><i class="simdemo__legend-dot simdemo__legend-dot--target"></i>目標 高さ</dt><dd data-sim-target-z-out="">1.30 m</dd></div>
+        <div><dt>壁方向</dt><dd data-sim-target-x-out="">1.93 m (+0.13)</dd></div>
+        <div><dt><i class="simdemo__legend-dot simdemo__legend-dot--drone"></i>機体</dt><dd data-sim-inset-height="">0.60 m</dd></div>
+      </dl>
+    </div>
   </div>
 
   <noscript>
@@ -339,35 +359,6 @@
       <button type="button" class="simdemo__chip" data-sim-scenario="hover">空中で静止</button>
     </div>
 
-    <div class="simdemo__row simdemo__row--target">
-      
-      <div class="simdemo__pad-wrap">
-        <svg class="simdemo__pad" viewBox="0 0 165 190" data-sim-pad="" tabindex="0" role="application" aria-label="目標位置パッド（横が壁方向，縦が高さ）" aria-describedby="simdemo-pad-help">
-          <rect class="simdemo__pad-bg" x="0" y="0" width="165" height="190" rx="3" />
-          <rect class="simdemo__pad-allowed" x="20" y="15" width="135" height="140" rx="2" />
-          <rect class="simdemo__pad-floor" x="0" y="186" width="165" height="4" />
-          <rect class="simdemo__pad-wall" x="135" y="0" width="10" height="190" />
-          <line class="simdemo__pad-limit" x1="120" y1="0" x2="120" y2="186" />
-          <text class="simdemo__pad-label" x="147" y="11">壁</text>
-          <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="11">↑ 高さ</text>
-          <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="182">壁方向 →</text>
-          <circle class="simdemo__pad-drone" data-sim-pad-drone="" cx="95" cy="130" r="5" />
-          <circle class="simdemo__pad-target" data-sim-pad-target="" cx="133" cy="60" r="6.5" />
-        </svg>
-        <p id="simdemo-pad-help" class="simdemo__pad-help">
-          パッドをドラッグ，または矢印キー（Shift で大きく）で目標を動かします。3D 表示の緑の球を直接ドラッグしても動かせます。
-        </p>
-      </div>
-      <dl class="simdemo__target-values" aria-live="polite">
-        <div><dt>目標の高さ</dt><dd data-sim-target-z-out="">1.30 m</dd></div>
-        <div><dt>目標の壁方向位置</dt><dd data-sim-target-x-out="">1.93 m (+0.13)</dd></div>
-        <div class="simdemo__legend">
-          <span><i class="simdemo__legend-dot simdemo__legend-dot--target"></i>目標</span>
-          <span><i class="simdemo__legend-dot simdemo__legend-dot--drone"></i>機体</span>
-        </div>
-      </dl>
-    </div>
-
     <dl class="simdemo__readout">
       <div><dt>時刻</dt><dd data-sim-time="">0.0 s</dd></div>
       <div><dt>機体の高さ</dt><dd data-sim-height="">0.60 m</dd></div>
@@ -375,8 +366,8 @@
       <div><dt>実時間比</dt><dd data-sim-rate="">—</dd></div>
     </dl>
 
-    <p class="simdemo__hint">
-      3D 表示はドラッグで視点を回転，ホイールで拡大縮小できます。壁面は <b>1.95 m</b> の位置にあり，車輪（半径 0.15 m）が触れると機体は <b>1.80 m</b> より先へは進めません。目標をそれより奥へ置くと，届かない分がそのまま壁への押し付け力になります。押し付けのための専用の制御は入っていません。
+    <p class="simdemo__hint" id="simdemo-pad-help">
+      目標は，3D 表示の<b>緑の球を直接ドラッグ</b>するか，左下の<b>パッド</b>をドラッグして動かします（パッドにフォーカスがあれば矢印キー，Shift で大きく）。3D 表示のそれ以外の場所はドラッグで視点回転，ホイールで拡大縮小です。壁面は <b>1.95 m</b> の位置にあり，車輪（半径 0.15 m）が触れると機体は <b>1.80 m</b> より先へは進めません。目標をそれより奥へ置くと，届かない分がそのまま壁への押し付け力になります。押し付けのための専用の制御は入っていません。
     </p>
   </div>
 </div>
@@ -385,7 +376,7 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788628339"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788629115"></script>
 
 <h2 id="このデモについて">このデモについて</h2>
 
@@ -400,7 +391,7 @@
 <p>姿勢の制御には，回転を 3 つの角度に分解せず回転行列のまま扱う定式化を用いています。どの姿勢でも計算が破綻しないという性質があり，本研究室の回転運動の制御の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
 
 <ul>
-  <li><strong>目標の動かし方</strong> — 3D 表示の緑の球を直接ドラッグするか，横のパッド（横軸が壁方向，縦軸が高さ）をドラッグします。パッドにフォーカスがあれば矢印キーでも動かせます</li>
+  <li><strong>目標の動かし方</strong> — 3D 表示の緑の球を直接ドラッグするか，3D 表示の左下にあるパッド（横軸が壁方向，縦軸が高さ）をドラッグします。パッドにフォーカスがあれば矢印キーでも動かせます</li>
   <li><strong>壁方向位置の「+」表示</strong> — 目標が，車輪が壁に触れた位置（1.80 m）よりどれだけ奥にあるかです。この分が押し付け力になります</li>
   <li><strong>実時間比</strong> — 実時間に対する計算の進み具合です。1.00× なら実時間どおりに解けています</li>
 </ul>
@@ -466,7 +457,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788628339"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788629115"></script>
 
 
 

@@ -10,7 +10,7 @@
  *
  * The target can be set four ways, all feeding one setTarget():
  *   - drag the green reference sphere in the 3D view
- *   - drag on the side-view pad
+ *   - drag on the side-view pad inset in the corner of the 3D view
  *   - arrow keys while the pad has focus
  *   - the scenario presets
  *
@@ -75,6 +75,7 @@ class SimulatorDemo {
     this.padDroneDot = root.querySelector('[data-sim-pad-drone]');
     this.targetXOut = root.querySelector('[data-sim-target-x-out]');
     this.targetZOut = root.querySelector('[data-sim-target-z-out]');
+    this.insetHeight = root.querySelector('[data-sim-inset-height]');
     this.gate = root.querySelector('[data-sim-gate]');
     this.loadButton = root.querySelector('[data-sim-load]');
     this.meteredNote = root.querySelector('[data-sim-metered]');
@@ -291,6 +292,10 @@ class SimulatorDemo {
     const { sx, sy } = SimulatorDemo._worldToPad(position[0], position[2]);
     this.padDroneDot.setAttribute('cx', sx.toFixed(1));
     this.padDroneDot.setAttribute('cy', sy.toFixed(1));
+    if (this.insetHeight) {
+      const text = `${position[2].toFixed(2)} m`;
+      if (this.insetHeight.textContent !== text) this.insetHeight.textContent = text;
+    }
   }
 
   _wirePad() {
