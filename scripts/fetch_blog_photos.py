@@ -49,7 +49,8 @@ def sized(url: str, size: int) -> str:
     if re.search(r"/w\d+-h\d+(-[a-z0-9-]+)?/", url):
         return re.sub(r"/w\d+-h\d+(-[a-z0-9-]+)?/", f"/s{size}/", url)
     if "googleusercontent.com" in url and "=" not in url.rsplit("/", 1)[-1]:
-        return url + f"=s{size}"
+        # lh3-style URLs may carry ?width=NNN; the =sNNN form replaces it
+        return url.split("?", 1)[0] + f"=s{size}"
     return url
 
 
@@ -104,9 +105,10 @@ def main() -> int:
         srcs = []
         for m in re.finditer(r'<img[^>]+src="([^"]+)"', content, flags=re.I):
             s = html.unescape(m.group(1))
-            if "blogger.googleusercontent.com" in s or "bp.blogspot.com" in s:
-                if s not in srcs:
-                    srcs.append(s)
+            # Blogger serves images from several Google hosts (blogger.googleusercontent.com,
+            # lh3.googleusercontent.com, N.bp.blogspot.com); take any of them.
+            if ("googleusercontent.com" in s or "blogspot.com" in s) and s not in srcs:
+                srcs.append(s)
         for ii, s in enumerate(srcs, 1):
             name = f"p{pi:02d}-{ii:02d}.jpg"
             try:
