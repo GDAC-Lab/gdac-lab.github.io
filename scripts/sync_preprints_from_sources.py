@@ -1,13 +1,24 @@
 #!/usr/bin/env python3
-# Generate _publications/*-pp-*.md from _data/preprint_sources.json using:
-# - Crossref API for DOIs (https://api.crossref.org/works/{doi})
-# - arXiv Atom API for bare arXiv ids or when Crossref has no record for 10.48550/arXiv.* DOIs
-#
-# Edit preprint_sources.json ("dois" / "arxiv_ids"), then run this script (or rely on CI).
-# Manual preprints: add normal .md in _publications with category: preprints (no "-pp-" in filename).
-#
-# arXiv rate limits: default 3.5s between arXiv API calls (override: ARXIV_MIN_INTERVAL_SEC).
-# 429 responses are retried with backoff.
+"""Regenerate _publications/*-pp-*.md from _data/preprint_sources.json.
+
+Sources: Crossref for DOIs (https://api.crossref.org/works/{doi}); the arXiv Atom
+API for bare arXiv ids and for 10.48550/arXiv.* DOIs Crossref does not hold.
+
+Edit preprint_sources.json ("dois" / "arxiv_ids"), then run this script (or let CI
+run it). A preprint that needs no external lookup can be added as an ordinary .md
+in _publications with `category: preprints` and no "-pp-" in the filename; this
+script only owns the "-pp-" files.
+
+Failure handling
+----------------
+Nothing is deleted until every entry has been resolved. When a single lookup
+fails — arXiv rate limiting is the common case, and it is what broke the sync on
+2026-06-22 and 06-29 — the previously generated file for that entry is carried
+forward instead of being dropped, and the script exits non-zero so CI reports it.
+
+arXiv rate limits: at most one request per ARXIV_MIN_INTERVAL_SEC (default 3.5s);
+429/503 are retried with backoff.
+"""
 
 from __future__ import annotations
 
@@ -22,100 +33,78 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-# arXiv API: aim for at most one request per ~3s (shared CI IPs hit 429 easily).
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from pubsync_common import (  # noqa: E402
+    PUB_DIR,
+    REPO_ROOT,
+    SyncAbort,
+    allow_shrink_from_env,
+    apply_generated,
+    build_citation,
+    front_matter,
+    log,
+    title_language,
+)
+
 _ARXIV_MIN_INTERVAL_SEC = float(os.environ.get("ARXIV_MIN_INTERVAL_SEC", "3.5"))
 _ARXIV_NEXT_MONO = 0.0
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = REPO_ROOT / "_data" / "preprint_sources.json"
-PUB_DIR = REPO_ROOT / "_publications"
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
 
 
 def user_agent() -> str:
-    import os
-
-    m = (os.environ.get("CROSSREF_CONTACT_EMAIL") or "").strip()
+    mail = (os.environ.get("CROSSREF_CONTACT_EMAIL") or "").strip()
     base = "gdac-lab-site/1.0 (https://github.com/gdac-lab/gdac-lab.github.io)"
-    return f"{base}; mailto:{m}" if m else base
-
-
-def yaml_sq(s: str) -> str:
-    return str(s).replace("'", "''")
-
-
-# Hiragana / Katakana / CJK Unified Ideographs — rough language tag for publication lists
-_TITLE_JA_RE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff]")
-
-
-def title_language(title: str) -> str:
-    if not title:
-        return "en"
-    return "ja" if _TITLE_JA_RE.search(title) else "en"
-
-
-def html_esc(s: str) -> str:
-    return (
-        str(s)
-        .replace("&", "&amp;")
-        .replace('"', "&quot;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-    )
-
-
-def remove_generated() -> None:
-    for p in PUB_DIR.glob("*-pp-*.md"):
-        p.unlink()
+    return f"{base}; mailto:{mail}" if mail else base
 
 
 def _arxiv_throttle() -> None:
     global _ARXIV_NEXT_MONO
-    now = time.monotonic()
-    wait = _ARXIV_NEXT_MONO - now
+    wait = _ARXIV_NEXT_MONO - time.monotonic()
     if wait > 0:
         time.sleep(wait)
     _ARXIV_NEXT_MONO = time.monotonic() + _ARXIV_MIN_INTERVAL_SEC
 
 
-def urlopen_with_retry(req: urllib.request.Request, timeout: float = 60) -> object:
-    """Retry on 429 / 503 (arXiv, Crossref rate limits)."""
+def urlopen_with_retry(req: urllib.request.Request, timeout: float = 60):
+    """Retry on 429 / 503 (arXiv and Crossref rate limits)."""
     backoff = 5.0
     last_err: Exception | None = None
     for attempt in range(6):
         try:
             return urllib.request.urlopen(req, timeout=timeout)
-        except urllib.error.HTTPError as e:
-            last_err = e
-            if e.code not in (429, 503) or attempt >= 5:
+        except urllib.error.HTTPError as exc:
+            last_err = exc
+            if exc.code not in (429, 503) or attempt >= 5:
                 raise
-            ra = e.headers.get("Retry-After") if e.headers else None
+            retry_after = exc.headers.get("Retry-After") if exc.headers else None
             try:
-                wait = float(ra)
+                wait = float(retry_after)
             except (TypeError, ValueError):
                 wait = backoff
             wait = max(3.0, wait)
-            print(
-                f"[preprint] HTTP {e.code} ({req.full_url}), sleep {wait:.1f}s retry {attempt + 1}/5",
-                file=sys.stderr,
-            )
+            log(f"[preprint] HTTP {exc.code} ({req.full_url}), sleep {wait:.1f}s "
+                f"retry {attempt + 1}/5")
             time.sleep(wait)
             backoff = min(backoff * 1.5, 90.0)
     raise last_err  # pragma: no cover
 
 
+# --------------------------------------------------------------------------- Crossref
+
+
 def crossref_fetch(doi: str) -> dict | None:
-    enc = urllib.parse.quote(doi.strip(), safe="")
-    url = f"https://api.crossref.org/works/{enc}"
+    url = f"https://api.crossref.org/works/{urllib.parse.quote(doi.strip(), safe='')}"
     req = urllib.request.Request(
-        url,
-        headers={"User-Agent": user_agent(), "Accept": "application/json"},
+        url, headers={"User-Agent": user_agent(), "Accept": "application/json"}
     )
     try:
         with urlopen_with_retry(req) as resp:
             payload = json.load(resp)
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
             return None
         raise
     if payload.get("status") != "ok":
@@ -125,71 +114,60 @@ def crossref_fetch(doi: str) -> dict | None:
 
 def crossref_date(msg: dict) -> str:
     for key in ("published-print", "published-online", "issued", "created"):
-        block = msg.get(key) or {}
-        parts = block.get("date-parts")
-        if isinstance(parts, list) and parts:
+        parts = (msg.get(key) or {}).get("date-parts")
+        if isinstance(parts, list) and parts and isinstance(parts[0], list) and parts[0]:
             dp = parts[0]
-            if isinstance(dp, list) and dp:
-                y = int(dp[0])
-                m = int(dp[1]) if len(dp) > 1 else 1
-                d = int(dp[2]) if len(dp) > 2 else 1
-                return f"{y:04d}-{m:02d}-{d:02d}"
+            year = int(dp[0])
+            month = int(dp[1]) if len(dp) > 1 else 1
+            day = int(dp[2]) if len(dp) > 2 else 1
+            return f"{year:04d}-{month:02d}-{day:02d}"
     return "1900-01-01"
 
 
 def crossref_title(msg: dict) -> str:
-    t = msg.get("title")
-    if isinstance(t, list) and t:
-        return str(t[0]).strip()
-    return ""
+    titles = msg.get("title")
+    return str(titles[0]).strip() if isinstance(titles, list) and titles else ""
 
 
 def crossref_authors(msg: dict) -> str:
-    authors = msg.get("author") or []
-    if not isinstance(authors, list):
-        return ""
     names: list[str] = []
-    for a in authors:
-        if not isinstance(a, dict):
+    for author in msg.get("author") or []:
+        if not isinstance(author, dict):
             continue
-        fam = (a.get("family") or "").strip()
-        giv = (a.get("given") or "").strip()
-        if fam and giv:
-            names.append(f"{giv} {fam}")
-        elif fam:
-            names.append(fam)
-        elif a.get("name"):
-            names.append(str(a["name"]).strip())
+        family = (author.get("family") or "").strip()
+        given = (author.get("given") or "").strip()
+        if family and given:
+            names.append(f"{given} {family}")
+        elif family:
+            names.append(family)
+        elif author.get("name"):
+            names.append(str(author["name"]).strip())
     return ", ".join(names)
 
 
 def crossref_venue(msg: dict) -> str:
-    ct = msg.get("container-title")
-    if isinstance(ct, list) and ct:
-        return str(ct[0]).strip()
-    pub = msg.get("publisher")
-    if isinstance(pub, str) and pub.strip():
-        return pub.strip()
-    typ = msg.get("type") or ""
-    if "posted" in typ or typ == "report":
-        return "Preprint"
+    container = msg.get("container-title")
+    if isinstance(container, list) and container:
+        return str(container[0]).strip()
+    publisher = msg.get("publisher")
+    if isinstance(publisher, str) and publisher.strip():
+        return publisher.strip()
     return "Preprint"
 
 
 def crossref_url(msg: dict, doi: str) -> str:
     if msg.get("URL"):
         return str(msg["URL"])
-    d = doi.strip()
-    if d.lower().startswith("http"):
-        return d
-    return f"https://doi.org/{d}"
+    doi = doi.strip()
+    return doi if doi.lower().startswith("http") else f"https://doi.org/{doi}"
 
 
 def arxiv_id_from_doi(doi: str) -> str | None:
     m = re.search(r"10\.48550/\s*arXiv\.(\d{4}\.\d{4,5})", doi, re.I)
-    if m:
-        return m.group(1)
-    return None
+    return m.group(1) if m else None
+
+
+# ------------------------------------------------------------------------------ arXiv
 
 
 def arxiv_fetch(arxiv_id: str) -> dict | None:
@@ -200,46 +178,50 @@ def arxiv_fetch(arxiv_id: str) -> dict | None:
     try:
         with urlopen_with_retry(req) as resp:
             xml = resp.read()
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
             return None
         raise
-    root = ET.fromstring(xml)
-    entry = root.find("atom:entry", ATOM_NS)
+    entry = ET.fromstring(xml).find("atom:entry", ATOM_NS)
     if entry is None:
         return None
+
     title_el = entry.find("atom:title", ATOM_NS)
-    title = title_el.text.strip() if title_el is not None and title_el.text else ""
+    title = " ".join(title_el.text.split()) if title_el is not None and title_el.text else ""
+
     published_el = entry.find("atom:published", ATOM_NS)
-    pub = "1900-01-01"
-    if published_el is not None and published_el.text:
-        pub = published_el.text.strip()[:10]
-    names = []
-    for a in entry.findall("atom:author", ATOM_NS):
-        ne = a.find("atom:name", ATOM_NS)
-        if ne is not None and ne.text:
-            names.append(ne.text.strip())
-    link_el = None
+    published = (
+        published_el.text.strip()[:10]
+        if published_el is not None and published_el.text
+        else "1900-01-01"
+    )
+
+    names = [
+        name_el.text.strip()
+        for author in entry.findall("atom:author", ATOM_NS)
+        for name_el in [author.find("atom:name", ATOM_NS)]
+        if name_el is not None and name_el.text
+    ]
+
+    href = f"https://arxiv.org/abs/{aid}"
     for link in entry.findall("atom:link", ATOM_NS):
-        if link.get("rel") == "alternate" and link.get("type") == "text/html":
-            link_el = link
+        if link.get("rel") == "alternate" and link.get("type") == "text/html" and link.get("href"):
+            href = link.get("href")
             break
-    if link_el is None:
-        for link in entry.findall("atom:link", ATOM_NS):
-            if link.get("href"):
-                link_el = link
-                break
-    href = link_el.get("href") if link_el is not None else f"https://arxiv.org/abs/{aid}"
+
     return {
         "title": title,
-        "date": pub,
+        "date": published,
         "authors": ", ".join(names),
         "url": href,
         "arxiv_id": aid,
     }
 
 
-def write_md(
+# ----------------------------------------------------------------------------- render
+
+
+def render(
     *,
     date_iso: str,
     slug_suffix: str,
@@ -247,148 +229,155 @@ def write_md(
     venue: str,
     authors: str,
     paperurl: str,
-    citation: str,
-    plang: str = "en",
-) -> None:
-    front = [
-        "---",
-        f"title: '{yaml_sq(title)}'",
-        "collection: publications",
-        "category: preprints",
-        f"lang: {plang}",
-        f"permalink: /publication/{date_iso}-pp-{slug_suffix}",
-        f"date: {date_iso}",
-        f"venue: '{yaml_sq(venue)}'",
+) -> tuple[str, str]:
+    """Return (filename, content). Permalinks are keyed on the source id, not the
+    date, so a metadata correction cannot silently move the page."""
+    fields: list[tuple[str, object]] = [
+        ("title", title),
+        ("collection", "publications"),
+        ("category", "preprints"),
+        ("lang", title_language(title)),
+        ("permalink", f"/publication/pp-{slug_suffix}"),
+        ("redirect_from", [f"/publication/{date_iso}-pp-{slug_suffix}"]),
+        ("date", date_iso),
+        ("venue", venue),
+        ("paperurl", paperurl),
+        ("authors", authors),
+        ("citation", build_citation(authors, date_iso[:4], title, venue)),
     ]
-    if paperurl:
-        front.append(f"paperurl: '{yaml_sq(paperurl)}'")
-    if authors:
-        front.append(f"authors: '{yaml_sq(authors)}'")
-    front.append(f"citation: '{yaml_sq(citation)}'")
-    front.append("---")
-    path = PUB_DIR / f"{date_iso}-pp-{slug_suffix}.md"
-    path.write_text("\n".join(front) + "\n", encoding="utf-8")
+    return f"{date_iso}-pp-{slug_suffix}.md", front_matter(fields)
 
 
-def build_citation(authors: str, year: str, title: str, venue: str) -> str:
-    tq = html_esc(title)
-    v = html_esc(venue)
-    return f'{html_esc(authors)} ({year}). &quot;{tq}&quot; <i>{v}</i>.'
+def carry_forward(slug_suffix: str) -> tuple[str, str] | None:
+    """Reuse the previously generated file for an entry whose lookup just failed."""
+    for path in sorted(PUB_DIR.glob(f"*-pp-{slug_suffix}.md")):
+        return path.name, path.read_text(encoding="utf-8")
+    return None
 
 
-def sync_doi(doi: str) -> None:
-    doi = doi.strip()
-    if not doi or doi.startswith("#"):
-        return
-    if doi.lower().startswith("https://doi.org/"):
-        doi = doi[16:]
-
-    msg = crossref_fetch(doi)
-    if msg is None:
-        aid = arxiv_id_from_doi(doi)
-        if aid:
-            meta = arxiv_fetch(aid)
-            if meta:
-                slug = f"arxiv-{meta['arxiv_id'].replace('.', '-')}"
-                year = meta["date"][:4]
-                cite = build_citation(
-                    meta["authors"],
-                    year,
-                    meta["title"],
-                    "arXiv preprint",
-                )
-                url = meta["url"]
-                if not url.startswith("http"):
-                    url = f"https://arxiv.org/abs/{meta['arxiv_id']}"
-                write_md(
-                    date_iso=meta["date"],
-                    slug_suffix=slug,
-                    title=meta["title"],
-                    venue="arXiv preprint",
-                    authors=meta["authors"] or "—",
-                    paperurl=f"https://doi.org/{doi}" if doi else url,
-                    citation=cite,
-                    plang=title_language(meta["title"]),
-                )
-                return
-        print(f"[preprint] skip DOI (not in Crossref / arXiv): {doi}", file=sys.stderr)
-        return
-
-    title = crossref_title(msg)
-    if not title:
-        print(f"[preprint] skip DOI (no title): {doi}", file=sys.stderr)
-        return
-    date_iso = crossref_date(msg)
-    venue = crossref_venue(msg)
-    authors = crossref_authors(msg) or "—"
-    year = date_iso[:4]
-    purl = crossref_url(msg, doi)
-    cite = build_citation(authors, year, title, venue)
-    slug = re.sub(r"[^a-z0-9]+", "-", doi.lower()).strip("-")[:72]
-    write_md(
-        date_iso=date_iso,
-        slug_suffix=f"doi-{slug}",
-        title=title,
-        venue=venue,
-        authors=authors,
-        paperurl=purl,
-        citation=cite,
-        plang=title_language(title),
-    )
-
-
-def sync_arxiv_id(aid: str) -> None:
-    aid = aid.strip()
-    if not aid or aid.startswith("#"):
-        return
+def resolve_arxiv(aid: str) -> tuple[str, str] | None:
     meta = arxiv_fetch(aid)
     if not meta:
-        print(f"[preprint] skip arXiv id: {aid}", file=sys.stderr)
-        return
-    slug = f"arxiv-{meta['arxiv_id'].replace('.', '-')}"
-    year = meta["date"][:4]
-    cite = build_citation(
-        meta["authors"],
-        year,
-        meta["title"],
-        "arXiv preprint",
-    )
-    write_md(
+        return None
+    return render(
         date_iso=meta["date"],
-        slug_suffix=slug,
+        slug_suffix=f"arxiv-{meta['arxiv_id'].replace('.', '-')}",
         title=meta["title"],
         venue="arXiv preprint",
         authors=meta["authors"] or "—",
         paperurl=meta["url"],
-        citation=cite,
-        plang=title_language(meta["title"]),
     )
+
+
+def resolve_doi(doi: str) -> tuple[str, str] | None:
+    doi = doi.strip()
+    if doi.lower().startswith("https://doi.org/"):
+        doi = doi[len("https://doi.org/"):]
+
+    msg = crossref_fetch(doi)
+    if msg is None:
+        aid = arxiv_id_from_doi(doi)
+        if not aid:
+            return None
+        meta = arxiv_fetch(aid)
+        if not meta:
+            return None
+        return render(
+            date_iso=meta["date"],
+            slug_suffix=f"arxiv-{meta['arxiv_id'].replace('.', '-')}",
+            title=meta["title"],
+            venue="arXiv preprint",
+            authors=meta["authors"] or "—",
+            paperurl=f"https://doi.org/{doi}",
+        )
+
+    title = crossref_title(msg)
+    if not title:
+        return None
+    return render(
+        date_iso=crossref_date(msg),
+        slug_suffix=f"doi-{re.sub(r'[^a-z0-9]+', '-', doi.lower()).strip('-')[:72]}",
+        title=title,
+        venue=crossref_venue(msg),
+        authors=crossref_authors(msg) or "—",
+        paperurl=crossref_url(msg, doi),
+    )
+
+
+def slug_for_source(kind: str, value: str) -> str:
+    if kind == "arxiv":
+        return f"arxiv-{value.strip().replace('arxiv:', '').replace('.', '-')}"
+    doi = value.strip()
+    if doi.lower().startswith("https://doi.org/"):
+        doi = doi[len("https://doi.org/"):]
+    aid = arxiv_id_from_doi(doi)
+    if aid:
+        return f"arxiv-{aid.replace('.', '-')}"
+    return f"doi-{re.sub(r'[^a-z0-9]+', '-', doi.lower()).strip('-')[:72]}"
 
 
 def main() -> int:
     if not DATA_PATH.is_file():
-        remove_generated()
-        print("[preprint] no _data/preprint_sources.json; removed stale *-pp-*.md", file=sys.stderr)
+        log(f"[preprint] no {DATA_PATH.relative_to(REPO_ROOT)}; nothing to do")
         return 0
-    raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    dois = raw.get("dois") or []
-    arxiv_ids = raw.get("arxiv_ids") or []
-    if not isinstance(dois, list):
-        dois = []
-    if not isinstance(arxiv_ids, list):
-        arxiv_ids = []
 
-    remove_generated()
-    for d in dois:
-        sync_doi(str(d))
-    for a in arxiv_ids:
-        sync_arxiv_id(str(a))
+    try:
+        raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        log(f"[preprint] ERROR: {DATA_PATH.name} is not valid JSON: {exc}")
+        return 1
 
-    print(
-        f"[preprint] wrote {len(list(PUB_DIR.glob('*-pp-*.md')))} file(s) from sources",
-        file=sys.stderr,
+    dois = [str(d) for d in (raw.get("dois") or []) if isinstance(raw.get("dois"), list)]
+    arxiv_ids = [
+        str(a) for a in (raw.get("arxiv_ids") or []) if isinstance(raw.get("arxiv_ids"), list)
+    ]
+
+    sources = [("doi", d) for d in dois] + [("arxiv", a) for a in arxiv_ids]
+    sources = [(k, v) for k, v in sources if v.strip() and not v.strip().startswith("#")]
+
+    generated: dict[str, str] = {}
+    failures: list[str] = []
+
+    for kind, value in sources:
+        try:
+            result = resolve_doi(value) if kind == "doi" else resolve_arxiv(value)
+        except Exception as exc:  # network / rate limit / malformed response
+            result = None
+            reason = f"{type(exc).__name__}: {exc}"
+        else:
+            reason = "no record found"
+
+        if result is None:
+            fallback = carry_forward(slug_for_source(kind, value))
+            if fallback:
+                generated[fallback[0]] = fallback[1]
+                failures.append(f"{kind} {value}: {reason} — kept the existing entry")
+            else:
+                failures.append(f"{kind} {value}: {reason} — no existing entry to keep")
+            continue
+
+        generated[result[0]] = result[1]
+
+    for note in failures:
+        log(f"[preprint] WARNING: {note}")
+
+    # An empty sources list legitimately means "no preprints"; allow the clear-out.
+    try:
+        written, deleted, unchanged = apply_generated(
+            pattern="*-pp-*.md",
+            generated=generated,
+            min_expected=0 if not sources else 1,
+            allow_shrink=allow_shrink_from_env() or not sources,
+        )
+    except SyncAbort as exc:
+        log(f"[preprint] ERROR: {exc}")
+        return 1
+
+    log(
+        f"[preprint] {len(generated)} entr(ies) from {len(sources)} source(s): "
+        f"{written} written, {deleted} removed, {unchanged} unchanged"
     )
-    return 0
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":

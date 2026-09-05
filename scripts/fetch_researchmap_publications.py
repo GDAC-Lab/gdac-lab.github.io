@@ -1,52 +1,98 @@
 #!/usr/bin/env python3
-# Fetch published papers from researchmap Web API and write academicpages-compatible
-# Markdown files under _publications/. See https://api.researchmap.jp/ (public read).
-# Profile: https://researchmap.jp/satoshi-nakano
+"""Regenerate _publications/*-rm-*.md from the researchmap Web API.
+
+Usage:  python3 scripts/fetch_researchmap_publications.py [slug]
+
+API: https://api.researchmap.jp/{slug}/published_papers  (public read)
+
+Design notes
+------------
+* Everything is fetched and validated **before** any file is touched. A failed
+  or empty response leaves the existing publication list untouched rather than
+  deleting it (see pubsync_common.apply_generated).
+* Results are paginated until the API stops returning new records, and the
+  count is checked against the reported total. A short read is an error, not a
+  silently truncated list.
+* Permalinks are keyed on the researchmap record id alone. The publication date
+  is metadata that researchmap does edit, and folding it into the URL meant a
+  date correction silently moved the page. `redirect_from` keeps the previous
+  date-based URL working.
+"""
 
 from __future__ import annotations
 
 import json
 import re
 import sys
+import urllib.error
 import urllib.request
 from pathlib import Path
 
-API_ROOT = "https://api.researchmap.jp"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-# Maps researchmap published_paper_type -> _config publication_category key
+from pubsync_common import (  # noqa: E402
+    SyncAbort,
+    allow_shrink_from_env,
+    apply_generated,
+    build_citation,
+    front_matter,
+    log,
+)
+
+API_ROOT = "https://api.researchmap.jp"
+PAGE_SIZE = 100
+MAX_PAGES = 50
+USER_AGENT = "gdac-lab-site/1.0 (https://github.com/gdac-lab/gdac-lab.github.io)"
+
+# researchmap published_paper_type -> _config.yml publication_category key.
+# Unknown types are reported rather than silently filed under "conferences".
 TYPE_TO_CATEGORY = {
     "scientific_journal": "manuscripts",
     "international_journal": "manuscripts",
     "national_journal": "manuscripts",
+    "joint_international_journal": "manuscripts",
+    "joint_national_journal": "manuscripts",
+    "in_book": "books",
+    "book": "books",
+    "book_chapter": "books",
     "international_conference_proceedings": "conferences",
     "national_conference_proceedings": "conferences",
     "international_conference_paper": "conferences",
     "national_conference_paper": "conferences",
     "international_conference": "conferences",
     "national_conference": "conferences",
-    "book": "books",
-    "book_chapter": "books",
+    "symposium": "conferences",
+    "summary_international_conference": "conferences",
+    "summary_national_conference": "conferences",
+    "research_institution": "manuscripts",
+    "technical_report": "manuscripts",
+    "doctoral_thesis": "manuscripts",
+    "master_thesis": "manuscripts",
+    "misc": "manuscripts",
 }
+DEFAULT_CATEGORY = "conferences"
 
 
-def yaml_single_quote(s: str) -> str:
-    """Escape for YAML single-quoted scalars."""
-    return str(s).replace("'", "''")
+def pick_localized(obj: object, prefer: tuple[str, ...] = ("en", "ja")) -> str:
+    if not isinstance(obj, dict):
+        return ""
+    for lang in prefer:
+        value = obj.get(lang)
+        if value:
+            return str(value).strip()
+    for value in obj.values():
+        if value:
+            return str(value).strip()
+    return ""
 
 
-def html_escape_attr(s: str) -> str:
-    return (
-        str(s)
-        .replace("&", "&amp;")
-        .replace('"', "&quot;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-    )
+def record_language(paper_title: object) -> str:
+    """Which language list this record belongs to.
 
-
-def paper_language(paper_title: dict | None) -> str:
-    """Primary record language for display grouping (en if any English title exists)."""
-    if not paper_title or not isinstance(paper_title, dict):
+    A record carrying an English title is shown on the English list; a
+    Japanese-only record is shown on the Japanese list only.
+    """
+    if not isinstance(paper_title, dict):
         return "en"
     if (paper_title.get("en") or "").strip():
         return "en"
@@ -55,168 +101,228 @@ def paper_language(paper_title: dict | None) -> str:
     return "en"
 
 
-def pick_localized(obj: dict | None, prefer: tuple[str, ...] = ("en", "ja")) -> str:
-    if not obj or not isinstance(obj, dict):
-        return ""
-    for lang in prefer:
-        v = obj.get(lang)
-        if v:
-            return str(v).strip()
-    for v in obj.values():
-        if v:
-            return str(v).strip()
-    return ""
-
-
 def format_authors(item: dict) -> str:
-    authors = item.get("authors") or {}
+    authors = item.get("authors")
     if not isinstance(authors, dict):
         return ""
     for lang in ("en", "ja"):
-        lst = authors.get(lang)
-        if isinstance(lst, list) and lst:
-            names = [x.get("name", "").strip() for x in lst if isinstance(x, dict)]
-            return ", ".join(n for n in names if n)
+        entries = authors.get(lang)
+        if isinstance(entries, list) and entries:
+            names = [
+                str(e.get("name", "")).strip()
+                for e in entries
+                if isinstance(e, dict) and str(e.get("name", "")).strip()
+            ]
+            if names:
+                return ", ".join(names)
     return ""
 
 
-def normalize_date(pub_date: str | None, fallback: str | None) -> str:
+def normalize_date(pub_date: object) -> str | None:
+    """researchmap dates arrive as YYYY, YYYY-MM or YYYY-MM-DD. Anything else is unusable.
+
+    Returns None when there is no usable date; callers report that rather than
+    substituting a record's modification timestamp, which is not a publication
+    date and silently mis-sorts the entry.
+    """
     if not pub_date:
-        if fallback:
-            return normalize_date(fallback[:10], None)
-        return "1900-01-01"
-    pub_date = str(pub_date).strip()
-    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", pub_date):
-        return pub_date
-    if re.fullmatch(r"\d{4}-\d{2}", pub_date):
-        return f"{pub_date}-01"
-    if re.fullmatch(r"\d{4}", pub_date):
-        return f"{pub_date}-01-01"
-    return pub_date[:10] if len(pub_date) >= 10 else "1900-01-01"
+        return None
+    text = str(pub_date).strip()
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        return text
+    if re.fullmatch(r"\d{4}-\d{2}", text):
+        return f"{text}-01"
+    if re.fullmatch(r"\d{4}", text):
+        return f"{text}-01-01"
+    m = re.match(r"(\d{4})-(\d{2})-(\d{2})", text)
+    return m.group(0) if m else None
 
 
-def paper_url_from_item(item: dict) -> str:
-    see = item.get("see_also") or []
-    if isinstance(see, list):
-        for entry in see:
-            if not isinstance(entry, dict):
-                continue
-            if entry.get("label") == "doi" and entry.get("@id"):
-                return str(entry["@id"])
-            if entry.get("label") == "url" and entry.get("@id"):
-                return str(entry["@id"])
-    ids = item.get("identifiers") or {}
-    if isinstance(ids, dict):
-        dois = ids.get("doi")
+def paper_url(item: dict) -> str:
+    """Prefer a DOI over a bare URL, wherever each appears in see_also."""
+    see_also = item.get("see_also")
+    if isinstance(see_also, list):
+        for label in ("doi", "url"):
+            for entry in see_also:
+                if isinstance(entry, dict) and entry.get("label") == label and entry.get("@id"):
+                    return str(entry["@id"]).strip()
+    identifiers = item.get("identifiers")
+    if isinstance(identifiers, dict):
+        dois = identifiers.get("doi")
         if isinstance(dois, list) and dois:
-            return f"https://doi.org/{dois[0]}"
+            doi = str(dois[0]).strip()
+            return doi if doi.startswith("http") else f"https://doi.org/{doi}"
     return ""
 
 
 def venue_line(item: dict) -> str:
-    pub_name = pick_localized(item.get("publication_name"))
-    publisher = pick_localized(item.get("publisher"))
-    vol = item.get("volume")
-    sp, ep = item.get("starting_page"), item.get("ending_page")
-    bits = []
-    if pub_name:
-        bits.append(pub_name)
-    elif publisher:
-        bits.append(publisher)
-    if vol:
-        bits.append(f"vol. {vol}")
-    if sp and ep:
-        bits.append(f"pp. {sp}–{ep}")
-    elif sp:
-        bits.append(f"p. {sp}")
-    return ". ".join(bits) if bits else publisher or pub_name or "Unknown venue"
+    name = pick_localized(item.get("publication_name")) or pick_localized(item.get("publisher"))
+    bits = [name] if name else []
+    volume = item.get("volume")
+    if volume:
+        bits.append(f"vol. {volume}")
+    start, end = item.get("starting_page"), item.get("ending_page")
+    if start and end:
+        bits.append(f"pp. {start}–{end}")
+    elif start:
+        bits.append(f"p. {start}")
+    return ". ".join(bits) if bits else "Unknown venue"
 
 
-def build_citation(item: dict, title: str, authors: str, venue: str, year: str) -> str:
-    tq = html_escape_attr(title)
-    v = html_escape_attr(venue)
-    cite = f'{html_escape_attr(authors)} ({year}). &quot;{tq}&quot; <i>{v}</i>.'
-    return cite
-
-
-def category_for(item: dict) -> str:
-    t = item.get("published_paper_type") or ""
-    if t in TYPE_TO_CATEGORY:
-        return TYPE_TO_CATEGORY[t]
-    if item.get("referee") and not item.get("publisher"):
-        return "manuscripts"
-    return "conferences"
+def category_for(item: dict, unknown_types: set[str]) -> str:
+    paper_type = str(item.get("published_paper_type") or "").strip()
+    if paper_type in TYPE_TO_CATEGORY:
+        return TYPE_TO_CATEGORY[paper_type]
+    if paper_type:
+        unknown_types.add(paper_type)
+    return DEFAULT_CATEGORY
 
 
 def fetch_items(slug: str) -> list[dict]:
-    url = f"{API_ROOT}/{slug}/published_papers?limit=200&start=1"
-    req = urllib.request.Request(url, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        data = json.load(resp)
-    items = data.get("items") or []
-    if not isinstance(items, list):
-        return []
-    return items
+    """Page through published_papers until every record has been retrieved."""
+    collected: list[dict] = []
+    seen_ids: set[str] = set()
+    total_reported: int | None = None
+
+    for page in range(MAX_PAGES):
+        start = page * PAGE_SIZE + 1
+        url = f"{API_ROOT}/{slug}/published_papers?limit={PAGE_SIZE}&start={start}"
+        req = urllib.request.Request(
+            url, headers={"Accept": "application/json", "User-Agent": USER_AGENT}
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                payload = json.load(resp)
+        except urllib.error.HTTPError as exc:
+            raise SyncAbort(f"researchmap API returned HTTP {exc.code} for {url}") from exc
+        except urllib.error.URLError as exc:
+            raise SyncAbort(f"researchmap API unreachable ({exc.reason}) for {url}") from exc
+        except json.JSONDecodeError as exc:
+            raise SyncAbort(f"researchmap API returned non-JSON for {url}: {exc}") from exc
+
+        if not isinstance(payload, dict):
+            raise SyncAbort(f"researchmap API returned {type(payload).__name__}, expected object")
+
+        if total_reported is None:
+            for key in ("totalResults", "total_results", "rm:totalResults"):
+                if isinstance(payload.get(key), int):
+                    total_reported = payload[key]
+                    break
+
+        items = payload.get("items")
+        if items is None:
+            raise SyncAbort(f"researchmap response has no 'items' key (keys: {sorted(payload)})")
+        if not isinstance(items, list):
+            raise SyncAbort(f"researchmap 'items' is {type(items).__name__}, expected list")
+        if not items:
+            break
+
+        new_on_page = 0
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            rm_id = str(item.get("rm:id") or "").strip()
+            if not rm_id or rm_id in seen_ids:
+                continue
+            seen_ids.add(rm_id)
+            collected.append(item)
+            new_on_page += 1
+
+        if new_on_page == 0 or len(items) < PAGE_SIZE:
+            break
+    else:
+        raise SyncAbort(f"pagination did not terminate after {MAX_PAGES} pages")
+
+    if total_reported is not None and len(collected) < total_reported:
+        raise SyncAbort(
+            f"short read: got {len(collected)} record(s) but the API reports "
+            f"{total_reported}. Refusing to publish a truncated list."
+        )
+
+    log(f"[researchmap] fetched {len(collected)} record(s)"
+        + (f" (API total: {total_reported})" if total_reported is not None else ""))
+    return collected
 
 
-def write_publication(repo_root: Path, item: dict, slug: str) -> None:
+def render(item: dict, unknown_types: set[str], skipped: list[str]) -> tuple[str, str] | None:
     rm_id = str(item.get("rm:id") or "").strip()
     if not rm_id:
-        return
+        skipped.append("record without rm:id")
+        return None
 
     title = pick_localized(item.get("paper_title"))
     if not title:
-        return
-    plang = paper_language(item.get("paper_title"))
+        skipped.append(f"rm:{rm_id} has no title")
+        return None
+
+    date_iso = normalize_date(item.get("publication_date"))
+    if date_iso is None:
+        skipped.append(f"rm:{rm_id} ({title[:40]}) has no usable publication_date")
+        return None
 
     authors = format_authors(item)
-    pub_raw = item.get("publication_date")
-    fallback = item.get("rm:modified") or item.get("rm:created")
-    date_iso = normalize_date(pub_raw, fallback)
     venue = venue_line(item)
     year = date_iso[:4]
-    purl = paper_url_from_item(item)
-    category = category_for(item)
+    citation = build_citation(authors or "Satoshi Nakano", year, title, venue)
 
-    permalink = f"/publication/{date_iso}-rm-{rm_id}"
-    cite = build_citation(item, title, authors or "Satoshi Nakano", venue, year)
-
-    front = [
-        "---",
-        f"title: '{yaml_single_quote(title)}'",
-        "collection: publications",
-        f"category: {category}",
-        f"lang: {plang}",
-        f"permalink: {permalink}",
-        f"date: {date_iso}",
+    fields: list[tuple[str, object]] = [
+        ("title", title),
+        ("collection", "publications"),
+        ("category", category_for(item, unknown_types)),
+        ("lang", record_language(item.get("paper_title"))),
+        ("permalink", f"/publication/rm-{rm_id}"),
+        # Keeps the previous date-based URL working after the permalink change.
+        ("redirect_from", [f"/publication/{date_iso}-rm-{rm_id}"]),
+        ("date", date_iso),
+        ("venue", venue),
+        ("paperurl", paper_url(item)),
+        ("authors", authors),
+        ("citation", citation),
     ]
-    if venue:
-        front.append(f"venue: '{yaml_single_quote(venue)}'")
-    if purl:
-        front.append(f"paperurl: '{yaml_single_quote(purl)}'")
-    if authors:
-        front.append(f"authors: '{yaml_single_quote(authors)}'")
-    front.append(f"citation: '{yaml_single_quote(cite)}'")
-    front.extend(["---", ""])
-
-    out = repo_root / "_publications" / f"{date_iso}-rm-{rm_id}.md"
-    out.write_text("\n".join(front) + "\n", encoding="utf-8")
-
-
-def remove_generated(repo_root: Path) -> None:
-    pub = repo_root / "_publications"
-    for p in pub.glob("*-rm-*.md"):
-        p.unlink()
+    return f"{date_iso}-rm-{rm_id}.md", front_matter(fields)
 
 
 def main() -> int:
     slug = sys.argv[1] if len(sys.argv) > 1 else "satoshi-nakano"
-    repo_root = Path(__file__).resolve().parent.parent
-    items = fetch_items(slug)
-    remove_generated(repo_root)
+    try:
+        items = fetch_items(slug)
+    except SyncAbort as exc:
+        log(f"[researchmap] ERROR: {exc}")
+        return 1
+
+    unknown_types: set[str] = set()
+    skipped: list[str] = []
+    generated: dict[str, str] = {}
     for item in items:
-        write_publication(repo_root, item, slug)
-    print(f"Wrote {len(items)} publication(s) from researchmap/{slug}", file=sys.stderr)
+        rendered = render(item, unknown_types, skipped)
+        if rendered:
+            name, content = rendered
+            generated[name] = content
+
+    for note in skipped:
+        log(f"[researchmap] skipped: {note}")
+    if unknown_types:
+        log(
+            "[researchmap] WARNING: unmapped published_paper_type(s) filed under "
+            f"'{DEFAULT_CATEGORY}': {', '.join(sorted(unknown_types))}. "
+            "Add them to TYPE_TO_CATEGORY."
+        )
+
+    try:
+        written, deleted, unchanged = apply_generated(
+            pattern="*-rm-*.md",
+            generated=generated,
+            min_expected=1,
+            allow_shrink=allow_shrink_from_env(),
+        )
+    except SyncAbort as exc:
+        log(f"[researchmap] ERROR: {exc}")
+        return 1
+
+    log(
+        f"[researchmap] {len(generated)} record(s) from researchmap/{slug}: "
+        f"{written} written, {deleted} removed, {unchanged} unchanged"
+    )
     return 0
 
 

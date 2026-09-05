@@ -1,11 +1,18 @@
-# Refresh _publications from researchmap and push to master if changed.
+# Refresh _publications from researchmap and preprint sources, push to master if changed.
 # Pushes trigger deploy.yml (Jekyll → plesk-deploy).
+#
+# Note on the schedule: GitHub disables a scheduled workflow after 60 days without
+# repository activity, and that is exactly what happened here — the sync went
+# `disabled_inactivity` on 2026-07-06 and stopped running for two months without
+# any failure notice. The heartbeat step below commits a timestamp whenever the
+# repository has been quiet for a month, so the 60-day timer cannot run out.
+# If it is ever disabled again, re-enable it under Actions → this workflow → Enable.
 
 name: Researchmap publication sync
 
 on:
   schedule:
-    # Weekly: Monday 00:00 UTC (09:00 JST). Edit cron if you prefer another slot.
+    # Weekly: Monday 00:00 UTC (09:00 JST).
     - cron: "0 0 * * 1"
   workflow_dispatch:
 
@@ -22,22 +29,54 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Test sync scripts
+        run: python3 scripts/test_pubsync.py
+
       - name: Fetch publications from researchmap
+        id: researchmap
         run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
 
+      # Preprint lookups hit arXiv/Crossref rate limits from shared CI IPs. A failure
+      # here must not discard an already-successful researchmap sync (it did on
+      # 2026-06-22 and 06-29), so record the outcome and fail the job at the end.
       - name: Sync preprints (DOI / arXiv)
+        id: preprints
+        continue-on-error: true
         run: python3 scripts/sync_preprints_from_sources.py
         env:
           CROSSREF_CONTACT_EMAIL: ${{ vars.CROSSREF_CONTACT_EMAIL }}
 
+      - name: Heartbeat when the repository has been quiet
+        run: |
+          last=$(git log -1 --format=%ct)
+          age_days=$(( ( $(date +%s) - last ) / 86400 ))
+          echo "Last commit was ${age_days} day(s) ago."
+          if [ "$age_days" -ge 30 ]; then
+            mkdir -p _data
+            printf '{\n  "last_sync_utc": "%s"\n}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              > _data/publication_sync.json
+            echo "Wrote heartbeat to keep the schedule from being auto-disabled."
+          fi
+
+      # -A stages deletions. The old `git add _publications/*-rm-*.md` matched only
+      # files still present, so a paper removed from researchmap — or renamed by a
+      # date correction — was never staged and lingered on the site as a duplicate.
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _publications/*-rm-*.md _publications/*-pp-*.md
+          git add -A _publications _data
           if git diff --staged --quiet; then
             echo "No publication file changes."
             exit 0
           fi
+          git diff --staged --name-status
           git commit -m "chore: sync publications (researchmap + preprints)"
           git push origin HEAD:master
+
+      - name: Report preprint sync failure
+        if: steps.preprints.outcome == 'failure'
+        run: |
+          echo "::error::Preprint sync reported failures (see the step log above)."
+          echo "Publications from researchmap were still committed."
+          exit 1

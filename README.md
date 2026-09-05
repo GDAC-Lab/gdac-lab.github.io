@@ -37,11 +37,38 @@ Home page composition is `_pages/about.md` (EN) / `_pages/ja/index.md` (JA), whi
   `_data/preprint_sources.json`; writes `*-pp-*.md`.
 
 To add a preprint, add its ID to `_data/preprint_sources.json` — not a file in `_publications/`.
+A one-off preprint that needs no lookup can be a normal `.md` with `category: preprints`, as long
+as its filename contains no `-pp-`; the scripts only own the `-rm-` and `-pp-` files.
 
 `.github/workflows/researchmap-sync.yml` runs both weekly (Mondays 00:00 UTC) and on demand,
-committing any changes to `master`.
+committing any changes to `master`. `scripts/test_pubsync.py` runs first and covers the sync
+logic offline — run it locally after touching either script.
 
 `publication_list_last_n_years:` in `_config.yml` limits the index to the last N years (0 = all).
+
+### How the sync protects the list
+
+* Nothing is deleted until a complete, validated result is in hand. An empty or malformed API
+  response aborts with a non-zero exit and leaves `_publications/` untouched — previously it
+  deleted every entry. A result that would shrink the list by more than half is also refused;
+  set `SYNC_ALLOW_SHRINK=1` when a large removal is genuinely intended.
+* researchmap is paged through to the end and the count is checked against the API's reported
+  total, so a truncated read cannot quietly publish a partial list.
+* A failed preprint lookup (arXiv rate limiting is the usual cause) keeps the previously
+  generated entry rather than dropping it, and does not discard the researchmap results.
+* Permalinks are keyed on the record id (`/publication/rm-<id>`, `/publication/pp-<id>`), not on
+  the publication date, because researchmap does edit dates. `redirect_from` keeps the old
+  date-based URLs working.
+* An unmapped researchmap `published_paper_type` is reported in the log instead of being filed
+  silently under Conference Papers. Add new types to `TYPE_TO_CATEGORY`.
+
+### If publications stop updating
+
+Check **Actions → Researchmap publication sync** first. GitHub disables a scheduled workflow
+after 60 days without repository activity, with no failure notice — this is what stopped the sync
+between 2026-07-06 and 2026-09-05. If the workflow shows as disabled, press **Enable workflow**.
+The heartbeat step in the workflow now commits a timestamp whenever the repository has been quiet
+for a month, so the 60-day timer should not run out again.
 
 ## Deployment
 
