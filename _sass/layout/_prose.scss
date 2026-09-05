@@ -152,6 +152,29 @@
     margin: 2.75rem 0;
   }
 
+  /* --- figures (video or image with a caption) --------------------------- */
+  > .media-figure {
+    margin: 1.75rem 0 2rem;
+    max-width: $prose-measure;
+
+    video,
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--global-border-color);
+      border-radius: $border-radius;
+      background: var(--global-callout-bg, var(--global-thead-color));
+    }
+
+    figcaption {
+      margin: 0.6rem 0 0;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: var(--global-text-color-light);
+    }
+  }
+
   @include breakpoint(max-width 600px) {
     > h2 {
       margin-top: 2.5rem;

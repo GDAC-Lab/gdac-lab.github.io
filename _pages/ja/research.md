@@ -87,6 +87,14 @@ Liquid コメントなので，このブロックは公開 HTML には一切出�
 
 そこで本研究室では，**車輪を備えたドローン**を対象としています。壁面や天井に機体を押し付けて車輪で走行し，必要に応じて飛行へ移行する機体です。
 
+<figure class="media-figure">
+  <video poster="{{ base_path }}/images/research/wall-demo-poster.jpg" width="960" height="360" autoplay muted loop playsinline controls preload="metadata" aria-label="車輪付きドローンが壁面へ接近し，接触して登り，保持し，降下するシミュレーション">
+    <source src="{{ base_path }}/images/research/wall-demo.mp4" type="video/mp4">
+    <source src="{{ base_path }}/images/research/wall-demo.webm" type="video/webm">
+  </video>
+  <figcaption>研究室で開発・公開しているシミュレータによる壁面走行の例。左は斜め上から，右は真横から見た同じ動きで，接近・接触・登坂・保持・降下の順に進みます。緑の球が目標位置，車輪と壁の間の矢印が接触力です。ブラウザ上で操作できる版は<a href="{{ base_path }}/ja/simulator/">シミュレータ</a>のページにあります。</figcaption>
+</figure>
+
 この機体は，制御の観点から次のような難しさを伴います。
 
 - 車輪は横方向に滑らないため，運動できる方向が制限されます（**非ホロノミック拘束**と呼びます）
