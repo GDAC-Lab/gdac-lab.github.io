@@ -109,19 +109,7 @@
 <link rel="icon" href="/images/favicon.ico"/>
 <meta name="theme-color" content="#ffffff"/>
 
-<!-- Language switcher responsive icons -->
-<style>
-  /* Hide emoji on desktop */
-  .lang-icon-mobile { display: none; }
-  
-  /* Show emoji on mobile */
-  @media (max-width: 768px) {
-    .lang-icon-mobile { 
-      display: inline; 
-      font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
-    }
-  }
-</style>
+<!-- Language switcher icon styles live in _sass/layout/_masthead.scss -->
 
 <!-- end custom head snippets -->
 
@@ -166,8 +154,7 @@
             
             
             <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/access/">Access</a></li>
-          
-          <li class="masthead__menu-item persist"><span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span style="display: inline; margin: 0 0.5rem;">|</span><a href="/ja/people/" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a></li>
+          <li class="masthead__menu-item persist"><span class="masthead__lang-current"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span class="masthead__lang-sep">|</span><a href="https://gdaclab.web.nitech.ac.jp/ja/people/" class="masthead__lang-link"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a></li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
           </li>

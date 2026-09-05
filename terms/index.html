@@ -109,19 +109,7 @@
 <link rel="icon" href="/images/favicon.ico"/>
 <meta name="theme-color" content="#ffffff"/>
 
-<!-- Language switcher responsive icons -->
-<style>
-  /* Hide emoji on desktop */
-  .lang-icon-mobile { display: none; }
-  
-  /* Show emoji on mobile */
-  @media (max-width: 768px) {
-    .lang-icon-mobile { 
-      display: inline; 
-      font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
-    }
-  }
-</style>
+<!-- Language switcher icon styles live in _sass/layout/_masthead.scss -->
 
 <!-- end custom head snippets -->
 
@@ -166,8 +154,7 @@
             
             
             <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/access/">Access</a></li>
-          
-          <li class="masthead__menu-item persist"><span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span style="display: inline; margin: 0 0.5rem;">|</span><a href="/ja/" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a></li>
+          <li class="masthead__menu-item persist"><span class="masthead__lang-current"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span class="masthead__lang-sep">|</span><a href="https://gdaclab.web.nitech.ac.jp/ja/terms/" class="masthead__lang-link"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a></li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
           </li>
@@ -294,7 +281,7 @@
     <meta itemprop="headline" content="Terms and Privacy Policy">
     
     
-    <meta itemprop="dateModified" content="June 06, 2016">
+    <meta itemprop="dateModified" content="September 05, 2026">
 
     <div class="page__inner-wrap">
       
@@ -304,7 +291,7 @@
           
           
         
-          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2016-06-06">June 06, 2016</time></p>
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2026-09-05">September 05, 2026</time></p>
         
         
             
@@ -317,51 +304,111 @@
 <nav class="toc">
     <header><h4 class="nav__title"><i class="fa fa-file-text"></i> On This Page</h4></header>
 <ul class="toc__menu" id="markdown-toc">
-  <li><a href="#privacy-policy" id="markdown-toc-privacy-policy">Privacy Policy</a>    <ul>
-      <li><a href="#log-files" id="markdown-toc-log-files">Log Files</a></li>
-      <li><a href="#cookies-and-web-beacons" id="markdown-toc-cookies-and-web-beacons">Cookies and Web Beacons</a>        <ul>
-          <li><a href="#google-analytics" id="markdown-toc-google-analytics">Google Analytics</a></li>
-        </ul>
-      </li>
+  <li><a href="#privacy" id="markdown-toc-privacy">Privacy</a>    <ul>
+      <li><a href="#what-this-site-does-not-do" id="markdown-toc-what-this-site-does-not-do">What this site does not do</a></li>
+      <li><a href="#theme-preference" id="markdown-toc-theme-preference">Theme preference</a></li>
+      <li><a href="#server-logs" id="markdown-toc-server-logs">Server logs</a></li>
+      <li><a href="#links-and-share-buttons-to-other-services" id="markdown-toc-links-and-share-buttons-to-other-services">Links and share buttons to other services</a></li>
     </ul>
   </li>
+  <li><a href="#terms-of-use" id="markdown-toc-terms-of-use">Terms of use</a>    <ul>
+      <li><a href="#site-content" id="markdown-toc-site-content">Site content</a></li>
+      <li><a href="#publications" id="markdown-toc-publications">Publications</a></li>
+      <li><a href="#accuracy" id="markdown-toc-accuracy">Accuracy</a></li>
+      <li><a href="#website-software" id="markdown-toc-website-software">Website software</a></li>
+    </ul>
+  </li>
+  <li><a href="#contact" id="markdown-toc-contact">Contact</a></li>
 </ul>
 
   </nav>
 </aside>
 
-<h2 id="privacy-policy">Privacy Policy</h2>
+<p>This page describes how this website handles visitor information, and the terms under
+which its content may be used. It covers this site only
+(<a href="https://gdaclab.web.nitech.ac.jp">https://gdaclab.web.nitech.ac.jp</a>), not Nagoya Institute of Technology as a whole and
+not the external services linked from these pages.</p>
 
-<p>The privacy of my visitors is extremely important. This Privacy Policy outlines the types of personal information that is received and collected and how it is used.</p>
+<h2 id="privacy">Privacy</h2>
 
-<p>First and foremost, I will never share your email address or any other personal information to anyone without your direct consent.</p>
+<h3 id="what-this-site-does-not-do">What this site does not do</h3>
 
-<h3 id="log-files">Log Files</h3>
+<p>This is a static website. It has no accounts, no comment form, and no contact form, and
+it collects nothing from you directly.</p>
 
-<p>Like many other websites, this site uses log files to help learn about when, from where, and how often traffic flows to this site. The information in these log files include:</p>
+<p>Specifically, this site does <strong>not</strong>:</p>
 
 <ul>
-  <li>Internet Protocol addresses (IP)</li>
-  <li>Types of browser</li>
-  <li>Internet Service Provider (ISP)</li>
-  <li>Date and time stamp</li>
-  <li>Referring and exit pages</li>
-  <li>Number of clicks</li>
+  <li>use Google Analytics or any other analytics or tracking service;</li>
+  <li>show advertising, or embed third-party ad or tracking scripts;</li>
+  <li>set any cookies;</li>
+  <li>host a comment system.</li>
 </ul>
 
-<p>All of this information is not linked to anything that is personally identifiable.</p>
+<p>Pages load their fonts, stylesheets, scripts and images from this site itself, so simply
+reading a page does not send a request to any other company’s server. Pages that display
+mathematics or generated diagrams are the one exception: those load a rendering library
+from a public CDN, and only on the pages that actually use one.</p>
 
-<h3 id="cookies-and-web-beacons">Cookies and Web Beacons</h3>
+<h3 id="theme-preference">Theme preference</h3>
 
-<p>When you visit this site &#8220;convenience&#8221; cookies are stored on your computer when you submit a comment to help you log in faster to <a href="http://disqus.com">Disqus</a> the next time you leave a comment.</p>
+<p>If you switch the site between light and dark appearance, that choice is saved in your
+own browser using <code class="language-plaintext highlighter-rouge">localStorage</code>. It stays on your device, is readable only by this site,
+and is never transmitted anywhere. Clearing your browser’s site data removes it.</p>
 
-<p>Third-party advertisers may also place and read cookies on your browser and/or use web beacons to collect information. This site has no access or control over these cookies. You should review the respective privacy policies on any and all third-party ad servers for more information regarding their practices and how to opt-out.</p>
+<h3 id="server-logs">Server logs</h3>
 
-<p>If you wish to disable cookies, you may do so through your web browser options. Instructions for doing so can be found on the specific web browsers&#8217; websites.</p>
+<p>This site is served from a web server operated by Nagoya Institute of Technology. As is
+normal for any web server, it may record standard access information such as IP address,
+date and time, requested page, referring page and browser identification. That data is
+handled by the university under its own policies; please refer to Nagoya Institute of
+Technology for details of its handling and retention.</p>
 
-<h4 id="google-analytics">Google Analytics</h4>
+<h3 id="links-and-share-buttons-to-other-services">Links and share buttons to other services</h3>
 
-<p>Google Analytics is a web analytics tool I use to help understand how visitors engage with this website. It reports website trends using cookies and web beacons without identifying individual visitors. You can read <a href="http://www.google.com/analytics/learn/privacy.html">Google Analytics Privacy Policy</a>.</p>
+<p>Pages link out to services such as researchmap, Google Scholar, publisher and DOI pages,
+arXiv, GitHub and the lab’s external photo album. Publication pages also carry share
+buttons for external social platforms. These are ordinary links: nothing is sent to those
+services unless you choose to follow or use them. Once you do, that service’s own privacy
+policy applies, not this one.</p>
+
+<h2 id="terms-of-use">Terms of use</h2>
+
+<h3 id="site-content">Site content</h3>
+
+<p>Text and images published here describing the laboratory, its research and its members
+may be quoted or cited for non-commercial academic and educational purposes with
+attribution to the GDAC Lab, Nagoya Institute of Technology. Please ask before reusing
+photographs of lab members, and before any commercial use.</p>
+
+<h3 id="publications">Publications</h3>
+
+<p>Publication entries on this site are bibliographic records, compiled automatically from
+researchmap and from Crossref and arXiv metadata. The papers themselves remain under the
+copyright of their publishers and authors; follow the DOI or arXiv link on each entry for
+the authoritative version and its licence terms. Records here may lag behind, or differ
+in detail from, the publisher’s own listing.</p>
+
+<h3 id="accuracy">Accuracy</h3>
+
+<p>Pages are maintained on a best-effort basis and parts of the site are still being written.
+Nothing here should be treated as an official statement of Nagoya Institute of Technology.
+For formal matters — admissions, procedures and official dates — follow the university’s
+own announcements.</p>
+
+<h3 id="website-software">Website software</h3>
+
+<p>The site is built with <a href="https://jekyllrb.com">Jekyll</a> from a fork of the
+<a href="https://github.com/academicpages/academicpages.github.io">Academic Pages</a> template, in
+turn a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/">Minimal Mistakes</a>
+(© 2016 Michael Rose). That template code is used under the MIT License and remains under
+its own copyright; the licence text ships with the site’s source repository.</p>
+
+<h2 id="contact">Contact</h2>
+
+<p>For questions about this page, or to request correction or removal of something published
+here, please contact the lab using the address shown on the
+<a href="https://gdaclab.web.nitech.ac.jp/people/">People</a> page.</p>
 
 
         
