@@ -6,6 +6,9 @@
 #   link: optional URL (external or on this site)
 #   link_label_en, link_label_ja: optional; default "Read more" / 「詳細」
 items:
+  - date: "2026-09-03"
+    body_en: "Keisuke gave a talk at RSJ2026."
+    body_ja: "佐野君が RSJ2026 で発表しました。"
   - date: "2026-04-24"
     body_en: "Yuki's paper has been accepted to ASCC!"
     body_ja: "堂高君の論文が ASCC にアクセプトされました！"
