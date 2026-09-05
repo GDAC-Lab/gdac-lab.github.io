@@ -1,0 +1,38 @@
+# One-off helper: copy the photos from the lab's own Blogger album into the
+# branch named below, with a manifest, so they can be picked over and moved
+# into images/. Run it from Actions → "Fetch blog photos" → Run workflow.
+name: Fetch blog photos
+
+on:
+  workflow_dispatch:
+    inputs:
+      size:
+        description: "Longest side in pixels to request from Blogger"
+        default: "1200"
+      branch:
+        description: "Branch that receives the photos (force-pushed)"
+        default: "blog-photos-inbox"
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Pillow
+        run: python3 -m pip install --quiet pillow
+
+      - name: Download the album
+        run: python3 scripts/fetch_blog_photos.py --out blog-photos --size "${{ inputs.size }}"
+
+      - name: Push to the inbox branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan "${{ inputs.branch }}"
+          git rm -rfq --cached .
+          git add -f blog-photos
+          git commit -qm "Photos from the lab blog"
+          git push -f origin "${{ inputs.branch }}"
