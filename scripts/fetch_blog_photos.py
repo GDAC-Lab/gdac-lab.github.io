@@ -96,7 +96,7 @@ def main() -> int:
         caps = captions_by_image(content)
         # The post text, in reading order with the images marked, so a photo can
         # be matched to the sentence that introduces it.
-        marked = re.sub(r'<img[^>]+src="([^"]+)"[^>]*>', lambda m: f" [IMG {html.unescape(m.group(1))[-24:]}] ", content, flags=re.I)
+        marked = re.sub(r'<img[^>]+src="([^"]+)"[^>]*>', lambda m: f" [IMG {html.unescape(m.group(1))}] ", content, flags=re.I)
         marked = re.sub(r"<(br|/p|/div|/tr|/li|/h\d)[^>]*>", "\n", marked, flags=re.I)
         text = html.unescape(re.sub(r"<[^>]+>", "", marked))
         text = re.sub(r"[ \t\u3000]+", " ", text)
@@ -105,9 +105,9 @@ def main() -> int:
         srcs = []
         for m in re.finditer(r'<img[^>]+src="([^"]+)"', content, flags=re.I):
             s = html.unescape(m.group(1))
-            # Blogger serves images from several Google hosts (blogger.googleusercontent.com,
-            # lh3.googleusercontent.com, N.bp.blogspot.com); take any of them.
-            if ("googleusercontent.com" in s or "blogspot.com" in s) and s not in srcs:
+            # Blogger serves images from several hosts depending on how they were
+            # uploaded; take every http(s) image the post shows.
+            if s.startswith("http") and s not in srcs:
                 srcs.append(s)
         for ii, s in enumerate(srcs, 1):
             name = f"p{pi:02d}-{ii:02d}.jpg"
