@@ -1,0 +1,30 @@
+# Apache configuration for the published site.
+#
+# Jekyll copies this file into _site (see the `include:` list in _config.yml),
+# so it ships with the deployed output. It only matters where Apache actually
+# reads .htaccess; under an nginx-only server it is ignored harmlessly, and the
+# equivalent settings have to be made in the server configuration instead.
+#
+# It exists for one reason: the simulator demo ships a 9.7 MB WebAssembly
+# module. Served with the right type and compression that is about 2.4 MB over
+# the wire; served without them it is the full 9.7 MB, and browsers fall back to
+# a slower non-streaming compile.
+
+<IfModule mod_mime.c>
+  AddType application/wasm .wasm
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/wasm
+  AddOutputFilterByType DEFLATE application/javascript text/javascript
+  AddOutputFilterByType DEFLATE text/css text/html text/xml application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml application/json
+</IfModule>
+
+<IfModule mod_headers.c>
+  # The engine and the vendored libraries are versioned by content, never edited
+  # in place, so they can be cached hard. Everything else keeps the default.
+  <FilesMatch "\.(wasm)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>

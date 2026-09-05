@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788623997">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788626374">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788623997"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788626374"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -154,12 +154,17 @@
             
             
             
-            <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/simulator/">シミュレータ</a></li>
           
             
             
             
             <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/access/">アクセス</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
           <li class="masthead__menu-item persist"><a href="https://gdaclab.web.nitech.ac.jp/terms/" class="masthead__lang-link"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</span></li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
@@ -322,6 +327,7 @@
       <li><a href="#論文情報" id="markdown-toc-論文情報">論文情報</a></li>
       <li><a href="#記載内容について" id="markdown-toc-記載内容について">記載内容について</a></li>
       <li><a href="#使用ソフトウェア" id="markdown-toc-使用ソフトウェア">使用ソフトウェア</a></li>
+      <li><a href="#シミュレータのデモの動作について" id="markdown-toc-シミュレータのデモの動作について">シミュレータのデモの動作について</a></li>
     </ul>
   </li>
   <li><a href="#お問い合わせ" id="markdown-toc-お問い合わせ">お問い合わせ</a></li>
@@ -379,6 +385,14 @@
 <h3 id="使用ソフトウェア">使用ソフトウェア</h3>
 
 <p>本サイトは <a href="https://jekyllrb.com">Jekyll</a> で構築しており、<a href="https://github.com/academicpages/academicpages.github.io">Academic Pages</a> テンプレート（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/">Minimal Mistakes</a>（© 2016 Michael Rose）のフォーク）をフォークしたものです。テンプレートのコードは MIT License のもとで使用しており、著作権は原著作者に帰属します。ライセンス全文はソースリポジトリに同梱しています。</p>
+
+<p><a href="https://gdaclab.web.nitech.ac.jp/ja/simulator/">シミュレータ</a>のページでは、これに加えて <a href="https://mujoco.org/">MuJoCo</a>（© Google DeepMind、Apache License 2.0）の WebAssembly ビルドと <a href="https://threejs.org/">three.js</a>（MIT License）を使用しています。いずれも外部のサーバーではなく本サイト内から配信しており、ライセンス全文も同梱しています。</p>
+
+<h3 id="シミュレータのデモの動作について">シミュレータのデモの動作について</h3>
+
+<p>シミュレータのページのデモは、物理計算をご覧になっているブラウザの中で実行します。そのため、ページを初めて開いたときに数 MB のプログラムを転送し、動作中は端末のプロセッサとグラフィックス機能を使用します。ノートパソコンやスマートフォンでは、通常のページより電力を消費します。</p>
+
+<p>計算結果・操作内容・端末の情報は、いずれも送信していません。ブラウザの外へは何も出ません。ページが表示されていない間はデモが自動的に停止し、一時停止の操作をすれば計算そのものが止まります。</p>
 
 <h2 id="お問い合わせ">お問い合わせ</h2>
 
@@ -455,7 +469,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788623997"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788626374"></script>
 
 
 

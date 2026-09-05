@@ -1,0 +1,455 @@
+
+
+<!doctype html><html lang="ja" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>シミュレータ - GDAC Lab</title>
+
+
+
+<meta name="description" content="Geometric Dynamics, Autonomy, and Control Laboratory">
+
+
+
+
+
+
+
+  <link rel="canonical" href="https://gdaclab.web.nitech.ac.jp/ja/simulator/">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "GDAC Lab",
+      "url" : "https://gdaclab.web.nitech.ac.jp",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+<!-- Open Graph protocol data (https://ogp.me/), used by social media -->
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="GDAC Lab"> 
+<meta property="og:title" content="シミュレータ">
+
+
+
+  <meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/ja/simulator/">
+
+
+
+
+
+<!-- end Open Graph protocol -->
+
+<link href="https://gdaclab.web.nitech.ac.jp/feed.xml" type="application/atom+xml" rel="alternate" title="GDAC Lab Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
+     different builds, or markup gets styled by rules that no longer exist. -->
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788626374">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<!-- Support for Academicons -->
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788626374"/>
+
+<!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
+<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg"/>
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32"/>
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192"/>
+<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json"/>
+<link rel="icon" href="/images/favicon.ico"/>
+<meta name="theme-color" content="#ffffff"/>
+
+<!-- Language switcher icon styles live in _sass/layout/_masthead.scss -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="https://gdaclab.web.nitech.ac.jp/ja/">GDAC Lab</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/publications/">論文</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究テーマ</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/people/">メンバー</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/facilities/">実験装置</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/simulator/">シミュレータ</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/access/">アクセス</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
+          <li class="masthead__menu-item persist"><a href="https://gdaclab.web.nitech.ac.jp/simulator/" class="masthead__lang-link"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</span></li>
+          <li id="theme-toggle" class="masthead__menu-item persist tail">
+            <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
+          </li>
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg" class="author__avatar" alt="仲野研究室のメンバー集合写真" fetchpriority="high" />
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">仲野研究室</h3>
+    
+    
+      <p class="author__bio">制御理論について研究しています。</p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      <!-- Font Awesome icons / Biographic information  -->
+      
+        <li class="author__desktop"><i class="fas fa-fw fa-location-dot icon-pad-right" aria-hidden="true"></i>Nagoya, Japan</li>
+      
+      
+        <li class="author__desktop"><i class="fas fa-fw fa-building-columns icon-pad-right" aria-hidden="true"></i>Nagoya Institute of Technology</li>
+      
+      
+        <li><a href="https://mcontrol.web.nitech.ac.jp/nakano/" rel="noopener"><i class="fas fa-fw fa-link icon-pad-right" aria-hidden="true"></i>教員・研究室紹介（名工大）</a></li>
+      
+      
+        <li><a href="https://researchmap.jp/satoshi-nakano?lang=english" rel="noopener"><i class="fas fa-fw fa-address-card icon-pad-right" aria-hidden="true"></i>researchmap</a></li>
+      
+      
+        <li><a href="https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/" rel="noopener"><i class="fa-solid fa-fw fa-id-card icon-pad-right" aria-hidden="true"></i>研究者プロフィール（Pure）</a></li>
+      
+      
+
+      <!-- Font Awesome and Academicons icons / Academic websites -->
+      
+            
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=ja" rel="noopener"><i class="ai ai-google-scholar ai-fw icon-pad-right"></i>Google Scholar</a></li>
+      
+      
+      
+      
+                              
+      
+      
+      
+
+      <!-- Font Awesome icons / Repositories and software development -->
+      
+            
+            
+      
+        <li><a href="https://github.com/gdac-lab"><i class="fab fa-fw fa-github icon-pad-right" aria-hidden="true"></i>GitHub</a></li>
+      
+            
+            
+
+      <!-- Font Awesome icons / Social media -->
+              
+      
+      
+            
+      
+                  
+                  
+      
+            
+            
+            
+      
+            
+                  
+            
+      
+            
+            
+      
+              
+      
+                      
+      
+      
+            
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    
+      <h1 class="page__title">シミュレータ</h1>
+    
+    
+<p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは，そのシミュレータが使っている物理エンジンをブラウザ上でそのまま動かしたものです。録画ではありません。</p>
+
+<div class="simdemo" data-sim-root="" data-sim-state="loading" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-strings="{&quot;loading&quot;:&quot;物理エンジンを読み込んでいます…&quot;,&quot;ready&quot;:&quot;準備完了。&quot;,&quot;play&quot;:&quot;再生&quot;,&quot;pause&quot;:&quot;一時停止&quot;,&quot;contactYes&quot;:&quot;壁に接触中&quot;,&quot;contactNo&quot;:&quot;非接触&quot;,&quot;failed&quot;:&quot;このブラウザではデモを開始できませんでした。&quot;}">
+
+  <div class="simdemo__stage">
+    <canvas class="simdemo__canvas" data-sim-canvas="" aria-label="車輪付きドローンが壁面を登るシミュレーションの3D表示" role="img"></canvas>
+    <p class="simdemo__status" data-sim-status="" data-kind="loading" role="status">
+      物理エンジンを読み込んでいます…
+    </p>
+  </div>
+
+  <noscript>
+    <p class="simdemo__noscript">
+      このデモの実行には JavaScript が必要です。
+    </p>
+  </noscript>
+
+  <div class="simdemo__panel">
+    <div class="simdemo__row simdemo__row--buttons">
+      <button type="button" class="btn simdemo__btn" data-sim-play="">一時停止</button>
+      <button type="button" class="btn btn--inverse simdemo__btn" data-sim-reset="">最初から</button>
+      <label class="simdemo__speed">
+        <span>速度</span>
+        <select data-sim-speed="">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected="">1×</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="simdemo__row simdemo__row--scenarios">
+      <span class="simdemo__row-label">シナリオ</span>
+      <button type="button" class="simdemo__chip" data-sim-scenario="wall-climb">壁面を登る</button>
+      <button type="button" class="simdemo__chip" data-sim-scenario="wall-hold">壁際で保持</button>
+      <button type="button" class="simdemo__chip" data-sim-scenario="hover">空中で静止</button>
+    </div>
+
+    <div class="simdemo__row simdemo__row--sliders">
+      <label class="simdemo__slider">
+        <span class="simdemo__slider-name">目標の高さ</span>
+        <input type="range" min="0.35" max="1.75" step="0.01" value="1.30" data-sim-target-z="" />
+        <output class="simdemo__slider-value" data-sim-target-z-out="">1.30 m</output>
+      </label>
+      <label class="simdemo__slider">
+        <span class="simdemo__slider-name">目標の壁方向位置</span>
+        <input type="range" min="0.80" max="2.15" step="0.01" value="1.93" data-sim-target-x="" />
+        <output class="simdemo__slider-value" data-sim-target-x-out="">1.93 m</output>
+      </label>
+    </div>
+
+    <dl class="simdemo__readout">
+      <div><dt>時刻</dt><dd data-sim-time="">0.0 s</dd></div>
+      <div><dt>機体の高さ</dt><dd data-sim-height="">0.60 m</dd></div>
+      <div><dt>壁</dt><dd data-sim-contact="">非接触</dd></div>
+      <div><dt>実時間比</dt><dd data-sim-rate="">—</dd></div>
+    </dl>
+
+    <p class="simdemo__hint">
+      ドラッグで視点を回転，ホイールで拡大縮小できます。壁面は <b>1.95 m</b> の位置にあり，車輪（半径 0.15 m）が触れると機体は <b>1.80 m</b> より先へは進めません。目標をそれより奥へ置くと，届かない分がそのまま壁への押し付け力になります。押し付けのための専用の制御は入っていません。
+    </p>
+  </div>
+</div>
+
+<script type="importmap">
+{"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
+</script>
+
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788626374"></script>
+
+<h2 id="このデモについて">このデモについて</h2>
+
+<p><strong>物理計算はブラウザの中で実行されています。</strong> MuJoCo を WebAssembly にしたものを読み込み，デスクトップ版のシミュレータが生成するものと同一のモデルファイルを，同じ 1 ミリ秒刻みで解いています。制御則も，シミュレータの幾何学的制御器をそのまま JavaScript へ移植したものです（数値が一致することを確認しています）。</p>
+
+<p>目標位置を動かすと，機体はその場で計算し直して動きます。あらかじめ用意した動きを再生しているわけではありません。</p>
+
+<h2 id="何が起きているか">何が起きているか</h2>
+
+<p>機体は 4 つのロータと 2 つの車輪を持ちます。壁面を登るときは，<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが壁に阻まれ，そのぶん壁からの反力が押し付け力として働きます。車輪は壁の上を転がるので，上下方向には自由に動けます。押し付けのための特別な制御は入っていません。</p>
+
+<p>姿勢の制御には，回転を 3 つの角度に分解せず回転行列のまま扱う定式化を用いています。どの姿勢でも計算が破綻しないという性質があり，本研究室の回転運動の制御の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
+
+<ul>
+  <li><strong>目標の高さ</strong> — 機体が登る先の高さです</li>
+  <li><strong>目標を壁の奥へ</strong> — 目標を壁面よりどれだけ奥に置くかです。深いほど押し付け力が強くなります</li>
+  <li><strong>実時間比</strong> — 実時間に対する計算の進み具合です。1.00× なら実時間どおりに解けています</li>
+</ul>
+
+<h2 id="シミュレータ本体">シミュレータ本体</h2>
+
+<p>シミュレータは MuJoCo による物理計算部（Python）と，UDP で接続する制御器（MATLAB／Python）からなります。単機・複数機，壁面や曲面地形，PX4 を実機ループに入れた HITL などに対応しています。</p>
+
+<ul>
+  <li>リポジトリ：<a href="https://github.com/GDAC-Lab/mujoco-wheeled-uav-simulator">GDAC-Lab/mujoco-wheeled-uav-simulator</a></li>
+  <li>ライセンス：リポジトリの <code class="language-plaintext highlighter-rouge">LICENSE</code> をご覧ください</li>
+  <li>引用情報：リポジトリの <code class="language-plaintext highlighter-rouge">CITATION.cff</code> をご利用ください</li>
+</ul>
+
+<p>このページのデモは，<a href="https://mujoco.org/">MuJoCo</a>（Apache-2.0）の WebAssembly ビルドと <a href="https://threejs.org/">three.js</a>（MIT）を用いています。いずれも本サイト内に配置しており，外部への通信は発生しません。</p>
+
+<h2 id="動作について">動作について</h2>
+
+<p>デモの実行には WebGL と WebAssembly に対応したブラウザが必要です。物理エンジンの読み込みに数 MB の通信が発生しますが，このページ以外には影響しません。動かない場合は<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページに研究の概要があります。</p>
+
+  </div>
+</div>
+
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<a href="/sitemap/">Sitemap</a>
+
+
+
+
+
+
+
+
+
+<!-- end custom footer snippets -->
+
+        
+
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+      <li><a href="https://github.com/gdac-lab"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    
+  </ul>
+</div>
+
+
+<div class="page__footer-copyright">
+  &copy; 2026 GDAC Lab, Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
+  Site last updated 2026-09-05
+</div>
+
+      </footer>
+    </div>
+
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788626374"></script>
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
+

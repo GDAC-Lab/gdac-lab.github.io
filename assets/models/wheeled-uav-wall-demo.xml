@@ -1,0 +1,101 @@
+<!--
+  Wheel-equipped quadrotor, wall_demo scene.
+
+  GENERATED FILE — do not edit by hand.
+
+  Produced by mujoco-wheeled-uav-simulator 1.1.0 (be0c9ee) from
+  configs/vehicle_params.wall_demo.json:
+
+      uv run wuav simulate --preset wall_demo --headless --duration-seconds 0
+
+  and copied from build/generated_xml/wheeled_uav.generated.xml. To refresh it,
+  re-run the above in a checkout of
+  https://github.com/GDAC-Lab/mujoco-wheeled-uav-simulator and copy the result
+  here. The scene has no external asset references, so the browser demo hands
+  this straight to MjModel.from_xml_string.
+-->
+<mujoco>
+  <compiler balanceinertia="true"/>
+  <statistic extent="3" center="0 0 0.5"/>
+  <option gravity="0 0 -9.81" timestep="0.001" iterations="100" noslip_iterations="0"/>
+  <visual>
+    <headlight ambient="0.35 0.35 0.35" diffuse="0.65 0.65 0.65" specular="0.2 0.2 0.2"/>
+    <!-- Offscreen framebuffer size, used only by the FrameRecorder's mujoco.Renderer.
+         The default is 640x480; enlarge it so recordings up to 1920x1080 are possible.
+         No effect on the physics or the interactive viewer. -->
+    <global offwidth="1920" offheight="1080"/>
+    <!-- Contact visualization sizing (recording show_contacts, or the viewer toggle).
+         Arrow length = force * map.force / mean body mass, sized so a few-newton
+         contact renders clearly; contact discs shrunk from the defaults so they
+         mark the contact without hiding the wheels. -->
+    <map force="0.06"/>
+    <scale contactwidth="0.08" contactheight="0.03"/>
+  </visual>
+
+  <default>
+    <motor ctrllimited="true" ctrlrange="0 20"/>
+  </default>
+
+  <asset>
+    <texture type="2d" name="checker" builtin="checker" rgb1=".34 .40 .46" rgb2=".22 .27 .32" width="512" height="512"/>
+    <material name="floor_mat" texture="checker" texrepeat="5 5" texuniform="true" specular="0.15" shininess="0.2" rgba="1 1 1 1"/>
+
+
+  </asset>
+
+  <worldbody>
+    <light ambient=".2 .2 .2" diffuse="1 1 1" pos="0 0 3.5" dir="0 0 -1"/>
+    <light ambient=".08 .08 .08" diffuse=".55 .55 .55" pos="-2 -1 4" dir="0.35 0.2 -1"/>
+    <geom name="surface_geom" solref="0.002 1" contype="1" conaffinity="1" material="floor_mat" rgba="0.3 0.3 0.35 1" type="plane" size="3 3 0.1"/>
+
+    <body name="wall" pos="2 0 1">
+      <!-- The geom name must match paths.WALL_GEOM_NAME: contact reporting keys
+           the "wall" contact-summary group off it, and the log review scripts
+           match it by name. -->
+      <geom name="wall_geom" type="box" size="0.05 1.2 1" euler="0 0 0" condim="4" rgba="0.8 0.4 0.4 0.45" solref="0.002 1" friction="1.2 0.005 0.0001" contype="1" conaffinity="1"/>
+    </body>
+
+
+
+    <body name="wall_overlay" pos="0 0 0">
+      <geom name="overlay_reference_0_path" type="capsule" fromto="1.93 0 0.6 1.93 0 1.6" size="0.012" rgba="0.15 0.75 0.3 0.95" contype="0" conaffinity="0" group="1"/>
+    </body>
+    <body name="overlay_reference_marker_0" mocap="true" pos="1.93 0 0.6">
+      <geom name="overlay_reference_marker_0_geom" type="sphere" size="0.07" rgba="0.15 0.75 0.3 0.95" contype="0" conaffinity="0" group="1"/>
+    </body>
+
+    <body name="drone" pos="1.55 0 0.6">
+      <joint type="free"/>
+      <inertial pos="0 0 0" mass="0.8" diaginertia="0.006 0.004 0.007"/>
+      <site name="prop_fr" pos="0.08 -0.1 0.012" zaxis="0 0 1" type="cylinder" size="0.06 0.005" rgba="0.92 0.24 0.24 0.55"/>
+      <site name="prop_fl" pos="0.08 0.1 0.012" zaxis="0 0 1" type="cylinder" size="0.06 0.005" rgba="0.92 0.24 0.24 0.55"/>
+      <site name="prop_br" pos="-0.08 -0.1 0.012" zaxis="0 0 1" type="cylinder" size="0.06 0.005" rgba="0.92 0.24 0.24 0.55"/>
+      <site name="prop_bl" pos="-0.08 0.1 0.012" zaxis="0 0 1" type="cylinder" size="0.06 0.005" rgba="0.92 0.24 0.24 0.55"/>
+      <geom name="drone_body_box" type="box" size="0.1 0.05 0.1" euler="90 0 0" mass="0" group="0" rgba="0.92 0.24 0.24 1" contype="1" conaffinity="1"/>
+      <body name="right_wheel" pos="0 -0.2 0">
+        <joint name="joint_rw" type="hinge" axis="0 1 0" damping="0.001"/>
+        <geom name="right_wheel_geom" type="cylinder" size="0.15 0.006" euler="90 0 0" mass="0.1" rgba="0.15 0.25 0.85 1" solref="0.01 1" friction="1.2 0.005 0.0001" contype="1" conaffinity="1"/>
+      </body>
+      <body name="left_wheel" pos="0 0.2 0">
+        <joint name="joint_lw" type="hinge" axis="0 1 0" damping="0.001"/>
+        <geom name="left_wheel_geom" type="cylinder" size="0.15 0.006" euler="90 0 0" mass="0.1" rgba="0.15 0.25 0.85 1" solref="0.01 1" friction="1.2 0.005 0.0001" contype="1" conaffinity="1"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="drone_thrust_fr" site="prop_fr" gear="0 0 1 0 0 -0.015"/>
+    <motor name="drone_thrust_fl" site="prop_fl" gear="0 0 1 0 0 0.015"/>
+    <motor name="drone_thrust_br" site="prop_br" gear="0 0 1 0 0 0.015"/>
+    <motor name="drone_thrust_bl" site="prop_bl" gear="0 0 1 0 0 -0.015"/>
+  </actuator>
+
+  <sensor>
+    <framepos name="drone_position" objtype="xbody" objname="drone"/>
+    <framelinvel name="drone_linear_velocity" objtype="xbody" objname="drone"/>
+    <frameangvel name="drone_angular_velocity" objtype="xbody" objname="drone"/>
+    <framexaxis name="drone_x_axis" objtype="xbody" objname="drone"/>
+    <frameyaxis name="drone_y_axis" objtype="xbody" objname="drone"/>
+    <framezaxis name="drone_z_axis" objtype="xbody" objname="drone"/>
+  </sensor>
+</mujoco>

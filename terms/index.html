@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788623997">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788626374">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788623997"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788626374"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -154,12 +154,17 @@
             
             
             
-            <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/simulator/">Simulator</a></li>
           
             
             
             
             <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/access/">Access</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
           <li class="masthead__menu-item persist"><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</span><span class="masthead__lang-sep">|</span><a href="https://gdaclab.web.nitech.ac.jp/ja/terms/" class="masthead__lang-link"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</a></li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
@@ -322,6 +327,7 @@
       <li><a href="#publications" id="markdown-toc-publications">Publications</a></li>
       <li><a href="#accuracy" id="markdown-toc-accuracy">Accuracy</a></li>
       <li><a href="#website-software" id="markdown-toc-website-software">Website software</a></li>
+      <li><a href="#running-the-simulator-demo" id="markdown-toc-running-the-simulator-demo">Running the simulator demo</a></li>
     </ul>
   </li>
   <li><a href="#contact" id="markdown-toc-contact">Contact</a></li>
@@ -410,6 +416,21 @@ turn a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-th
 (© 2016 Michael Rose). That template code is used under the MIT License and remains under
 its own copyright; the licence text ships with the site’s source repository.</p>
 
+<p>The <a href="https://gdaclab.web.nitech.ac.jp/simulator/">Simulator</a> page additionally carries a WebAssembly
+build of <a href="https://mujoco.org/">MuJoCo</a> (© Google DeepMind, Apache License 2.0) and
+<a href="https://threejs.org/">three.js</a> (MIT License). Both are served from this site, not
+from a third party, and both licence texts ship alongside them.</p>
+
+<h3 id="running-the-simulator-demo">Running the simulator demo</h3>
+
+<p>The demo on the Simulator page solves the physics in your own browser. It transfers
+several megabytes of program code the first time you open that page, and while it is
+running it uses the processor and the graphics hardware of your device, which on a
+laptop or phone will draw more battery than an ordinary page. It sends nothing back:
+no result, no interaction, and no measurement of your device leaves your browser. The
+demo pauses itself whenever the page is not visible, and pausing it by hand stops the
+computation entirely.</p>
+
 <h2 id="contact">Contact</h2>
 
 <p>For questions about this page, or to request correction or removal of something published
@@ -487,7 +508,7 @@ here, please contact the lab using the address shown on the
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788623997"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788626374"></script>
 
 
 
