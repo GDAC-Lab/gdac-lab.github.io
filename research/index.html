@@ -92,7 +92,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788619149">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788621334">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -100,7 +100,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788619149"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788621334"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -286,15 +286,15 @@
 
 <h2 id="overview">Overview</h2>
 
-<p>Operating a robot or a satellite as intended requires control over <strong>which direction the vehicle points</strong>. At the same time, every real machine carries limits that <strong>must</strong> be respected.</p>
+<p>Operating a robot or a satellite as intended requires control over which direction the vehicle points. At the same time, every real machine carries limits that must be respected.</p>
 
 <ul>
   <li>The force a motor can produce has an <strong>upper bound</strong>.</li>
-  <li>An observation camera <strong>cannot be pointed towards the sun</strong>.</li>
-  <li>A vehicle running while pressed against a wall <strong>can take only a restricted set of attitudes</strong>.</li>
+  <li>An observation camera cannot be pointed towards the sun.</li>
+  <li>A vehicle running while pressed against a wall can take only a restricted set of attitudes.</li>
 </ul>
 
-<p>In control engineering such limits are called <strong>constraints</strong>. Our research centres on building theory for <strong>controlling rotational motion while satisfying constraints</strong>, together with verification on real hardware.</p>
+<p>In control engineering such limits are called <strong>constraints</strong>. Our research centres on building theory for controlling rotational motion while satisfying constraints, together with verification on real hardware.</p>
 
 <p>The principal applications are <strong>satellites</strong> and <strong>drones</strong>.</p>
 
@@ -306,19 +306,19 @@
 
 <p>The position of an object can be expressed by three numbers, x, y and z. Representing its <strong>orientation</strong> is less straightforward.</p>
 
-<p>Aircraft attitude is widely described by three angles — pitch, roll and yaw, known as <strong>Euler angles</strong>. This representation has a weakness: at certain attitudes <strong>the computation breaks down</strong>, a phenomenon known as gimbal lock in aviation and computer graphics.</p>
+<p>Aircraft attitude is widely described by three angles — pitch, roll and yaw, known as <strong>Euler angles</strong>. This representation has a weakness: at certain attitudes the computation breaks down, a phenomenon known as gimbal lock in aviation and computer graphics.</p>
 
-<p>Rather than decomposing orientation into three angles, we use a mathematical framework that <strong>treats rotation itself directly</strong> — the set of rotation matrices, written SO(3). This formulation yields control designs that <strong>do not break down at any attitude</strong>.</p>
+<p>Rather than decomposing orientation into three angles, we use a mathematical framework that treats rotation itself directly — the set of rotation matrices, written SO(3). This formulation yields control designs that do not break down at any attitude.</p>
 
 <h4 id="guaranteeing-constraints-under-limited-computation">Guaranteeing constraints under limited computation</h4>
 
 <p>A straightforward approach to constraints is to add a mechanism that restricts the motion once a dangerous state is approached. Such an approach, however, provides no <strong>guarantee</strong> that the constraints hold in every situation.</p>
 
-<p>We work with the <strong>Explicit Reference Governor (ERG)</strong> and <strong>control barrier functions (CBFs)</strong>. Rather than redesigning the controller itself, these methods <strong>reshape the reference supplied to the controller so that it remains within a safe region</strong>, which allows constraint satisfaction to be guaranteed.</p>
+<p>We work with the <strong>Explicit Reference Governor (ERG)</strong> and <strong>control barrier functions (CBFs)</strong>. Rather than redesigning the controller itself, these methods reshape the reference supplied to the controller so that it remains within a safe region, which allows constraint satisfaction to be guaranteed.</p>
 
-<p>A second property is equally important: these methods <strong>require no optimization to be solved during operation</strong>.</p>
+<p>A second property is equally important: these methods require no optimization to be solved during operation.</p>
 
-<p>Model predictive control, the representative approach to constrained control, solves an optimization problem at every time step, which makes it difficult to run on hardware with limited computational capacity. ERG- and CBF-based methods instead evaluate expressions derived in advance, and can therefore be <strong>implemented on small computers</strong>. We are also studying this optimization-free framework in general form (<a href="https://arxiv.org/abs/2604.04001">arXiv, 2026</a>).</p>
+<p>Model predictive control, the representative approach to constrained control, solves an optimization problem at every time step, which makes it difficult to run on hardware with limited computational capacity. ERG- and CBF-based methods instead evaluate expressions derived in advance, and can therefore be implemented on small computers. We are also studying this optimization-free framework in general form (<a href="https://arxiv.org/abs/2604.04001">arXiv, 2026</a>).</p>
 
 <p><strong>Selected results</strong></p>
 
@@ -333,18 +333,19 @@
 <p>A satellite changes its attitude while orbiting the Earth, and several constraints apply simultaneously.</p>
 
 <ul>
-  <li>The observation camera <strong>must not be pointed towards the sun</strong>, as the sensor would be damaged.</li>
-  <li>The communication antenna <strong>must remain directed at the ground station</strong>.</li>
-  <li>The reaction wheels that reorient the spacecraft have an <strong>upper bound on the torque</strong> they can produce.</li>
+  <li>The observation camera must not be pointed towards the sun, as the sensor would be damaged.</li>
+  <li>The communication antenna must remain directed at the ground station.</li>
+  <li>The reaction wheels that reorient the spacecraft have an upper bound on the torque they can produce.</li>
 </ul>
 
 <p>Furthermore, an on-board computer must meet mass limits at launch and withstand the radiation environment of space, so its performance is considerably more restricted than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.</p>
 
-<p>The optimization-free methods described above are effective in precisely this setting. We are currently working towards a framework in which <strong>several small satellites reorient cooperatively</strong>.</p>
+<p>The optimization-free methods described above are effective in precisely this setting. We are currently working towards a framework in which several small satellites reorient cooperatively.</p>
 
 <blockquote>
-  <p><strong>JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)</strong> (FY2026–2029, 26K00967)
-“Constrained cooperative attitude control without online optimization for small satellite formations”</p>
+  <p><strong>JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)</strong> (FY2026–2029, 26K00967)</p>
+
+  <p>“Constrained cooperative attitude control without online optimization for small satellite formations”</p>
 </blockquote>
 
 <p>This theme is pursued as a collaboration with <a href="https://researchmap.jp/jaxasaki">Takahiro Sasaki</a> (Japan Aerospace Exploration Agency, JAXA) and Prof. <a href="https://www.st.nanzan-u.ac.jp/info/sakanobo/index.html">Noboru Sakamoto</a> (Nanzan University).</p>
@@ -364,9 +365,9 @@
 <p>From a control standpoint this vehicle presents the following difficulties.</p>
 
 <ul>
-  <li>The wheels do not slip laterally, so <strong>the directions of motion are restricted</strong> — a <strong>nonholonomic constraint</strong>.</li>
+  <li>The wheels do not slip laterally, so the directions of motion are restricted — a <strong>nonholonomic constraint</strong>.</li>
   <li>The <strong>pressing force against the wall</strong> must be regulated: too little and the vehicle separates from the surface, too much and it rebounds.</li>
-  <li><strong>Flight and ground locomotion alternate</strong>, so the nature of the dynamics itself changes.</li>
+  <li>Flight and ground locomotion alternate, so the nature of the dynamics itself changes.</li>
 </ul>
 
 <p>Constraints are again central. To handle the pressing force, the attitudes admissible during contact, and limits on flight altitude, we combine <strong>control barrier functions</strong>, <strong>input–output linearization</strong>, <strong>passivity-based methods</strong> and <strong>model predictive path integral (MPPI) control</strong>.</p>
@@ -387,7 +388,7 @@
 
 <h4 id="control-shared-with-a-human-operator">Control shared with a human operator</h4>
 
-<p>Rather than automating every action, we also study arrangements in which <strong>the operator commands the vehicle and the control system intervenes only to prevent unsafe motion</strong>. The presence of active constraints is conveyed to the operator through <strong>haptic feedback</strong>, while the safety guarantee itself is established theoretically.</p>
+<p>Rather than automating every action, we also study arrangements in which the operator commands the vehicle and the control system intervenes only to prevent unsafe motion. The presence of active constraints is conveyed to the operator through <strong>haptic feedback</strong>, while the safety guarantee itself is established theoretically.</p>
 
 <h2 id="other-applications-and-collaborations">Other applications and collaborations</h2>
 
@@ -445,7 +446,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788619149"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788621334"></script>
 
 
 
