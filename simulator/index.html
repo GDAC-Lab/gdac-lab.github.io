@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788626374">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788627483">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788626374"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788627483"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -329,17 +329,33 @@
       <button type="button" class="simdemo__chip" data-sim-scenario="hover">Hover in free air</button>
     </div>
 
-    <div class="simdemo__row simdemo__row--sliders">
-      <label class="simdemo__slider">
-        <span class="simdemo__slider-name">Target height</span>
-        <input type="range" min="0.35" max="1.75" step="0.01" value="1.30" data-sim-target-z="" />
-        <output class="simdemo__slider-value" data-sim-target-z-out="">1.30 m</output>
-      </label>
-      <label class="simdemo__slider">
-        <span class="simdemo__slider-name">Target toward the wall</span>
-        <input type="range" min="0.80" max="2.15" step="0.01" value="1.93" data-sim-target-x="" />
-        <output class="simdemo__slider-value" data-sim-target-x-out="">1.93 m</output>
-      </label>
+    <div class="simdemo__row simdemo__row--target">
+      
+      <div class="simdemo__pad-wrap">
+        <svg class="simdemo__pad" viewBox="0 0 165 190" data-sim-pad="" tabindex="0" role="application" aria-label="Target pad: sideways toward the wall, up for height" aria-describedby="simdemo-pad-help">
+          <rect class="simdemo__pad-bg" x="0" y="0" width="165" height="190" rx="3" />
+          <rect class="simdemo__pad-allowed" x="20" y="15" width="135" height="140" rx="2" />
+          <rect class="simdemo__pad-floor" x="0" y="186" width="165" height="4" />
+          <rect class="simdemo__pad-wall" x="135" y="0" width="10" height="190" />
+          <line class="simdemo__pad-limit" x1="120" y1="0" x2="120" y2="186" />
+          <text class="simdemo__pad-label" x="147" y="11">wall</text>
+          <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="11">↑ height</text>
+          <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="182">toward wall →</text>
+          <circle class="simdemo__pad-drone" data-sim-pad-drone="" cx="95" cy="130" r="5" />
+          <circle class="simdemo__pad-target" data-sim-pad-target="" cx="133" cy="60" r="6.5" />
+        </svg>
+        <p id="simdemo-pad-help" class="simdemo__pad-help">
+          Drag on the pad, or use the arrow keys (Shift for bigger steps). You can also drag the green sphere in the 3D view directly.
+        </p>
+      </div>
+      <dl class="simdemo__target-values" aria-live="polite">
+        <div><dt>Target height</dt><dd data-sim-target-z-out="">1.30 m</dd></div>
+        <div><dt>Target toward the wall</dt><dd data-sim-target-x-out="">1.93 m (+0.13)</dd></div>
+        <div class="simdemo__legend">
+          <span><i class="simdemo__legend-dot simdemo__legend-dot--target"></i>target</span>
+          <span><i class="simdemo__legend-dot simdemo__legend-dot--drone"></i>vehicle</span>
+        </div>
+      </dl>
     </div>
 
     <dl class="simdemo__readout">
@@ -350,7 +366,7 @@
     </dl>
 
     <p class="simdemo__hint">
-      Drag to orbit, scroll to zoom. The wall face is at <b>1.95 m</b>, and with 0.15 m wheels the body cannot get past <b>1.80 m</b>. Put the target beyond that and the part it cannot reach becomes the force pressing the wheels into the wall — there is no dedicated pressing controller.
+      In the 3D view, drag to orbit and scroll to zoom. The wall face is at <b>1.95 m</b>, and with 0.15 m wheels the body cannot get past <b>1.80 m</b>. Put the target beyond that and the part it cannot reach becomes the force pressing the wheels into the wall — there is no dedicated pressing controller.
     </p>
   </div>
 </div>
@@ -359,7 +375,7 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788626374"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788627483"></script>
 
 <h2 id="about-this-demo">About this demo</h2>
 
@@ -374,8 +390,8 @@
 <p>Attitude is controlled without decomposing rotation into three angles — the rotation matrix is used directly. That formulation does not break down at any attitude, and it is the idea at the centre of our work on rotational control. See the <a href="https://gdaclab.web.nitech.ac.jp/research/">Research</a> page for more.</p>
 
 <ul>
-  <li><strong>Target height</strong> — how high the vehicle climbs</li>
-  <li><strong>Target behind the wall</strong> — how far past the wall face the target sits. The deeper it is, the harder the vehicle presses</li>
+  <li><strong>Moving the target</strong> — drag the green sphere in the 3D view, or drag on the side-view pad (sideways is toward the wall, up is height). With the pad focused, the arrow keys work too</li>
+  <li><strong>The “+” on the wall-direction value</strong> — how far the target sits beyond the point where the wheels meet the wall (1.80 m). That excess is what becomes the pressing force</li>
   <li><strong>Real-time factor</strong> — how fast the physics is being solved relative to real time. 1.00× means it is keeping up</li>
 </ul>
 
@@ -440,7 +456,7 @@
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788626374"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788627483"></script>
 
 
 

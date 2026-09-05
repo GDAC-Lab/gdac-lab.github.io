@@ -132,6 +132,61 @@ export class MujocoView {
     this.geomMeshes = this._buildGeoms(model, mujoco);
     this.siteMeshes = this._buildSites(model, mujoco);
     this.setBackground('light');
+
+    // Direct manipulation of the reference marker. The demo is planar (y = 0),
+    // so a drag is resolved by intersecting the pointer ray with that plane.
+    this.raycaster = new THREE.Raycaster();
+    this.targetPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const markerEntry = this.geomMeshes.find((m) => m.mesh.name === 'overlay_reference_marker_0_geom');
+    this.marker = markerEntry ? markerEntry.mesh : null;
+    this.markerGrab = null;
+    if (this.marker) {
+      // A larger, invisible sphere rides on the marker so it is easy to grab
+      // without the visible sphere having to be big.
+      this.markerGrab = new THREE.Mesh(
+        new THREE.SphereGeometry(0.16, 12, 8),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
+      );
+      this.marker.add(this.markerGrab);
+    }
+  }
+
+  /* ---------------------------------------------------------- picking */
+
+  _ndc(clientX, clientY) {
+    const r = this.canvas.getBoundingClientRect();
+    return new THREE.Vector2(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
+  }
+
+  /** Is the pointer over the reference marker? */
+  pickMarker(clientX, clientY) {
+    if (!this.markerGrab) return false;
+    this.raycaster.setFromCamera(this._ndc(clientX, clientY), this.camera);
+    return this.raycaster.intersectObject(this.markerGrab, false).length > 0;
+  }
+
+  /** Where the pointer ray meets the y = 0 plane, as {x, z}, or null if it does not. */
+  projectToTargetPlane(clientX, clientY) {
+    this.raycaster.setFromCamera(this._ndc(clientX, clientY), this.camera);
+    const hit = this.raycaster.ray.intersectPlane(this.targetPlane, new THREE.Vector3());
+    return hit ? { x: hit.x, z: hit.z } : null;
+  }
+
+  /** The marker's centre in canvas client coordinates (used by tooling and tests). */
+  markerScreenPosition() {
+    if (!this.marker) return null;
+    const p = new THREE.Vector3().setFromMatrixPosition(this.marker.matrixWorld).project(this.camera);
+    const r = this.canvas.getBoundingClientRect();
+    return { x: r.left + ((p.x + 1) / 2) * r.width, y: r.top + ((1 - p.y) / 2) * r.height };
+  }
+
+  setMarkerHighlight(on) {
+    if (!this.marker) return;
+    this.marker.material.emissive.setHex(on ? 0x1f8a45 : 0x000000);
+  }
+
+  setOrbitEnabled(on) {
+    this.controls.enabled = on;
   }
 
   _buildGeoms(model, mujoco) {
