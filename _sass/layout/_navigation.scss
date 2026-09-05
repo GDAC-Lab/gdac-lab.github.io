@@ -202,6 +202,15 @@
     z-index: 100;
   }
 
+  /* The overflow button is absolutely positioned over the nav's right edge and
+     sits above everything (z-index: 100). .visible-links is a table with no
+     width, so it stretched the full nav width and put its last cell — the
+     theme toggle — underneath the button, where it could not be tapped.
+     Reserve the button's width while the button is shown. */
+  button:not(.hidden) ~ .visible-links {
+    width: calc(100% - #{$navicon-width} - 1.75rem);
+  }
+
   .visible-links {
     display: table;
 

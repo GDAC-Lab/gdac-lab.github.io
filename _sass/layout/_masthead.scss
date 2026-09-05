@@ -88,14 +88,24 @@
   position: relative;
 }
 
-/* Flag emoji shown next to the labels on narrow screens only */
-.lang-icon-mobile {
+/* Flags beside the language labels (see _includes/lang-flag.html).
+   Hidden by default and switched on only once the masthead is wide enough:
+   the overflow button is absolutely positioned over the right edge, and on a
+   narrow screen the row is already tight enough without them. Height is fixed
+   rather than width, so the two different flag ratios (JP 2:3, GB 1:2) sit on
+   the same line without looking uneven. */
+.masthead__lang-flag {
   display: none;
 }
 
-@media (max-width: 768px) {
-  .lang-icon-mobile {
-    display: inline;
-    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+@include breakpoint($medium) {
+  .masthead__lang-flag {
+    display: inline-block;
+    width: auto;
+    height: 0.8em;
+    margin-right: 0.35em;
+    vertical-align: -0.02em;
+    /* Japan is mostly white: without an edge it disappears on a light masthead */
+    border: 1px solid var(--global-border-color);
   }
 }

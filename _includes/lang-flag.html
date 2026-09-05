@@ -1,0 +1,19 @@
+{%- comment -%}
+  Flag beside a language label in the masthead. Usage:
+
+      {% include lang-flag.html code="gb" %}
+      {% include lang-flag.html code="jp" %}
+
+  Drawn as inline SVG rather than the flag emoji (🇬🇧 🇯🇵). Windows has no
+  country flags in Segoe UI Emoji: a regional-indicator pair falls back to the
+  two bare letters, so the emoji version reads "GB EN | JP 日本語" there. The
+  SVG draws the same on every platform and needs no font.
+
+  Decorative: the language name next to it already carries the meaning, so the
+  flag is hidden from assistive technology.
+{%- endcomment -%}
+{%- if include.code == 'jp' -%}
+<svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>
+{%- elsif include.code == 'gb' -%}
+<svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>
+{%- endif -%}
