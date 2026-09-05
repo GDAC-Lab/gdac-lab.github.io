@@ -14,7 +14,9 @@ lang_ref: lab_policy
 
 {% comment %} The Japanese version is _pages/ja/policy.md. Keep the two outlines in step. {% endcomment %}
 
+{% comment %}
 ## What the lab values
+{% endcomment %}
 
 ## Joining the lab
 
@@ -26,9 +28,13 @@ lang_ref: lab_policy
 
 ## How research topics are chosen
 
+{% comment %}
 ## Day-to-day
+{% endcomment %}
 
+{% comment %}
 ## What you will learn and use
+{% endcomment %}
 
 ## Conferences and papers
 

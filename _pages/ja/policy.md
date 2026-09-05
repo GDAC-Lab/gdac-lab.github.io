@@ -14,7 +14,9 @@ lang_ref: lab_policy
 
 {% comment %} 英語版は _pages/policy.md。項目を増減したら両方を揃えてください。 {% endcomment %}
 
+{% comment %}
 ## 研究室が大切にしていること
+{% endcomment %}
 
 ## 配属について
 
@@ -26,9 +28,13 @@ lang_ref: lab_policy
 
 ## 研究テーマの決め方
 
+{% comment %}
 ## 日々の活動
+{% endcomment %}
 
+{% comment %}
 ## 身につくこと・使うもの
+{% endcomment %}
 
 ## 学会発表・論文
 
