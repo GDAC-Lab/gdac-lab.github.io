@@ -1,0 +1,146 @@
+/* ==========================================================================
+   FACILITIES GALLERY
+   Cards for the equipment / lab-environment page (_includes/facility-gallery.html).
+   The grid runs the full content width rather than the prose measure: a photo
+   grid wants the room, while the text above it keeps its own line length. The
+   markup wraps the list in .gallery-wrap for exactly that reason — see the
+   comment in the include.
+   ========================================================================== */
+
+.gallery-wrap {
+  margin: 1.75rem 0 2.5rem;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1.9rem 1.5rem;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  list-style: none;
+}
+
+.gallery__item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  scroll-margin-top: calc(#{$masthead-height} + 1rem);
+}
+
+.gallery__figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------- the image */
+
+.gallery__media {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--global-border-color);
+  border-radius: $border-radius;
+  background: var(--global-callout-bg, var(--global-thead-color));
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+}
+
+a.gallery__media {
+  text-decoration: none;
+
+  &:hover img,
+  &:focus-visible img {
+    opacity: 0.88;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--global-link-color);
+    outline-offset: 2px;
+  }
+}
+
+/* ------------------------------------------------------- the "not yet" tile */
+
+/* A dashed frame reads as deliberately empty; a solid one reads as broken.
+   Same 4:3 box as a real photo, so dropping an image in later does not
+   reflow the grid. */
+.gallery__media--pending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  aspect-ratio: 4 / 3;
+  border-style: dashed;
+  border-color: var(--global-dark-border-color, var(--global-border-color));
+  background: var(--global-callout-bg, var(--global-thead-color));
+}
+
+.gallery__pending-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--global-callout-text-muted, var(--global-text-color-light));
+  opacity: 0.7;
+}
+
+.gallery__pending-chip {
+  padding: 0.3em 0.85em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  color: var(--global-callout-text-muted, var(--global-text-color-light));
+  border: 1px solid var(--global-dark-border-color, var(--global-border-color));
+  border-radius: 999px;
+  background: var(--global-bg-color);
+}
+
+/* ---------------------------------------------------------------- the words */
+
+.gallery__caption {
+  margin: 0.75rem 0 0;
+}
+
+h3.gallery__title {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  font-family: $sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  color: var(--global-text-color-strong, var(--global-text-color));
+  overflow-wrap: break-word;
+}
+
+.gallery__body {
+  margin: 0.35rem 0 0;
+  max-width: none;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--global-text-color-light);
+  overflow-wrap: break-word;
+}
+
+/* A pending card is a plan, not content: hold it back a step. */
+.gallery__item--pending .gallery__title {
+  color: var(--global-text-color);
+}
+
+@include breakpoint(max-width 600px) {
+  .gallery {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

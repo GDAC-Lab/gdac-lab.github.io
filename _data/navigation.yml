@@ -16,6 +16,10 @@ main:
   - title: "People"
     title_ja: "メンバー"
     url: /people/
+
+  - title: "Facilities"
+    title_ja: "実験装置"
+    url: /facilities/
     
   # Japanese-only Blogger; label shows (外部). Same wording on EN/JA nav.
   - title: "アルバム（外部）"

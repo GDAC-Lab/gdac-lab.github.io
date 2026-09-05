@@ -1,0 +1,73 @@
+{% comment %}
+  Equipment and facilities gallery. Content comes from _data/facilities.yml —
+  see the instructions at the top of that file.
+
+  An entry with no `image` renders as a "coming soon" tile rather than being
+  skipped, so the page keeps its shape while photographs are still being taken.
+{% endcomment %}
+{% include base_path %}
+
+{% assign _ja = false %}
+{% if page.lang == 'ja' %}{% assign _ja = true %}{% endif %}
+
+{% assign _items = site.data.facilities.items %}
+{% if _items and _items.size > 0 %}
+{% comment %}
+  The wrapper keeps the list out of reach of the prose list rules in
+  layout/prose, which would otherwise impose the text measure and a bullet
+  indent on the grid.
+{% endcomment %}
+<div class="gallery-wrap">
+<ul class="gallery">
+  {% for item in _items %}
+    {% if _ja %}
+      {% assign _title = item.title_ja | default: item.title_en %}
+      {% assign _body  = item.body_ja  | default: item.body_en %}
+      {% assign _alt   = item.alt_ja   | default: item.alt_en %}
+    {% else %}
+      {% assign _title = item.title_en | default: item.title_ja %}
+      {% assign _body  = item.body_en  | default: item.body_ja %}
+      {% assign _alt   = item.alt_en   | default: item.alt_ja %}
+    {% endif %}
+    {% if _alt == nil or _alt == '' %}{% assign _alt = _title %}{% endif %}
+
+    <li class="gallery__item{% unless item.image %} gallery__item--pending{% endunless %}"
+        {% if item.id %}id="facility-{{ item.id }}"{% endif %}>
+      {% if item.image %}
+        {% if item.image contains '://' %}
+          {% assign _src = item.image %}
+        {% else %}
+          {% assign _src = item.image | prepend: '/images/' | prepend: base_path %}
+        {% endif %}
+        <figure class="gallery__figure">
+          <a class="gallery__media" href="{{ _src }}"
+             aria-label="{% if _ja %}{{ _title }}の画像を原寸で開く{% else %}Open the full-size image of {{ _title }}{% endif %}">
+            <img src="{{ _src }}"
+                 alt="{{ _alt }}"
+                 width="{{ item.width | default: 1600 }}"
+                 height="{{ item.height | default: 1200 }}"
+                 loading="lazy"
+                 decoding="async" />
+          </a>
+          <figcaption class="gallery__caption">
+            <h3 class="gallery__title">{{ _title }}</h3>
+            {% if _body %}<p class="gallery__body">{{ _body }}</p>{% endif %}
+          </figcaption>
+        </figure>
+      {% else %}
+        <figure class="gallery__figure">
+          <div class="gallery__media gallery__media--pending" aria-hidden="true">
+            <i class="fa-solid fa-camera gallery__pending-icon"></i>
+            <span class="gallery__pending-chip">{% if _ja %}写真準備中{% else %}Photo coming soon{% endif %}</span>
+          </div>
+          <figcaption class="gallery__caption">
+            <h3 class="gallery__title">{{ _title }}</h3>
+            {% if _body %}<p class="gallery__body">{{ _body }}</p>{% endif %}
+          </figcaption>
+        </figure>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+</div>
+{% endif %}

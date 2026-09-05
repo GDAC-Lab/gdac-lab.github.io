@@ -1,0 +1,69 @@
+# 実験装置・設備ギャラリー（/facilities/ ・ /ja/facilities/）
+# Equipment and facilities gallery. Rendered by _includes/facility-gallery.html.
+#
+# 写真を追加する手順 / How to add a photo
+#   1. 画像を images/facilities/ に置きます。
+#      横 1600px 程度・JPEG（品質 78 前後）を目安にしてください。サイトを軽く保つためです。
+#   2. 下の該当する項目に image: を書きます。images/ からの相対パスです。
+#        image: "facilities/wheeled-drone.jpg"
+#   3. width: / height: に画像の実寸を入れます。読み込み中のガタつきを防ぐためのものです。
+#   4. alt_ja: / alt_en: に，写真に何が写っているかを一文で書きます。
+#
+#   image: が空の項目は「準備中」のカードとして表示されます。項目そのものを消す必要はありません。
+#   An item with no `image` renders as a "coming soon" card, so the list can be
+#   filled in one photo at a time.
+#
+# 項目を増やすとき / To add an item
+#   items: の末尾に，下のテンプレート（コメントアウトしてあります）をコピーして使ってください。
+#   並び順はこのファイルの順序がそのまま表示順になります。
+
+items:
+  - id: wheeled-drone
+    title_ja: "車輪付きドローン"
+    title_en: "Wheeled drones"
+    body_ja: "壁面や天井に押し付けて車輪で走行し，必要に応じて飛行へ移行する機体です。機体の写真を掲載予定です。"
+    body_en: "Vehicles that press against a wall or ceiling, travel on their wheels, and transition to flight as required. Photographs of the airframes will be added here."
+    image:
+    alt_ja:
+    alt_en:
+
+  - id: wall-testbed
+    title_ja: "壁面走行・打音検査の試験環境"
+    title_en: "Wall-running and hammering-inspection testbed"
+    body_ja: "壁面タイルの打音検査を実験するための試験体と，走行試験を行う環境です。設営の様子を掲載予定です。"
+    body_en: "The test specimens and the space used for hammering-inspection and wall-running experiments. Photographs of the setup will be added here."
+    image:
+    alt_ja:
+    alt_en:
+
+  - id: haptic-teleoperation
+    title_ja: "力覚デバイスを用いた操縦実験"
+    title_en: "Haptic teleoperation setup"
+    body_ja: "操縦者へ触覚を介して拘束の存在を提示しながら操縦する実験の環境です。操作卓まわりの写真を掲載予定です。"
+    body_en: "The station used for experiments in which the constraint is conveyed to the operator through haptic feedback. Photographs of the console will be added here."
+    image:
+    alt_ja:
+    alt_en:
+
+  - id: attitude-control
+    title_ja: "回転・姿勢制御の検証環境"
+    title_en: "Rotational and attitude control verification"
+    body_ja: "SO(3) 上で設計した姿勢制御則を実機で検証するための環境です。装置の写真を掲載予定です。"
+    body_en: "The environment used to verify attitude control laws designed on SO(3) on real hardware. Photographs of the apparatus will be added here."
+    image:
+    alt_ja:
+    alt_en:
+
+# --- テンプレート / template -------------------------------------------------
+# 先頭の "# " を外し，items: の下（他の項目と同じ字下げ）に置いてください。
+#
+#  - id: shortname-in-ascii
+#    title_ja: "日本語の見出し"
+#    title_en: "English title"
+#    body_ja: "一〜二文の説明。"
+#    body_en: "One or two sentences."
+#    image: "facilities/shortname-in-ascii.jpg"
+#    width: 1600
+#    height: 1200
+#    alt_ja: "写真の内容を一文で。"
+#    alt_en: "One sentence describing the photograph."

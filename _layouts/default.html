@@ -5,7 +5,13 @@ layout: compress
 {% include base_path %}
 
 <!doctype html>
-<html lang="{{ site.locale | slice: 0,2 }}" class="no-js"{% if site.site_theme == "dark" %} data-theme="dark"{% endif %}>
+{%- comment -%}
+  Every page declared lang="en" from site.locale, Japanese pages included, so a
+  screen reader read Japanese text with an English voice. Pages that carry a
+  `lang` in their front matter now say what they are; the rest (404, sitemap)
+  keep the site default.
+{%- endcomment -%}
+<html lang="{{ page.lang | default: site.locale | slice: 0,2 }}" class="no-js"{% if site.site_theme == "dark" %} data-theme="dark"{% endif %}>
   <head>
     {% include head.html %}
     {% include head/custom.html %}
