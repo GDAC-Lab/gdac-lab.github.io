@@ -29,9 +29,11 @@ author:
   name_ja          : "仲野研究室"
   pronouns         : # example: "she/her"  
   bio              : "Geometric Dynamics, Autonomy, and Control Laboratory"
-  bio_ja           : "制御理論について研究しています。"
+  bio_ja           : "拘束を考慮した回転運動の制御と，衛星・ドローンへの応用を研究しています。"
   location         : "Nagoya, Japan"
+  location_ja      : "名古屋"
   employer         : "Nagoya Institute of Technology"
+  employer_ja      : "名古屋工業大学"
   uri              : "https://mcontrol.web.nitech.ac.jp/nakano/" # PI / lab intro (NITech)
   pure_url         : "https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/" # PI profile (NITech Pure)
   # Email: plain `email` adds a mailto link in the sidebar. `email_image` is shown only on People (教員 block).
@@ -100,7 +102,7 @@ publication_category:
     title_ja: '著書'
   manuscripts:
     title: 'Journal Articles'
-    title_ja: '学術論文（掲載誌）'
+    title_ja: '学術雑誌論文'
   conferences:
     title: 'Conference Papers'
     title_ja: '会議論文'

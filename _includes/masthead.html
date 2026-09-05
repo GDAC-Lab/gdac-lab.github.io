@@ -59,7 +59,7 @@
           {%- endif -%}
           <li class="masthead__menu-item persist">{% if lang_is_ja %}<a href="{{ base_path }}{{ lang_url_en }}" class="masthead__lang-link">{% include lang-flag.html code="gb" %}EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current">{% include lang-flag.html code="jp" %}日本語</span>{% else %}<span class="masthead__lang-current">{% include lang-flag.html code="gb" %}EN</span><span class="masthead__lang-sep">|</span><a href="{{ base_path }}{{ lang_url_ja }}" class="masthead__lang-link">{% include lang-flag.html code="jp" %}日本語</a>{% endif %}</li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
-            <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
+            <a role="button" aria-label="{% if page.lang == 'ja' %}表示テーマを切り替える{% else %}Toggle light and dark theme{% endif %}"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="{% if page.lang == 'ja' %}表示テーマの切り替え{% else %}Toggle theme{% endif %}"></i></a>
           </li>
         </ul>
         <ul class="hidden-links hidden"></ul>

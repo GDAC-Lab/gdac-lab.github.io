@@ -1,6 +1,6 @@
 <!-- start custom footer snippets -->
-
-<a href="/sitemap/">Sitemap</a>
+{% include base_path %}
+<a href="{{ base_path }}/sitemap/">{% if page.lang == 'ja' %}サイトマップ{% else %}Sitemap{% endif %}</a>
 
 {% comment %}
   MathJax / Plotly / Mermaid are large third-party bundles. They used to load on every

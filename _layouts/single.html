@@ -34,7 +34,8 @@ layout: default
             <p class="page__meta"><i class="fa fa-clock" aria-hidden="true"></i> {% include read-time.html %}</p>
           {% endif %}
         {% if page.modified %}
-          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].date_label | default: "Published:" }}</strong> <time datetime="{{ page.modified | date: "%Y-%m-%d" }}">{{ page.modified | date: "%B %d, %Y" }}</time></p>
+          {%- comment -%} `modified` is a revision date, so it is labelled as one; the Japanese pages get a Japanese date. {%- endcomment -%}
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {% if page.lang == 'ja' %}最終更新：{% else %}Last updated:{% endif %}</strong> <time datetime="{{ page.modified | date: "%Y-%m-%d" }}">{% if page.lang == 'ja' %}{{ page.modified | date: "%Y年%-m月%-d日" }}{% else %}{{ page.modified | date: "%B %-d, %Y" }}{% endif %}</time></p>
         {% endif %}
         
         {% if page.collection == 'teaching' %}
@@ -86,7 +87,8 @@ layout: default
 
       {% if page.share %}{% include social-share.html %}{% endif %}
 
-      {% include post_pagination.html %}
+      {%- comment -%} Publication records are not a sequence to page through. {%- endcomment -%}
+      {% unless page.collection == 'publications' %}{% include post_pagination.html %}{% endunless %}
     </div>
 
     {% if site.comments.provider and page.comments %}

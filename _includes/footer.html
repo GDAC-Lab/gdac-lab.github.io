@@ -3,9 +3,7 @@
 {% if site.author.github or site.author.bitbucket or site.atom_feed.hide != true %}
 <div class="page__footer-follow">
   <ul class="social-icons">
-    {% if site.data.ui-text[site.locale].follow_label %}
-      <li><strong>{{ site.data.ui-text[site.locale].follow_label }}</strong></li>
-    {% endif %}
+    <li><strong>{% if page.lang == 'ja' %}リンク{% else %}{{ site.data.ui-text[site.locale].follow_label | default: "Follow:" }}{% endif %}</strong></li>
     {% if site.author.github %}
       <li><a href="https://github.com/{{ site.author.github }}"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a></li>
     {% endif %}
@@ -20,7 +18,13 @@
 {% endif %}
 
 <div class="page__footer-copyright">
-  &copy; {{ site.time | date: '%Y' }} {{ site.name | default: site.title }}, {{ site.data.ui-text[site.locale].powered_by | default: "Powered by" }} <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
   {%- comment -%} Build time in JST, so the live site can be checked against the deploy log. {%- endcomment -%}
-  Site last updated {{ "now" | date: '%s' | plus: 32400 | date: '%Y-%m-%d %H:%M' }} JST
+  {%- capture _built %}{{ "now" | date: '%s' | plus: 32400 | date: '%Y-%m-%d %H:%M' }} JST{% endcapture -%}
+  {%- if page.lang == 'ja' %}
+  &copy; {{ site.time | date: '%Y' }} {{ site.name | default: site.title }}<br />
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：{{ _built }}
+  {%- else %}
+  &copy; {{ site.time | date: '%Y' }} {{ site.name | default: site.title }}. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
+  Last updated {{ _built }}
+  {%- endif %}
 </div>
