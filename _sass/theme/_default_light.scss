@@ -6,6 +6,11 @@
 $gray                       : #7a8288;
 $dark-gray                  : mix(#000, $gray, 40%);
 $darker-gray                : mix(#000, $gray, 60%);
+/* Secondary text. $light-gray (#bdc1c4) only reaches 1.8:1 on white — it was
+   used for publication authors, dates and captions, which is most of the
+   metadata on the site. This tier clears WCAG AA on white and on the callout
+   panel while staying clearly lighter than body text. */
+$muted-gray                 : mix(#000, $gray, 18%);
 $light-gray                 : mix(#fff, $gray, 50%);
 $lighter-gray               : mix(#fff, $gray, 90%);
 
@@ -35,17 +40,21 @@ $sidebar-screen-min-width   : 1024px;
     --global-dark-border-color          : #bdc1c4;
     --global-code-background-color      : #fafafa;
     --global-code-text-color            : #{$darker-gray};
-    --global-fig-caption-color          : mix(#fff,  #{$dark-gray}, 25%);
-    --global-link-color                 : #52adc8;
-    --global-link-color-hover           : mix(#000, #2f7f93, 25%);
-    --global-link-color-visited         : mix(#fff, #2f7f93, 25%);  
+    --global-fig-caption-color          : #{$muted-gray};
+    /* Deeper than the upstream #52adc8, which reaches only 2.6:1 on white. */
+    --global-link-color                 : #1f7490;
+    --global-link-color-hover           : #{mix(#000, #1f7490, 30%)};
+    --global-link-color-visited         : #{mix(#000, #2f7f93, 15%)};
     --global-masthead-link-color        : #{$dark-gray};
     --global-masthead-link-color-hover  : mix(#000, #{$gray}, 25%);    
     --global-text-color                 : #{$dark-gray};
-    --global-text-color-light           : #{$light-gray};
+    --global-text-color-strong          : #{$darker-gray};
+    --global-text-color-light           : #{$muted-gray};
     --global-thead-color                : #{$lighter-gray};
     /* Notices / email callout: explicit pairing for readability */
     --global-callout-bg                 : #{$lighter-gray};
     --global-callout-text               : #{$dark-gray};
-    --global-callout-text-muted         : #{$light-gray};
+    --global-callout-text-strong        : #{$darker-gray};
+    --global-callout-text-muted         : #{$muted-gray};
+    --global-toc-header-bg              : #{mix(#000, $gray, 30%)};
 }

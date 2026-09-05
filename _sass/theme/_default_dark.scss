@@ -11,12 +11,22 @@ $light-gray                 : mix(#fff, $gray, 50%);
 $background                 : #474747;
 $background-light           : mix(#fff, $background, 80%);
 $background-lighter         : mix(#fff, $background, 90%);
-/* Dark panel for callouts (tables still use thead = light tint) */
-$callout-surface            : mix(#fff, $background, 12%);
+/* Dark panel for callouts. Recessed rather than raised: a panel lighter than
+   the page leaves light text almost no contrast (the muted tier managed only
+   2.2:1 on the old surface). */
+$callout-surface            : mix(#000, $background, 22%);
+/* Text tiers. Body text sits below pure white on purpose: on a dark ground
+   light type blooms, so a full-white body leaves <strong> no room to stand out.
+   Measured against $background (#474747): body 7.0:1, strong 9.3:1, muted 4.7:1. */
 $text                       : #ffffff;
-$link                       : #0ea1c5;
-$link-dark                  : mix(#000, $link, 25%);
-$link-light                 : mix(#fff, $link, 25%);
+$text-body                  : #e0e0e0;
+$text-muted                 : #b8b8b8;
+/* Lighter than the upstream #0ea1c5, which reaches only 3.1:1 on $background.
+   Hover and visited both go lighter — going darker loses contrast on a dark
+   ground. */
+$link                       : #4ec3e2;
+$link-hover                 : mix(#fff, $link, 35%);
+$link-visited               : mix(#fff, $link, 18%);
 
 /* Color codes used for the site */
 $danger-color               : #ee5f5b;
@@ -46,15 +56,18 @@ html[data-theme="dark"] {
     --global-code-text-color            : #{$darker-gray};
     --global-fig-caption-color          : #{$light-gray};
     --global-link-color                 : #{$link};
-    --global-link-color-hover           : #{$link-dark};
-    --global-link-color-visited         : #{$link-light};
+    --global-link-color-hover           : #{$link-hover};
+    --global-link-color-visited         : #{$link-visited};
     --global-masthead-link-color        : #{$text};
     --global-masthead-link-color-hover  : #{$background-light};
-    --global-text-color                 : #{$text};
-    --global-text-color-light           : #f3f3f3;
+    --global-text-color                 : #{$text-body};
+    --global-text-color-strong          : #{$text};
+    --global-text-color-light           : #{$text-muted};
     --global-thead-color                : #{$background-lighter};
     /* Dark surface + light text (avoid light thead + light body text) */
     --global-callout-bg                 : #{$callout-surface};
-    --global-callout-text               : #{$text};
-    --global-callout-text-muted         : #{mix($text, $background, 42%)};
+    --global-callout-text               : #{$text-body};
+    --global-callout-text-strong        : #{$text};
+    --global-callout-text-muted         : #{$text-muted};
+    --global-toc-header-bg              : #{$background};
 }

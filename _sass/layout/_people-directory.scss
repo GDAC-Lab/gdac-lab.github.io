@@ -7,7 +7,9 @@
     margin-top: 1.75em;
     margin-bottom: 0.65em;
     padding-bottom: 0.35em;
-    font-size: $type-size-4;
+    font-size: 1.3125rem;
+    line-height: 1.4;
+    color: var(--global-text-color-strong, var(--global-text-color));
     border-bottom: 1px solid var(--global-border-color);
 
     &:first-child {
@@ -15,13 +17,15 @@
     }
   }
 
-  /* Category labels: master's vs undergraduate */
+  /* Category labels: master's vs undergraduate. Kept just above body size —
+     the list under each one is short, so spacing carries most of the break. */
   h3 {
     margin-top: 1.25em;
     margin-bottom: 0.4em;
-    font-size: $type-size-5;
-    font-weight: 600;
-    line-height: 1.3;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--global-text-color-strong, var(--global-text-color));
   }
 
   h3 + ul,
@@ -197,7 +201,7 @@ html[data-theme="dark"] .people-directory .people-faculty-email__img {
   word-wrap: break-word;
 
   strong {
-    color: var(--global-callout-text, var(--global-text-color));
+    color: var(--global-callout-text-strong, var(--global-callout-text, var(--global-text-color)));
   }
 }
 

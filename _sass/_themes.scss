@@ -39,6 +39,13 @@ $type-size-6                : 0.75em;   // ~12px
 $type-size-7                : 0.6875em; // ~11px
 $type-size-8                : 0.625em;  // ~10px
 
+/* Prose (hand-written body copy). The root is 16px on phones and 18px from
+   $medium up (see layout/reset), so rem-based sizes scale with the viewport.
+   The measure holds a line to roughly 40 Japanese characters on a wide screen —
+   without it the text column runs past 1000px and the eye loses the line. */
+$prose-font-size            : 1rem;   // 16px / 18px
+$prose-measure              : 44rem;
+
 $global-font-family         : $sans-serif;
 $header-font-family         : $sans-serif;
 $caption-font-family        : $serif;

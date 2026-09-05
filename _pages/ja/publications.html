@@ -77,7 +77,7 @@ lang_ref: publications_ja
     {% endif %}
 
     {% assign cat_title_ja = category[1].title_ja | default: category[1].title %}
-    <h2 id="publication-{{ cat_key }}" class="publications-page__category-heading">{{ cat_title_ja }}</h2><hr />
+    <h2 id="publication-{{ cat_key }}" class="publications-page__category-heading">{{ cat_title_ja }}</h2>
 
     {% if recent_in_cat_ja > 0 %}
       {% if recent_in_cat_en > 0 %}

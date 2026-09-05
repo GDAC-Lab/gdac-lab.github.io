@@ -50,9 +50,11 @@ $sidebar-screen-min-width   : 1024px;
     --global-masthead-link-color        : #{$text};
     --global-masthead-link-color-hover  : #{$link};
     --global-text-color                 : #{$text};
+    --global-text-color-strong          : #{mix(#000, $text, 35%)};
     --global-text-color-light           : #{$light-primary-color};
     --global-thead-color                : #{$background-lighter};
     --global-callout-bg                 : #{$background-lighter};
     --global-callout-text               : #{$text};
+    --global-callout-text-strong        : #{mix(#000, $text, 35%)};
     --global-callout-text-muted         : #{$light-primary-color};
 }

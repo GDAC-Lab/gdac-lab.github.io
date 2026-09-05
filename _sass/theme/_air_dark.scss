@@ -51,9 +51,11 @@ html[data-theme="dark"] {
     --global-masthead-link-color        : #{$text};
     --global-masthead-link-color-hover  : #{$background-light};
     --global-text-color                 : #{$text};
+    --global-text-color-strong          : #ffffff;
     --global-text-color-light           : #{$light-primary-color};
     --global-thead-color                : #{$background-lighter};
     --global-callout-bg                 : #{$callout-surface};
     --global-callout-text               : #{$text};
+    --global-callout-text-strong        : #ffffff;
     --global-callout-text-muted         : #{mix($text, $background, 40%)};
 }

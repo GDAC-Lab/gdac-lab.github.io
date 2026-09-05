@@ -60,6 +60,23 @@ small, .small {
   font-size: $type-size-6;
 }
 
+/* Emphasis.
+   Weight alone is a weak signal on a dark ground — light type blooms, so bold
+   and regular converge. Emphasis therefore also steps up one colour tier.
+   Elements that own their colour (links, code, notices) opt out below. */
+strong, b {
+  font-weight: 700;
+  color: var(--global-text-color-strong, inherit);
+}
+
+a strong, a b,
+button strong, button b,
+.btn strong, .btn b,
+code strong, code b,
+pre strong, pre b {
+  color: inherit;
+}
+
 p {
   margin-bottom: 1.3em;
 }

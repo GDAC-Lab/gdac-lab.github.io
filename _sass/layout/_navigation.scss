@@ -393,7 +393,7 @@
   .nav__title {
     color: #fff;
     font-size: $type-size-6;
-    background: var(--global-base-color);
+    background: var(--global-toc-header-bg, var(--global-base-color));
     border-top-left-radius: $border-radius;
     border-top-right-radius: $border-radius;
   }
