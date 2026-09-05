@@ -9,12 +9,11 @@ lang_ref: facilities
 
 {% include base_path %}
 
-**This page is under construction.** Photographs of our equipment and experimental environments will be added here as they are taken. For now it lists only the items we plan to show.
-{: .notice}
-
-This page introduces the vehicles, testbeds, and apparatus used in our work. For what each theme is about, see the [Research]({{ base_path }}/research/) page.
+This page introduces the vehicles, the experiment room, and the apparatus used in our work. For what each theme is about, see the [Research]({{ base_path }}/research/) page.
 
 {% include facility-gallery.html %}
+
+We also have a testbed for wall running and hammering inspection, a haptic teleoperation setup, and an attitude-control test rig. Photographs of these will follow.
 
 ## Simulator
 

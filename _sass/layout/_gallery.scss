@@ -32,6 +32,12 @@
   margin: 0;
   display: flex;
   flex-direction: column;
+  /* The base `figure` rule is a flex row with space-between; in a column that
+     sank a short caption to the bottom of the grid row, so titles in the same
+     row sat at different heights. Pack from the top. */
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap: nowrap;
   height: 100%;
 }
 

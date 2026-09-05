@@ -3,56 +3,124 @@
 #
 # 写真を追加する手順 / How to add a photo
 #   1. 画像を images/facilities/ に置きます。
-#      横 1600px 程度・JPEG（品質 78 前後）を目安にしてください。サイトを軽く保つためです。
+#      横 1424 × 縦 1068（4:3）の JPEG（品質 80 前後）を目安にしてください。ギャラリーは 4:3 の枠で
+#      表示するので，元の写真をその比率に切り抜いておくと意図した構図で表示されます。
 #   2. 下の該当する項目に image: を書きます。images/ からの相対パスです。
 #        image: "facilities/wheeled-drone.jpg"
 #   3. width: / height: に画像の実寸を入れます。読み込み中のガタつきを防ぐためのものです。
 #   4. alt_ja: / alt_en: に，写真に何が写っているかを一文で書きます。
 #
-#   image: が空の項目は「準備中」のカードとして表示されます。項目そのものを消す必要はありません。
-#   An item with no `image` renders as a "coming soon" card, so the list can be
+#   image: が空の項目は「写真準備中」のカードとして表示されます。項目そのものを消す必要はありません。
+#   An item with no `image` renders as a "photo coming soon" card, so the list can be
 #   filled in one photo at a time.
 #
 # 項目を増やすとき / To add an item
 #   items: の末尾に，下のテンプレート（コメントアウトしてあります）をコピーして使ってください。
 #   並び順はこのファイルの順序がそのまま表示順になります。
+#
+# 現在の写真は研究室ブログ（https://gdaclab.blogspot.com/）の 2026 年 5 月の記事から取り込んだものです。
 
 items:
   - id: wheeled-drone
     title_ja: "車輪付きドローン"
-    title_en: "Wheeled drones"
-    body_ja: "壁面や天井に押し付けて車輪で走行し，必要に応じて飛行へ移行する機体です。機体の写真を掲載予定です。"
-    body_en: "Vehicles that press against a wall or ceiling, travel on their wheels, and transition to flight as required. Photographs of the airframes will be added here."
-    image:
-    alt_ja:
-    alt_en:
+    title_en: "Wheeled drone"
+    body_ja: "ドローンの両側に車輪を取り付けた機体です。壁や天井に押し付けて車輪で走行でき，壁のそばや狭い空間でも姿勢を保てます。"
+    body_en: "A drone with a wheel on each side. Pressed against a wall or ceiling it travels on its wheels, and it holds its attitude close to walls and in narrow spaces."
+    image: "facilities/wheeled-drone.jpg"
+    width: 1424
+    height: 1068
+    alt_ja: "床に置かれた車輪付きドローン。左右に大きな車輪が付いている"
+    alt_en: "A wheeled drone on the floor, with a large wheel on each side"
 
-  - id: wall-testbed
-    title_ja: "壁面走行・打音検査の試験環境"
-    title_en: "Wall-running and hammering-inspection testbed"
-    body_ja: "壁面タイルの打音検査を実験するための試験体と，走行試験を行う環境です。設営の様子を掲載予定です。"
-    body_en: "The test specimens and the space used for hammering-inspection and wall-running experiments. Photographs of the setup will be added here."
-    image:
-    alt_ja:
-    alt_en:
+  - id: quadrotors
+    title_ja: "研究用ドローン（QAV250）"
+    title_en: "Research drones (QAV250)"
+    body_ja: "制御対象として用いている QAV250 ベースのドローンです。モーションキャプチャ用のマーカを取り付けて飛行させます。"
+    body_en: "QAV250-based drones used as the controlled vehicles. They fly with motion-capture markers attached."
+    image: "facilities/quadrotors-qav250.jpg"
+    width: 1424
+    height: 1068
+    alt_ja: "送信機と，マーカを付けた数機の QAV250 ドローン"
+    alt_en: "A transmitter and several QAV250 drones fitted with motion-capture markers"
 
-  - id: haptic-teleoperation
-    title_ja: "力覚デバイスを用いた操縦実験"
-    title_en: "Haptic teleoperation setup"
-    body_ja: "操縦者へ触覚を介して拘束の存在を提示しながら操縦する実験の環境です。操作卓まわりの写真を掲載予定です。"
-    body_en: "The station used for experiments in which the constraint is conveyed to the operator through haptic feedback. Photographs of the console will be added here."
-    image:
-    alt_ja:
-    alt_en:
+  - id: stampfly
+    title_ja: "小型ドローン（StampFly）"
+    title_en: "Small drone (StampFly)"
+    body_ja: "重さ約 37 g の小型ドローン StampFly です。手のひらに載る大きさで，屋内の実験に用いています。"
+    body_en: "StampFly, a small drone weighing about 37 g. It fits in the palm of a hand and is used for indoor experiments."
+    image: "facilities/stampfly.jpg"
+    width: 1424
+    height: 1068
+    alt_ja: "手のひらに載せた小型ドローン StampFly"
+    alt_en: "The StampFly small drone resting in a palm"
 
-  - id: attitude-control
-    title_ja: "回転・姿勢制御の検証環境"
-    title_en: "Rotational and attitude control verification"
-    body_ja: "SO(3) 上で設計した姿勢制御則を実機で検証するための環境です。装置の写真を掲載予定です。"
-    body_en: "The environment used to verify attitude control laws designed on SO(3) on real hardware. Photographs of the apparatus will be added here."
-    image:
-    alt_ja:
-    alt_en:
+  - id: experiment-room
+    title_ja: "実験室"
+    title_en: "Experiment room"
+    body_ja: "山田研究室と共同で使用している実験室です。モーションキャプチャのカメラを備え，ドローンの飛行実験を行います。"
+    body_en: "The experiment room shared with the Yamada Laboratory. It is equipped with motion-capture cameras and is where the drones fly."
+    image: "facilities/experiment-room.jpg"
+    width: 1424
+    height: 1068
+    alt_ja: "黒い幕とモーションキャプチャカメラに囲まれた実験室の飛行スペース"
+    alt_en: "The flight space of the experiment room, ringed by black curtains and motion-capture cameras"
+
+  - id: motion-capture
+    title_ja: "モーションキャプチャ"
+    title_en: "Motion capture"
+    body_ja: "Vicon と Qualisys の 2 種類のモーションキャプチャを，用途に応じて使い分けています。機体の位置と姿勢を計測し，制御に用います。"
+    body_en: "Two motion-capture systems, Vicon and Qualisys, are used depending on the experiment. They measure the position and attitude of the vehicles for control."
+    image: "facilities/motion-capture-vicon.jpg"
+    width: 1424
+    height: 1068
+    alt_ja: "天井のレールに取り付けられた Vicon のモーションキャプチャカメラ"
+    alt_en: "A Vicon motion-capture camera mounted on a ceiling rail"
+
+  - id: thrust-stand
+    title_ja: "推力試験機"
+    title_en: "Thrust test stand"
+    body_ja: "ロータの推力と反トルクを，電圧・電流に対して計測する試験機です。力覚センサには Leptrino 製のものを用いています。"
+    body_en: "A stand that measures rotor thrust and reaction torque against voltage and current, using a Leptrino force sensor."
+    image: "facilities/thrust-test-stand.jpg"
+    width: 1424
+    height: 1068
+    alt_ja: "アルミフレームの推力試験機に固定されたドローン"
+    alt_en: "A drone fixed to the aluminum-frame thrust test stand"
+
+  - id: printers
+    title_ja: "3D プリンタ"
+    title_en: "3D printers"
+    body_ja: "機体の部品を製作するための 3D プリンタです。3 機を用途に応じて使い分けています。"
+    body_en: "3D printers for making airframe parts. Three machines are used according to the job."
+    image: "facilities/3d-printers.jpg"
+    width: 1424
+    height: 1068
+    alt_ja: "実験室に置かれた 3D プリンタ"
+    alt_en: "One of the 3D printers in the experiment room"
+
+# --- 写真待ちの項目 / items awaiting photographs -------------------------------
+# 写真が撮れたら，先頭の "# " を外して items: に戻してください。
+#
+#  - id: wall-testbed
+#    title_ja: "壁面走行・打音検査の試験環境"
+#    title_en: "Wall-running and hammering-inspection testbed"
+#    body_ja: "壁面タイルの打音検査を実験するための試験体と，走行試験を行う環境です。"
+#    body_en: "The test specimens and the space used for hammering-inspection and wall-running experiments."
+#    image:
+#
+#  - id: haptic-teleoperation
+#    title_ja: "力覚デバイスを用いた操縦実験"
+#    title_en: "Haptic teleoperation setup"
+#    body_ja: "操縦者へ触覚を介して拘束の存在を提示しながら操縦する実験の環境です。"
+#    body_en: "The station used for experiments in which the constraint is conveyed to the operator through haptic feedback."
+#    image:
+#
+#  - id: attitude-control
+#    title_ja: "回転・姿勢制御の検証環境"
+#    title_en: "Rotational and attitude control verification"
+#    body_ja: "SO(3) 上で設計した姿勢制御則を実機で検証するための環境です。"
+#    body_en: "The environment used to verify attitude control laws designed on SO(3) on real hardware."
+#    image:
 
 # --- テンプレート / template -------------------------------------------------
 # 先頭の "# " を外し，items: の下（他の項目と同じ字下げ）に置いてください。
@@ -63,7 +131,7 @@ items:
 #    body_ja: "一〜二文の説明。"
 #    body_en: "One or two sentences."
 #    image: "facilities/shortname-in-ascii.jpg"
-#    width: 1600
-#    height: 1200
+#    width: 1424
+#    height: 1068
 #    alt_ja: "写真の内容を一文で。"
 #    alt_en: "One sentence describing the photograph."
