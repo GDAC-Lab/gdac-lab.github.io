@@ -9,6 +9,7 @@ HTML for <img> tags, requests each image at the given longest-side size
 
     <out>/pNN-MM.jpg          post NN (oldest = 01), image MM within the post
     <out>/manifest.json       date, title, post URL, caption, source URL, size
+    <out>/posts.json          each post's text with the images marked in place
 
 The lab wrote the blog, so this is its own material coming home; the script
 only exists because the editing sandbox cannot reach blogspot.com.
@@ -41,6 +42,8 @@ def sized(url: str, size: int) -> str:
     url = html.unescape(url)
     if re.search(r"=s\d+(-[a-z0-9-]+)?$", url):
         return re.sub(r"=s\d+(-[a-z0-9-]+)?$", f"=s{size}", url)
+    if re.search(r"=w\d+-h\d+(-[a-z0-9-]+)?$", url):
+        return re.sub(r"=w\d+-h\d+(-[a-z0-9-]+)?$", f"=s{size}", url)
     if re.search(r"/s\d+(-[a-z0-9-]+)?/", url):
         return re.sub(r"/s\d+(-[a-z0-9-]+)?/", f"/s{size}/", url)
     if re.search(r"/w\d+-h\d+(-[a-z0-9-]+)?/", url):
@@ -83,12 +86,21 @@ def main() -> int:
         Image = None
 
     manifest = []
+    posts = []
     for pi, e in enumerate(entries, 1):
         title = html.unescape(e.get("title", {}).get("$t", "")).strip()
         date = e["published"]["$t"][:10]
         url = next((l["href"] for l in e.get("link", []) if l.get("rel") == "alternate"), "")
         content = e.get("content", {}).get("$t", "") or e.get("summary", {}).get("$t", "")
         caps = captions_by_image(content)
+        # The post text, in reading order with the images marked, so a photo can
+        # be matched to the sentence that introduces it.
+        marked = re.sub(r'<img[^>]+src="([^"]+)"[^>]*>', lambda m: f" [IMG {html.unescape(m.group(1))[-24:]}] ", content, flags=re.I)
+        marked = re.sub(r"<(br|/p|/div|/tr|/li|/h\d)[^>]*>", "\n", marked, flags=re.I)
+        text = html.unescape(re.sub(r"<[^>]+>", "", marked))
+        text = re.sub(r"[ \t\u3000]+", " ", text)
+        text = re.sub(r"\n\s*\n+", "\n", text).strip()
+        posts.append({"post": pi, "date": date, "title": title, "post_url": url, "text": text})
         srcs = []
         for m in re.finditer(r'<img[^>]+src="([^"]+)"', content, flags=re.I):
             s = html.unescape(m.group(1))
@@ -121,6 +133,7 @@ def main() -> int:
             print(f"{name}  {date}  {w}x{h}  {len(data)//1024} KB  {title[:40]}", file=sys.stderr)
 
     (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    (out / "posts.json").write_text(json.dumps(posts, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"wrote {len(manifest)} image(s) to {out}/", file=sys.stderr)
     return 0
 
