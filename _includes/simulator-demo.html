@@ -57,17 +57,39 @@
       <button type="button" class="simdemo__chip" data-sim-scenario="hover">{% if _ja %}空中で静止{% else %}Hover in free air{% endif %}</button>
     </div>
 
-    <div class="simdemo__row simdemo__row--sliders">
-      <label class="simdemo__slider">
-        <span class="simdemo__slider-name">{% if _ja %}目標の高さ{% else %}Target height{% endif %}</span>
-        <input type="range" min="0.35" max="1.75" step="0.01" value="1.30" data-sim-target-z>
-        <output class="simdemo__slider-value" data-sim-target-z-out>1.30 m</output>
-      </label>
-      <label class="simdemo__slider">
-        <span class="simdemo__slider-name">{% if _ja %}目標の壁方向位置{% else %}Target toward the wall{% endif %}</span>
-        <input type="range" min="0.80" max="2.15" step="0.01" value="1.93" data-sim-target-x>
-        <output class="simdemo__slider-value" data-sim-target-x-out>1.93 m</output>
-      </label>
+    <div class="simdemo__row simdemo__row--target">
+      {% comment %}
+        Side view of the scene (x to the right, z up), in centimetres: the
+        viewBox spans x 0.60–2.25 m and z 0–1.90 m. Keep PAD in demo.js in step.
+      {% endcomment %}
+      <div class="simdemo__pad-wrap">
+        <svg class="simdemo__pad" viewBox="0 0 165 190" data-sim-pad tabindex="0"
+             role="application"
+             aria-label="{% if _ja %}目標位置パッド（横が壁方向，縦が高さ）{% else %}Target pad: sideways toward the wall, up for height{% endif %}"
+             aria-describedby="simdemo-pad-help">
+          <rect class="simdemo__pad-bg" x="0" y="0" width="165" height="190" rx="3"/>
+          <rect class="simdemo__pad-allowed" x="20" y="15" width="135" height="140" rx="2"/>
+          <rect class="simdemo__pad-floor" x="0" y="186" width="165" height="4"/>
+          <rect class="simdemo__pad-wall" x="135" y="0" width="10" height="190"/>
+          <line class="simdemo__pad-limit" x1="120" y1="0" x2="120" y2="186"/>
+          <text class="simdemo__pad-label" x="147" y="11">{% if _ja %}壁{% else %}wall{% endif %}</text>
+          <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="11">{% if _ja %}↑ 高さ{% else %}↑ height{% endif %}</text>
+          <text class="simdemo__pad-label simdemo__pad-label--axis" x="4" y="182">{% if _ja %}壁方向 →{% else %}toward wall →{% endif %}</text>
+          <circle class="simdemo__pad-drone" data-sim-pad-drone cx="95" cy="130" r="5"/>
+          <circle class="simdemo__pad-target" data-sim-pad-target cx="133" cy="60" r="6.5"/>
+        </svg>
+        <p id="simdemo-pad-help" class="simdemo__pad-help">
+          {% if _ja %}パッドをドラッグ，または矢印キー（Shift で大きく）で目標を動かします。3D 表示の緑の球を直接ドラッグしても動かせます。{% else %}Drag on the pad, or use the arrow keys (Shift for bigger steps). You can also drag the green sphere in the 3D view directly.{% endif %}
+        </p>
+      </div>
+      <dl class="simdemo__target-values" aria-live="polite">
+        <div><dt>{% if _ja %}目標の高さ{% else %}Target height{% endif %}</dt><dd data-sim-target-z-out>1.30 m</dd></div>
+        <div><dt>{% if _ja %}目標の壁方向位置{% else %}Target toward the wall{% endif %}</dt><dd data-sim-target-x-out>1.93 m (+0.13)</dd></div>
+        <div class="simdemo__legend">
+          <span><i class="simdemo__legend-dot simdemo__legend-dot--target"></i>{% if _ja %}目標{% else %}target{% endif %}</span>
+          <span><i class="simdemo__legend-dot simdemo__legend-dot--drone"></i>{% if _ja %}機体{% else %}vehicle{% endif %}</span>
+        </div>
+      </dl>
     </div>
 
     <dl class="simdemo__readout">
@@ -78,7 +100,7 @@
     </dl>
 
     <p class="simdemo__hint">
-      {% if _ja %}ドラッグで視点を回転，ホイールで拡大縮小できます。壁面は <b>1.95 m</b> の位置にあり，車輪（半径 0.15 m）が触れると機体は <b>1.80 m</b> より先へは進めません。目標をそれより奥へ置くと，届かない分がそのまま壁への押し付け力になります。押し付けのための専用の制御は入っていません。{% else %}Drag to orbit, scroll to zoom. The wall face is at <b>1.95 m</b>, and with 0.15 m wheels the body cannot get past <b>1.80 m</b>. Put the target beyond that and the part it cannot reach becomes the force pressing the wheels into the wall — there is no dedicated pressing controller.{% endif %}
+      {% if _ja %}3D 表示はドラッグで視点を回転，ホイールで拡大縮小できます。壁面は <b>1.95 m</b> の位置にあり，車輪（半径 0.15 m）が触れると機体は <b>1.80 m</b> より先へは進めません。目標をそれより奥へ置くと，届かない分がそのまま壁への押し付け力になります。押し付けのための専用の制御は入っていません。{% else %}In the 3D view, drag to orbit and scroll to zoom. The wall face is at <b>1.95 m</b>, and with 0.15 m wheels the body cannot get past <b>1.80 m</b>. Put the target beyond that and the part it cannot reach becomes the force pressing the wheels into the wall — there is no dedicated pressing controller.{% endif %}
     </p>
   </div>
 </div>

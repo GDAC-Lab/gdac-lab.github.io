@@ -8,6 +8,12 @@
  * controller. Nothing here is a recording — move the target and the vehicle
  * has to work out what to do.
  *
+ * The target can be set four ways, all feeding one setTarget():
+ *   - drag the green reference sphere in the 3D view
+ *   - drag on the side-view pad
+ *   - arrow keys while the pad has focus
+ *   - the scenario presets
+ *
  * Everything is served from this site; no third-party requests.
  */
 
@@ -19,20 +25,29 @@ const CONTROL_DECIMATION = 5;   // 1 kHz physics -> 200 Hz control, as in the si
 const MAX_CATCHUP_SECONDS = 0.1; // never try to make up more than this in one frame
 
 /**
- * Scene geometry, for describing the target slider in useful terms.
+ * Scene geometry, for describing the target in useful terms.
  * The wall's near face is at x = 1.95 m. The wheels have radius 0.15 m, so the
  * body cannot get past x = 1.80 m: a target beyond that is unreachable, and the
  * leftover command becomes the force pressing the wheels into the wall. That is
  * the whole trick behind the wall demo — no dedicated pressing controller.
  */
-const WALL_FACE_X = 1.95;
 const BODY_X_AT_CONTACT = 1.80;
+
+/** Where the target may be placed. Inside the wall is allowed on purpose. */
+const TARGET_LIMITS = { x: [0.80, 2.15], z: [0.35, 1.75] };
+const KEY_STEP = 0.02;
+const KEY_STEP_FAST = 0.10;
+
+/** World extent the side-view pad shows; must match the SVG in the include. */
+const PAD = { x0: 0.60, x1: 2.25, z0: 0.00, z1: 1.90 };
 
 const SCENARIOS = {
   'wall-climb': { x: 1.93, z: 1.60 },
   'wall-hold': { x: 1.93, z: 0.62 },
   hover: { x: 1.00, z: 1.20 },
 };
+
+const clamp = (v, [lo, hi]) => Math.min(Math.max(v, lo), hi);
 
 class SimulatorDemo {
   constructor(root) {
@@ -47,20 +62,24 @@ class SimulatorDemo {
     };
     this.playButton = root.querySelector('[data-sim-play]');
     this.resetButton = root.querySelector('[data-sim-reset]');
-    this.targetX = root.querySelector('[data-sim-target-x]');
-    this.targetZ = root.querySelector('[data-sim-target-z]');
-    this.targetXOut = root.querySelector('[data-sim-target-x-out]');
-    this.targetZOut = root.querySelector('[data-sim-target-z-out]');
     this.speedSelect = root.querySelector('[data-sim-speed]');
     this.scenarioButtons = [...root.querySelectorAll('[data-sim-scenario]')];
+    this.pad = root.querySelector('[data-sim-pad]');
+    this.padTargetDot = root.querySelector('[data-sim-pad-target]');
+    this.padDroneDot = root.querySelector('[data-sim-pad-drone]');
+    this.targetXOut = root.querySelector('[data-sim-target-x-out]');
+    this.targetZOut = root.querySelector('[data-sim-target-z-out]');
 
     this.strings = JSON.parse(root.dataset.simStrings || '{}');
     this.modelUrl = root.dataset.simModel;
+    this.targetPos = { x: 1.93, z: 1.30 };
     this.running = false;
     this.lastFrameMs = 0;
     this.stepCounter = 0;
     this.stepsThisSecond = 0;
     this.rateWindowStart = 0;
+    this.dragging3d = false;
+    this.hovering3d = false;
   }
 
   say(key, fallback) {
@@ -92,13 +111,15 @@ class SimulatorDemo {
     this.timestep = this.model.opt.timestep;
 
     // The green sphere is a mocap body: the simulator slides it along the
-    // commanded path. Here the sliders set the command, so point it at them.
+    // commanded path. Here the visitor sets the command, so it marks that.
     const markerBody = mujoco.mj_name2id(this.model, enumValue(mujoco.mjtObj.mjOBJ_BODY), 'overlay_reference_marker_0');
     this.markerMocapId = markerBody >= 0 ? this.model.body_mocapid[markerBody] : -1;
 
     this.view = new MujocoView(this.canvas, this.model, mujoco);
     this.view.setBackground(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
     this.view.resize();
+    this.setTarget(this.targetPos.x, this.targetPos.z);
+    mujoco.mj_forward(this.model, this.data);
     this.view.sync(this.data);
     this.view.render();
 
@@ -150,9 +171,177 @@ class SimulatorDemo {
     };
   }
 
+  /* ---------------------------------------------------------------- target */
+
   target() {
-    return [Number(this.targetX.value), 0, Number(this.targetZ.value)];
+    return [this.targetPos.x, 0, this.targetPos.z];
   }
+
+  /**
+   * The one place the target changes. Clamps, moves the marker, and refreshes
+   * every readout of it. While paused it also redraws, so dragging the marker
+   * still shows the marker moving.
+   */
+  setTarget(x, z) {
+    this.targetPos = { x: clamp(x, TARGET_LIMITS.x), z: clamp(z, TARGET_LIMITS.z) };
+    this._placeMarker(this.target());
+    this._syncTargetLabels();
+    this._syncPadTarget();
+    if (this.view && !this.running) {
+      this.mujoco.mj_forward(this.model, this.data);
+      this.view.sync(this.data);
+      this.view.render();
+    }
+  }
+
+  nudgeTarget(dx, dz) {
+    this.setTarget(this.targetPos.x + dx, this.targetPos.z + dz);
+  }
+
+  /** Park the reference marker on the commanded target. */
+  _placeMarker(target) {
+    if (this.markerMocapId < 0) return;
+    const base = this.markerMocapId * 3;
+    const mocap = this.data.mocap_pos;
+    mocap[base] = target[0];
+    mocap[base + 1] = target[1];
+    mocap[base + 2] = target[2];
+  }
+
+  _syncTargetLabels() {
+    const { x, z } = this.targetPos;
+    if (this.targetXOut) {
+      const press = x - BODY_X_AT_CONTACT;
+      this.targetXOut.textContent = press > 0.005
+        ? `${x.toFixed(2)} m (+${press.toFixed(2)})`
+        : `${x.toFixed(2)} m`;
+      this.targetXOut.dataset.pressing = press > 0.005 ? 'true' : 'false';
+    }
+    if (this.targetZOut) this.targetZOut.textContent = `${z.toFixed(2)} m`;
+  }
+
+  /* ------------------------------------------------------------------- pad */
+
+  /** World (x, z) -> pad SVG coordinates. The SVG viewBox is in centimetres. */
+  static _worldToPad(x, z) {
+    return { sx: (x - PAD.x0) * 100, sy: (PAD.z1 - z) * 100 };
+  }
+
+  _padToWorld(clientX, clientY) {
+    const r = this.pad.getBoundingClientRect();
+    const fx = (clientX - r.left) / r.width;
+    const fy = (clientY - r.top) / r.height;
+    return { x: PAD.x0 + fx * (PAD.x1 - PAD.x0), z: PAD.z1 - fy * (PAD.z1 - PAD.z0) };
+  }
+
+  _syncPadTarget() {
+    if (!this.padTargetDot) return;
+    const { sx, sy } = SimulatorDemo._worldToPad(this.targetPos.x, this.targetPos.z);
+    this.padTargetDot.setAttribute('cx', sx.toFixed(1));
+    this.padTargetDot.setAttribute('cy', sy.toFixed(1));
+  }
+
+  _syncPadDrone(position) {
+    if (!this.padDroneDot) return;
+    const { sx, sy } = SimulatorDemo._worldToPad(position[0], position[2]);
+    this.padDroneDot.setAttribute('cx', sx.toFixed(1));
+    this.padDroneDot.setAttribute('cy', sy.toFixed(1));
+  }
+
+  _wirePad() {
+    const pad = this.pad;
+    if (!pad) return;
+    let activePointer = null;
+    const place = (event) => {
+      const { x, z } = this._padToWorld(event.clientX, event.clientY);
+      this.setTarget(x, z);
+    };
+    pad.addEventListener('pointerdown', (event) => {
+      if (event.button !== undefined && event.button !== 0) return;
+      activePointer = event.pointerId;
+      pad.setPointerCapture(event.pointerId);
+      pad.classList.add('is-dragging');
+      pad.focus({ preventScroll: true });
+      place(event);
+      event.preventDefault();
+    });
+    pad.addEventListener('pointermove', (event) => {
+      if (event.pointerId !== activePointer) return;
+      place(event);
+    });
+    const release = (event) => {
+      if (event.pointerId !== activePointer) return;
+      activePointer = null;
+      pad.classList.remove('is-dragging');
+    };
+    pad.addEventListener('pointerup', release);
+    pad.addEventListener('pointercancel', release);
+
+    pad.addEventListener('keydown', (event) => {
+      const step = event.shiftKey ? KEY_STEP_FAST : KEY_STEP;
+      const moves = {
+        ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, step], ArrowDown: [0, -step],
+      };
+      const move = moves[event.key];
+      if (!move) return;
+      event.preventDefault();
+      this.nudgeTarget(move[0], move[1]);
+    });
+  }
+
+  /* ------------------------------------------------------------- 3D drag */
+
+  _wire3dDrag() {
+    const canvas = this.canvas;
+    let activePointer = null;
+
+    const setHover = (on) => {
+      if (on === this.hovering3d) return;
+      this.hovering3d = on;
+      this.view.setMarkerHighlight(on);
+      canvas.style.cursor = on ? 'grab' : '';
+      if (!this.running) this.view.render();
+    };
+
+    // Registered in the capture phase so it runs before OrbitControls' own
+    // pointerdown on the same element; the marker grab must win over orbit.
+    canvas.addEventListener('pointerdown', (event) => {
+      if (event.button !== undefined && event.button !== 0) return;
+      if (!this.view.pickMarker(event.clientX, event.clientY)) return;
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      activePointer = event.pointerId;
+      this.dragging3d = true;
+      this.view.setOrbitEnabled(false);
+      canvas.setPointerCapture(event.pointerId);
+      canvas.style.cursor = 'grabbing';
+    }, { capture: true });
+
+    canvas.addEventListener('pointermove', (event) => {
+      if (this.dragging3d) {
+        if (event.pointerId !== activePointer) return;
+        const hit = this.view.projectToTargetPlane(event.clientX, event.clientY);
+        if (hit) this.setTarget(hit.x, hit.z);
+        return;
+      }
+      // Hover feedback only for a mouse: touch has no hover, and a raycast per
+      // touchmove would fight the orbit gesture for no benefit.
+      if (event.pointerType === 'mouse') setHover(this.view.pickMarker(event.clientX, event.clientY));
+    });
+
+    const release = (event) => {
+      if (!this.dragging3d || event.pointerId !== activePointer) return;
+      activePointer = null;
+      this.dragging3d = false;
+      this.view.setOrbitEnabled(true);
+      canvas.style.cursor = this.hovering3d ? 'grab' : '';
+    };
+    canvas.addEventListener('pointerup', release);
+    canvas.addEventListener('pointercancel', release);
+    canvas.addEventListener('pointerleave', () => { if (!this.dragging3d) setHover(false); });
+  }
+
+  /* --------------------------------------------------------------- physics */
 
   /** How many contacts involve the wall right now. */
   wallContacts() {
@@ -166,21 +355,10 @@ class SimulatorDemo {
     return count;
   }
 
-  /** Park the reference marker on the commanded target. */
-  _placeMarker(target) {
-    if (this.markerMocapId < 0) return;
-    const base = this.markerMocapId * 3;
-    const mocap = this.data.mocap_pos;
-    mocap[base] = target[0];
-    mocap[base + 1] = target[1];
-    mocap[base + 2] = target[2];
-  }
-
   step(seconds) {
     const { mujoco, model, data } = this;
     const steps = Math.min(Math.round(seconds / this.timestep), Math.round(MAX_CATCHUP_SECONDS / this.timestep));
     const target = this.target();
-    this._placeMarker(target);
     for (let i = 0; i < steps; i += 1) {
       if (this.stepCounter % CONTROL_DECIMATION === 0) {
         const thrusts = computeHoverControl(this.readState(), target, WALL_DEMO_CONFIG);
@@ -203,6 +381,7 @@ class SimulatorDemo {
     if (elapsed > 0) this.step(elapsed * speed);
     this.view.sync(this.data);
     this.view.render();
+    this._syncPadDrone(this.readState().position);
     this._updateReadout(nowMs);
   }
 
@@ -225,6 +404,8 @@ class SimulatorDemo {
     }
     if (this.readout.rate) this.readout.rate.textContent = `${(simSeconds / wallSeconds).toFixed(2)}×`;
   }
+
+  /* -------------------------------------------------------------- lifecycle */
 
   start() {
     if (this.running) return;
@@ -250,19 +431,7 @@ class SimulatorDemo {
     this.stepCounter = 0;
     this.view.sync(this.data);
     this.view.render();
-  }
-
-  _syncTargetLabels() {
-    const x = Number(this.targetX.value);
-    const z = Number(this.targetZ.value);
-    if (this.targetXOut) {
-      const press = x - BODY_X_AT_CONTACT;
-      this.targetXOut.textContent = press > 0.005
-        ? `${x.toFixed(2)} m (+${press.toFixed(2)})`
-        : `${x.toFixed(2)} m`;
-      this.targetXOut.dataset.pressing = press > 0.005 ? 'true' : 'false';
-    }
-    if (this.targetZOut) this.targetZOut.textContent = `${z.toFixed(2)} m`;
+    this._syncPadDrone(this.readState().position);
   }
 
   _wireControls() {
@@ -270,21 +439,18 @@ class SimulatorDemo {
       this.playButton.addEventListener('click', () => (this.running ? this.stop() : this.start()));
     }
     if (this.resetButton) this.resetButton.addEventListener('click', () => this.reset());
-    for (const input of [this.targetX, this.targetZ]) {
-      if (input) input.addEventListener('input', () => this._syncTargetLabels());
-    }
     for (const button of this.scenarioButtons) {
       button.addEventListener('click', () => {
         const preset = SCENARIOS[button.dataset.simScenario];
         if (!preset) return;
-        this.targetX.value = preset.x;
-        this.targetZ.value = preset.z;
-        this._syncTargetLabels();
+        this.setTarget(preset.x, preset.z);
         this.reset();
         this.start();
       });
     }
-    this._syncTargetLabels();
+    this._wirePad();
+    this._wire3dDrag();
+    this._syncPadDrone(this.readState().position);
 
     const resize = () => {
       this.view.resize();
@@ -320,6 +486,8 @@ class SimulatorDemo {
 const root = document.querySelector('[data-sim-root]');
 if (root) {
   const demo = new SimulatorDemo(root);
+  // Exposed on the element for tooling and tests; not part of any page API.
+  root.simdemo = demo;
   demo.load().catch((error) => {
     console.error('[simulator]', error);
     demo.setStatus(
