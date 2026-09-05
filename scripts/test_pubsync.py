@@ -11,6 +11,7 @@ permalinks. Everything is driven from fixtures, so no network is required.
 
 from __future__ import annotations
 
+import http.client
 import json
 import sys
 import tempfile
@@ -234,7 +235,7 @@ class TestPagination(unittest.TestCase):
 
     def test_http_error_aborts_cleanly(self):
         def boom(req, timeout=None):
-            raise urllib.error.HTTPError(req.full_url, 503, "busy", None, None)
+            raise urllib.error.HTTPError(req.full_url, 404, "no such slug", None, None)
 
         orig = rm.urllib.request.urlopen
         rm.urllib.request.urlopen = boom
@@ -301,6 +302,96 @@ class TestPreprints(TempPubDir):
     def test_crossref_authors_formatting(self):
         msg = {"author": [{"given": "Ada", "family": "Lovelace"}, {"family": "Turing"}]}
         self.assertEqual(pp.crossref_authors(msg), "Ada Lovelace, Turing")
+
+
+class TestRetry(unittest.TestCase):
+    """A researchmap blip is retried; a permanent error or a real outage aborts cleanly."""
+
+    class _Resp:
+        def __init__(self, body: dict):
+            self._body = json.dumps(body).encode()
+        def read(self):
+            return self._body
+        def __enter__(self):
+            return self
+        def __exit__(self, *a):
+            return False
+
+    def _fetch(self, urlopen):
+        """Run fetch_items with `urlopen` in place and sleeps recorded, not slept."""
+        sleeps: list[float] = []
+        orig_open, orig_sleep = rm.urllib.request.urlopen, rm._sleep
+        rm.urllib.request.urlopen, rm._sleep = urlopen, sleeps.append
+        try:
+            return rm.fetch_items("slug"), sleeps
+        finally:
+            rm.urllib.request.urlopen, rm._sleep = orig_open, orig_sleep
+
+    def test_dropped_connection_is_retried(self):
+        calls = {"n": 0}
+
+        def flaky(req, timeout=None):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise http.client.RemoteDisconnected(
+                    "Remote end closed connection without response")
+            return self._Resp({"items": [paper("1")], "totalResults": 1})
+
+        items, sleeps = self._fetch(flaky)
+        self.assertEqual([i["rm:id"] for i in items], ["1"])
+        self.assertEqual(calls["n"], 2)
+        self.assertEqual(sleeps, [rm.RETRY_DELAYS[0]])
+
+    def test_server_error_is_retried(self):
+        calls = {"n": 0}
+
+        def busy_once(req, timeout=None):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise urllib.error.HTTPError(req.full_url, 503, "busy", None, None)
+            return self._Resp({"items": [paper("1")]})
+
+        items, sleeps = self._fetch(busy_once)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(len(sleeps), 1)
+
+    def test_persistent_disconnect_aborts_without_traceback(self):
+        calls = {"n": 0}
+
+        def dead(req, timeout=None):
+            calls["n"] += 1
+            raise http.client.RemoteDisconnected(
+                "Remote end closed connection without response")
+
+        with self.assertRaises(common.SyncAbort) as ctx:
+            self._fetch(dead)
+        self.assertEqual(calls["n"], rm.RETRY_ATTEMPTS)
+        self.assertIn("RemoteDisconnected", str(ctx.exception))
+
+    def test_pauses_grow_between_attempts(self):
+        def dead(req, timeout=None):
+            raise TimeoutError("timed out")
+
+        sleeps: list[float] = []
+        orig_open, orig_sleep = rm.urllib.request.urlopen, rm._sleep
+        rm.urllib.request.urlopen, rm._sleep = dead, sleeps.append
+        try:
+            with self.assertRaises(common.SyncAbort):
+                rm.fetch_items("slug")
+        finally:
+            rm.urllib.request.urlopen, rm._sleep = orig_open, orig_sleep
+        self.assertEqual(sleeps, list(rm.RETRY_DELAYS[:rm.RETRY_ATTEMPTS - 1]))
+
+    def test_not_found_is_not_retried(self):
+        calls = {"n": 0}
+
+        def missing(req, timeout=None):
+            calls["n"] += 1
+            raise urllib.error.HTTPError(req.full_url, 404, "no such slug", None, None)
+
+        with self.assertRaises(common.SyncAbort):
+            self._fetch(missing)
+        self.assertEqual(calls["n"], 1)
 
 
 class TestFrontMatter(unittest.TestCase):

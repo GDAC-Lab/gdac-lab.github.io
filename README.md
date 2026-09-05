@@ -54,6 +54,10 @@ logic offline — run it locally after touching either script.
   set `SYNC_ALLOW_SHRINK=1` when a large removal is genuinely intended.
 * researchmap is paged through to the end and the count is checked against the API's reported
   total, so a truncated read cannot quietly publish a partial list.
+* A dropped connection, a timeout or an HTTP 429/5xx from researchmap is retried (five attempts,
+  pauses of 3–24 s) before the run is called failed. In `deploy.yml` a failed fetch is a warning on
+  the run, not a failed deploy: the site is built from the committed list, which the weekly sync
+  keeps current, and the warning names which fetch failed.
 * A failed preprint lookup (arXiv rate limiting is the usual cause) keeps the previously
   generated entry rather than dropping it, and does not discard the researchmap results.
 * Permalinks are keyed on the record id (`/publication/rm-<id>`, `/publication/pp-<id>`), not on

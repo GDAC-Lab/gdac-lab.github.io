@@ -12,13 +12,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      # The publication list is refreshed from researchmap and arXiv/Crossref on
+      # every deploy, but the committed _publications/ files are already a
+      # complete list (the weekly researchmap-sync workflow keeps them current).
+      # An outage at one of those services must not stop the rest of the site
+      # from going out: record the outcome, build from what is committed, and
+      # flag it in the run summary below.
       - name: Fetch publications from researchmap
+        id: researchmap
+        continue-on-error: true
         run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
 
       - name: Sync preprints (DOI / arXiv from _data/preprint_sources.json)
+        id: preprints
+        continue-on-error: true
         run: python3 scripts/sync_preprints_from_sources.py
         env:
           CROSSREF_CONTACT_EMAIL: ${{ vars.CROSSREF_CONTACT_EMAIL }}
+
+      - name: Note a failed publication fetch
+        if: steps.researchmap.outcome == 'failure' || steps.preprints.outcome == 'failure'
+        run: |
+          if [ "${{ steps.researchmap.outcome }}" = "failure" ]; then
+            echo "::warning title=researchmap fetch failed::The site was built from the committed publication list. See the step log; the weekly sync will retry."
+          fi
+          if [ "${{ steps.preprints.outcome }}" = "failure" ]; then
+            echo "::warning title=Preprint sync failed::The site was built from the committed preprint entries. See the step log; the weekly sync will retry."
+          fi
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
