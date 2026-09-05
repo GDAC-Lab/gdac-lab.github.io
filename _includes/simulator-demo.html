@@ -10,14 +10,14 @@
 {% if page.lang == 'ja' %}{% assign _ja = true %}{% endif %}
 
 {% if _ja %}
-  {% capture _strings %}{"loading":"物理エンジンを読み込んでいます…","ready":"準備完了。","play":"再生","pause":"一時停止","contactYes":"壁に接触中","contactNo":"非接触","failed":"このブラウザではデモを開始できませんでした。"}{% endcapture %}
+  {% capture _strings %}{"loading":"物理エンジンを読み込んでいます…","ready":"準備完了。","play":"再生","pause":"一時停止","contactYes":"壁に接触中","contactNo":"非接触","failed":"このブラウザではデモを開始できませんでした。","meteredNote":"モバイル回線または通信量節約モードのようです。Wi-Fi でのご利用をおすすめします。"}{% endcapture %}
 {% else %}
-  {% capture _strings %}{"loading":"Loading the physics engine…","ready":"Ready.","play":"Play","pause":"Pause","contactYes":"touching the wall","contactNo":"not touching","failed":"The demo could not start in this browser."}{% endcapture %}
+  {% capture _strings %}{"loading":"Loading the physics engine…","ready":"Ready.","play":"Play","pause":"Pause","contactYes":"touching the wall","contactNo":"not touching","failed":"The demo could not start in this browser.","meteredNote":"This looks like a mobile connection or data-saver mode. Wi-Fi is recommended."}{% endcapture %}
 {% endif %}
 
 <div class="simdemo"
      data-sim-root
-     data-sim-state="loading"
+     data-sim-state="idle"
      data-sim-model="{{ base_path }}/assets/models/wheeled-uav-wall-demo.xml"
      data-sim-strings="{{ _strings | escape }}">
 
@@ -25,9 +25,23 @@
     <canvas class="simdemo__canvas" data-sim-canvas
             aria-label="{% if _ja %}車輪付きドローンが壁面を登るシミュレーションの3D表示{% else %}3D view of a wheeled drone climbing a wall in simulation{% endif %}"
             role="img"></canvas>
-    <p class="simdemo__status" data-sim-status data-kind="loading" role="status">
-      {% if _ja %}物理エンジンを読み込んでいます…{% else %}Loading the physics engine…{% endif %}
-    </p>
+    {% comment %}
+      Nothing heavy is fetched until the visitor asks for it. The engine is
+      about 12 MB uncompressed (3.5 MB when the server gzips it), which is not
+      something to spend on a phone plan without asking.
+    {% endcomment %}
+    <div class="simdemo__gate" data-sim-gate>
+      <img class="simdemo__poster" src="{{ base_path }}/images/simulator-poster.jpg" width="1280" height="720" alt="" loading="lazy" decoding="async">
+      <div class="simdemo__gate-card">
+        <p class="simdemo__gate-title">{% if _ja %}物理エンジンを読み込みますか？{% else %}Load the physics engine?{% endif %}</p>
+        <p class="simdemo__gate-text">
+          {% if _ja %}デモの実行には MuJoCo の WebAssembly 版（<b>約 3.5〜12 MB</b>，サーバの圧縮設定によります）を転送します。ブラウザにキャッシュされるので，転送は初回のみです。{% else %}Running the demo transfers the WebAssembly build of MuJoCo (<b>about 3.5–12 MB</b>, depending on the server's compression). Your browser caches it, so this happens once.{% endif %}
+        </p>
+        <p class="simdemo__gate-note" data-sim-metered hidden></p>
+        <button type="button" class="btn simdemo__gate-btn" data-sim-load>{% if _ja %}読み込んで実行する{% else %}Load and run{% endif %}</button>
+      </div>
+    </div>
+    <p class="simdemo__status" data-sim-status data-kind="idle" role="status" hidden></p>
   </div>
 
   <noscript>

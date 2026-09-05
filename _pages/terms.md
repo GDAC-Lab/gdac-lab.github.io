@@ -95,8 +95,8 @@ from a third party, and both licence texts ship alongside them.
 ### Running the simulator demo
 
 The demo on the Simulator page solves the physics in your own browser. It transfers
-several megabytes of program code the first time you open that page, and while it is
-running it uses the processor and the graphics hardware of your device, which on a
+several megabytes of program code when you press "Load and run" — not merely by opening
+the page — and while it is running it uses the processor and the graphics hardware of your device, which on a
 laptop or phone will draw more battery than an ordinary page. It sends nothing back:
 no result, no interaction, and no measurement of your device leaves your browser. The
 demo pauses itself whenever the page is not visible, and pausing it by hand stops the

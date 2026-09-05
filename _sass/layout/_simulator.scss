@@ -48,6 +48,89 @@
     color: #7a1f1c;
     background: #f6dedd;
   }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------- gate */
+
+/* A still of the demo with the download question on top. Nothing behind it
+   has been fetched yet. */
+.simdemo__gate {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;   /* leaves the vehicle in the still visible above the card */
+  justify-content: center;
+  padding: 1rem 1rem 1.25rem;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.simdemo__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+  filter: saturate(0.7);
+}
+
+.simdemo__gate-card {
+  position: relative;
+  max-width: 28rem;
+  padding: 1.1rem 1.35rem 1.25rem;
+  text-align: center;
+  color: var(--global-text-color);
+  background: var(--global-bg-color);
+  border: 1px solid var(--global-border-color);
+  border-radius: $border-radius;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+.simdemo__gate-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--global-text-color-strong, var(--global-text-color));
+}
+
+.simdemo__gate-text {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.simdemo__gate-note {
+  margin: -0.25rem 0 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--global-text-color-light);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.simdemo__gate-btn {
+  margin-bottom: 0;
+  font-size: 0.9375rem;
+}
+
+/* The controls mean nothing until the engine is up. */
+.simdemo[data-sim-state="idle"] .simdemo__panel,
+.simdemo[data-sim-state="loading"] .simdemo__panel {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.simdemo[data-sim-state="idle"] .simdemo__canvas {
+  opacity: 0;
 }
 
 /* Once running, the status line has nothing useful left to say. */

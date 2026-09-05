@@ -17,9 +17,15 @@
  * Everything is served from this site; no third-party requests.
  */
 
-import loadMujoco from '../../vendor/mujoco/mujoco.js';
-import { MujocoView, enumValue } from './scene.js';
 import { computeHoverControl, WALL_DEMO_CONFIG } from './controller.js';
+
+// The engine glue and three.js are imported only after the visitor presses
+// "Load and run" (see arm()), so opening the page costs nothing extra.
+const ENGINE_URL = new URL('../../vendor/mujoco/mujoco.js', import.meta.url).href;
+const VIEW_URL = new URL('./scene.js', import.meta.url).href;
+
+/** Embind enums arrive as objects; the C functions want the plain int. */
+const enumValue = (entry) => (typeof entry === 'number' ? entry : entry.value);
 
 const CONTROL_DECIMATION = 5;   // 1 kHz physics -> 200 Hz control, as in the simulator
 const MAX_CATCHUP_SECONDS = 0.1; // never try to make up more than this in one frame
@@ -69,6 +75,9 @@ class SimulatorDemo {
     this.padDroneDot = root.querySelector('[data-sim-pad-drone]');
     this.targetXOut = root.querySelector('[data-sim-target-x-out]');
     this.targetZOut = root.querySelector('[data-sim-target-z-out]');
+    this.gate = root.querySelector('[data-sim-gate]');
+    this.loadButton = root.querySelector('[data-sim-load]');
+    this.meteredNote = root.querySelector('[data-sim-metered]');
 
     this.strings = JSON.parse(root.dataset.simStrings || '{}');
     this.modelUrl = root.dataset.simModel;
@@ -90,17 +99,53 @@ class SimulatorDemo {
     if (!this.statusEl) return;
     this.statusEl.textContent = text;
     this.statusEl.dataset.kind = kind || 'info';
+    this.statusEl.hidden = !text;
+  }
+
+  /**
+   * Show the gate and wait for the visitor's go-ahead. The engine is a large
+   * download, so nothing is fetched until they choose to. If the connection
+   * looks metered, say so on the card.
+   */
+  arm() {
+    const conn = navigator.connection;
+    const metered = !!(conn && (conn.saveData || /(^|-)(2g|3g)$/.test(conn.effectiveType || '')));
+    if (metered && this.meteredNote) {
+      this.meteredNote.textContent = this.say('meteredNote', 'This looks like a metered connection.');
+      this.meteredNote.hidden = false;
+    }
+    this.root.dataset.simState = 'idle';
+    if (this.loadButton) {
+      this.loadButton.addEventListener('click', () => {
+        this.loadButton.disabled = true;
+        this.load().catch((error) => this.fail(error));
+      }, { once: true });
+    }
+  }
+
+  fail(error) {
+    console.error('[simulator]', error);
+    if (this.gate) this.gate.hidden = true;
+    this.setStatus(
+      `${this.say('failed', 'The demo could not start in this browser.')} (${error.message})`,
+      'error',
+    );
+    this.root.dataset.simState = 'error';
   }
 
   async load() {
+    this.root.dataset.simState = 'loading';
+    if (this.gate) this.gate.hidden = true;
     this.setStatus(this.say('loading', 'Loading the physics engine…'), 'loading');
-    const [mujoco, xml] = await Promise.all([
-      loadMujoco(),
+    const [{ default: loadMujoco }, { MujocoView }, xml] = await Promise.all([
+      import(ENGINE_URL),
+      import(VIEW_URL),
       fetch(this.modelUrl).then((r) => {
         if (!r.ok) throw new Error(`model ${r.status}`);
         return r.text();
       }),
     ]);
+    const mujoco = await loadMujoco();
     this.mujoco = mujoco;
     this.model = mujoco.MjModel.from_xml_string(xml);
     this.data = new mujoco.MjData(this.model);
@@ -488,12 +533,5 @@ if (root) {
   const demo = new SimulatorDemo(root);
   // Exposed on the element for tooling and tests; not part of any page API.
   root.simdemo = demo;
-  demo.load().catch((error) => {
-    console.error('[simulator]', error);
-    demo.setStatus(
-      `${demo.say('failed', 'The demo could not start in this browser.')} (${error.message})`,
-      'error',
-    );
-    root.dataset.simState = 'error';
-  });
+  demo.arm();
 }

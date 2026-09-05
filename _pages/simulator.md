@@ -42,4 +42,4 @@ This demo uses a WebAssembly build of [MuJoCo](https://mujoco.org/) (Apache-2.0)
 
 ## Requirements
 
-The demo needs a browser with WebGL and WebAssembly. Loading the physics engine transfers a few megabytes, which affects this page only. If it does not run for you, the [Research]({{ base_path }}/research/) page describes the work in words.
+The demo needs a browser with WebGL and WebAssembly. Loading the physics engine transfers a few megabytes, so nothing is fetched just by opening the page: the transfer starts **only when you press "Load and run"**, happens once, and affects this page only. If it does not run for you, the [Research]({{ base_path }}/research/) page describes the work in words.
