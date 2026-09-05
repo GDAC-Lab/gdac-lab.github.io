@@ -102,11 +102,6 @@ publication_category:
     title: 'Preprints'
     title_ja: 'プレプリント'
 
-# Legacy (EN/JA split pages no longer use combined language sub-headings here)
-publication_language_labels:
-  en: "English"
-  ja: "日本語"
-
 # Publications index: only the last N calendar years are listed (inclusive). Set to 0 to list all years.
 # Older works: see researchmap_url on the Publications page.
 publication_list_last_n_years: 5
@@ -117,7 +112,6 @@ breadcrumbs              : false # true, false (default)
 words_per_minute         : 160
 future                   : true
 read_more                : "disabled" # if enabled, adds "Read more" links to excerpts
-talkmap_link             : false      #change to true to add link to talkmap on talks page
 comments:
   provider               : # false (default), "disqus", "discourse", "facebook", "google-plus", "staticman", "custom"
   disqus:
@@ -184,12 +178,14 @@ analytics:
 include:
   - .htaccess
   - _pages
-  - files
+# Anything listed here is not copied into _site. Repo-only tooling and docs must
+# stay listed, otherwise Jekyll publishes them verbatim under the site root.
 exclude:
   - "*.sublime-project"
   - "*.sublime-workspace"
   - .asset-cache
   - .bundle
+  - .devcontainer
   - .github
   - .jekyll-assets-cache
   - .sass-cache
@@ -199,8 +195,11 @@ exclude:
   - CHANGELOG
   - Capfile
   - config
+  - CONTRIBUTING.md
+  - docker-compose.yaml
   - Dockerfile
   - Gemfile
+  - Gemfile.lock
   - Gruntfile.js
   - gulpfile.js
   - LICENSE
@@ -209,7 +208,8 @@ exclude:
   - node_modules
   - package.json*
   - Rakefile
-  - README
+  - README.md
+  - scripts
   - tmp
   - vendor
 keep_files:

@@ -1,96 +1,111 @@
-# Academic Pages
-**Academic Pages is a GitHub Pages template for personal and professional portfolio-oriented websites.**
+# GDAC Lab website
 
-![Academic Pages template example](images/themes/homepage-light.png "Academic Pages template example")
+Source for the website of the **Geometric Dynamics, Autonomy, and Control Laboratory
+(GDAC Lab / 仲野研究室)** at Nagoya Institute of Technology.
 
-# Getting Started
+- Live site: <https://gdaclab.web.nitech.ac.jp> (host is set in `CNAME` and `url:` in `_config.yml`)
+- Built with [Jekyll](https://jekyllrb.com); forked from
+  [Academic Pages](https://github.com/academicpages/academicpages.github.io), itself a fork of the
+  [Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/) theme (© 2016 Michael Rose, MIT — see `LICENSE`).
 
-1. Register a GitHub account if you don't have one and confirm your e-mail (required!)
-1. Click the "Use this template" button in the top right.
-1. On the "New repository" page, enter your public repository name as "[your GitHub username].github.io", which will also be your website's URL.
-1. Set site-wide configuration and add your content.
-1. Upload any files (like PDFs, .zip files, etc.) to the `files/` directory. They will appear at https://[your GitHub username].github.io/files/example.pdf.
-1. Check status by going to the repository settings, in the "GitHub pages" section
-1. (Optional) Use the Jupyter notebooks or python scripts in the `markdown_generator` folder to generate markdown files for publications and talks from a TSV file.
+The site is bilingual: English pages live at the site root, Japanese pages under `/ja/`.
 
-See more info at https://academicpages.github.io/
+## Where the content lives
+
+| What | Where |
+| --- | --- |
+| Pages (EN) | `_pages/*.md`, `_pages/*.html` |
+| Pages (JA) | `_pages/ja/` |
+| Publications | `_publications/` — **generated, see below** |
+| Header navigation | `_data/navigation.yml` |
+| Home page news items | `_data/news.yml` |
+| Collaborators shown on People | `_data/collaborators.yml` |
+| Site/author settings, publication categories | `_config.yml` |
+| UI strings | `_data/ui-text.yml` |
+| Images | `images/` (group photo: `images/lab/group-photo.jpg`) |
+
+Home page composition is `_pages/about.md` (EN) / `_pages/ja/index.md` (JA), which pull in
+`_includes/home-slideshow.html`, `home-extra.html` and `home-news.html`.
+
+## Publications are generated — do not hand-edit
+
+`_publications/*.md` is written by the sync scripts and is overwritten on every run:
+
+- `scripts/fetch_researchmap_publications.py` — pulls from researchmap
+  (account set by `researchmap_url:` in `_config.yml`); writes `*-rm-*.md`.
+- `scripts/sync_preprints_from_sources.py` — resolves the DOI/arXiv IDs listed in
+  `_data/preprint_sources.json`; writes `*-pp-*.md`.
+
+To add a preprint, add its ID to `_data/preprint_sources.json` — not a file in `_publications/`.
+
+`.github/workflows/researchmap-sync.yml` runs both weekly (Mondays 00:00 UTC) and on demand,
+committing any changes to `master`.
+
+`publication_list_last_n_years:` in `_config.yml` limits the index to the last N years (0 = all).
+
+## Deployment
+
+Pushing to `master` triggers `.github/workflows/deploy.yml`, which re-runs the publication sync,
+builds with Jekyll, and publishes `_site` to the `plesk-deploy` branch, from which the NITech
+Plesk host serves the site. There is no GitHub Pages deployment.
 
 ## Running locally
 
-When you are initially working on your website, it is very useful to be able to preview the changes locally before pushing them to GitHub. To work locally you will need to:
-
-1. Clone the repository and made updates as detailed above.
-
-### Using a different IDE
-1. Make sure you have ruby-dev, bundler, and nodejs installed
-    
-    On most Linux distribution and [Windows Subsystem Linux](https://learn.microsoft.com/en-us/windows/wsl/about) the command is:
-    ```bash
-    sudo apt install ruby-dev ruby-bundler nodejs
-    ```
-    If you see error `Unable to locate package ruby-bundler`, `Unable to locate package nodejs `, run the following:
-    ```bash
-    sudo apt update && sudo apt upgrade -y
-    ```
-    then try run `sudo apt install ruby-dev ruby-bundler nodejs` again.
-
-    On MacOS the commands are:
-    ```bash
-    brew install ruby
-    brew install node
-    gem install bundler
-    ```
-1. Run `bundle install` to install ruby dependencies. If you get errors, delete Gemfile.lock and try again.
-
-    If you see file permission error like `Fetching bundler-2.6.3.gem ERROR:  While executing gem (Gem::FilePermissionError) You don't have write permissions for the /var/lib/gems/3.2.0 directory.` or `Bundler::PermissionError: There was an error while trying to write to /usr/local/bin.`
-    Install Gems Locally (Recommended):
-    ```bash
-    bundle config set --local path 'vendor/bundle'
-    ```
-    then try run `bundle install` again. If succeeded, you should see a folder called `vendor` and `.bundle`.
-
-1. Run `jekyll serve -l -H localhost` to generate the HTML and serve it from `localhost:4000` the local server will automatically rebuild and refresh the pages on change to Markdown (*.md) and HTML files, while changes to the core template and configuration (i.e., `_config.yml`) will require stoping and restarting Jekyll.
-    You may also try `bundle exec jekyll serve -l -H localhost` to ensure jekyll to use specific dependencies on your own local machine.
-
-If you are running on Linux it may be necessary to install some additional dependencies prior to being able to run locally: `sudo apt install build-essential gcc make`
-
-## Using Docker
-
-Working from a different OS, or just want to avoid installing dependencies? You can use the provided `Dockerfile` to build a container that will run the site for you if you have [Docker](https://www.docker.com/) installed.
-
-You can build and execute the container by running the following command in the repository:
+Requires Ruby (with `ruby-dev`) and Bundler.
 
 ```bash
-chmod -R 777 .
-docker compose up
+bundle install
+bundle exec jekyll serve -l -H localhost   # http://localhost:4000
 ```
 
-You should now be able to access the website from `localhost:4000`.
+If `bundle install` hits permission errors, install gems into the project instead:
 
-### Using the DevContainer in VS Code
+```bash
+bundle config set --local path 'vendor/bundle'
+```
 
-If you are using [Visual Studio Code](https://code.visualstudio.com/) you can use the [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) that comes with this Repository. Normally VS Code detects that a development coontainer configuration is available and asks you if you want to use the container. If this doesn't happen you can manually start the container by **F1->DevContainer: Reopen in Container**. This restarts your VS Code in the container and automatically hosts your academic page locally on http://localhost:4000. All changes will be updated live to that page after a few seconds.
+Changes to Markdown/HTML rebuild automatically; changes to `_config.yml` need a restart.
 
-# Maintenance
+Note: build the site under a UTF-8 locale (`LANG=C.UTF-8`). Some SCSS partials contain Japanese
+comments, and Jekyll's SCSS converter aborts under a US-ASCII locale.
 
-Bug reports and feature requests to the template should be [submitted via GitHub](https://github.com/academicpages/academicpages.github.io/issues/new/choose). For questions concerning how to style the template, please feel free to start a [new discussion on GitHub](https://github.com/academicpages/academicpages.github.io/discussions).
+### Docker
 
-This repository was forked (then detached) by [Stuart Geiger](https://github.com/staeiou) from the [Minimal Mistakes Jekyll Theme](https://mmistakes.github.io/minimal-mistakes/), which is © 2016 Michael Rose and released under the MIT License (see LICENSE.md). It is currently being maintained by [Robert Zupko](https://github.com/rjzupkoii) and additional maintainers would be welcomed.
+```bash
+docker compose up   # http://localhost:4000
+```
 
-## Bugfixes and enhancements
+VS Code users can instead use the bundled dev container
+(**F1 → Dev Containers: Reopen in Container**).
 
-If you have bugfixes and enhancements that you would like to submit as a pull request, you will need to [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repository as opposed to using it as a template. This will also allow you to [synchronize your copy](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork) of template to your fork as well.
+## Notes on this fork
 
-Unfortunately, one logistical issue with a template theme like Academic Pages that makes it a little tricky to get bug fixes and updates to the core theme. If you use this template and customize it, you will probably get merge conflicts if you attempt to synchronize. If you want to save your various .yml configuration files and markdown files, you can delete the repository and fork it again. Or you can manually patch.
+Upstream Academic Pages ships demo content (sample blog posts, talks, teaching entries, a
+portfolio, a "GitHub University" CV, a talk map, and TSV/notebook publication generators). None
+of it applied to this site and all of it was published as live pages, so it has been removed. The
+theme machinery behind those features is still in place, so a feature can be brought back by
+adding content again:
 
----
-<div align="center">
-    
-![pages-build-deployment](https://github.com/academicpages/academicpages.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)
-[![GitHub contributors](https://img.shields.io/github/contributors/academicpages/academicpages.github.io.svg)](https://github.com/academicpages/academicpages.github.io/graphs/contributors)
-[![GitHub release](https://img.shields.io/github/v/release/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io/releases/latest)
-[![GitHub license](https://img.shields.io/github/license/academicpages/academicpages.github.io?color=blue)](https://github.com/academicpages/academicpages.github.io/blob/master/LICENSE)
+- `_talks/`, `_teaching/`, `_portfolio/` are still declared as collections in `_config.yml` and
+  their layouts/includes are intact — add documents plus an index page under `_pages/` to re-enable.
+- The JSON-CV feature (`_includes/cv-template.html`, `_layouts/cv-layout.html`,
+  `_sass/layout/_json_cv.scss`) was removed entirely; restore those three files from upstream if wanted.
 
-[![GitHub stars](https://img.shields.io/github/stars/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io)
-[![GitHub forks](https://img.shields.io/github/forks/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io/fork)
-</div>
+Web fonts are served as `woff2` only (plus a `woff` fallback for Academicons). Legacy `eot`,
+`svg` and `ttf` faces were dropped — they were dead weight for any browser released since ~2016.
+
+MathJax, Plotly and Mermaid used to load from CDNs on *every* page, several megabytes of
+JavaScript for features no page used. They are now loaded per page in
+`_includes/footer/custom.html`:
+
+- **MathJax** — opt in with `mathjax: true` in a page's front matter.
+- **Plotly** and **Mermaid** — detected automatically from a <code>```plotly</code> or
+  <code>```mermaid</code> code block in the page.
+
+Repo-only files (`scripts/`, `README.md`, `CONTRIBUTING.md`, Docker files, `.devcontainer`) are
+listed under `exclude:` in `_config.yml`. Anything not excluded is copied verbatim into the
+published site, so add new tooling directories there too.
+
+Images are committed at their delivery size — the group photo is 1600 px wide. Resize before
+committing rather than checking in camera originals; a 24-megapixel JPEG is loaded by the sidebar
+on *every* page.
