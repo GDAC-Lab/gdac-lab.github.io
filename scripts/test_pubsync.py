@@ -178,6 +178,14 @@ class TestResearchmapParsing(unittest.TestCase):
         item.update({"volume": "12", "starting_page": "3", "ending_page": "9"})
         self.assertEqual(rm.venue_line(item), "J. Test, vol. 12, pp. 3–9")
 
+    def test_japanese_author_list_uses_fullwidth_comma(self):
+        item = {"authors": {"en": [], "ja": [{"name": "小島豪介"}, {"name": "仲野聡史"}]}}
+        self.assertEqual(rm.format_authors(item), "小島豪介，仲野聡史")
+
+    def test_english_author_list_uses_comma_space(self):
+        item = {"authors": {"en": [{"name": "A. Author"}, {"name": "B. Author"}]}}
+        self.assertEqual(rm.format_authors(item), "A. Author, B. Author")
+
     def test_venue_single_page(self):
         item = paper("1")
         item.update({"starting_page": "7"})

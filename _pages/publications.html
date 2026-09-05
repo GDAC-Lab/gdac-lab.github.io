@@ -16,9 +16,9 @@ lang_ref: publications
 {% endif %}
 
 <p class="publications-page__lede">
-  English-language publications are listed below.
+  English-language publications, by category.
   {% if pub_years > 0 %}
-    Only <strong>{{ min_pub_y }}–{{ current_y }}</strong> (last {{ pub_years }} years) are shown.{% if site.researchmap_url %} Older items: <a href="{{ site.researchmap_url }}">researchmap</a>.{% endif %}
+    Only <strong>{{ min_pub_y }}–{{ current_y }}</strong> (the last {{ pub_years }} years) are shown.{% if site.researchmap_url %} Earlier work is listed on <a href="{{ site.researchmap_url }}">researchmap</a>.{% endif %}
   {% endif %}
 </p>
 
@@ -34,11 +34,11 @@ lang_ref: publications
   {%- endif -%}
   {%- if site.researchmap_url -%}
     {%- if site.author.googlescholar %} {% endif -%}
-    The list below is kept in sync with <a href="{{ site.researchmap_url }}">researchmap</a>, roughly on a weekly basis.
+    The list is synchronized with <a href="{{ site.researchmap_url }}">researchmap</a> roughly once a week.
   {%- endif -%}
   {%- if _pp_d > 0 or _pp_a > 0 -%}
     {%- if site.author.googlescholar or site.researchmap_url %} {% endif -%}
-    Some Preprints entries are filled in from <a href="https://www.crossref.org">Crossref</a> or <a href="https://arxiv.org">arXiv</a> metadata when this site is built.
+    Preprint entries are filled in from <a href="https://www.crossref.org">Crossref</a> and <a href="https://arxiv.org">arXiv</a> metadata when the site is built.
   {%- endif -%}
   </small>
 {% endif %}

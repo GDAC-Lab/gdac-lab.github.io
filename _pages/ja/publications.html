@@ -17,7 +17,7 @@ lang_ref: publications_ja
 
 <p class="publications-page__lede">
   {% if pub_years > 0 %}
-    区分ごとに掲載し、<strong>{{ min_pub_y }}年〜{{ current_y }}年</strong>（直近{{ pub_years }}年）に掲載された文献に限ります。{% if site.researchmap_url %}それ以前は <a href="{{ site.researchmap_url }}">researchmap</a> をご覧ください。{% endif %}
+    区分ごとに，<strong>{{ min_pub_y }}年〜{{ current_y }}年</strong>（直近{{ pub_years }}年）に発表した文献を掲載しています。{% if site.researchmap_url %}それ以前の文献は <a href="{{ site.researchmap_url }}">researchmap</a> をご覧ください。{% endif %}
   {% else %}
     区分ごとに文献を掲載しています。
   {% endif %}
@@ -35,15 +35,15 @@ lang_ref: publications_ja
 {% endif %}
 {% if gs_profile != '' or site.researchmap_url or _pp_d > 0 or _pp_a > 0 %}
   <small class="publications-page__anno" role="note">{%- if gs_profile != '' -%}
-    この一覧のほか、<a href="{{ gs_profile }}" rel="noopener">Google Scholar</a> からも論文をたどれます。
+    この一覧のほか，<a href="{{ gs_profile }}" rel="noopener">Google Scholar</a> からも論文をたどれます。
   {%- endif -%}
   {%- if site.researchmap_url -%}
     {%- if gs_profile != '' %} {% endif -%}
-    下記の文献情報は <a href="{{ site.researchmap_url }}">researchmap</a> と概ね週に1回そろえています。
+    文献情報は，おおむね週に1回，<a href="{{ site.researchmap_url }}">researchmap</a> の登録内容と同期しています。
   {%- endif -%}
   {%- if _pp_d > 0 or _pp_a > 0 -%}
     {%- if gs_profile != '' or site.researchmap_url %} {% endif -%}
-    プレプリントの一部は、このサイトを生成するときに <a href="https://www.crossref.org">Crossref</a> や <a href="https://arxiv.org">arXiv</a> の書誌情報を取り込んでいます。
+    プレプリントの書誌情報は，サイトの生成時に <a href="https://www.crossref.org">Crossref</a> と <a href="https://arxiv.org">arXiv</a> から取得しています。
   {%- endif -%}
   </small>
 {% endif %}

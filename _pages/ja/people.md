@@ -14,11 +14,10 @@ lang_ref: people
 ## 教員
 
 ### 仲野 聡史 — 助教
-- **役職**: 助教
-- **所属**: 名古屋工業大学 工学専攻
-- **学生室**: 3号館10階1010室
-- **researchmap**: [仲野 聡史（researchmap）](https://researchmap.jp/satoshi-nakano)
-- **教員・研究室紹介（名工大）**: [mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
+- **所属**：名古屋工業大学 工学専攻
+- **研究室（学生室）**：3号館10階1010室
+- **researchmap**：[仲野 聡史](https://researchmap.jp/satoshi-nakano)
+- **教員ページ（名工大）**：[mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
 
 {% include people-faculty-email-image.html %}
 
@@ -28,45 +27,44 @@ lang_ref: people
 
 ### 修士学生
 
-- **松永 勝希** — 修士課程: 2026年4月～
-  - *本研究室学部在籍*: 2024年10月～2026年3月
+- **松永 勝希** — 修士課程：2026年4月〜
+  - *本研究室学部在籍*：2024年10月〜2026年3月
 
 ### 学部生
-- **川合 球太** — 2025年10月～
-- **佐野 圭亮** — 2025年10月～
-- **杉山 瑛大** — 2025年10月～
+- **川合 球太** — 2025年10月〜
+- **佐野 圭亮** — 2025年10月〜
+- **杉山 瑛大** — 2025年10月〜
 
 ### 副指導学生
-- **浅田 樹** — 主指導: 山田学教授 · 2025年4月～
-  - *本研究室学部在籍*: 2023年10月～2025年3月
-- **堂高 友樹** — 主指導: 山田学教授 · 2025年4月～
+- **浅田 樹** — 主指導：山田 学 教授 · 2025年4月〜
+  - *本研究室学部在籍*：2023年10月〜2025年3月
+- **堂高 友樹** — 主指導：山田 学 教授 · 2025年4月〜
 
 {% include people-collaborators.html %}
 
 </div>
 
 <!--
-  Editor templates (not rendered).
+  編集用テンプレート（表示されません）。区切りの記号は全角コロン「：」，期間の波ダッシュは「〜」（U+301C）。
 
-  Faculty:
+  教員:
   ### 氏名 — 役職
-  - **役職**:
-  - **所属**:
-  - **研究室**（任意）:
+  - **所属**：
+  - **研究室**（任意）：
 
-  Master's — nested line ONLY if bachelor's was in this lab:
-  - **氏名** — 修士課程: YYYY年M月～
-    - *本研究室学部在籍*: YYYY年M月～YYYY年M月
+  修士学生 — 学部も本研究室だった場合のみ，入れ子の行を付ける:
+  - **氏名** — 修士課程：YYYY年M月〜
+    - *本研究室学部在籍*：YYYY年M月〜YYYY年M月
 
-  Undergraduate:
-  - **氏名** — YYYY年M月～
+  学部生:
+  - **氏名** — YYYY年M月〜
 
-  Co-advised (副指導):
-  - **氏名** — 主指導: ○○研究室 · YYYY年M月～
+  副指導学生:
+  - **氏名** — 主指導：○○ ○○ 教授 · YYYY年M月〜
 
   集合写真: `people-group-photo.html` は `## 研究室メンバー` の直後・`### 修士学生` の前。
 
   研究協力者（ページ末尾の折りたたみ）:
   - `_data/collaborators.yml` を編集（各人の `url` は任意）。表示は `people-collaborators.html`。
-  - 研究協力者は `_data/collaborators.yml` を編集。閉じたとき見出しに「クリックで開く」と表示（`people-collaborators.html`）。
+    閉じたとき見出しに「クリックで開く」と表示されます。
 -->

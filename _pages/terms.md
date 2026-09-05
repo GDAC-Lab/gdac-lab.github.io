@@ -1,6 +1,6 @@
 ---
 permalink: /terms/
-title: "Terms and Privacy Policy"
+title: "Terms and privacy policy"
 modified: 2026-09-05
 lang: en
 lang_ref: terms
@@ -69,12 +69,12 @@ photographs of lab members, and before any commercial use.
 Publication entries on this site are bibliographic records, compiled automatically from
 researchmap and from Crossref and arXiv metadata. The papers themselves remain under the
 copyright of their publishers and authors; follow the DOI or arXiv link on each entry for
-the authoritative version and its licence terms. Records here may lag behind, or differ
+the authoritative version and its license terms. Records here may lag behind, or differ
 in detail from, the publisher's own listing.
 
 ### Accuracy
 
-Pages are maintained on a best-effort basis and parts of the site are still being written.
+Pages are maintained on a best-effort basis, and some pages are still in preparation.
 Nothing here should be treated as an official statement of Nagoya Institute of Technology.
 For formal matters — admissions, procedures and official dates — follow the university's
 own announcements.
@@ -85,12 +85,12 @@ The site is built with [Jekyll](https://jekyllrb.com) from a fork of the
 [Academic Pages](https://github.com/academicpages/academicpages.github.io) template, in
 turn a fork of [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)
 (© 2016 Michael Rose). That template code is used under the MIT License and remains under
-its own copyright; the licence text ships with the site's source repository.
+its own copyright; the license text ships with the site's source repository.
 
 The [Simulator]({{ base_path }}/simulator/) page additionally carries a WebAssembly
 build of [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0) and
 [three.js](https://threejs.org/) (MIT License). Both are served from this site, not
-from a third party, and both licence texts ship alongside them.
+from a third party, and both license texts ship alongside them.
 
 ### Running the simulator demo
 

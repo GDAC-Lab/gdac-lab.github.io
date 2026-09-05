@@ -14,10 +14,9 @@ lang_ref: people
 ## Faculty
 
 ### Satoshi Nakano — Assistant Professor
-- **Position**: Assistant Professor
 - **Affiliation**: Nagoya Institute of Technology, Department of Engineering
-- **Lab room**: Room 1010, Building No. 3, 10th Floor
-- **researchmap**: [satoshi-nakano](https://researchmap.jp/satoshi-nakano?lang=english)
+- **Lab room**: Building 3, 10th floor, Room 1010
+- **researchmap**: [Satoshi Nakano](https://researchmap.jp/satoshi-nakano?lang=english)
 - **Faculty page (NITech)**: [mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
 
 {% include people-faculty-email-image.html %}
@@ -50,11 +49,10 @@ lang_ref: people
 
   Faculty:
   ### Full name — Job title
-  - **Position**:
   - **Affiliation**:
   - **Office** (optional):
 
-  Master's — nested line ONLY if bachelor's was in this lab:
+  Master's — nested line ONLY if the bachelor's was in this lab:
   - **Name** — Master's program: from Month YYYY
     - *Undergraduate in this lab*: Month YYYY – Month YYYY
 
@@ -66,7 +64,7 @@ lang_ref: people
 
   Group photo: `people-group-photo.html` sits under `## Lab members`, above `### Master's students`.
 
-  Collaborators (expandable block at bottom of page):
-  - Edit `_data/collaborators.yml` (optional `url` per person). Rendered via `people-collaborators.html`.
-  - Collaborators: edit `_data/collaborators.yml`; summary shows “Click to open” when collapsed (`people-collaborators.html`).
+  Collaborators (expandable block at the bottom of the page):
+  - Edit `_data/collaborators.yml` (optional `url` per person). Rendered by `people-collaborators.html`;
+    the summary shows "Click to open" when collapsed.
 -->

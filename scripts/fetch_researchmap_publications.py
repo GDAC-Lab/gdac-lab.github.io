@@ -115,6 +115,8 @@ def record_language(paper_title: object) -> str:
 
 
 def format_authors(item: dict) -> str:
+    """Author names as one string; a Japanese-only author list uses the
+    full-width comma the Japanese pages use everywhere else."""
     authors = item.get("authors")
     if not isinstance(authors, dict):
         return ""
@@ -127,7 +129,7 @@ def format_authors(item: dict) -> str:
                 if isinstance(e, dict) and str(e.get("name", "")).strip()
             ]
             if names:
-                return ", ".join(names)
+                return ("，" if lang == "ja" else ", ").join(names)
     return ""
 
 

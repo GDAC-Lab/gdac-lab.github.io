@@ -9,7 +9,7 @@ lang_ref: lab_policy
 
 {% include base_path %}
 
-**準備中のページです。** 項目立てのみ先に置いています。各項目の内容は順次追記します。
+**準備中のページです。**項目立てのみ先に置いています。各項目の内容は順次追記します。
 {: .notice}
 
 {% comment %} 英語版は _pages/policy.md。項目を増減したら両方を揃えてください。 {% endcomment %}

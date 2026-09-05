@@ -11,23 +11,21 @@ lang_ref: access
 
 ## Address
 
-**GDAC Laboratory**  
-Room 1010, Building No. 3, 10th Floor  
+**GDAC Lab (Nakano Laboratory)**  
+Building 3, 10th floor, Room 1010  
 Nagoya Institute of Technology  
 Gokiso-cho, Showa-ku, Nagoya 466-8555, Japan
 
-## Access by Train
+## By train
 
-- **JR Chuo Line**: Get off at Tsurumai Station (approx. 400m east from Meidai Hospital Exit)
-- **Subway Tsurumai Line**: Get off at Tsurumai Station (approx. 500m east from Exit 4)
-- **Subway Sakura-dori Line**: Get off at Fukiage Station (approx. 900m west from Exit 5)
+- **JR Chuo Line**: Tsurumai Station, about 400 m east of the Meidai Hospital exit
+- **Subway Tsurumai Line**: Tsurumai Station, about 500 m east of Exit 4
+- **Subway Sakura-dori Line**: Fukiage Station, about 900 m west of Exit 5
 
-### Detailed Map from Station
+### Map from the stations
 
-![Detailed Map]({{ base_path }}/images/shosai-c2017.jpg)
+![Map from Tsurumai and Fukiage stations to Nagoya Institute of Technology]({{ base_path }}/images/shosai-c2017.jpg)
 
-## Campus Map
+## Campus map
 
-![Campus Map]({{ base_path }}/images/map_2018-1024x762.jpg)
-
-
+![Campus map of Nagoya Institute of Technology]({{ base_path }}/images/map_2018-1024x762.jpg)

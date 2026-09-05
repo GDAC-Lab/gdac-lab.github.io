@@ -5,19 +5,20 @@
 #   body, body_en, body_ja: optional (Markdown); at least one of title/body/link should be set
 #   link: optional URL (external or on this site)
 #   link_label_en, link_label_ja: optional; default "Read more" / 「詳細」
+#   Style: full names in English; family name + 君/さん in Japanese; ，。 punctuation.
 items:
   - date: "2026-09-03"
-    body_en: "Keisuke gave a talk at RSJ2026."
+    body_en: "Keisuke Sano gave a talk at RSJ2026."
     body_ja: "佐野君が RSJ2026 で発表しました。"
   - date: "2026-06-20"
-    body_en: "Yuki gave a talk at ASCC."
-    body_ja: "堂高君が ASCC で発表しました。"
+    body_en: "Yuki Dotaka gave a talk at ASCC 2026."
+    body_ja: "堂高君が ASCC 2026 で発表しました。"
   - date: "2026-04-24"
-    body_en: "Yuki's paper has been accepted to ASCC!"
-    body_ja: "堂高君の論文が ASCC にアクセプトされました！"
+    body_en: "Yuki Dotaka's paper has been accepted to ASCC 2026."
+    body_ja: "堂高君の論文が ASCC 2026 に採択されました。"
   - date: "2026-04-24"
-    body_en: "We have published a group photo of lab members on the home page and in the sidebar."
-    body_ja: "研究室メンバーの集合写真を、ホームページおよび各ページ左のサイドバーに掲載しました。"
+    body_en: "A group photo of lab members is now on the home page and in the sidebar."
+    body_ja: "研究室メンバーの集合写真を，トップページと各ページのサイドバーに掲載しました。"
   - date: "2026-03-30"
-    body_en: "Our laboratory website is now public. We will update publications, people, and news here as they change."
-    body_ja: "研究室のウェブページを公開しました。論文・メンバー・お知らせなど、随時更新していきます。"
+    body_en: "The lab website is now public. Publications, members, and news will be updated here."
+    body_ja: "研究室のウェブサイトを公開しました。論文・メンバー・お知らせなどを随時更新していきます。"

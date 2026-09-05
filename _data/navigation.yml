@@ -10,7 +10,7 @@ main:
     url: /publications/
 
   - title: "Research"
-    title_ja: "研究テーマ"
+    title_ja: "研究内容"
     url: /research/
 
   - title: "People"
