@@ -9,9 +9,6 @@ lang_ref: research
 
 {% include base_path %}
 
-This page outlines our research directions. The descriptions are revised from time to time as the work develops.
-{: .notice}
-
 ## Overview
 
 Operating a robot or a satellite as intended requires control over which direction the vehicle points. At the same time, every real machine carries limits that must be respected.
