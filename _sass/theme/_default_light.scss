@@ -57,4 +57,7 @@ $sidebar-screen-min-width   : 1024px;
     --global-callout-text-strong        : #{$darker-gray};
     --global-callout-text-muted         : #{$muted-gray};
     --global-toc-header-bg              : #{mix(#000, $gray, 30%)};
+    /* Buttons carry white text, so the ground has to be dark enough for it. */
+    --global-button-bg                  : #{mix(#000, $gray, 25%)};
+    --global-button-bg-hover            : #{mix(#000, $gray, 45%)};
 }

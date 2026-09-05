@@ -17,13 +17,13 @@
   font-weight: bold;
   text-align: center;
   text-decoration: none;
-  background-color: var(--global-base-color);
+  background-color: var(--global-button-bg, var(--global-base-color));
   border: 0 !important;
   border-radius: $border-radius;
   cursor: pointer;
 
   &:hover {
-    background-color: mix(white, #000, 20%);
+    background-color: var(--global-button-bg-hover, #{mix(white, #000, 20%)});
   }
 
   .icon {

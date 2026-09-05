@@ -118,4 +118,6 @@ We also take part in the following themes as **collaborators**.
 - **Vibration control of building structures** — suppressing the sway of buildings under earthquakes and wind. Disturbance estimation based on the equivalent-input-disturbance (EID) approach is applied to tuned mass damper design and to the control of base-isolated buildings. [Representative paper (*Control Engineering Practice*, 2024)](https://doi.org/10.1016/j.conengprac.2024.105853)
 - **Visual feedback control** — estimating the position and orientation of an object from camera images and using them for control. [Representative paper (*SICE JCMSI*, 2023)](https://doi.org/10.1080/18824889.2023.2247853)
 
+Our wheeled-drone simulator is publicly available, and the [Simulator]({{ base_path }}/simulator/) page runs a demo of it in your browser.
+
 A full list of papers is on the [Publications]({{ base_path }}/publications/) page and our collaborators are listed under [People]({{ base_path }}/people/); funding, awards and other details are on the [faculty page](https://mcontrol.web.nitech.ac.jp/nakano/).

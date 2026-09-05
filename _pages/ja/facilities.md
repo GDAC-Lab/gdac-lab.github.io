@@ -16,6 +16,10 @@ lang_ref: facilities
 
 {% include facility-gallery.html %}
 
+## シミュレータ
+
+実機と並行して，MuJoCo による[シミュレータ]({{ base_path }}/ja/simulator/)を開発・公開しています。ブラウザ上で動くデモをご覧いただけます。
+
 ## そのほかの写真
 
 研究室の活動の様子や日常の写真は，外部のアルバム（[GDAC Lab Blog](https://gdaclab.blogspot.com/)）へ掲載しています。集合写真は[メンバー]({{ base_path }}/ja/people/)のページにあります。

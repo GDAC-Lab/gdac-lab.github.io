@@ -1,0 +1,89 @@
+{% comment %}
+  Browser demo of the lab's wheeled-UAV simulator: real MuJoCo physics compiled
+  to WebAssembly, plus the simulator's own controller ported to JavaScript.
+  See assets/js/simulator/ and assets/models/wheeled-uav-wall-demo.xml.
+
+  Everything is served from this site — no third-party requests.
+{% endcomment %}
+{% include base_path %}
+{% assign _ja = false %}
+{% if page.lang == 'ja' %}{% assign _ja = true %}{% endif %}
+
+{% if _ja %}
+  {% capture _strings %}{"loading":"物理エンジンを読み込んでいます…","ready":"準備完了。","play":"再生","pause":"一時停止","contactYes":"壁に接触中","contactNo":"非接触","failed":"このブラウザではデモを開始できませんでした。"}{% endcapture %}
+{% else %}
+  {% capture _strings %}{"loading":"Loading the physics engine…","ready":"Ready.","play":"Play","pause":"Pause","contactYes":"touching the wall","contactNo":"not touching","failed":"The demo could not start in this browser."}{% endcapture %}
+{% endif %}
+
+<div class="simdemo"
+     data-sim-root
+     data-sim-state="loading"
+     data-sim-model="{{ base_path }}/assets/models/wheeled-uav-wall-demo.xml"
+     data-sim-strings="{{ _strings | escape }}">
+
+  <div class="simdemo__stage">
+    <canvas class="simdemo__canvas" data-sim-canvas
+            aria-label="{% if _ja %}車輪付きドローンが壁面を登るシミュレーションの3D表示{% else %}3D view of a wheeled drone climbing a wall in simulation{% endif %}"
+            role="img"></canvas>
+    <p class="simdemo__status" data-sim-status data-kind="loading" role="status">
+      {% if _ja %}物理エンジンを読み込んでいます…{% else %}Loading the physics engine…{% endif %}
+    </p>
+  </div>
+
+  <noscript>
+    <p class="simdemo__noscript">
+      {% if _ja %}このデモの実行には JavaScript が必要です。{% else %}This demo needs JavaScript to run.{% endif %}
+    </p>
+  </noscript>
+
+  <div class="simdemo__panel">
+    <div class="simdemo__row simdemo__row--buttons">
+      <button type="button" class="btn simdemo__btn" data-sim-play>{% if _ja %}一時停止{% else %}Pause{% endif %}</button>
+      <button type="button" class="btn btn--inverse simdemo__btn" data-sim-reset>{% if _ja %}最初から{% else %}Reset{% endif %}</button>
+      <label class="simdemo__speed">
+        <span>{% if _ja %}速度{% else %}Speed{% endif %}</span>
+        <select data-sim-speed>
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="simdemo__row simdemo__row--scenarios">
+      <span class="simdemo__row-label">{% if _ja %}シナリオ{% else %}Scenario{% endif %}</span>
+      <button type="button" class="simdemo__chip" data-sim-scenario="wall-climb">{% if _ja %}壁面を登る{% else %}Climb the wall{% endif %}</button>
+      <button type="button" class="simdemo__chip" data-sim-scenario="wall-hold">{% if _ja %}壁際で保持{% else %}Hold at the wall{% endif %}</button>
+      <button type="button" class="simdemo__chip" data-sim-scenario="hover">{% if _ja %}空中で静止{% else %}Hover in free air{% endif %}</button>
+    </div>
+
+    <div class="simdemo__row simdemo__row--sliders">
+      <label class="simdemo__slider">
+        <span class="simdemo__slider-name">{% if _ja %}目標の高さ{% else %}Target height{% endif %}</span>
+        <input type="range" min="0.35" max="1.75" step="0.01" value="1.30" data-sim-target-z>
+        <output class="simdemo__slider-value" data-sim-target-z-out>1.30 m</output>
+      </label>
+      <label class="simdemo__slider">
+        <span class="simdemo__slider-name">{% if _ja %}目標の壁方向位置{% else %}Target toward the wall{% endif %}</span>
+        <input type="range" min="0.80" max="2.15" step="0.01" value="1.93" data-sim-target-x>
+        <output class="simdemo__slider-value" data-sim-target-x-out>1.93 m</output>
+      </label>
+    </div>
+
+    <dl class="simdemo__readout">
+      <div><dt>{% if _ja %}時刻{% else %}Time{% endif %}</dt><dd data-sim-time>0.0 s</dd></div>
+      <div><dt>{% if _ja %}機体の高さ{% else %}Height{% endif %}</dt><dd data-sim-height>0.60 m</dd></div>
+      <div><dt>{% if _ja %}壁{% else %}Wall{% endif %}</dt><dd data-sim-contact>{% if _ja %}非接触{% else %}not touching{% endif %}</dd></div>
+      <div><dt>{% if _ja %}実時間比{% else %}Real-time factor{% endif %}</dt><dd data-sim-rate>—</dd></div>
+    </dl>
+
+    <p class="simdemo__hint">
+      {% if _ja %}ドラッグで視点を回転，ホイールで拡大縮小できます。壁面は <b>1.95 m</b> の位置にあり，車輪（半径 0.15 m）が触れると機体は <b>1.80 m</b> より先へは進めません。目標をそれより奥へ置くと，届かない分がそのまま壁への押し付け力になります。押し付けのための専用の制御は入っていません。{% else %}Drag to orbit, scroll to zoom. The wall face is at <b>1.95 m</b>, and with 0.15 m wheels the body cannot get past <b>1.80 m</b>. Put the target beyond that and the part it cannot reach becomes the force pressing the wheels into the wall — there is no dedicated pressing controller.{% endif %}
+    </p>
+  </div>
+</div>
+
+<script type="importmap">
+{"imports": {"three": "{{ base_path }}/assets/vendor/three/three.module.min.js"}}
+</script>
+<script type="module" src="{{ base_path }}/assets/js/simulator/demo.js?v={{ site.time | date: '%s' }}"></script>

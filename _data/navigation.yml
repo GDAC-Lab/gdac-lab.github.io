@@ -20,12 +20,17 @@ main:
   - title: "Facilities"
     title_ja: "実験装置"
     url: /facilities/
-    
-  # Japanese-only Blogger; label shows (外部). Same wording on EN/JA nav.
-  - title: "アルバム（外部）"
-    title_ja: "アルバム（外部）"
-    url: "https://gdaclab.blogspot.com/"
+
+  - title: "Simulator"
+    title_ja: "シミュレータ"
+    url: /simulator/
     
   - title: "Access"
     title_ja: "アクセス"
     url: /access/
+
+  # Japanese-only Blogger; label shows (外部). Same wording on EN/JA nav.
+  - title: "アルバム（外部）"
+    title_ja: "アルバム（外部）"
+    url: "https://gdaclab.blogspot.com/"
+

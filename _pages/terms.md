@@ -87,6 +87,21 @@ turn a fork of [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes
 (© 2016 Michael Rose). That template code is used under the MIT License and remains under
 its own copyright; the licence text ships with the site's source repository.
 
+The [Simulator]({{ base_path }}/simulator/) page additionally carries a WebAssembly
+build of [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0) and
+[three.js](https://threejs.org/) (MIT License). Both are served from this site, not
+from a third party, and both licence texts ship alongside them.
+
+### Running the simulator demo
+
+The demo on the Simulator page solves the physics in your own browser. It transfers
+several megabytes of program code the first time you open that page, and while it is
+running it uses the processor and the graphics hardware of your device, which on a
+laptop or phone will draw more battery than an ordinary page. It sends nothing back:
+no result, no interaction, and no measurement of your device leaves your browser. The
+demo pauses itself whenever the page is not visible, and pausing it by hand stops the
+computation entirely.
+
 ## Contact
 
 For questions about this page, or to request correction or removal of something published

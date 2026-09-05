@@ -16,6 +16,10 @@ This page introduces the vehicles, testbeds and apparatus used in our work. For 
 
 {% include facility-gallery.html %}
 
+## Simulator
+
+Alongside the hardware we develop and publish a MuJoCo [simulator]({{ base_path }}/simulator/), with a demo that runs in your browser.
+
 ## Other photographs
 
 Photographs of lab activities and everyday life are posted on our external album, the [GDAC Lab Blog](https://gdaclab.blogspot.com/) (in Japanese). The group photo is on the [People]({{ base_path }}/people/) page.

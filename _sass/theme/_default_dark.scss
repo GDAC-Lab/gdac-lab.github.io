@@ -70,4 +70,7 @@ html[data-theme="dark"] {
     --global-callout-text-strong        : #{$text};
     --global-callout-text-muted         : #{$text-muted};
     --global-toc-header-bg              : #{$background};
+    /* $background is the page itself: a button painted with it disappears. */
+    --global-button-bg                  : #{mix(#fff, $background, 25%)};
+    --global-button-bg-hover            : #{mix(#fff, $background, 40%)};
 }

@@ -57,6 +57,14 @@ lang_ref: terms
 
 本サイトは [Jekyll](https://jekyllrb.com) で構築しており、[Academic Pages](https://github.com/academicpages/academicpages.github.io) テンプレート（[Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)（© 2016 Michael Rose）のフォーク）をフォークしたものです。テンプレートのコードは MIT License のもとで使用しており、著作権は原著作者に帰属します。ライセンス全文はソースリポジトリに同梱しています。
 
+[シミュレータ]({{ base_path }}/ja/simulator/)のページでは、これに加えて [MuJoCo](https://mujoco.org/)（© Google DeepMind、Apache License 2.0）の WebAssembly ビルドと [three.js](https://threejs.org/)（MIT License）を使用しています。いずれも外部のサーバーではなく本サイト内から配信しており、ライセンス全文も同梱しています。
+
+### シミュレータのデモの動作について
+
+シミュレータのページのデモは、物理計算をご覧になっているブラウザの中で実行します。そのため、ページを初めて開いたときに数 MB のプログラムを転送し、動作中は端末のプロセッサとグラフィックス機能を使用します。ノートパソコンやスマートフォンでは、通常のページより電力を消費します。
+
+計算結果・操作内容・端末の情報は、いずれも送信していません。ブラウザの外へは何も出ません。ページが表示されていない間はデモが自動的に停止し、一時停止の操作をすれば計算そのものが止まります。
+
 ## お問い合わせ
 
 本ページに関するご質問、または掲載内容の訂正・削除のご依頼は、[メンバー]({{ base_path }}/ja/people/) ページに記載の連絡先までお願いします。
