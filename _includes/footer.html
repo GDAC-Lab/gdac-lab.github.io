@@ -21,5 +21,6 @@
 
 <div class="page__footer-copyright">
   &copy; {{ site.time | date: '%Y' }} {{ site.name | default: site.title }}, {{ site.data.ui-text[site.locale].powered_by | default: "Powered by" }} <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Site last updated {{ "now" | date: '%Y-%m-%d' }}
+  {%- comment -%} Build time in JST, so the live site can be checked against the deploy log. {%- endcomment -%}
+  Site last updated {{ "now" | date: '%s' | plus: 32400 | date: '%Y-%m-%d %H:%M' }} JST
 </div>
