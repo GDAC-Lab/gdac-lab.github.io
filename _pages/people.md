@@ -16,7 +16,7 @@ lang_ref: people
 ### Satoshi Nakano — Assistant Professor
 - **Position**: Assistant Professor
 - **Affiliation**: Nagoya Institute of Technology, Department of Engineering
-- **Office**: Room 1007, Building No. 3, 10th Floor
+- **Lab room**: Room 1010, Building No. 3, 10th Floor
 - **researchmap**: [satoshi-nakano](https://researchmap.jp/satoshi-nakano?lang=english)
 - **Faculty page (NITech)**: [mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
 

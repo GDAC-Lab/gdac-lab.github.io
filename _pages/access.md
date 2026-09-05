@@ -12,7 +12,7 @@ lang_ref: access
 ## Address
 
 **GDAC Laboratory**  
-Room 1002, Building No. 3, 10th Floor  
+Room 1010, Building No. 3, 10th Floor  
 Nagoya Institute of Technology  
 Gokiso-cho, Showa-ku, Nagoya 466-8555, Japan
 

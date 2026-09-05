@@ -16,7 +16,7 @@ lang_ref: people
 ### 仲野 聡史 — 助教
 - **役職**: 助教
 - **所属**: 名古屋工業大学 工学専攻
-- **研究室**: 3号館10階1007室
+- **学生室**: 3号館10階1010室
 - **researchmap**: [仲野 聡史（researchmap）](https://researchmap.jp/satoshi-nakano)
 - **教員・研究室紹介（名工大）**: [mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
 
