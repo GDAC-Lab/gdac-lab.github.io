@@ -26,7 +26,7 @@ The vehicle has four rotors and two wheels. To climb the wall, the controller do
 
 Attitude is controlled without decomposing rotation into three angles — the rotation matrix is used directly. That formulation does not break down at any attitude, and it is the idea at the centre of our work on rotational control. See the [Research]({{ base_path }}/research/) page for more.
 
-- **Moving the target** — drag the green sphere in the 3D view, or drag on the side-view pad (sideways is toward the wall, up is height). With the pad focused, the arrow keys work too
+- **Moving the target** — drag the green sphere in the 3D view, or drag on the pad in its lower-left corner (sideways is toward the wall, up is height). With the pad focused, the arrow keys work too
 - **The "+" on the wall-direction value** — how far the target sits beyond the point where the wheels meet the wall (1.80 m). That excess is what becomes the pressing force
 - **Real-time factor** — how fast the physics is being solved relative to real time. 1.00× means it is keeping up
 
