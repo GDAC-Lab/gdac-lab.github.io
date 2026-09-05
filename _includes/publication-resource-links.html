@@ -14,7 +14,14 @@
     {% elsif pu contains "//dx.doi.org/" %}
       {% assign _doi_id = pu | split: "//dx.doi.org/" | last | split: "?" | first %}
     {% endif %}
-    {% if _doi_id %}
+    {%- comment -%}
+      Liquid treats an empty string as true, so the DOI branch must test for
+      content explicitly; otherwise an arXiv link rendered as "Publisher page"
+      with an empty DOI after it.
+    {%- endcomment -%}
+    {% if _doi_id != "" and _doi_id contains "arXiv" %}
+      <a href="https://arxiv.org/abs/{{ _doi_id | split: 'arXiv.' | last }}">arXiv</a><span class="publication-link-sep" aria-hidden="true">·</span><span class="publication-doi-inline">DOI <a href="https://doi.org/{{ _doi_id }}">{{ _doi_id }}</a></span>
+    {% elsif _doi_id != "" %}
       {% capture _doi_resolved %}https://doi.org/{{ _doi_id }}{% endcapture %}
       {% if _pl == 'ja' %}
         <a href="{{ pu }}">出版元ページ</a><span class="publication-link-sep" aria-hidden="true">·</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
