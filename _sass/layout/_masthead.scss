@@ -65,3 +65,37 @@
     font-weight: 700;
   }
 }
+
+/* Language switcher (see _includes/masthead.html) */
+.masthead__lang-current {
+  display: inline;
+  font-weight: bold;
+  padding: 0.5rem 0.3rem;
+}
+
+.masthead__lang-sep {
+  display: inline;
+  margin: 0 0.5rem;
+}
+
+/* Scoped to beat `.greedy-nav a { display: block; margin: 0 1rem; }` in
+   _navigation.scss, which is imported after this file. */
+.greedy-nav a.masthead__lang-link {
+  display: inline-block;
+  text-decoration: none;
+  margin: 0;
+  padding: 0.5rem 0.3rem;
+  position: relative;
+}
+
+/* Flag emoji shown next to the labels on narrow screens only */
+.lang-icon-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .lang-icon-mobile {
+    display: inline;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  }
+}

@@ -30,7 +30,34 @@
             {% endif %}
             <li class="masthead__menu-item"><a href="{{ domain }}{{ url }}"{% if link.url contains 'http' %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ nav_label }}</a></li>
           {% endfor %}
-          <li class="masthead__menu-item persist">{% if page.lang_ref == 'publications' %}<span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span style="display: inline; margin: 0 0.5rem;">|</span><a href="{{ base_path }}/ja/publications/" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a>{% elsif page.lang_ref == 'publications_ja' %}<a href="{{ base_path }}/publications/" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</a><span style="display: inline; margin: 0 0.5rem;">|</span><span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</span>{% elsif page.lang == 'ja' %}<a href="{{ page.url | replace: '/ja/', '/' }}" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</a><span style="display: inline; margin: 0 0.5rem;">|</span><span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</span>{% elsif page.lang == 'en' %}<span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span style="display: inline; margin: 0 0.5rem;">|</span><a href="/ja{{ page.url }}" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a>{% else %}<span style="display: inline; font-weight: bold; padding: 0.5rem 0.3rem;"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span style="display: inline; margin: 0 0.5rem;">|</span><a href="/ja/" style="display: inline-block; text-decoration: none; margin: 0; padding: 0.5rem 0.3rem; position: relative;"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a>{% endif %}</li>
+          {%- comment -%}
+            Language switcher. Each page links to its counterpart in the other language.
+
+            Publication documents are the exception: a publication is one record, held in
+            whichever language the work was written in, and has no counterpart at a
+            mirrored URL. Sending them through the generic rule below produced a 404 on
+            /ja/publication/<slug> for English works, and a link back to the same page for
+            Japanese ones, so they point at the publications index of each language instead.
+          {%- endcomment -%}
+          {%- assign lang_is_ja = false -%}
+          {%- if page.lang == 'ja' or page.lang_ref == 'publications_ja' -%}
+            {%- assign lang_is_ja = true -%}
+          {%- endif -%}
+          {%- if page.collection == 'publications' or page.lang_ref == 'publications' or page.lang_ref == 'publications_ja' -%}
+            {%- assign lang_url_en = '/publications/' -%}
+            {%- assign lang_url_ja = '/ja/publications/' -%}
+          {%- elsif page.lang == 'ja' -%}
+            {%- assign lang_url_en = page.url | replace_first: '/ja/', '/' -%}
+            {%- assign lang_url_ja = page.url -%}
+          {%- elsif page.lang == 'en' -%}
+            {%- assign lang_url_en = page.url -%}
+            {%- assign lang_url_ja = page.url | prepend: '/ja' -%}
+          {%- else -%}
+            {%- comment -%} Pages with no `lang` and so no counterpart (404, sitemap). {%- endcomment -%}
+            {%- assign lang_url_en = page.url -%}
+            {%- assign lang_url_ja = '/ja/' -%}
+          {%- endif -%}
+          <li class="masthead__menu-item persist">{% if lang_is_ja %}<a href="{{ base_path }}{{ lang_url_en }}" class="masthead__lang-link"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</span>{% else %}<span class="masthead__lang-current"><span class="lang-icon-mobile">&#x1F1EC;&#x1F1E7; </span>EN</span><span class="masthead__lang-sep">|</span><a href="{{ base_path }}{{ lang_url_ja }}" class="masthead__lang-link"><span class="lang-icon-mobile">&#x1F1EF;&#x1F1F5; </span>日本語</a>{% endif %}</li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
           </li>
