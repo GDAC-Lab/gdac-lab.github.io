@@ -23,6 +23,7 @@ import { computeHoverControl, WALL_DEMO_CONFIG } from './controller.js';
 // "Load and run" (see arm()), so opening the page costs nothing extra.
 const ENGINE_URL = new URL('../../vendor/mujoco/mujoco.js', import.meta.url).href;
 const VIEW_URL = new URL('./scene.js', import.meta.url).href;
+const DRONE_MESH_URL = new URL('./drone-mesh.js', import.meta.url).href;
 
 /** Embind enums arrive as objects; the C functions want the plain int. */
 const enumValue = (entry) => (typeof entry === 'number' ? entry : entry.value);
@@ -82,6 +83,8 @@ class SimulatorDemo {
 
     this.strings = JSON.parse(root.dataset.simStrings || '{}');
     this.modelUrl = root.dataset.simModel;
+    this.meshUrl = root.dataset.simMesh || '';
+    this.droneMesh = null;
     this.targetPos = { x: 1.93, z: 1.30 };
     this.running = false;
     this.lastFrameMs = 0;
@@ -164,15 +167,39 @@ class SimulatorDemo {
     this.view = new MujocoView(this.canvas, this.model, mujoco);
     this.view.setBackground(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
     this.view.resize();
+    await this._loadDroneMesh();
     this.setTarget(this.targetPos.x, this.targetPos.z);
     mujoco.mj_forward(this.model, this.data);
-    this.view.sync(this.data);
+    this._syncView(0);
     this.view.render();
 
     this._wireControls();
     this.setStatus(this.say('ready', 'Ready.'), 'ready');
     this.root.dataset.simState = 'ready';
     this.start();
+  }
+
+  /**
+   * Swap MuJoCo's collision primitives for the lab's CAD, if the bundle is
+   * there. Optional by design: the demo is about the controller, so a failure
+   * here leaves the boxes and cylinders in place and says nothing.
+   */
+  async _loadDroneMesh() {
+    if (!this.meshUrl) return;
+    try {
+      const { loadDroneMesh, DroneMesh } = await import(DRONE_MESH_URL);
+      const bundle = await loadDroneMesh(this.meshUrl);
+      this.droneMesh = new DroneMesh(this.view, bundle, this.model, this.mujoco);
+    } catch (error) {
+      this.droneMesh = null;
+      if (window.console) console.info('simulator: drawing the primitives —', error.message);
+    }
+  }
+
+  /** One place that advances every drawn thing by dt seconds of wall clock. */
+  _syncView(dt) {
+    this.view.sync(this.data);
+    if (this.droneMesh) this.droneMesh.sync(this.data, dt);
   }
 
   _sensorAddresses() {
@@ -235,7 +262,7 @@ class SimulatorDemo {
     this._syncPadTarget();
     if (this.view && !this.running) {
       this.mujoco.mj_forward(this.model, this.data);
-      this.view.sync(this.data);
+      this._syncView(0);
       this.view.render();
     }
   }
@@ -429,7 +456,7 @@ class SimulatorDemo {
     this.lastFrameMs = nowMs;
     const speed = Number(this.speedSelect ? this.speedSelect.value : 1) || 1;
     if (elapsed > 0) this.step(elapsed * speed);
-    this.view.sync(this.data);
+    this._syncView(Math.min(elapsed, 0.1) * speed);
     this.view.render();
     this._syncPadDrone(this.readState().position);
     this._updateReadout(nowMs);
@@ -479,7 +506,7 @@ class SimulatorDemo {
     this._placeMarker(this.target());
     this.mujoco.mj_forward(this.model, this.data);
     this.stepCounter = 0;
-    this.view.sync(this.data);
+    this._syncView(0);
     this.view.render();
     this._syncPadDrone(this.readState().position);
   }

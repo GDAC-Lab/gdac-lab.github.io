@@ -22,6 +22,8 @@ Move the target and the vehicle works out what to do from there. Nothing is play
 
 ## What you are looking at
 
+The vehicle you see is the lab's own CAD, measured from the airframe and simplified for the browser. The wheels turn at whatever rate the physics works out; only the rotor spin is drawn rather than solved.
+
 The vehicle has four rotors and two wheels. To climb the wall, the controller does nothing special: **the target position is simply placed behind the wall face**. The vehicle tries to reach it, the wall stops it, and the wall's reaction becomes the pressing force. The wheels roll on the wall surface, so vertical motion stays free. There is no dedicated pressing controller.
 
 Attitude is controlled without decomposing rotation into three angles; the rotation matrix is used directly. That formulation does not break down at any attitude, and it is the idea at the center of our work on rotational control. See the [Research]({{ base_path }}/research/) page for more.
