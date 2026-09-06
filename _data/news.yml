@@ -3,7 +3,9 @@
 #   date: YYYY-MM-DD (required for display)
 #   title, title_en, title_ja: all optional (short items can use body_* only)
 #   body, body_en, body_ja: optional (Markdown); at least one of title/body/link should be set
-#   link: optional URL (external or on this site)
+#   link: optional URL (external or on this site). For an external announcement,
+#     link the page the organisation maintains, not the PDF it happens to hold
+#     today: those URLs carry a cache stamp (?cvid=...) and break on re-upload.
 #   link_label_en, link_label_ja: optional; default "Read more" / 「詳細」
 #   Style: full names in English; family name + 君/さん in Japanese; ，。 punctuation.
 items:
@@ -16,6 +18,9 @@ items:
   - date: "2026-06-10"
     body_en: "The lab was awarded a laboratory infrastructure grant (electrical and electronic engineering) by the Murata Science and Education Foundation."
     body_ja: "村田学術振興・教育財団の研究室インフラ整備助成（電気・電子工学）に採択されました。"
+    link: "https://corporate.murata.com/ja-jp/group/zaidan/requirement/grant-target"
+    link_label_en: "Awardee list"
+    link_label_ja: "採択者一覧"
   - date: "2026-04-24"
     body_en: "Yuki Dotaka's paper has been accepted to ASCC 2026."
     body_ja: "堂高君の論文が ASCC 2026 に採択されました。"
