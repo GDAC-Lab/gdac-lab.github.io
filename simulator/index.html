@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788677291">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788681204">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788677291"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788681204"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -293,7 +293,7 @@
     
 <p class="notice">Our wheeled-drone simulator is publicly available. The demo below runs the same physics engine the simulator uses, inside your browser. It is not a recording.</p>
 
-<div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-strings="{&quot;loading&quot;:&quot;Loading the physics engine…&quot;,&quot;ready&quot;:&quot;Ready.&quot;,&quot;play&quot;:&quot;Play&quot;,&quot;pause&quot;:&quot;Pause&quot;,&quot;contactYes&quot;:&quot;touching the wall&quot;,&quot;contactNo&quot;:&quot;not touching&quot;,&quot;failed&quot;:&quot;The demo could not start in this browser.&quot;,&quot;meteredNote&quot;:&quot;This looks like a mobile connection or data-saver mode. Wi-Fi is recommended.&quot;}">
+<div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-mesh="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav/drone-mesh.bin" data-sim-strings="{&quot;loading&quot;:&quot;Loading the physics engine…&quot;,&quot;ready&quot;:&quot;Ready.&quot;,&quot;play&quot;:&quot;Play&quot;,&quot;pause&quot;:&quot;Pause&quot;,&quot;contactYes&quot;:&quot;touching the wall&quot;,&quot;contactNo&quot;:&quot;not touching&quot;,&quot;failed&quot;:&quot;The demo could not start in this browser.&quot;,&quot;meteredNote&quot;:&quot;This looks like a mobile connection or data-saver mode. Wi-Fi is recommended.&quot;}">
 
   <div class="simdemo__stage">
     <canvas class="simdemo__canvas" data-sim-canvas="" aria-label="3D view of a wheeled drone climbing a wall in simulation" role="img"></canvas>
@@ -376,7 +376,7 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788677291"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788681204"></script>
 
 <h2 id="about-this-demo">About this demo</h2>
 
@@ -385,6 +385,8 @@
 <p>Move the target and the vehicle works out what to do from there. Nothing is played back.</p>
 
 <h2 id="what-you-are-looking-at">What you are looking at</h2>
+
+<p>The vehicle you see is the lab’s own CAD, measured from the airframe and simplified for the browser. The wheels turn at whatever rate the physics works out; only the rotor spin is drawn rather than solved.</p>
 
 <p>The vehicle has four rotors and two wheels. To climb the wall, the controller does nothing special: <strong>the target position is simply placed behind the wall face</strong>. The vehicle tries to reach it, the wall stops it, and the wall’s reaction becomes the pressing force. The wheels roll on the wall surface, so vertical motion stays free. There is no dedicated pressing controller.</p>
 
@@ -448,13 +450,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-09-06 15:48 JST
+  Last updated 2026-09-06 16:53 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788677291"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788681204"></script>
 
 
 
