@@ -1,7 +1,17 @@
-{% comment %} Faculty contact email as image (People page only). Uses site.author.email_image. {% endcomment %}
+{% comment %}
+  Faculty contact email (People page only). Either the address as text with a
+  mailto link (site.author.email_as_text + email_text) or as an image
+  (site.author.email_image); see the note in _config.yml.
+{% endcomment %}
 {% include base_path %}
 {% assign _img = site.author.email_image %}
-{% if _img and _img != "" %}
+{% assign _txt = site.author.email_text %}
+{% if site.author.email_as_text and _txt and _txt != "" %}
+<div class="people-faculty-email">
+  <p class="people-faculty-email__label"><strong>{% if page.lang == 'ja' %}メール{% else %}Email{% endif %}</strong></p>
+  <p class="people-faculty-email__text"><a href="mailto:{{ _txt }}">{{ _txt }}</a></p>
+</div>
+{% elsif _img and _img != "" %}
 <div class="people-faculty-email">
   <p class="people-faculty-email__label"><strong>{% if page.lang == 'ja' %}メール{% else %}Email{% endif %}</strong></p>
   <img

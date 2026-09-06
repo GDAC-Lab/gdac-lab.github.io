@@ -38,6 +38,12 @@ author:
   pure_url         : "https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/" # PI profile (NITech Pure)
   # Email: plain `email` adds a mailto link in the sidebar. `email_image` is shown only on People (教員 block).
   email            : # used only if email_image is unset, for sidebar mailto
+  # The address on the People page. As an image it is out of reach of address
+  # harvesters, but also of automated checks that look for the address in the
+  # page text. `email_as_text: true` prints it as text with a mailto link
+  # instead; set it back to false to return to the image.
+  email_text       : "nakano@nitech.ac.jp"
+  email_as_text    : true
   # Raster under /images/ (path relative to /images/). Shown on /people/ and /ja/people/ only.
   email_image      : "nakano-email.png"
 
