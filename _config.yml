@@ -205,6 +205,10 @@ exclude:
   - .sass-cache
   - assets/js/_main.js
   - assets/js/plugins
+  # The CAD the browser demo's vehicle is built from. Kept in the repository
+  # so scripts/build_drone_mesh.py can be re-run, but 8 MB of STL has no
+  # business on the live site: only the built bundle beside it ships.
+  - assets/models/wheeled-uav/meshes
   - assets/js/vendor
   - CHANGELOG
   - Capfile
