@@ -7,13 +7,15 @@
 #     link the page the organisation maintains, not the PDF it happens to hold
 #     today: those URLs carry a cache stamp (?cvid=...) and break on re-upload.
 #   link_label_en, link_label_ja: optional; default "Read more" / 「詳細」
-#   Style: full names in English; family name + 君/さん in Japanese; ，。 punctuation.
+#   Style: given name only in English (Keisuke), family name + 君/さん in Japanese
+#     (佐野君); ，。 punctuation. Students are named the way the lab speaks of them,
+#     not the way a press release would.
 items:
   - date: "2026-09-03"
-    body_en: "Keisuke Sano gave a talk at RSJ2026."
+    body_en: "Keisuke gave a talk at RSJ2026."
     body_ja: "佐野君が RSJ2026 で発表しました。"
   - date: "2026-06-20"
-    body_en: "Yuki Dotaka gave a talk at ASCC 2026."
+    body_en: "Yuki gave a talk at ASCC 2026."
     body_ja: "堂高君が ASCC 2026 で発表しました。"
   - date: "2026-06-10"
     body_en: "The lab was awarded a laboratory infrastructure grant (electrical and electronic engineering) by the Murata Science and Education Foundation."
@@ -22,7 +24,7 @@ items:
     link_label_en: "Awardee list"
     link_label_ja: "採択者一覧"
   - date: "2026-04-24"
-    body_en: "Yuki Dotaka's paper has been accepted to ASCC 2026."
+    body_en: "Yuki's paper has been accepted to ASCC 2026."
     body_ja: "堂高君の論文が ASCC 2026 に採択されました。"
   - date: "2026-04-24"
     body_en: "A group photo of lab members is now on the home page and in the sidebar."
