@@ -91,7 +91,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788800583">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1788857881">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -99,7 +99,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788800583"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1788857881"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -325,9 +325,9 @@
         <circle class="simdemo__pad-target" data-sim-pad-target="" cx="133" cy="60" r="6.5" />
       </svg>
       <dl class="simdemo__inset-values" aria-live="polite">
-        <div><dt><i class="simdemo__legend-dot simdemo__legend-dot--target"></i>目標 高さ</dt><dd data-sim-target-z-out="">1.30 m</dd></div>
+        <div><dt><i class="simdemo__legend-dot simdemo__legend-dot--target"></i>目標の高さ</dt><dd data-sim-target-z-out="">1.30 m</dd></div>
         <div><dt>壁方向</dt><dd data-sim-target-x-out="">1.93 m (+0.13)</dd></div>
-        <div><dt><i class="simdemo__legend-dot simdemo__legend-dot--drone"></i>機体</dt><dd data-sim-inset-height="">0.60 m</dd></div>
+        <div><dt><i class="simdemo__legend-dot simdemo__legend-dot--drone"></i>機体の高さ</dt><dd data-sim-inset-height="">0.60 m</dd></div>
       </dl>
     </div>
   </div>
@@ -376,7 +376,7 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788800583"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1788857881"></script>
 
 <h2 id="このデモについて">このデモについて</h2>
 
@@ -386,9 +386,9 @@
 
 <h2 id="何が起きているか">何が起きているか</h2>
 
-<p>画面の機体は，研究室で実機を採寸して起こした CAD をそのまま簡略化したものです。車輪の回転は物理計算の結果をそのまま描いています（プロペラの回転だけは見た目のためのものです）。</p>
+<p>画面の機体は，研究室で実機を採寸して起こした CAD を，ブラウザ向けに簡略化して表示したものです。車輪の回転は物理計算の結果をそのまま描いています（プロペラの回転だけは見た目のためのものです）。</p>
 
-<p>機体は4つのロータと2つの車輪を持ちます。壁面を登るときは，<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが壁に阻まれ，壁からの反力がその分だけ押し付け力として働きます。車輪は壁の上を転がるので，上下方向には自由に動けます。押し付けのための特別な制御は入っていません。</p>
+<p>機体は4つのロータと2つの車輪を持ちます。壁面を登るときは，<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが壁に阻まれ，壁からの反力がその分だけ押し付け力として働きます。車輪は壁の上を転がるので，上下方向には自由に動けます。押し付けのための専用の制御は入っていません。</p>
 
 <p>姿勢の制御には，回転を3つの角度に分解せず，回転行列のまま扱う定式化を用いています。どの姿勢でも計算が破綻しないという性質があり，本研究室の回転運動の制御の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
 
@@ -412,7 +412,7 @@
 
 <h2 id="動作環境">動作環境</h2>
 
-<p>デモの実行には，WebGL と WebAssembly に対応したブラウザが必要です。物理エンジンの読み込みには数 MB の通信が発生するため，ページを開いただけでは転送せず，<strong>「読み込んで実行する」を押したときに初めて</strong>転送します。転送は初回のみで，このページ以外には影響しません。動かない場合は，<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページに研究の概要があります。</p>
+<p>デモの実行には，WebGL と WebAssembly に対応したブラウザが必要です。物理エンジンの読み込みには数 MB の通信が発生するため，ページを開いただけでは転送せず，<strong>「読み込んで実行する」を押したときに初めて</strong>転送します。転送は初回のみで，このページ以外には影響しません。デモが動かない場合も，研究の概要は<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページでご覧いただけます。</p>
 
   </div>
 </div>
@@ -450,13 +450,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-08 02:03 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-08 17:58 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788800583"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1788857881"></script>
 
 
 
