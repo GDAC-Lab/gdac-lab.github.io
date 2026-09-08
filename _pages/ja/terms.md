@@ -54,7 +54,7 @@ lang_ref: terms
 
 ### 使用ソフトウェア
 
-本サイトは [Jekyll](https://jekyllrb.com) で構築しており，[Academic Pages](https://github.com/academicpages/academicpages.github.io) テンプレートをフォークしたものです。Academic Pages 自体は [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)（© 2016 Michael Rose）を基にしています。テンプレートのコードは MIT License のもとで使用しており，著作権は原著作者に帰属します。ライセンス全文はソースリポジトリに同梱しています。
+本サイトは，[Academic Pages](https://github.com/academicpages/academicpages.github.io) テンプレートをフォークし，[Jekyll](https://jekyllrb.com) で構築しています。Academic Pages 自体は [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)（© 2016 Michael Rose）を基にしています。テンプレートのコードは MIT License のもとで使用しており，著作権は原著作者に帰属します。ライセンス全文はソースリポジトリに同梱しています。
 
 [シミュレータ]({{ base_path }}/ja/simulator/)のページでは，これに加えて [MuJoCo](https://mujoco.org/)（© Google DeepMind，Apache License 2.0）の WebAssembly ビルドと [three.js](https://threejs.org/)（MIT License）を使用しています。いずれも外部のサーバではなく本サイト内から配信しており，ライセンス全文も同梱しています。
 

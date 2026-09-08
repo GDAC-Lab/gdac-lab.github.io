@@ -33,11 +33,11 @@ lang_ref: publications
     You can also browse publications on <a href="{{ site.author.googlescholar }}" rel="noopener">Google Scholar</a>.
   {%- endif -%}
   {%- if site.researchmap_url -%}
-    {%- if site.author.googlescholar %} {% endif -%}
+    {%- if site.author.googlescholar %}{{ ' ' }}{% endif -%}
     The list is synchronized with <a href="{{ site.researchmap_url }}">researchmap</a> roughly once a week.
   {%- endif -%}
   {%- if _pp_d > 0 or _pp_a > 0 -%}
-    {%- if site.author.googlescholar or site.researchmap_url %} {% endif -%}
+    {%- if site.author.googlescholar or site.researchmap_url %}{{ ' ' }}{% endif -%}
     Preprint entries are filled in from <a href="https://www.crossref.org">Crossref</a> and <a href="https://arxiv.org">arXiv</a> metadata when the site is built.
   {%- endif -%}
   </small>

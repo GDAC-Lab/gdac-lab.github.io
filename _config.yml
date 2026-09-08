@@ -107,10 +107,10 @@ publication_category:
     title: 'Books'
     title_ja: '著書'
   manuscripts:
-    title: 'Journal Articles'
+    title: 'Journal articles'
     title_ja: '学術雑誌論文'
   conferences:
-    title: 'Conference Papers'
+    title: 'Conference papers'
     title_ja: '会議論文'
   preprints:
     title: 'Preprints'

@@ -41,7 +41,7 @@
         {% endif %}
         <figure class="gallery__figure">
           <a class="gallery__media" href="{{ _src }}"
-             aria-label="{% if _ja %}{{ _title }}の画像を原寸で開く{% else %}Open the full-size image of {{ _title }}{% endif %}">
+             aria-label="{% if _ja %}{{ _title }}の画像を原寸で開く{% else %}Open full-size image: {{ _title }}{% endif %}">
             <img src="{{ _src }}"
                  alt="{{ _alt }}"
                  width="{{ item.width | default: 1600 }}"

@@ -11,7 +11,7 @@ redirect_from:
 
 This site introduces the **Geometric Dynamics, Autonomy, and Control Laboratory (GDAC Lab)** at Nagoya Institute of Technology. We hope it is useful for prospective students, colleagues in academia and industry, and anyone interested in control theory, robotics, and safety-critical systems.
 
-We develop theory and hardware experiments for constrained control of rotational motion, geometric attitude control on SO(3), and applications such as wheeled drones for infrastructure inspection. A concise overview is on the [Research]({{ site.baseurl }}/research/) page.
+Our work combines theory and hardware experiments on constrained control of rotational motion, geometric attitude control on SO(3), and applications such as wheeled drones for infrastructure inspection. A concise overview is on the [Research]({{ site.baseurl }}/research/) page.
 
 {% include home-slideshow.html %}
 

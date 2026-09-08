@@ -35,7 +35,7 @@ layout: default
           {% endif %}
         {% if page.modified %}
           {%- comment -%} `modified` is a revision date, so it is labelled as one; the Japanese pages get a Japanese date. {%- endcomment -%}
-          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {% if page.lang == 'ja' %}最終更新：{% else %}Last updated:{% endif %}</strong> <time datetime="{{ page.modified | date: "%Y-%m-%d" }}">{% if page.lang == 'ja' %}{{ page.modified | date: "%Y年%-m月%-d日" }}{% else %}{{ page.modified | date: "%B %-d, %Y" }}{% endif %}</time></p>
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> {% if page.lang == 'ja' %}最終更新：</strong>{% else %}Last updated:</strong> {% endif %}<time datetime="{{ page.modified | date: "%Y-%m-%d" }}">{% if page.lang == 'ja' %}{{ page.modified | date: "%Y年%-m月%-d日" }}{% else %}{{ page.modified | date: "%B %-d, %Y" }}{% endif %}</time></p>
         {% endif %}
         
         {% if page.collection == 'teaching' %}

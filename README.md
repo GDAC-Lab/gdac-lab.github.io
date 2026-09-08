@@ -64,7 +64,7 @@ logic offline — run it locally after touching either script.
   the publication date, because researchmap does edit dates. `redirect_from` keeps the old
   date-based URLs working.
 * An unmapped researchmap `published_paper_type` is reported in the log instead of being filed
-  silently under Conference Papers. Add new types to `TYPE_TO_CATEGORY`.
+  silently under Conference papers. Add new types to `TYPE_TO_CATEGORY`.
 
 ### If publications stop updating
 

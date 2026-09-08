@@ -18,14 +18,14 @@
 #   items: の末尾に，下のテンプレート（コメントアウトしてあります）をコピーして使ってください。
 #   並び順はこのファイルの順序がそのまま表示順になります。
 #
-# 現在の写真は研究室ブログ（https://gdaclab.blogspot.com/）の 2026 年 5 月の記事から取り込んだものです。
+# 現在の写真は研究室ブログ（https://gdaclab.blogspot.com/）の2026年5月の記事から取り込んだものです。
 
 items:
   - id: wheeled-drone
     title_ja: "車輪付きドローン"
     title_en: "Wheeled drone"
     body_ja: "ドローンの両側に車輪を取り付けた機体です。壁や天井に押し付けて車輪で走行でき，壁のそばや狭い空間でも姿勢を保てます。"
-    body_en: "A drone with a wheel on each side. Pressed against a wall or ceiling it travels on its wheels, and it holds its attitude close to walls and in narrow spaces."
+    body_en: "A drone with a wheel on each side. Pressed against a wall or ceiling, it travels on its wheels and holds its attitude close to walls and in narrow spaces."
     image: "facilities/wheeled-drone.jpg"
     width: 1424
     height: 1068
@@ -68,7 +68,7 @@ items:
   - id: motion-capture
     title_ja: "モーションキャプチャ"
     title_en: "Motion capture"
-    body_ja: "Vicon と Qualisys の 2 種類のモーションキャプチャを，用途に応じて使い分けています。機体の位置と姿勢を計測し，制御に用います。"
+    body_ja: "Vicon と Qualisys の2種類のモーションキャプチャを，用途に応じて使い分けています。機体の位置と姿勢を計測し，制御に用います。"
     body_en: "Two motion-capture systems, Vicon and Qualisys, are used depending on the experiment. They measure the position and attitude of the vehicles for control."
     image: "facilities/motion-capture-vicon.jpg"
     width: 1424
@@ -90,7 +90,7 @@ items:
   - id: printers
     title_ja: "3D プリンタ"
     title_en: "3D printers"
-    body_ja: "機体の部品を製作するための 3D プリンタです。3 機を用途に応じて使い分けています。"
+    body_ja: "機体の部品を製作するための 3D プリンタです。3台を用途に応じて使い分けています。"
     body_en: "3D printers for making airframe parts. Three machines are used according to the job."
     image: "facilities/3d-printers.jpg"
     width: 1424

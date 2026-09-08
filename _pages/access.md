@@ -18,7 +18,7 @@ Gokiso-cho, Showa-ku, Nagoya 466-8555, Japan
 
 ## By train
 
-- **JR Chuo Line**: Tsurumai Station, about 400 m east of the Meidai Hospital exit
+- **JR Chuo Line**: Tsurumai Station, about 400 m east of the Nagoya University Hospital exit
 - **Subway Tsurumai Line**: Tsurumai Station, about 500 m east of Exit 4
 - **Subway Sakura-dori Line**: Fukiage Station, about 900 m west of Exit 5
 

@@ -28,7 +28,7 @@ Specifically, this site does **not**:
 * set any cookies;
 * host a comment system.
 
-Pages load their fonts, stylesheets, scripts and images from this site itself, so simply
+Pages load their fonts, stylesheets, scripts, and images from this site itself, so simply
 reading a page does not send a request to any other company's server. Pages that display
 mathematics or generated diagrams are the one exception: those load a rendering library
 from a public CDN, and only on the pages that actually use one.
@@ -43,14 +43,14 @@ and is never transmitted anywhere. Clearing your browser's site data removes it.
 
 This site is served from a web server operated by Nagoya Institute of Technology. As is
 normal for any web server, it may record standard access information such as IP address,
-date and time, requested page, referring page and browser identification. That data is
+date and time, requested page, referring page, and browser identification. That data is
 handled by the university under its own policies; please refer to Nagoya Institute of
 Technology for details of its handling and retention.
 
 ### Links and share buttons to other services
 
 Pages link out to services such as researchmap, Google Scholar, publisher and DOI pages,
-arXiv, GitHub and the lab's external photo album. Publication pages also carry share
+arXiv, GitHub, and the lab's external photo album. Publication pages also carry share
 buttons for external social platforms. These are ordinary links: nothing is sent to those
 services unless you choose to follow or use them. Once you do, that service's own privacy
 policy applies, not this one.
@@ -59,7 +59,7 @@ policy applies, not this one.
 
 ### Site content
 
-Text and images published here describing the laboratory, its research and its members
+Text and images published here describing the laboratory, its research, and its members
 may be quoted or cited for non-commercial academic and educational purposes with
 attribution to the GDAC Lab, Nagoya Institute of Technology. Please ask before reusing
 photographs of lab members, and before any commercial use.
@@ -76,7 +76,7 @@ in detail from, the publisher's own listing.
 
 Pages are maintained on a best-effort basis, and some pages are still in preparation.
 Nothing here should be treated as an official statement of Nagoya Institute of Technology.
-For formal matters — admissions, procedures and official dates — follow the university's
+For formal matters — admissions, procedures, and official dates — follow the university's
 own announcements.
 
 ### Website software

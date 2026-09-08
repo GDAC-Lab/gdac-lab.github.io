@@ -89,7 +89,7 @@ We therefore study **drones equipped with wheels**: the vehicle presses itself a
     <source src="{{ base_path }}/images/research/wall-demo.mp4" type="video/mp4">
     <source src="{{ base_path }}/images/research/wall-demo.webm" type="video/webm">
   </video>
-  <figcaption>Wall riding in the simulator the lab develops and publishes. Left, a three-quarter view; right, the same run seen from the side: approach, contact, climb, hold, and descent. The green sphere is the reference position, and the arrows at the wheel–wall interface are the contact forces. An interactive version runs in your browser on the <a href="{{ base_path }}/simulator/">Simulator</a> page.</figcaption>
+  <figcaption>Wall running in the simulator the lab develops and publishes. Left, a three-quarter view; right, the same run seen from the side: approach, contact, climb, hold, and descent. The green sphere is the reference position, and the arrows at the wheel–wall interface are the contact forces. An interactive version runs in your browser on the <a href="{{ base_path }}/simulator/">Simulator</a> page.</figcaption>
 </figure>
 
 From a control standpoint, this vehicle presents the following difficulties.
