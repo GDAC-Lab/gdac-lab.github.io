@@ -132,8 +132,23 @@ this repository. `satellite.obj` is generated from primitives upstream and is CC
 since the viewer does not load it.
 
 The still on the Research pages (`images/research/sun-safe-slew*.jpg`) is rendered from
-the viewer with `#shell` hidden, one per language because the labels drawn into the scene
-are localized.
+the viewer itself by `scripts/render_slew_figure.mjs`, one per language:
+
+```bash
+python3 -m http.server 8000                                   # serve the site root
+NODE_PATH=<global node_modules> \
+  node scripts/render_slew_figure.mjs http://127.0.0.1:8000 images/research
+```
+
+The viewer's `?figure=1` mode strips the overlay and the text baked into the scene as
+sprites, leaving geometry, and takes `&view=`, `&t=` and `&earth=` so a URL fixes the
+frame. Figure mode also lights the spacecraft from the camera side: on screen it is
+backlit and reads as a silhouette in motion, which is honest, but a still has no motion
+to carry it and the solar cells are near black on a near-black sky. The annotation is
+placed by hand in the script, in pixel coordinates of the 1280x720 frame, so it holds
+only for the view and time set there. The frame is the "from the Sun" view at the end of
+the run, where the keep-out cone projects to a circle and inside the ring is a breach
+with no depth to argue about. Downscale the 2x screenshot to 1280x720 before committing.
 
 ## Deployment
 
