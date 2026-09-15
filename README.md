@@ -91,6 +91,50 @@ between 2026-07-06 and 2026-09-05. If the workflow shows as disabled, press **En
 The heartbeat step in the workflow now commits a timestamp whenever the repository has been quiet
 for a month, so the 60-day timer should not run out again.
 
+## The two browser demos
+
+Both live under `assets/`, are served entirely from this site, and are reached from their
+own pages. Neither is documented anywhere else, and neither is something you would guess
+from the tree.
+
+| | `/simulator/` | `/sun-safe-slew/` |
+| --- | --- | --- |
+| What it does | solves MuJoCo physics live in the browser | plays back a run computed offline |
+| Page | `_pages/simulator.md`, `_pages/ja/simulator.md` | `_pages/sun-safe-slew.md`, `_pages/ja/sun-safe-slew.md` |
+| Include | `_includes/simulator-demo.html` | `_includes/slew-demo.html` |
+| Styles | `_sass/layout/_simulator.scss` | `_sass/layout/_slew-demo.scss` |
+| Code | `assets/js/simulator/`, `assets/models/` | `assets/demos/sun-safe-slew/` |
+| Weight | ~3.5-12 MB, behind a load gate | ~126 kB, no gate |
+
+`assets/vendor/three/` is shared by both. `assets/vendor/fonts/` is used only by the slew
+viewer, which needs its two faces; the rest of the site uses system fonts.
+
+### The slew viewer is vendored, with local changes
+
+`assets/demos/sun-safe-slew/index.html` was written as a standalone page in the research
+repository that produced `data/trajectory.json`, and is adapted here. If it is ever
+refreshed from upstream, these are the changes to re-apply — all of them are commented in
+place, so diffing against the upstream file will show them:
+
+1. `loadThree()` imports `../../vendor/three/three.module.min.js` instead of reaching for
+   cdnjs and jsdelivr.
+2. `@font-face` rules for the two self-hosted faces, in place of a Google Fonts
+   stylesheet link, and `--font-body` pointing at this site's font stack.
+3. An `STR`/`TR()` string table selected by a `lang` query parameter. The file is a static
+   asset, so Liquid never runs in it; `_includes/slew-demo.html` passes `?lang=ja`.
+4. A `FRAMED` check that relaxes the wheel-zoom and `touch-action` so an iframe does not
+   swallow the page's scroll.
+5. A doctype, charset, viewport and `noscript` fallback.
+
+It is the viewer and the run, not the method: nothing that computes the control law is in
+this repository. `satellite.obj` is generated from primitives upstream and is CC0-1.0
+(`assets/LICENSE.txt` beside it); the `.stl` of the same mesh is deliberately not copied,
+since the viewer does not load it.
+
+The still on the Research pages (`images/research/sun-safe-slew*.jpg`) is rendered from
+the viewer with `#shell` hidden, one per language because the labels drawn into the scene
+are localized.
+
 ## Deployment
 
 Pushing to `master` triggers `.github/workflows/deploy.yml`, which re-runs the publication sync,
