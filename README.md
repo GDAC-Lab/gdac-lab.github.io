@@ -46,6 +46,23 @@ logic offline — run it locally after touching either script.
 
 `publication_list_last_n_years:` in `_config.yml` limits the index to the last N years (0 = all).
 
+### How the two publication indexes are built
+
+`_pages/publications.html` (English works only) and `_pages/ja/publications.html` (both
+languages, under one heading per category) share their logic through four includes, so the year
+window and the "is this category empty?" test cannot drift apart between the two pages:
+
+| Include | Does what |
+| --- | --- |
+| `publication-window.html` | Derives `pub_years`, `current_y`, `min_pub_y` from `publication_list_last_n_years`. Safe to include more than once. |
+| `publication-recent-count.html` | `docs=` a list of records → how many fall inside the window, in `recent_count`. |
+| `publication-list.html` | `docs=` a list of records → the `<ol>` of those inside the window, newest first, numbering continued in `pub_counter`. |
+| `publication-entry.html` | One `<li>`; `publication-author-names.html` works out its author line. |
+
+Each page picks the records it wants with `where`/`where_exp` and hands them to those; the
+category jump buttons (`publications-category-jump.html`) count with the same include, so a
+button never points at a heading that was not rendered.
+
 ### How the sync protects the list
 
 * Nothing is deleted until a complete, validated result is in hand. An empty or malformed API
@@ -132,6 +149,20 @@ JavaScript for features no page used. They are now loaded per page in
 - **MathJax** — opt in with `mathjax: true` in a page's front matter.
 - **Plotly** and **Mermaid** — detected automatically from a <code>```plotly</code> or
   <code>```mermaid</code> code block in the page.
+
+`assets/js/theme.js` — 14 kB of Plotly light/dark layout templates — is imported the same way.
+It used to be a static `import` in `assets/js/_main.js`, which made every page fetch it on top of
+the bundle; it is now an `import('./theme.js')` inside the branch that runs only when a
+<code>```plotly</code> block is present.
+
+`assets/js/main.min.js` is generated, not written: it is jQuery + fitvids + jquery-smooth-scroll
++ `assets/js/plugins/jquery.greedy-navigation.js` + `assets/js/_main.js` run through uglify-js.
+After editing `_main.js`, rebuild it and commit both files:
+
+```bash
+npm install          # once
+npm run build:js     # rewrites assets/js/main.min.js
+```
 
 Repo-only files (`scripts/`, `README.md`, `CONTRIBUTING.md`, Docker files, `.devcontainer`) are
 listed under `exclude:` in `_config.yml`. Anything not excluded is copied verbatim into the
