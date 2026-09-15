@@ -1,7 +1,13 @@
 # 車輪付きドローンの表示用メッシュ / Display meshes for the wheeled drone
 
 シミュレータのデモ（`/simulator/`）で機体を描くための CAD です。研究室で実機を採寸して
-起こしたもので，`CAD-README.md` に元の配布時の説明が入っています。
+起こしたもので，`CAD-README.md` に元の配布時の説明が入っています。著作権のある CAD
+データは使っていないため，形状の公開に問題はありません。
+
+> **正本は研究室内のアセットリポジトリ（private）にあります。** ここはビルド入力としての
+> 複製です。このリポジトリは公開なので private リポジトリを submodule にできず，同じ
+> ファイルを置いています。**CAD を差し替えるときは正本を先に更新し，ここへ反映してから**
+> `scripts/build_drone_mesh.py` を再実行してください。下の MD5 で同期を確認できます。
 
 このフォルダは **サイトには配信されません**（`_config.yml` の `exclude:` に入れてあります）。
 公開されるのは，この CAD から生成した一つのファイル `../drone-mesh.bin`（約 250 KB）だけです。
@@ -17,6 +23,17 @@
 | `QAV250.stl` | 組み立て済みの一体メッシュ。描画には使っていません（参考用） |
 
 座標系は機体座標系（**x 前方，y 左，z 上**），単位は **mm**。バイナリ STL です。
+
+### MD5（正本との同期確認用）
+
+```
+19bd8de04548ac9be910a7f03e6e6a30  frame.stl
+16bc824ba651dceb7618dfa2e6a49e82  wheel_l.stl
+96be436cfc3c293edfb37fe16ff75479  wheel_r.stl
+5c0b2323d95a88b875ead05d28733051  propeller_cw.stl
+ecd2f8070c46fdf965cca37dbf4b0b56  propeller_ccw.stl
+6fc1d357e7a431cdcd20c980576e77f7  QAV250.stl
+```
 
 ## 作り直し方
 
@@ -48,8 +65,14 @@ MuJoCo モデルの当たり判定の車輪は半径 0.15 m ですが，CAD の�
 
 ## English
 
-The CAD the demo's vehicle is drawn from, measured from the lab's own airframe;
-`CAD-README.md` is the note that came with it.
+The CAD the demo's vehicle is drawn from, measured from the lab's own airframe; no
+copyrighted CAD was used, so the shape is fine to publish. `CAD-README.md` is the note
+that came with it.
+
+**The canonical copy lives in the lab's internal asset repository (private);** this is a
+build-input copy, since a public repository cannot use a private one as a submodule.
+Update the canonical copy first, mirror it here, then re-run
+`scripts/build_drone_mesh.py`. The MD5 list above detects drift between the two.
 
 This folder is **not published** (see `exclude:` in `_config.yml`). Only the single
 file built from it, `../drone-mesh.bin` (about 250 KB), is served: there is no reason
