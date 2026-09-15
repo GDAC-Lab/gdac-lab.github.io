@@ -61,6 +61,11 @@ Furthermore, an on-board computer must meet mass limits at launch and withstand 
 
 The optimization-free methods described above are effective in precisely this setting. We are currently working toward a framework in which several small satellites reorient cooperatively.
 
+<figure class="media-figure">
+  <img src="{{ base_path }}/images/research/sun-safe-slew.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="A space telescope turning between two targets. The shortest path cuts straight through a shaded 25-degree exclusion cone around the Sun; a second path slides around the outside of the cone, with a wedge marking 33 degrees from the Sun.">
+  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly on the way. The red track is the shortest path, straight through the 25&deg; exclusion cone. The teal track is what the governor commands: it slides around the outside, holds 33&deg; from the Sun, and never asks the reaction wheels for more than 18 % of their torque. The animation runs in your browser on the <a href="{{ base_path }}/sun-safe-slew/">Sun-safe slew</a> page.</figcaption>
+</figure>
+
 > **JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)** (FY2026–2029, 26K00967)
 >
 > "Constrained cooperative attitude control without online optimization for small satellite formations"

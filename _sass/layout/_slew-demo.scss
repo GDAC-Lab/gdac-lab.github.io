@@ -1,0 +1,60 @@
+/* ==========================================================================
+   SUN-SAFE SLEW DEMO
+   The constrained-attitude-control animation (_includes/slew-demo.html),
+   framed from assets/demos/sun-safe-slew/. Full content width rather than the
+   prose measure, like the simulator demo: the instrument rail wants the room.
+
+   The viewer has two layouts, switching at 900px of its own width: a wide one
+   with the instrument rail down the side and the legend opposite, and a
+   compact one with the gauges in a scrollable row. The wide layout needs
+   about 910px of height for the rail not to end up scrolled — taller than a
+   laptop viewport, which would leave the transport controls off screen inside
+   a scrolling page. So the frame is deliberately held under that breakpoint
+   and the page carries the legend in its own prose; the caption links to the
+   viewer in its own tab, where the wide layout gets the room it wants.
+   ========================================================================== */
+
+.slewdemo {
+  margin: 1.75rem 0 2.25rem;
+  max-width: none;
+}
+
+.slewdemo__frame {
+  display: block;
+  width: 100%;
+  /* px, not rem: the viewer switches layout on its own width in CSS pixels,
+     and this site's root font-size is 16px below $medium and 18px above it,
+     so 55rem would clear 900px on a wide screen and land in the wide layout. */
+  max-width: 880px;
+
+  /* 7:5 puts the frame at 880x628 once it reaches its cap, which is where the
+     compact layout composes best: gauges in one row, and enough sky left for
+     the cone, both tracks and the two target labels. */
+  aspect-ratio: 7 / 5;
+  min-height: 420px;
+  border: 1px solid var(--global-border-color);
+  border-radius: $border-radius;
+
+  /* The viewer paints its own near-black ground. Matching it here keeps the
+     frame from flashing the page background while the iframe loads. */
+  background: #070a12;
+  color-scheme: dark;
+}
+
+.slewdemo__note {
+  margin-top: 0.6rem;
+  font-size: 0.8em;
+  line-height: 1.55;
+  color: var(--global-text-color-light, var(--global-text-color));
+}
+
+@include breakpoint(max-width 600px) {
+  .slewdemo__frame {
+    /* A phone-width frame is all header and controls unless it is given real
+       height: at 540px the spacecraft ends up behind the gauge row, at 660px
+       the scene reads. The canvas passes vertical drags through, so a frame
+       this tall is not a scroll trap. */
+    aspect-ratio: 3 / 4;
+    min-height: 660px;
+  }
+}

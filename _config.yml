@@ -278,6 +278,14 @@ collections:
 
 # These settings control how pages and collections are included in the site
 defaults:
+  # The animation's viewer is a standalone page framed by /sun-safe-slew/, and
+  # it carries a noindex meta tag. jekyll-sitemap picks up static .html files,
+  # so keep it out: a sitemap entry for a noindex URL is a contradiction, and
+  # the framing page is the one to list.
+  - scope:
+      path: "assets/demos"
+    values:
+      sitemap: false
   # _posts
   - scope:
       path: ""

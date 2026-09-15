@@ -1,0 +1,30 @@
+{% comment %}
+  The constrained-attitude-control animation, framed from
+  assets/demos/sun-safe-slew/. The viewer is a self-contained page written for
+  a full viewport, so it stays in an iframe: its stylesheet never meets this
+  site's, and it needs no rework to sit in an article.
+
+  It plays back a run computed offline — unlike the simulator demo, which
+  solves the physics in the browser — so nothing heavy is transferred and
+  there is no load gate. The language rides in the query string because the
+  viewer is a static asset that Liquid never sees.
+{% endcomment %}
+{% include base_path %}
+{% assign _ja = false %}
+{% if page.lang == 'ja' %}{% assign _ja = true %}{% endif %}
+{% if _ja %}{% assign _q = '?lang=ja' %}{% else %}{% assign _q = '' %}{% endif %}
+{% capture _src %}{{ base_path }}/assets/demos/sun-safe-slew/{{ _q }}{% endcapture %}
+
+<figure class="slewdemo">
+  <iframe class="slewdemo__frame"
+          src="{{ _src }}"
+          loading="lazy"
+          title="{% if _ja %}太陽を避けて姿勢を変更する衛星のアニメーション{% else %}Animation of a satellite slewing around the Sun{% endif %}"></iframe>
+  <figcaption class="slewdemo__note">
+    {% if _ja %}
+      ドラッグで視点を回せます。拡大は Ctrl ＋スクロール，またはピンチです（そのままスクロールするとページが動きます）。下の帯グラフをクリックすると時刻を移動します。<a href="{{ _src }}" target="_blank" rel="noopener">別のタブで開く</a>と，計器と凡例がすべて表示されます。
+    {% else %}
+      Drag to orbit; ctrl + scroll or pinch to zoom, since a plain scroll moves the page. Click the strip chart to scrub. <a href="{{ _src }}" target="_blank" rel="noopener">Opening it in its own tab</a> gives the instruments and the legend room.
+    {% endif %}
+  </figcaption>
+</figure>

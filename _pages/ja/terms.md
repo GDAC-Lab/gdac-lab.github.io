@@ -1,7 +1,7 @@
 ---
 permalink: /ja/terms/
 title: "利用規約・プライバシーポリシー"
-modified: 2026-09-05
+modified: 2026-09-15
 lang: ja
 lang_ref: terms
 ---
@@ -58,11 +58,15 @@ lang_ref: terms
 
 [シミュレータ]({{ base_path }}/ja/simulator/)のページでは，これに加えて [MuJoCo](https://mujoco.org/)（© Google DeepMind，Apache License 2.0）の WebAssembly ビルドと [three.js](https://threejs.org/)（MIT License）を使用しています。いずれも外部のサーバではなく本サイト内から配信しており，ライセンス全文も同梱しています。
 
-### シミュレータのデモの動作について
+[太陽を避ける姿勢変更]({{ base_path }}/ja/sun-safe-slew/)のページでは，同じ three.js に加えて，書体の [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)（© 2018 The Chakra Petch Project Authors）と [IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono)（© 2017 IBM Corp.）を SIL Open Font License 1.1 のもとで使用し，基本図形から生成した衛星の形状データを CC0-1.0 として同梱しています。書体も外部のフォントサービスではなく本サイト内から配信しているため，このページも外部への要求を行いません。
+
+### デモの動作について
 
 シミュレータのページのデモは，物理計算をお使いのブラウザの中で実行します。そのため，「読み込んで実行する」を押したときに数 MB のプログラムを転送し（ページを開いただけでは転送しません），動作中は端末のプロセッサとグラフィックス機能を使用します。ノートパソコンやスマートフォンでは，通常のページより電力を消費します。
 
 計算結果・操作内容・端末の情報は，いずれも送信していません。ブラウザの外へは何も出ません。ページが表示されていない間はデモが自動的に停止し，一時停止の操作をすれば計算そのものが止まります。
+
+太陽を避ける姿勢変更のページのアニメーションは，あらかじめ計算した結果を再生するだけなので，これより軽くなります。ページを開いた時点で数百 KB を転送し，そのあとは描画のみです。こちらも外部への送信は一切ありません。
 
 ## お問い合わせ
 

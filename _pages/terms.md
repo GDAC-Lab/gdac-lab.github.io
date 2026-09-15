@@ -1,7 +1,7 @@
 ---
 permalink: /terms/
 title: "Terms and privacy policy"
-modified: 2026-09-05
+modified: 2026-09-15
 lang: en
 lang_ref: terms
 ---
@@ -92,7 +92,15 @@ build of [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0) 
 [three.js](https://threejs.org/) (MIT License). Both are served from this site, not
 from a third party, and both license texts ship alongside them.
 
-### Running the simulator demo
+The [Sun-safe slew]({{ base_path }}/sun-safe-slew/) page uses the same copy of three.js,
+along with the [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)
+(© 2018 The Chakra Petch Project Authors) and
+[IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono) (© 2017 IBM Corp.)
+typefaces under the SIL Open Font License 1.1, and a spacecraft mesh generated from
+primitives and released under CC0-1.0. The fonts are served from this site rather than
+from a font service, so that page makes no external requests either.
+
+### Running the demos
 
 The demo on the Simulator page solves the physics in your own browser. It transfers
 several megabytes of program code when you press "Load and run" — not merely by opening
@@ -101,6 +109,10 @@ laptop or phone will draw more battery than an ordinary page. It sends nothing b
 no result, no interaction, and no measurement of your device leaves your browser. The
 demo pauses itself whenever the page is not visible, and pausing it by hand stops the
 computation entirely.
+
+The animation on the Sun-safe slew page is lighter: it plays back a run computed in
+advance rather than solving anything, so it transfers a few hundred kilobytes when the
+page opens and after that only draws. It sends nothing back either.
 
 ## Contact
 
