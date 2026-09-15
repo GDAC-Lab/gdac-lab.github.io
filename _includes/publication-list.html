@@ -1,0 +1,21 @@
+{%- comment -%}
+  One <ol> of publication entries: those of `include.docs` that fall inside the
+  year window, newest first.
+
+      {% include publication-list.html docs=_docs %}
+
+  The running number is kept in `pub_counter`, which the caller initialises to 0
+  once per page and this include then advances, so the numbering continues
+  across the categories (and, on the Japanese page, the language sections) of
+  one page instead of restarting at each heading.
+{%- endcomment -%}
+{%- include publication-window.html -%}
+<ol class="publication-list">
+{%- for post in include.docs reversed -%}
+  {%- assign _post_y = post.date | date: "%Y" | plus: 0 -%}
+  {%- if pub_years == 0 or _post_y >= min_pub_y -%}
+    {%- assign pub_counter = pub_counter | plus: 1 -%}
+    {% include publication-entry.html pub_index=pub_counter %}
+  {%- endif -%}
+{%- endfor %}
+</ol>

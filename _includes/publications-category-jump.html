@@ -1,43 +1,30 @@
-{% comment %} Category jump buttons; EN page = non-JA only; JA page = same category anchors for JA+EN combined. {% endcomment %}
+{%- comment -%}
+  Jump buttons across the top of a publications index, one per category.
+
+  A category gets a button only when it has entries inside the year window —
+  the same test the lists themselves apply, made through
+  publication-recent-count.html so the two cannot drift apart.
+
+  The English page counts English-language works only; the Japanese page shows
+  both languages under one heading per category, so it counts all of them.
+{%- endcomment -%}
 {% if site.publication_category %}
-<nav class="publications-page__jump" aria-label="{% if page.lang == 'ja' %}セクションへ移動{% else %}Jump to section{% endif %}">
-  {% for category in site.publication_category %}
-    {% assign cat_key = category[0] %}
-    {% if page.lang == 'ja' %}
-      {% assign posts_cat_ja = site.publications | where: "category", cat_key | where: "lang", "ja" %}
-      {% assign posts_cat_en = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
-      {% assign cat_jump_title = category[1].title_ja | default: category[1].title %}
-      {% assign recent_in_cat = 0 %}
-      {% for p in posts_cat_ja %}
-        {% assign py = p.date | date: "%Y" | plus: 0 %}
-        {% if pub_years == 0 or py >= min_pub_y %}
-          {% assign recent_in_cat = recent_in_cat | plus: 1 %}
-        {% endif %}
-      {% endfor %}
-      {% for p in posts_cat_en %}
-        {% assign py = p.date | date: "%Y" | plus: 0 %}
-        {% if pub_years == 0 or py >= min_pub_y %}
-          {% assign recent_in_cat = recent_in_cat | plus: 1 %}
-        {% endif %}
-      {% endfor %}
-    {% else %}
-      {% assign posts_cat = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
-      {% assign cat_jump_title = category[1].title %}
-      {% if posts_cat.size == 0 %}
-        {% continue %}
-      {% endif %}
-      {% assign recent_in_cat = 0 %}
-      {% for p in posts_cat %}
-        {% assign py = p.date | date: "%Y" | plus: 0 %}
-        {% if pub_years == 0 or py >= min_pub_y %}
-          {% assign recent_in_cat = recent_in_cat | plus: 1 %}
-        {% endif %}
-      {% endfor %}
-    {% endif %}
-    {% if recent_in_cat == 0 %}
-      {% continue %}
-    {% endif %}
-    <a href="#publication-{{ cat_key }}" class="btn btn--inverse publications-page__jump-btn">{{ cat_jump_title }}</a>
-  {% endfor %}
+{%- assign _jump_ja = false -%}
+{%- if page.lang == 'ja' %}{% assign _jump_ja = true %}{% endif -%}
+<nav class="publications-page__jump" aria-label="{% if _jump_ja %}セクションへ移動{% else %}Jump to section{% endif %}">
+  {%- for category in site.publication_category -%}
+    {%- assign cat_key = category[0] -%}
+    {%- if _jump_ja -%}
+      {%- assign _docs = site.publications | where: "category", cat_key -%}
+      {%- assign _label = category[1].title_ja | default: category[1].title -%}
+    {%- else -%}
+      {%- assign _docs = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" -%}
+      {%- assign _label = category[1].title -%}
+    {%- endif -%}
+    {%- include publication-recent-count.html docs=_docs -%}
+    {%- if recent_count > 0 %}
+    <a href="#publication-{{ cat_key }}" class="btn btn--inverse publications-page__jump-btn">{{ _label }}</a>
+    {%- endif -%}
+  {%- endfor %}
 </nav>
 {% endif %}

@@ -1,14 +1,13 @@
-{% comment %}
-  doc: post or page (collection publications). Uses doc.authors or parses doc.citation before first '('.
-{% endcomment %}
-{% assign d = include.doc %}
-{% assign _pl = include.plang | default: 'en' %}
-{% assign _auth = "" %}
-{% if d.authors and d.authors != "" %}
-  {% assign _auth = d.authors %}
-{% elsif d.citation and d.citation != "" %}
-  {% assign _auth = d.citation | split: '(' | first | strip %}
-{% endif %}
-{% if _auth %}
-<p class="publication-authors">{% if _pl == 'ja' %}著者:{% else %}Authors:{% endif %} {{ _auth }}</p>
+{%- comment -%}
+  Author line for a single publication page (_layouts/single.html) and for an
+  archive entry. Carries the "Authors:" label, which the bibliography-style
+  lists on the publications index deliberately leave out — those use
+  publication-entry.html instead.
+
+      {% include publication-authors.html doc=page plang=page.lang %}
+{%- endcomment -%}
+{% include publication-author-names.html doc=include.doc %}
+{%- assign _pl = include.plang | default: 'en' -%}
+{% if pub_authors != "" %}
+<p class="publication-authors">{% if _pl == 'ja' %}著者:{% else %}Authors:{% endif %} {{ pub_authors }}</p>
 {% endif %}

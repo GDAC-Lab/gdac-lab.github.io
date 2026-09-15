@@ -7,13 +7,7 @@ lang: en
 lang_ref: publications
 ---
 
-{% assign pub_years = site.publication_list_last_n_years | default: 5 %}
-{% assign current_y = site.time | date: "%Y" | plus: 0 %}
-{% if pub_years == 0 %}
-  {% assign min_pub_y = 0 %}
-{% else %}
-  {% assign min_pub_y = current_y | minus: pub_years | plus: 1 %}
-{% endif %}
+{% include publication-window.html %}
 
 <p class="publications-page__lede">
   English-language publications, by category.
@@ -47,46 +41,22 @@ lang_ref: publications
 
 {% include base_path %}
 
+{%- comment -%}
+  English list: every publication whose title is not Japanese. The Japanese page
+  (_pages/ja/publications.html) shows both languages; see there for why.
+{%- endcomment -%}
 {% assign pub_counter = 0 %}
 {% if site.publication_category %}
   {% for category in site.publication_category %}
     {% assign cat_key = category[0] %}
-    {% assign posts_cat = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
-    {% if posts_cat.size == 0 %}
-      {% continue %}
-    {% endif %}
-    {% assign recent_in_cat = 0 %}
-    {% for p in posts_cat %}
-      {% assign py = p.date | date: "%Y" | plus: 0 %}
-      {% if pub_years == 0 or py >= min_pub_y %}
-        {% assign recent_in_cat = recent_in_cat | plus: 1 %}
-      {% endif %}
-    {% endfor %}
-    {% if recent_in_cat == 0 %}
-      {% continue %}
-    {% endif %}
+    {% assign _docs = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
+    {% include publication-recent-count.html docs=_docs %}
+    {% if recent_count == 0 %}{% continue %}{% endif %}
 
     <h2 id="publication-{{ cat_key }}" class="publications-page__category-heading">{{ category[1].title }}</h2>
-
-    <ol class="publication-list">
-      {% for post in posts_cat reversed %}
-      {% assign post_year = post.date | date: "%Y" | plus: 0 %}
-      {% if pub_years == 0 or post_year >= min_pub_y %}
-        {% assign pub_counter = pub_counter | plus: 1 %}
-        {% include publication-entry.html pub_index=pub_counter %}
-      {% endif %}
-    {% endfor %}
-      </ol>
+    {% include publication-list.html docs=_docs %}
   {% endfor %}
 {% else %}
-  {% assign posts_all_en = site.publications | where_exp: "p", "p.lang != 'ja'" %}
-  <ol class="publication-list">
-      {% for post in posts_all_en reversed %}
-    {% assign post_year = post.date | date: "%Y" | plus: 0 %}
-    {% if pub_years == 0 or post_year >= min_pub_y %}
-      {% assign pub_counter = pub_counter | plus: 1 %}
-      {% include publication-entry.html pub_index=pub_counter %}
-    {% endif %}
-  {% endfor %}
-      </ol>
+  {% assign _docs = site.publications | where_exp: "p", "p.lang != 'ja'" %}
+  {% include publication-list.html docs=_docs %}
 {% endif %}

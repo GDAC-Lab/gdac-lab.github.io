@@ -1,0 +1,18 @@
+{%- comment -%}
+  Works out the author list of one publication record and leaves it in
+  `pub_authors` (an empty string when the record carries neither field).
+
+      {% include publication-author-names.html doc=post %}
+
+  researchmap and the preprint sync both write an `authors` field, but older
+  hand-written entries only have `citation`, whose text begins with the authors
+  and then the year in parentheses. Taking the part before the first "(" covers
+  those without a second copy of the rule living in each caller.
+{%- endcomment -%}
+{%- assign _doc = include.doc -%}
+{%- assign pub_authors = "" -%}
+{%- if _doc.authors and _doc.authors != "" -%}
+  {%- assign pub_authors = _doc.authors -%}
+{%- elsif _doc.citation and _doc.citation != "" -%}
+  {%- assign pub_authors = _doc.citation | split: '(' | first | strip -%}
+{%- endif -%}

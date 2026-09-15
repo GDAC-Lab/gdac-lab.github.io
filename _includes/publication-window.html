@@ -1,0 +1,23 @@
+{%- comment -%}
+  Derives the year window that every publication list on the site shares, from
+  `publication_list_last_n_years` in _config.yml, and leaves it in:
+
+      pub_years  the configured window length in years (0 = no limit)
+      current_y  the current calendar year
+      min_pub_y  the earliest year listed (0 when there is no limit)
+
+  Liquid's `assign` writes to the page scope, so the three stay visible both to
+  the caller and to the includes it calls afterwards — which is how
+  publication-recent-count.html and publication-list.html read the window.
+
+  Including this twice on a page is harmless; it only re-derives the same three
+  values, so an include that needs the window can ask for it itself rather than
+  trusting the caller to have done it.
+{%- endcomment -%}
+{%- assign pub_years = site.publication_list_last_n_years | default: 5 -%}
+{%- assign current_y = site.time | date: "%Y" | plus: 0 -%}
+{%- if pub_years == 0 -%}
+  {%- assign min_pub_y = 0 -%}
+{%- else -%}
+  {%- assign min_pub_y = current_y | minus: pub_years | plus: 1 -%}
+{%- endif -%}

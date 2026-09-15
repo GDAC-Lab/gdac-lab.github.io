@@ -13,13 +13,8 @@
 
 {%- assign _pl = page.lang | default: 'en' -%}
 
-{%- comment -%} Authors: prefer the explicit field, else the part of the citation before "(" {%- endcomment -%}
-{%- assign _authors = "" -%}
-{%- if post.authors and post.authors != "" -%}
-  {%- assign _authors = post.authors -%}
-{%- elsif post.citation and post.citation != "" -%}
-  {%- assign _authors = post.citation | split: '(' | first | strip -%}
-{%- endif -%}
+{%- include publication-author-names.html doc=post -%}
+{%- assign _authors = pub_authors -%}
 
 {%- comment -%} Emphasise the lab's own names so a reader can scan for them. {%- endcomment -%}
 {%- assign _authors_html = _authors -%}

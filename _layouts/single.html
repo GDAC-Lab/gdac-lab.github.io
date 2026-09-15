@@ -57,23 +57,12 @@ layout: default
       <section class="page__content" itemprop="text">
         {{ content }}
 
-        {% if page.collection == 'publications' %}
-          {% include publication-resource-links.html paperurl=page.paperurl slidesurl=page.slidesurl bibtexurl=page.bibtexurl plang=page.lang %}
-        {% elsif page.paperurl and page.slidesurl and page.bibtexurl %}
-          <p style="font-size: smaller"><a href="{{ page.paperurl }}">Full text</a> | <a href="{{ page.slidesurl }}">Slides</a> | <a href="{{ page.bibtexurl }}">BibTeX</a></p>
-        {% elsif page.paperurl and page.slidesurl %}
-          <p style="font-size: smaller"><a href="{{ page.paperurl }}">Full text</a> | <a href="{{ page.slidesurl }}">Slides</a></p>
-        {% elsif page.paperurl and page.bibtexurl %}
-          <p style="font-size: smaller"><a href="{{ page.paperurl }}">Full text</a> | <a href="{{ page.bibtexurl }}">BibTeX</a></p>
-        {% elsif page.slidesurl and page.bibtexurl %}
-          <p style="font-size: smaller"><a href="{{ page.slidesurl }}">Slides</a> | <a href="{{ page.bibtexurl }}">BibTeX</a></p>
-        {% elsif page.paperurl %}
-          <p style="font-size: smaller"><a href="{{ page.paperurl }}">Full text</a></p>
-        {% elsif page.slidesurl %}
-          <p style="font-size: smaller"><a href="{{ page.slidesurl }}">Slides</a></p>
-        {% elsif page.bibtexurl %}
-          <p style="font-size: smaller"><a href="{{ page.bibtexurl }}">BibTeX</a></p>
-        {% endif %}
+        {%- comment -%}
+          Paper / slides / BibTeX links. One include covers every combination
+          (and resolves a DOI to a labelled link), so there is no ladder of
+          `elsif` branches here enumerating which of the three are present.
+        {%- endcomment -%}
+        {% include publication-resource-links.html paperurl=page.paperurl slidesurl=page.slidesurl bibtexurl=page.bibtexurl plang=page.lang %}
 
         {% if page.link %}<div><a href="{{ page.link }}" class="btn">{{ site.data.ui-text[site.locale].ext_link_label | default: "Direct Link" }}</a></div>{% endif %}
       </section>

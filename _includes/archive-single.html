@@ -51,23 +51,8 @@
     <p class="archive__item-excerpt" itemprop="description"><p>{{ post.excerpt | markdownify | remove: '<p>' | remove: '</p>' }}<strong><a href="{{ base_path }}{{ post.url }}" rel="permalink"> Read more</a></strong></p></p>
     {% endif %}
     
-    {% if post.collection == 'publications' %}
-      {% include publication-resource-links.html paperurl=post.paperurl slidesurl=post.slidesurl bibtexurl=post.bibtexurl plang=page.lang %}
-    {% elsif post.paperurl and post.slidesurl and post.bibtexurl %}
-      <p><a href="{{ post.paperurl }}">Full text</a> | <a href="{{ post.slidesurl }}">Slides</a> | <a href="{{ post.bibtexurl }}">BibTeX</a></p>
-    {% elsif post.paperurl and post.slidesurl %}
-      <p><a href="{{ post.paperurl }}">Full text</a> | <a href="{{ post.slidesurl }}">Slides</a></p>
-    {% elsif post.paperurl and post.bibtexurl %}
-      <p><a href="{{ post.paperurl }}">Full text</a> | <a href="{{ post.bibtexurl }}">BibTeX</a></p>
-    {% elsif post.slidesurl and post.bibtexurl %}
-      <p><a href="{{ post.slidesurl }}">Slides</a> | <a href="{{ post.bibtexurl }}">BibTeX</a></p>
-    {% elsif post.paperurl %}
-      <p><a href="{{ post.paperurl }}">Full text</a></p>
-    {% elsif post.slidesurl %}
-      <p><a href="{{ post.slidesurl }}">Slides</a></p>
-    {% elsif post.bibtexurl %}
-      <p><a href="{{ post.bibtexurl }}">BibTeX</a></p>
-    {% endif %}
+    {%- comment -%} Same single include as _layouts/single.html; see the note there. {%- endcomment -%}
+    {% include publication-resource-links.html paperurl=post.paperurl slidesurl=post.slidesurl bibtexurl=post.bibtexurl plang=page.lang %}
 
   </article>
 </div>

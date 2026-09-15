@@ -7,13 +7,7 @@ lang: ja
 lang_ref: publications_ja
 ---
 
-{% assign pub_years = site.publication_list_last_n_years | default: 5 %}
-{% assign current_y = site.time | date: "%Y" | plus: 0 %}
-{% if pub_years == 0 %}
-  {% assign min_pub_y = 0 %}
-{% else %}
-  {% assign min_pub_y = current_y | minus: pub_years | plus: 1 %}
-{% endif %}
+{% include publication-window.html %}
 
 <p class="publications-page__lede">
   {% if pub_years > 0 %}
@@ -52,106 +46,47 @@ lang_ref: publications_ja
 
 {% include base_path %}
 
+{%- comment -%}
+  日本語ページは日本語・英語の両方の文献を載せる（英語ページは英語の文献のみ）。
+  一つの区分に両方あるときだけ「日本語」「英語」の小見出しを立て，片方だけの
+  ときは小見出しを出さない。通し番号 pub_counter はページ全体で連続する。
+{%- endcomment -%}
 {% assign pub_counter = 0 %}
 {% if site.publication_category %}
   {% for category in site.publication_category %}
     {% assign cat_key = category[0] %}
-    {% assign posts_cat_ja = site.publications | where: "category", cat_key | where: "lang", "ja" %}
-    {% assign posts_cat_en = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
-    {% assign recent_in_cat_ja = 0 %}
-    {% for p in posts_cat_ja %}
-      {% assign py = p.date | date: "%Y" | plus: 0 %}
-      {% if pub_years == 0 or py >= min_pub_y %}
-        {% assign recent_in_cat_ja = recent_in_cat_ja | plus: 1 %}
-      {% endif %}
-    {% endfor %}
-    {% assign recent_in_cat_en = 0 %}
-    {% for p in posts_cat_en %}
-      {% assign py = p.date | date: "%Y" | plus: 0 %}
-      {% if pub_years == 0 or py >= min_pub_y %}
-        {% assign recent_in_cat_en = recent_in_cat_en | plus: 1 %}
-      {% endif %}
-    {% endfor %}
-    {% if recent_in_cat_ja == 0 and recent_in_cat_en == 0 %}
-      {% continue %}
+    {% assign _docs_ja = site.publications | where: "category", cat_key | where: "lang", "ja" %}
+    {% assign _docs_en = site.publications | where: "category", cat_key | where_exp: "p", "p.lang != 'ja'" %}
+    {% include publication-recent-count.html docs=_docs_ja %}
+    {% assign _n_ja = recent_count %}
+    {% include publication-recent-count.html docs=_docs_en %}
+    {% assign _n_en = recent_count %}
+    {% if _n_ja == 0 and _n_en == 0 %}{% continue %}{% endif %}
+
+    <h2 id="publication-{{ cat_key }}" class="publications-page__category-heading">{{ category[1].title_ja | default: category[1].title }}</h2>
+
+    {% if _n_ja > 0 %}
+      {% if _n_en > 0 %}<h3 class="publication-lang-heading">日本語</h3>{% endif %}
+      {% include publication-list.html docs=_docs_ja %}
     {% endif %}
-
-    {% assign cat_title_ja = category[1].title_ja | default: category[1].title %}
-    <h2 id="publication-{{ cat_key }}" class="publications-page__category-heading">{{ cat_title_ja }}</h2>
-
-    {% if recent_in_cat_ja > 0 %}
-      {% if recent_in_cat_en > 0 %}
-        <h3 class="publication-lang-heading">日本語</h3>
-      {% endif %}
-      <ol class="publication-list">
-      {% for post in posts_cat_ja reversed %}
-        {% assign post_year = post.date | date: "%Y" | plus: 0 %}
-        {% if pub_years == 0 or post_year >= min_pub_y %}
-          {% assign pub_counter = pub_counter | plus: 1 %}
-          {% include publication-entry.html pub_index=pub_counter %}
-        {% endif %}
-      {% endfor %}
-      </ol>
-    {% endif %}
-
-    {% if recent_in_cat_en > 0 %}
-      {% if recent_in_cat_ja > 0 %}
-        <h3 class="publication-lang-heading">英語</h3>
-      {% endif %}
-      <ol class="publication-list">
-      {% for post in posts_cat_en reversed %}
-        {% assign post_year = post.date | date: "%Y" | plus: 0 %}
-        {% if pub_years == 0 or post_year >= min_pub_y %}
-          {% assign pub_counter = pub_counter | plus: 1 %}
-          {% include publication-entry.html pub_index=pub_counter %}
-        {% endif %}
-      {% endfor %}
-      </ol>
+    {% if _n_en > 0 %}
+      {% if _n_ja > 0 %}<h3 class="publication-lang-heading">英語</h3>{% endif %}
+      {% include publication-list.html docs=_docs_en %}
     {% endif %}
   {% endfor %}
 {% else %}
-  {% assign posts_all_ja = site.publications | where: "lang", "ja" %}
-  {% assign posts_all_en = site.publications | where_exp: "p", "p.lang != 'ja'" %}
-  {% assign recent_all_ja = 0 %}
-  {% for p in posts_all_ja %}
-    {% assign py = p.date | date: "%Y" | plus: 0 %}
-    {% if pub_years == 0 or py >= min_pub_y %}
-      {% assign recent_all_ja = recent_all_ja | plus: 1 %}
-    {% endif %}
-  {% endfor %}
-  {% assign recent_all_en = 0 %}
-  {% for p in posts_all_en %}
-    {% assign py = p.date | date: "%Y" | plus: 0 %}
-    {% if pub_years == 0 or py >= min_pub_y %}
-      {% assign recent_all_en = recent_all_en | plus: 1 %}
-    {% endif %}
-  {% endfor %}
-  {% if recent_all_ja > 0 %}
-    {% if recent_all_en > 0 %}
-      <h3 class="publication-lang-heading">日本語</h3>
-    {% endif %}
-    <ol class="publication-list">
-      {% for post in posts_all_ja reversed %}
-      {% assign post_year = post.date | date: "%Y" | plus: 0 %}
-      {% if pub_years == 0 or post_year >= min_pub_y %}
-        {% assign pub_counter = pub_counter | plus: 1 %}
-        {% include publication-entry.html pub_index=pub_counter %}
-      {% endif %}
-    {% endfor %}
-      </ol>
+  {% assign _docs_ja = site.publications | where: "lang", "ja" %}
+  {% assign _docs_en = site.publications | where_exp: "p", "p.lang != 'ja'" %}
+  {% include publication-recent-count.html docs=_docs_ja %}
+  {% assign _n_ja = recent_count %}
+  {% include publication-recent-count.html docs=_docs_en %}
+  {% assign _n_en = recent_count %}
+  {% if _n_ja > 0 %}
+    {% if _n_en > 0 %}<h3 class="publication-lang-heading">日本語</h3>{% endif %}
+    {% include publication-list.html docs=_docs_ja %}
   {% endif %}
-  {% if recent_all_en > 0 %}
-    {% if recent_all_ja > 0 %}
-      <h3 class="publication-lang-heading">英語</h3>
-    {% endif %}
-    <ol class="publication-list">
-      {% for post in posts_all_en reversed %}
-      {% assign post_year = post.date | date: "%Y" | plus: 0 %}
-      {% if pub_years == 0 or post_year >= min_pub_y %}
-        {% assign pub_counter = pub_counter | plus: 1 %}
-        {% include publication-entry.html pub_index=pub_counter %}
-      {% endif %}
-    {% endfor %}
-      </ol>
+  {% if _n_en > 0 %}
+    {% if _n_ja > 0 %}<h3 class="publication-lang-heading">英語</h3>{% endif %}
+    {% include publication-list.html docs=_docs_en %}
   {% endif %}
 {% endif %}
