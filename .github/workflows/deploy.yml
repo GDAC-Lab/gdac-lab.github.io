@@ -10,7 +10,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # The publication list is refreshed from researchmap and arXiv/Crossref on
       # every deploy, but the committed _publications/ files are already a
@@ -46,7 +46,13 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
+      # LANG matters: several SCSS partials carry Japanese comments, and Jekyll's
+      # SCSS converter aborts on them under a US-ASCII locale. ubuntu-latest
+      # happens to default to C.UTF-8, so this only makes the requirement
+      # explicit rather than depending on the runner image (see README).
       - name: Build Jekyll site
+        env:
+          LANG: C.UTF-8
         run: |
           gem install bundler
           bundle install

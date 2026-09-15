@@ -224,7 +224,10 @@ exclude:
   - local
   - log
   - node_modules
-  - package.json*
+  # npm is only used to rebuild assets/js/main.min.js; neither the manifest nor
+  # the lockfile npm writes beside it belongs on the live site.
+  - package.json
+  - package-lock.json
   - Rakefile
   - README.md
   - scripts
