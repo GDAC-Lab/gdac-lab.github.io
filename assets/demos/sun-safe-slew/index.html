@@ -40,6 +40,19 @@
   }
   #stage{position:fixed; inset:0; display:block; width:100%; height:100%; touch-action:none}
   :root[data-framed] #stage{touch-action:pan-y}
+  /* framed, the page above already carries the title and the lead, and the
+     frame is short enough that repeating them crowds the scene out */
+  :root[data-framed] .mission{display:none}
+  :root[data-framed] header{padding-top:calc(9px + env(safe-area-inset-top,0px));
+                            padding-bottom:9px}
+  :root[data-framed] .met{margin-left:0; text-align:left}
+  :root[data-framed] .met .v{font-size:19px}
+  /* the tallest panel in the compact row, and pure reference data: the page
+     lists the same constants in its text. Dropping it takes the row from
+     180px to about 80, which is what lets the scene sit clear of it. */
+  :root[data-framed] #flightdata{display:none}
+  :root[data-framed] #chart{height:78px}
+  :root[data-figure] #shell, :root[data-figure] #boot{display:none}
   #shell{position:relative; height:100%; display:grid;
          grid-template-rows:auto 1fr auto; pointer-events:none}
   .pointer{pointer-events:auto}
@@ -295,6 +308,26 @@ var FRAMED = (function(){
 })();
 if(FRAMED) document.documentElement.setAttribute("data-framed", "");
 
+/* ---------------------------------------------------------------------
+   Figure mode. ?figure=1 keeps the geometry and drops everything meant
+   for a screen: the overlay shell, the labels baked into the scene as
+   sprites, and the camera drift. It exists so the still on the Research
+   pages can be regenerated from a URL; the annotation on that figure is
+   composited over this, because a sprite lands where the projection puts
+   it and a figure needs its text placed.
+   --------------------------------------------------------------------- */
+var QS = (function(){
+  try{ return new URLSearchParams(location.search); }catch(_){ return null; }
+})();
+function qnum(key, dflt){
+  var v = QS && QS.get(key);
+  if(v === null || v === undefined || v === "") return dflt;
+  v = parseFloat(v);
+  return isFinite(v) ? v : dflt;
+}
+var FIGURE = !!(QS && (QS.get("figure") === "1" || QS.get("figure") === "true"));
+if(FIGURE) document.documentElement.setAttribute("data-figure", "");
+
 var STR = { ja: {
     "title": "太陽を避ける姿勢変更",
     "eyebrow": "SO(3) 上の Explicit Reference Governor・応用例",
@@ -549,7 +582,7 @@ function start(D, objText){
   var camPos = CAM_FWD.clone().negate().multiplyScalar(VIEW.radius);
   var camUpV = CAM_UP.clone();
   var tPos = camPos.clone(), tUp = camUpV.clone();
-  var autoSpin = true, lookK = -1.35, tLookK = -1.35;
+  var autoSpin = !FIGURE, lookK = FRAMED ? 0 : -1.35, tLookK = lookK;
 
   var _c = new THREE.Vector3(), _g = new THREE.Vector3(),
       _ax = new THREE.Vector3(), _look = new THREE.Vector3();
@@ -610,10 +643,14 @@ function start(D, objText){
   function goView(i){
     tPos.copy(PRESETS[i].pos);
     tUp.copy(PRESETS[i].up);
-    tLookK = PRESETS[i].look;
-    autoSpin = PRESETS[i].spin && !reducedMotion;
-    setEarth(PRESETS[i].earth);
-    if(sunLabel) sunLabel.visible = (i === 0);   // it collides in the analytic views
+    tLookK = FRAMED ? 0 : PRESETS[i].look;
+    autoSpin = PRESETS[i].spin && !reducedMotion && !FIGURE;
+    /* the Earth is scenery, and in a short frame it fills the half of the
+       picture the spacecraft has to read against; the toggle still offers it */
+    setEarth(QS && QS.get("earth") !== null
+             ? QS.get("earth") === "1"
+             : PRESETS[i].earth && !FRAMED);
+    if(sunLabel) sunLabel.visible = (i === 0) && !FIGURE;  // collides in the analytic views
   }
 
   (function trackball(){
@@ -666,10 +703,20 @@ function start(D, objText){
   var sunLight = new THREE.DirectionalLight(0xfff0dc, 2.0);
   sunLight.position.copy(SUN).multiplyScalar(400);
   scene.add(sunLight);
-  scene.add(new THREE.AmbientLight(0x27324c, 0.62));
+  scene.add(new THREE.AmbientLight(0x27324c, FIGURE ? 1.55 : 0.62));
   var earthBounce = new THREE.DirectionalLight(0x3a7ec0, 0.45);
   earthBounce.position.copy(EARTH_DIR).multiplyScalar(200);
   scene.add(earthBounce);
+  if(FIGURE){
+    /* On screen the spacecraft is backlit and reads as a silhouette moving
+       against the stars, which is honest and looks right. A still has no
+       motion to carry it, and the solar cells are Kd 0.06 0.12 0.32 -- near
+       black on a near-black sky. A figure has to be legible first, so it gets
+       a fill light from the camera side and a lifted ambient. */
+    var fill = new THREE.DirectionalLight(0xbfd4f2, 0.85);
+    fill.position.copy(camera.position).multiplyScalar(20);
+    scene.add(fill);
+  }
 
   /* ---------- starfield ---------- */
   (function stars(){
@@ -927,6 +974,10 @@ function start(D, objText){
   }
   function makeLabel(text, color, size){
     size = size || 0.42;                       // world height of the glyphs
+    if(FIGURE){                                /* geometry only; see above */
+      var blank = new THREE.Sprite(new THREE.SpriteMaterial({transparent:true, opacity:0}));
+      blank.visible = false; return blank;
+    }
     var c=document.createElement("canvas"), x=c.getContext("2d");
     var font="600 56px 'Chakra Petch', 'Bahnschrift', sans-serif";
     x.font=font;
@@ -1052,7 +1103,8 @@ function start(D, objText){
     if(_wax.lengthSq() < 1e-10){
       wedge.visible = wedgeArc.visible = angTag.visible = false; return;
     }
-    wedge.visible = wedgeArc.visible = angTag.visible = true;
+    wedge.visible = wedgeArc.visible = true;
+    angTag.visible = !FIGURE;                  /* the figure sets its own */
     _wax.normalize();
     var ang = Math.acos(Math.max(-1, Math.min(1, SUN.dot(b))));
     var pos = wedge.geometry.attributes.position.array;
@@ -1132,7 +1184,7 @@ function start(D, objText){
   gErr.tick.style.display = "none";
 
   var note=document.createElement("div");
-  note.className="gauge";
+  note.className="gauge"; note.id="flightdata";
   note.innerHTML='<div class="grow"><span class="glabel">'+
     TR("fd","Flight data")+'</span></div>'+
     '<div class="gfoot" style="margin-top:7px"><span>'+TR("fd_rate","body rate")+'</span>'+
@@ -1260,6 +1312,7 @@ function start(D, objText){
 
   /* ---------- playback ---------- */
   var state={t:0, rate:25, playing:!reducedMotion};
+  if(FIGURE) state.playing = false;
   if(reducedMotion) state.t = T[argmin(E.sun_angle)];
 
   function argmin(a){ var k=0; for(var i=1;i<a.length;i++) if(a[i]<a[k]) k=i; return k; }
@@ -1407,7 +1460,12 @@ function start(D, objText){
   toggle("tgl-base", function(on){ baseTube.visible=on; });
   toggle("tgl-cone", function(on){ coneGroup.visible=on; });
   toggle("tgl-earth", setEarth);
-  goView(0);
+  goView(Math.max(0, Math.min(2, qnum("view", 0) | 0)));
+  if(QS && QS.get("t") !== null) state.t = Math.max(0, Math.min(TEND, qnum("t", 0)));
+  if(FIGURE){
+    /* the presets ease in over a few frames; jump straight there */
+    camPos.copy(tPos); camUpV.copy(tUp); lookK = tLookK; applyCam();
+  }
   chart.addEventListener("click", function(e){
     var r=chart.getBoundingClientRect();
     var span=r.width-PAD.l-PAD.r;
@@ -1416,10 +1474,60 @@ function start(D, objText){
     state.t = Math.max(0, Math.min(TEND, x*TEND)); lastHud=-1;
   });
 
+  /* ---------- framing: keep the scene out from under the panels --------
+     The shell floats over a full-bleed canvas, so centring the camera on the
+     window puts the spacecraft and the tracks behind a gauge or the strip
+     chart. Measure the box the panels actually leave free -- which differs
+     between the two panel arrangements, and moves again when the transport
+     row wraps -- and aim the frustum at that instead.
+
+     The frustum is fitted to the free box grown by half its slack against
+     the window. Fitting the box exactly would shrink the scene about twice
+     as much as the crowding warrants, because the content never filled the
+     whole window to begin with; half the slack puts it inside the band with
+     the perspective still natural.
+     -------------------------------------------------------------------- */
+  /* 0 fits the box exactly, 1 only re-centres. 0.32 is where the two target
+     labels -- the extremes of the picture -- clear the gauge row and the
+     strip chart in the compact frame, with the perspective still natural. */
+  var FIT = 0.32;
+
+  function laidOut(el){
+    /* offsetParent is null for display:none, which is how the compact
+       layout hides the right-hand column */
+    return el && el.offsetParent !== null ? el.getBoundingClientRect() : null;
+  }
+
+  function freeBox(w, h){
+    var L = 0, R = w, T = 0, B = h, r;
+    if((r = laidOut(document.querySelector("header")))) T = Math.max(T, r.bottom);
+    if((r = laidOut(document.querySelector("footer")))) B = Math.min(B, r.top);
+    var rail = laidOut(document.getElementById("rail"));
+    var rcol = laidOut(document.querySelector(".rightcol"));
+    if(rcol){                                  /* wide: the rail is a column */
+      if(rail) L = Math.max(L, rail.right);
+      R = Math.min(R, rcol.left);
+    } else if(rail){                           /* compact: the rail is a row */
+      T = Math.max(T, rail.bottom);
+    }
+    /* a collapsed or over-full layout must not produce a degenerate box */
+    return {x:L, y:T, w:Math.max(120, R - L), h:Math.max(120, B - T)};
+  }
+
+  function frameScene(w, h){
+    var box = freeBox(w, h);
+    var fw = box.w + (w - box.w) * FIT,
+        fh = box.h + (h - box.h) * FIT;
+    camera.setViewOffset(fw, fh,
+                         fw / 2 - box.x - box.w / 2,
+                         fh / 2 - box.y - box.h / 2,
+                         w, h);
+  }
+
   function resize(){
     var w=Math.max(1, innerWidth|0), h=Math.max(1, innerHeight|0);
     renderer.setSize(w,h,false);
-    camera.aspect=w/h; camera.updateProjectionMatrix();
+    frameScene(w, h);
     drawChartBG(); lastHud=-1;
   }
   addEventListener("resize", resize);
