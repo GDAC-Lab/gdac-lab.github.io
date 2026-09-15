@@ -1,0 +1,25 @@
+Satellite mesh assets
+=====================
+
+  satellite.obj
+  satellite.mtl
+  satellite.stl
+
+These files were generated from scratch by
+examples/satellite/tools/make_satellite_mesh.py, which builds the geometry
+out of boxes, cylinders, frustums and a paraboloid.  No third-party model,
+scan, texture or CAD data was used, so the files carry no upstream licence.
+
+They are released into the public domain under CC0 1.0 Universal:
+
+    https://creativecommons.org/publicdomain/zero/1.0/
+
+To the extent possible under law, the authors have waived all copyright and
+related or neighboring rights to these mesh files.  You may copy, modify and
+redistribute them, for any purpose, without asking permission and without
+attribution.
+
+Everything else in the 3-D scene is likewise generated at run time and carries
+no third-party rights: the star field is random, the Earth texture is value
+noise evaluated in the browser, and the Sun is a radial gradient drawn on a
+canvas.  No external image, font file or model is downloaded by the viewer.

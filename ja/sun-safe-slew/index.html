@@ -1,0 +1,450 @@
+
+
+<!doctype html><html lang="ja" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>太陽を避ける姿勢変更 - GDAC Lab</title>
+
+
+
+<meta name="description" content="Geometric Dynamics, Autonomy, and Control Laboratory">
+
+
+
+
+
+
+
+  <link rel="canonical" href="https://gdaclab.web.nitech.ac.jp/ja/sun-safe-slew/">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "GDAC Lab",
+      "url" : "https://gdaclab.web.nitech.ac.jp",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+<!-- Open Graph protocol data (https://ogp.me/), used by social media -->
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="GDAC Lab"> 
+<meta property="og:title" content="太陽を避ける姿勢変更">
+
+
+
+  <meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/ja/sun-safe-slew/">
+
+
+
+
+
+<!-- end Open Graph protocol -->
+
+<link href="https://gdaclab.web.nitech.ac.jp/feed.xml" type="application/atom+xml" rel="alternate" title="GDAC Lab Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
+     different builds, or markup gets styled by rules that no longer exist. -->
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789492852">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<!-- Support for Academicons -->
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789492852"/>
+
+<!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
+<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg"/>
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32"/>
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192"/>
+<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json"/>
+<link rel="icon" href="https://gdaclab.web.nitech.ac.jp/images/favicon.ico"/>
+<meta name="theme-color" content="#ffffff"/>
+
+<!-- Language switcher icon styles live in _sass/layout/_masthead.scss -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="https://gdaclab.web.nitech.ac.jp/ja/">GDAC Lab</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/publications/">論文</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/people/">メンバー</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/facilities/">実験装置</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/simulator/">シミュレータ</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.web.nitech.ac.jp/ja/access/">アクセス</a></li>
+          
+            
+            
+            
+            <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">アルバム（外部）</a></li>
+          <li class="masthead__menu-item persist"><a href="https://gdaclab.web.nitech.ac.jp/sun-safe-slew/" class="masthead__lang-link"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</span></li>
+          <li id="theme-toggle" class="masthead__menu-item persist tail">
+            <a role="button" aria-label="表示テーマを切り替える"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="表示テーマの切り替え"></i></a>
+          </li>
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg" class="author__avatar" alt="仲野研究室のメンバー集合写真" fetchpriority="high" />
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">仲野研究室</h3>
+    
+    
+      <p class="author__bio">拘束を考慮した回転運動の制御と，衛星・ドローンへの応用を研究しています。</p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">関連リンク</button>
+    <ul class="author__urls social-icons">
+      <!-- Font Awesome icons / Biographic information  -->
+      
+        <li class="author__desktop"><i class="fas fa-fw fa-location-dot icon-pad-right" aria-hidden="true"></i>名古屋</li>
+      
+      
+        <li class="author__desktop"><i class="fas fa-fw fa-building-columns icon-pad-right" aria-hidden="true"></i>名古屋工業大学</li>
+      
+      
+        <li><a href="https://mcontrol.web.nitech.ac.jp/nakano/" rel="noopener"><i class="fas fa-fw fa-link icon-pad-right" aria-hidden="true"></i>教員ページ（名工大）</a></li>
+      
+      
+        <li><a href="https://researchmap.jp/satoshi-nakano?lang=english" rel="noopener"><i class="fas fa-fw fa-address-card icon-pad-right" aria-hidden="true"></i>researchmap</a></li>
+      
+      
+        <li><a href="https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/" rel="noopener"><i class="fa-solid fa-fw fa-id-card icon-pad-right" aria-hidden="true"></i>研究者情報（Pure）</a></li>
+      
+      
+
+      <!-- Font Awesome and Academicons icons / Academic websites -->
+      
+            
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=ja" rel="noopener"><i class="ai ai-google-scholar ai-fw icon-pad-right"></i>Google Scholar</a></li>
+      
+      
+      
+      
+                              
+      
+      
+      
+
+      <!-- Font Awesome icons / Repositories and software development -->
+      
+            
+            
+      
+        <li><a href="https://github.com/gdac-lab"><i class="fab fa-fw fa-github icon-pad-right" aria-hidden="true"></i>GitHub</a></li>
+      
+            
+            
+
+      <!-- Font Awesome icons / Social media -->
+              
+      
+      
+            
+      
+                  
+                  
+      
+            
+            
+            
+      
+            
+                  
+            
+      
+            
+            
+      
+              
+      
+                      
+      
+      
+            
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <div class="archive">
+    
+      <h1 class="page__title">太陽を避ける姿勢変更</h1>
+    
+    
+<p class="notice">宇宙望遠鏡が次の観測対象へ 95° 向きを変えようとすると，その経路上にほぼ太陽があります。下のアニメーションは，本研究室が取り組む拘束付きの姿勢制御をこの問題に適用した計算結果を再生したものです。</p>
+
+<figure class="slewdemo">
+  <iframe class="slewdemo__frame" src="https://gdaclab.web.nitech.ac.jp/assets/demos/sun-safe-slew/?lang=ja" loading="lazy" title="太陽を避けて姿勢を変更する衛星のアニメーション"></iframe>
+  <figcaption class="slewdemo__note">
+    
+      ドラッグで視点を回せます。拡大は Ctrl ＋スクロール，またはピンチです（そのままスクロールするとページが動きます）。下の帯グラフをクリックすると時刻を移動します。<a href="https://gdaclab.web.nitech.ac.jp/assets/demos/sun-safe-slew/?lang=ja" target="_blank" rel="noopener">別のタブで開く</a>と，計器と凡例がすべて表示されます。
+    
+  </figcaption>
+</figure>
+
+<h2 id="画面の読み方">画面の読み方</h2>
+
+<ul>
+  <li><strong>青緑</strong> — 望遠鏡が実際に向いている方向。光線が現在の向き，尾を引く線が通ってきた経路です。</li>
+  <li><strong>黄</strong> — 制御器が指示している方向。数度だけ先を進みます。</li>
+  <li><strong>赤</strong> — 最短経路。最初から全体を描いてあり，太陽を貫きます。</li>
+  <li><strong>橙</strong> — 太陽のまわりの 25° の禁止円錐。</li>
+  <li>太陽の方向と視軸の間の<strong>扇形</strong>は，その時刻の両者のなす角を数値で示します。拘束が破られた場合は赤くなります。</li>
+</ul>
+
+<h2 id="問題設定">問題設定</h2>
+
+<p>2つの観測対象は 95° 離れており，その最短経路から 8° のところに太陽があります。光学系を太陽から 25° 以内に向けると損傷するため，最短経路は選べません。姿勢変更の全区間で，次の2つの拘束を同時に満たす必要があります。</p>
+
+<ul>
+  <li>望遠鏡の視軸を<strong>太陽から 25° 以上</strong>離し続ける（論文の記法では <code class="language-plaintext highlighter-rouge">theta_c = 155°</code> の指向拘束）</li>
+  <li>リアクションホイールに<strong>0.17 N·m</strong> を超えるトルクを要求しない</li>
+</ul>
+
+<p>機体は <code class="language-plaintext highlighter-rouge">J = diag(18, 25, 30) kg m²</code> の剛体で，高度 600 km の軌道上にあり，静止状態から姿勢変更を始めます。</p>
+
+<h2 id="計算結果">計算結果</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>ERG を用いた場合</th>
+      <th>目標値を直接与えた場合</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>太陽への最接近</td>
+      <td><strong>33.0°</strong>（下限 25°）</td>
+      <td><strong>6.9°</strong> — 禁止領域の 18.1° 内側</td>
+    </tr>
+    <tr>
+      <td>最大ホイールトルク</td>
+      <td><strong>0.030 N·m</strong>（上限の 18 %）</td>
+      <td><strong>0.498 N·m</strong> — 上限の 2.9 倍</td>
+    </tr>
+    <tr>
+      <td>最大機体角速度</td>
+      <td>0.54 °/s</td>
+      <td>4.2 °/s</td>
+    </tr>
+    <tr>
+      <td>誤差 1° 以内への収束</td>
+      <td>227 s</td>
+      <td>40 s（ただし拘束を満たさない）</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>右の列は，同じ内側のループに最終姿勢をそのまま目標値として与えたものです。意図的に弱い比較対象を置いたわけではなく，<strong>拘束を満たすために要する代償</strong>を示しています。ERG を用いると収束までの時間は 5倍になりますが，その代わりに全区間で拘束が満たされます。</p>
+
+<p>アニメーションには両方の経路が描かれています。青緑が ERG を用いた場合，赤が太陽を貫く最短経路です。</p>
+
+<h2 id="経路をあらかじめ計画しているのではありません">経路をあらかじめ計画しているのではありません</h2>
+
+<p>太陽を避ける経路を事前に引いてはいません。内側のループは通常の PD 制御器で，2つの拘束をいずれも見ていません。変わるのは<strong>与えられる目標値</strong>です。ERG は，保証付きの余裕が許す速さでのみ補助的な目標姿勢を動かし，余裕が尽きればその方向へは動かしません。「安全余裕の使用率」の計器がその余裕にあたり，リアプノフ関数の値が拘束から定まるしきい値の何割に達しているかを表します。望遠鏡が禁止領域を回り込むのは，その側で余裕が詰まり ERG がその方向へ押すのをやめるからで，軌道があらかじめそう指定しているからではありません。</p>
+
+<p>実用上重要なのは，この方式が<strong>動作中に最適化問題を解かない</strong>という点です。ERG はあらかじめ導出しておいた式を評価するだけで済みます。各時刻で最適化を解く方式では搭載が難しい，小型で耐放射線性の求められる計算機にも実装できるのは，このためです。考え方は<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページに記してあり，このアニメーションはそこで述べている小型衛星への応用にあたります。</p>
+
+<h2 id="モデルに含めていないもの">モデルに含めていないもの</h2>
+
+<p>飛行シミュレーションとして読まれないよう，明記しておきます。</p>
+
+<ul>
+  <li><strong>剛体とし，環境トルクを含めません。</strong>重力勾配トルク，空力トルク，太陽放射圧トルク（この規模では 1e-5 N·m 程度）はいずれも扱っておらず，柔軟構造の振動も含めていません。</li>
+  <li><strong>ホイールはトルク源としてのみ扱います。</strong>角運動量の収支，回転数の上限，複数ホイールへの分配，アンローディングはいずれも含めません。蓄積角運動量は参考として表示しているだけで，モデル上の拘束ではありません。</li>
+  <li><strong>機体角速度の上限を置いていません。</strong>実際の運用では，スタートラッカが追従できるよう姿勢変更の速さを制限します。ここではトルクの上限と禁止円錐だけを課しています。</li>
+  <li><strong>禁止円錐は1つだけです。</strong>実際の宇宙望遠鏡は，地球の縁，月，明るい天体に対する禁止領域も併せて持ちます。</li>
+  <li><strong>トルクの上界は保守的です。</strong>安全なレベル集合全体での最悪値であり，姿勢誤差と機体角速度が互いに打ち消し合う状態を想定しています。滑らかな姿勢変更がそのような状態を通ることはないため，実際に出るトルクは上限の 18 % に収まっています。</li>
+  <li><strong>地球は背景です。</strong>その方向は軌道位相から決まるだけで，制御問題には一切現れません。見かけの大きさは実際どおりで，高度 600 km では 66° を占めます。この値もビューアが計算しています。</li>
+</ul>
+
+<h2 id="出典">出典</h2>
+
+<p>定式化は SO(3) 上の Explicit Reference Governor（ERG）です。</p>
+
+<ul>
+  <li><a href="https://doi.org/10.1016/j.automatica.2023.111103">Explicit reference governor on SO(3) for torque and pointing constraint management</a> — <em>Automatica</em>, 2023</li>
+  <li><a href="https://doi.org/10.1109/CDC.2018.8618908">Attitude Constrained Control on SO(3): An Explicit Reference Governor Approach</a> — <em>IEEE CDC</em>, 2018</li>
+</ul>
+
+<p>計算はあらかじめ済ませてあり，このページはその結果を再生しているだけです。したがって転送量は写真1枚程度で，描画以外に計算機の負荷もかかりません。画面に出ている量はすべて，上記の連続時間 ERG の量です。衛星の形状データは基本図形から生成したもので CC0-1.0 として公開しており，星野，地球，太陽はいずれも手続き的に描いています。<a href="https://threejs.org/">three.js</a>（MIT License）を使用していますが，本サイト内から配信しており，外部への要求は行いません。</p>
+
+<p>ブラウザ上で物理計算そのものを実行する車輪付きドローンのデモは，<a href="https://gdaclab.web.nitech.ac.jp/ja/simulator/">シミュレータ</a>のページにあります。</p>
+
+  </div>
+</div>
+
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<a href="https://gdaclab.web.nitech.ac.jp/sitemap/">サイトマップ</a>
+
+
+
+
+
+
+
+
+
+<!-- end custom footer snippets -->
+
+        
+
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><a href="https://github.com/gdac-lab"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    
+  </ul>
+</div>
+
+
+<div class="page__footer-copyright">
+  &copy; 2026 GDAC Lab<br />
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-16 02:20 JST
+</div>
+
+      </footer>
+    </div>
+
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789492852"></script>
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
+
