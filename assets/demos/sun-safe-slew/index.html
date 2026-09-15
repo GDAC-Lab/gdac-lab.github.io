@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- the page that frames this one is the one to index -->
+<meta name="robots" content="noindex">
+<title data-i18n="title">Sun-Safe Slew</title>
+<style>
+  /* Chakra Petch (c) 2018 The Chakra Petch Project Authors, SIL OFL 1.1.
+     IBM Plex Mono (c) 2017 IBM Corp., SIL OFL 1.1.
+     License texts: ../../vendor/fonts/OFL-*.txt */
+  @font-face{font-family:"Chakra Petch"; font-style:normal; font-weight:600; font-display:swap;
+             src:url(../../vendor/fonts/chakra-petch-600.woff2) format("woff2")}
+  @font-face{font-family:"Chakra Petch"; font-style:normal; font-weight:700; font-display:swap;
+             src:url(../../vendor/fonts/chakra-petch-700.woff2) format("woff2")}
+  @font-face{font-family:"IBM Plex Mono"; font-style:normal; font-weight:400; font-display:swap;
+             src:url(../../vendor/fonts/ibm-plex-mono-400.woff2) format("woff2")}
+  @font-face{font-family:"IBM Plex Mono"; font-style:normal; font-weight:600; font-display:swap;
+             src:url(../../vendor/fonts/ibm-plex-mono-600.woff2) format("woff2")}
+  :root{
+    --void:#070a12; --void-2:#0a0f1a;
+    --panel:rgba(14,20,32,.78); --panel-solid:#0e1420; --edge:#1d2839; --edge-soft:#151d2b;
+    --ink:#dce5f2; --ink-dim:#8194ae; --ink-faint:#5a6a83;
+    --boresight:#45e0d0;   /* commanded body: actual telescope axis */
+    --governor:#f2b441;    /* auxiliary reference R_g */
+    --sun:#ff8a4d;         /* Sun + keep-out cone */
+    --violate:#ff4d6a;     /* unconstrained PD, constraint breach */
+    --font-display:"Chakra Petch","Bahnschrift","DIN Alternate",system-ui,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","Hiragino Sans","Hiragino Kaku Gothic ProN","BIZ UDPGothic","Yu Gothic Medium","Yu Gothic",Meiryo,"Noto Sans JP",Arial,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--void); color:var(--ink);
+    font-family:var(--font-body); font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  #stage{position:fixed; inset:0; display:block; width:100%; height:100%; touch-action:none}
+  :root[data-framed] #stage{touch-action:pan-y}
+  #shell{position:relative; height:100%; display:grid;
+         grid-template-rows:auto 1fr auto; pointer-events:none}
+  .pointer{pointer-events:auto}
+
+  /* ---------- masthead ---------- */
+  header{
+    display:flex; flex-wrap:wrap; align-items:flex-start; gap:12px 22px;
+    padding:calc(14px + env(safe-area-inset-top,0px)) 20px 14px;
+    background:linear-gradient(to bottom,rgba(7,10,18,.96) 30%,rgba(7,10,18,.55) 72%,rgba(7,10,18,0));
+  }
+  .mission{display:flex; flex-direction:column; gap:3px; min-width:0}
+  .eyebrow{
+    font-family:var(--font-display); font-size:10.5px; font-weight:600;
+    letter-spacing:.22em; text-transform:uppercase; color:var(--ink-faint);
+  }
+  h1{
+    margin:0; font-family:var(--font-display); font-weight:700;
+    font-size:clamp(19px,3.1vw,27px); letter-spacing:.005em; text-wrap:balance;
+  }
+  h1 em{font-style:normal; color:var(--boresight)}
+  .sub{color:var(--ink-dim); font-size:12.5px; max-width:58ch;
+       text-shadow:0 1px 8px rgba(7,10,18,.95), 0 0 22px rgba(7,10,18,.8)}
+  h1,.eyebrow{text-shadow:0 1px 10px rgba(7,10,18,.9)}
+  .met{
+    margin-left:auto; text-align:right; font-family:var(--font-mono);
+    display:flex; flex-direction:column; gap:1px;
+  }
+  .met .k{font-size:9.5px; letter-spacing:.18em; color:var(--ink-faint); text-transform:uppercase}
+  .met .v{font-size:clamp(20px,3.4vw,28px); font-weight:600; font-variant-numeric:tabular-nums}
+  .met .v small{font-size:.5em; color:var(--ink-dim); font-weight:400; margin-left:2px}
+
+  /* ---------- instrument rail ---------- */
+  .mid{display:flex; align-items:flex-start; justify-content:space-between;
+       gap:16px; padding:0 20px; min-height:0; overflow:hidden}
+  .rail{
+    width:264px; display:flex; flex-direction:column; gap:9px;
+    max-height:100%; overflow:auto; scrollbar-width:thin;
+  }
+  .gauge{
+    background:var(--panel); border:1px solid var(--edge); border-radius:3px;
+    padding:9px 11px 10px; backdrop-filter:blur(7px);
+  }
+  .gauge.breach{border-color:var(--violate); box-shadow:0 0 0 1px rgba(255,77,106,.28)}
+  .grow{display:flex; align-items:baseline; justify-content:space-between; gap:8px}
+  .glabel{font-family:var(--font-display); font-size:10px; font-weight:600;
+          letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim)}
+  .gval{font-family:var(--font-mono); font-size:16px; font-weight:600;
+        font-variant-numeric:tabular-nums}
+  .gval u{text-decoration:none; font-size:10px; color:var(--ink-faint); margin-left:3px}
+  .meter{position:relative; height:6px; margin-top:7px; border-radius:1px;
+         background:#141c2a; overflow:hidden}
+  .meter i{position:absolute; inset:0 auto 0 0; display:block; width:0;
+           background:var(--boresight); transition:width .09s linear}
+  .meter b{position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--ink);
+           opacity:.85; border-radius:1px}
+  .gfoot{display:flex; justify-content:space-between; gap:8px; margin-top:5px;
+         font-family:var(--font-mono); font-size:10px; color:var(--ink-faint)}
+  .chip{font-family:var(--font-display); font-size:9.5px; font-weight:700;
+        letter-spacing:.14em; padding:1px 6px; border-radius:2px;
+        border:1px solid currentColor; text-transform:uppercase}
+
+  .rightcol{align-self:flex-end; width:252px; display:flex; flex-direction:column;
+            gap:9px; max-height:100%; overflow:auto}
+  .legend{
+    background:var(--panel); border:1px solid var(--edge);
+    border-radius:3px; padding:10px 12px; backdrop-filter:blur(7px);
+  }
+  .legend h2{margin:0 0 7px; font-family:var(--font-display); font-size:10px;
+             font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim)}
+  .legend ul{margin:0; padding:0; list-style:none; display:grid; gap:5px}
+  .legend li{display:grid; grid-template-columns:16px 1fr; gap:8px; align-items:start;
+             font-size:11.5px; line-height:1.35; color:var(--ink-dim)}
+  .legend .swatch{margin-top:6px}
+  .swatch{height:3px; border-radius:2px; background:currentColor}
+  .legend li span{color:var(--ink)}
+  .note{margin:9px 0 0; padding-top:8px; border-top:1px solid var(--edge-soft);
+        font-size:10.5px; line-height:1.45; color:var(--ink-faint)}
+
+  /* ---------- dock ---------- */
+  footer{
+    padding:10px 20px calc(12px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(to top,rgba(7,10,18,.95) 55%,rgba(7,10,18,0));
+    display:flex; flex-direction:column; gap:9px;
+  }
+  #chartwrap{position:relative}
+  #chart{display:block; width:100%; height:136px}
+  .transport{display:flex; align-items:center; flex-wrap:wrap; gap:8px}
+  button{
+    font-family:var(--font-display); font-size:11px; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-dim); background:rgba(14,20,32,.85);
+    border:1px solid var(--edge); border-radius:2px; padding:6px 11px; cursor:pointer;
+    transition:color .14s,border-color .14s,background .14s;
+  }
+  button:hover{color:var(--ink); border-color:#2c3c55}
+  button[aria-pressed="true"],button.primary{color:var(--void); background:var(--boresight);
+    border-color:var(--boresight)}
+  button:focus-visible{outline:2px solid var(--governor); outline-offset:2px}
+  .seg{display:flex; border:1px solid var(--edge); border-radius:2px; overflow:hidden}
+  .seg button{border:0; border-radius:0; padding:6px 9px}
+  .seg button+button{border-left:1px solid var(--edge)}
+  .spacer{flex:1}
+  .hint{font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint)}
+  .seglabel{font-family:var(--font-display); font-size:10px; font-weight:600;
+            letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint)}
+  .legend em{white-space:nowrap}
+
+  #boot{position:fixed; inset:0; display:grid; place-content:center; gap:10px;
+        text-align:center; background:var(--void); z-index:9; padding:24px}
+  #boot p{margin:0; font-family:var(--font-mono); font-size:12px; color:var(--ink-dim)}
+  #boot .bar{width:190px; height:2px; background:#16202f; overflow:hidden; margin:0 auto}
+  #boot .bar i{display:block; height:100%; width:38%; background:var(--boresight);
+               animation:sweep 1.15s ease-in-out infinite}
+  @keyframes sweep{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
+
+  @media (max-width:900px){
+    .mid{flex-direction:column; padding:0 14px}
+    .rail{flex-direction:row; align-items:flex-start; width:100%; gap:8px;
+          max-height:none; overflow-x:auto; overflow-y:hidden; padding-bottom:4px}
+    .gauge{min-width:166px; flex:0 0 auto}
+    .rightcol{display:none}
+    header{padding-left:14px; padding-right:14px; gap:4px 12px}
+    h1{font-size:19px}
+    .eyebrow{font-size:9px; letter-spacing:.16em}
+    .sub{font-size:11.5px; line-height:1.4}
+    .more{display:none}
+    .met .v{font-size:19px}
+    .met .k{font-size:8.5px}
+    footer{padding-left:14px; padding-right:14px; gap:7px}
+    #chart{height:104px}
+    button{padding:5px 8px; font-size:10px; letter-spacing:.05em}
+    .seg button{padding:5px 7px}
+    .seglabel,.hint{display:none}
+    .transport{gap:6px}
+  }
+  #boot .ns{display:none; max-width:32ch; color:var(--ink-dim); text-align:center}
+  @media (prefers-reduced-motion:reduce){
+    #boot .bar i{animation:none; width:100%}
+    .meter i{transition:none}
+  }
+</style>
+<noscript><style>
+  #bootmsg, #boot .bar{display:none}
+  #boot .ns{display:block}
+</style></noscript>
+</head>
+<body>
+
+<canvas id="stage"></canvas>
+
+<div id="shell">
+  <header>
+    <div class="mission">
+      <div class="eyebrow" data-i18n="eyebrow">Explicit reference governor on SO(3) &middot; application study</div>
+      <h1 data-i18n="h1">Slewing a telescope <em>around</em> the Sun</h1>
+      <div class="sub" data-i18n="sub">
+        This telescope has to swing 95&deg; to its next target, and the Sun sits almost
+        exactly on the way &mdash; looking within 25&deg; of it would ruin the optics.
+        <span class="more">The controller finds its own way around that no-look zone,
+        without ever asking the reaction wheels for more torque than they have.</span>
+      </div>
+    </div>
+    <div class="met">
+      <div class="k" data-i18n="met_k">Mission elapsed</div>
+      <div class="v" id="met">000.0<small>s</small></div>
+      <div class="k" id="phase" data-i18n="phase_leave" style="color:var(--boresight)">Leaving target A</div>
+    </div>
+  </header>
+
+  <div class="mid">
+    <div class="rail pointer" id="rail"></div>
+    <div class="rightcol pointer">
+    <div id="verdict"></div>
+    <div class="legend">
+      <h2 data-i18n="legend_h2">Reading the scene</h2>
+      <ul>
+        <li style="color:var(--boresight)"><i class="swatch"></i><span data-i18n="leg1">Where the telescope
+          is looking &mdash; the ray now, the trail behind it</span></li>
+        <li style="color:var(--governor)"><i class="swatch"></i><span data-i18n="leg2">Where the controller
+          is telling it to look, a few degrees ahead</span></li>
+        <li style="color:var(--violate)"><i class="swatch"></i><span data-i18n="leg3">The shortest path,
+          drawn in full from the start &mdash; straight through the Sun</span></li>
+        <li style="color:var(--sun)"><i class="swatch"></i><span data-i18n="leg4">The 25&deg; no-look zone
+          around the Sun</span></li>
+        <li style="color:var(--boresight)"><i class="swatch" style="opacity:.45"></i><span data-i18n="leg5">The
+          wedge: the angle between the two, right now</span></li>
+      </ul>
+      <p class="note" data-i18n="leg_note">Idealized: rigid body, no environmental torques, no
+      wheel-momentum management, one keep-out cone. The torque bound is
+      worst-case over the safe level set, so the realized torque sits well
+      inside it.</p>
+    </div>
+    </div>
+  </div>
+
+  <footer class="pointer">
+    <div id="chartwrap"><canvas id="chart"></canvas></div>
+    <div class="transport">
+      <button id="play" class="primary" data-i18n="btn_pause">Pause</button>
+      <button id="restart" data-i18n="btn_restart">Restart</button>
+      <div class="seg" role="group" aria-label="Playback rate" data-i18n-aria="aria_rate">
+        <button data-rate="1">1&times;</button>
+        <button data-rate="5">5&times;</button>
+        <button data-rate="25" aria-pressed="true">25&times;</button>
+        <button data-rate="100">100&times;</button>
+      </div>
+      <span class="seglabel" data-i18n="seg_view">View</span>
+      <div class="seg" role="group" aria-label="Camera view" data-i18n-aria="aria_view">
+        <button data-view="0" aria-pressed="true" data-i18n="view0">Overview</button>
+        <button data-view="1" data-i18n="view1">From the Sun</button>
+        <button data-view="2" data-i18n="view2">See the angle</button>
+      </div>
+      <div class="spacer"></div>
+      <button id="tgl-base" aria-pressed="true" data-i18n="tgl_base">Shortest path</button>
+      <button id="tgl-cone" aria-pressed="true" data-i18n="tgl_cone">No-look zone</button>
+      <button id="tgl-earth" aria-pressed="true" data-i18n="tgl_earth">Earth</button>
+      <div class="hint" data-i18n="hint" data-i18n-framed="hint_framed">Drag &middot; scroll to zoom</div>
+    </div>
+  </footer>
+</div>
+
+<div id="boot">
+  <p id="bootmsg" data-i18n="boot">Loading trajectory and spacecraft mesh&hellip;</p>
+  <div class="bar"><i></i></div>
+  <p class="ns">このアニメーションには JavaScript が必要です。<br>This animation needs JavaScript.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------------------------------------------------------------
+   Localization. This file is a static asset rather than a Jekyll page, so
+   the framing page passes the language in the query string instead of
+   Liquid baking out two copies. English stays at the call sites and only
+   Japanese is tabulated: a key that is missing or misspelled then falls
+   back to English rather than to a blank.
+   --------------------------------------------------------------------- */
+var LANG = (function(){
+  try{
+    var q = new URLSearchParams(location.search).get("lang");
+    if(q === "ja" || q === "en") return q;
+  }catch(_){}                                  /* no URLSearchParams: English */
+  return "en";
+})();
+var JA = LANG === "ja";
+document.documentElement.lang = LANG;
+
+/* Framed in an article the page's scroll belongs to the reader, so the wheel
+   and one-finger drag are handled differently below. A cross-origin frame
+   throws on window.top, which still means framed. */
+var FRAMED = (function(){
+  try{ return window.self !== window.top; }catch(_){ return true; }
+})();
+if(FRAMED) document.documentElement.setAttribute("data-framed", "");
+
+var STR = { ja: {
+    "title": "太陽を避ける姿勢変更",
+    "eyebrow": "SO(3) 上の Explicit Reference Governor・応用例",
+    "h1": "太陽を<em>避けて</em>望遠鏡を向け直す",
+    "sub": "この望遠鏡は，次の観測対象へ 95° 向きを変えます。ところが，その経路上にほぼ太陽があります。太陽から 25° 以内を見ると光学系が損傷します。<span class=\"more\">制御器は，この禁止領域を自力で回り込みます。しかも，リアクションホイールが出せる以上のトルクを要求しません。</span>",
+    "met_k": "経過時間",
+    "phase_leave": "目標 A を離れるところ",
+    "phase_turn": "目標 A から旋回中",
+    "phase_slide": "禁止領域を回り込み中",
+    "phase_close": "目標 B に接近中",
+    "phase_lock": "目標 B に指向完了",
+    "legend_h2": "画面の読み方",
+    "leg1": "望遠鏡が向いている方向。光線が現在，尾を引く線が通ってきた経路です",
+    "leg2": "制御器が指示している方向。数度だけ先を進みます",
+    "leg3": "最短経路。最初から全体を描いてあります。太陽を貫きます",
+    "leg4": "太陽のまわりを囲む 25° の禁止領域",
+    "leg5": "扇形。いまこの瞬間の，両者のなす角です",
+    "leg_note": "理想化してあります：剛体，環境トルクなし，ホイール角運動量の管理なし，禁止円錐は1つ。トルクの上界は安全なレベル集合全体での最悪値なので，実際に出るトルクはその十分内側に収まります。",
+    "btn_pause": "一時停止",
+    "btn_play": "再生",
+    "btn_replay": "もう一度",
+    "btn_restart": "最初から",
+    "aria_rate": "再生速度",
+    "seg_view": "視点",
+    "aria_view": "カメラ視点",
+    "view0": "全体",
+    "view1": "太陽から見る",
+    "view2": "角度を見る",
+    "tgl_base": "最短経路",
+    "tgl_cone": "禁止領域",
+    "tgl_earth": "地球",
+    "hint": "ドラッグで回転・スクロールで拡大",
+    "hint_framed": "ドラッグで回転・Ctrl ＋スクロールで拡大",
+    "boot": "軌道データと機体形状を読み込んでいます…",
+    "g_sun": "太陽との角度",
+    "g_tau": "ホイールトルク",
+    "g_mar": "安全余裕の使用率",
+    "g_err": "残りの回転量",
+    "f_tau_limit": "ホイール上限 ",
+    "f_tau_peak": "最大 ",
+    "f_err_mid": "姿勢誤差",
+    "fd": "状態と諸元",
+    "fd_rate": "機体角速度",
+    "fd_lead": "補助目標の先行角／速度",
+    "fd_mom": "蓄積角運動量",
+    "fd_J": "J（対角）",
+    "fd_alt": "&Gamma;<sub>d</sub>・軌道高度",
+    "vd_h": "最短経路を通った場合",
+    "vd_sun": "太陽への最接近",
+    "vd_tau": "最大ホイールトルク",
+    "vd_ctl": "制御器を用いた場合",
+    "lbl_violate": "禁止領域に侵入",
+    "lbl_a": "目標 A",
+    "lbl_b": "目標 B",
+    "lbl_sun": "太陽",
+    "lbl_cone": "禁止領域 ",
+    "wedge_safe": "太陽から",
+    "wedge_bad": "禁止領域の内側",
+    "err_title": "エラーが起きて止まりました。",
+    "err_stop": "アニメーションが止まりました。",
+    "err_stop_d": "描画コンテキストが失われたか，フレームの描画に失敗しました。",
+    "err_three": "3D ライブラリ（three.js）を読み込めませんでした。",
+    "err_webgl": "このブラウザでは WebGL を実行できません。",
+    "err_webgl_d": "このアニメーションには，ハードウェアアクセラレーションによる 3D 描画が必要です。",
+    "err_build": "場面を組み立てられませんでした。",
+    "err_data": "場面のデータを読み込めませんでした。",
+    "err_data_d": "しばらくしてから再読み込みをお試しください。",
+    "err_lost": "描画コンテキストが失われました。",
+    "err_lost_d": "長時間放置したあと，ドライバのリセットのあと，GPU が切り替わったあとに起こることがあります。再読み込みで組み直します。",
+    "btn_reload": "再読み込み"
+  } };
+
+function TR(key, en){
+  var t = STR[LANG], v = t && t[key];
+  return v === undefined ? en : v;
+}
+
+/* "0.498 (2.9x limit)" and "0.498（上限の 2.9 倍）" put the number in
+   different places, so the fragment is built per language. */
+function timesLimit(ratio){
+  return JA ? "（上限の " + ratio + " 倍）"
+            : " (" + ratio + "&times; limit)";
+}
+
+/* The shell's markup carries English; swap the tagged nodes in place. */
+if(JA){
+  Array.prototype.forEach.call(document.querySelectorAll("[data-i18n]"), function(el){
+    var v = STR.ja[el.getAttribute("data-i18n")];
+    if(v !== undefined){
+      if(el.tagName === "TITLE") document.title = v; else el.innerHTML = v;
+    }
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-aria]"), function(el){
+    var v = STR.ja[el.getAttribute("data-i18n-aria")];
+    if(v !== undefined) el.setAttribute("aria-label", v);
+  });
+}
+
+if(FRAMED){
+  Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-framed]"), function(el){
+    var key = el.getAttribute("data-i18n-framed");
+    el.innerHTML = TR(key, key === "hint_framed"
+                      ? "Drag &middot; ctrl + scroll to zoom" : el.innerHTML);
+  });
+}
+
+/* ---------------------------------------------------------------------
+   Anything that can leave a black canvas -- a throw during setup, a lost
+   WebGL context, a layout that collapses to zero, an unreachable CDN --
+   has to surface as a message with a way out, never as silence.
+   --------------------------------------------------------------------- */
+var overlay = document.getElementById("boot");
+var booted = false, fatal = false, lastRender = 0;
+
+function showFatal(title, detail){
+  if(fatal) return;
+  fatal = true;
+  if(!overlay || !overlay.parentNode){
+    overlay = document.createElement("div");
+    overlay.id = "boot";
+    document.body.appendChild(overlay);
+  }
+  overlay.textContent = "";
+  var h = document.createElement("p");
+  h.textContent = title;
+  h.style.color = "#ff4d6a";
+  overlay.appendChild(h);
+  if(detail){
+    var d = document.createElement("p");
+    d.textContent = String(detail).slice(0, 240);
+    d.style.maxWidth = "48ch";
+    overlay.appendChild(d);
+  }
+  var b = document.createElement("button");
+  b.textContent = TR("btn_reload", "Reload");
+  b.style.justifySelf = "center";
+  b.addEventListener("click", function(){ location.reload(); });
+  overlay.appendChild(b);
+}
+
+window.addEventListener("error", function(e){
+  showFatal(TR("err_title", "The scene stopped with an error."), e.message);
+});
+window.addEventListener("unhandledrejection", function(e){
+  showFatal(TR("err_title", "The scene stopped with an error."),
+            e.reason && e.reason.message);
+});
+/* frames stopping while the tab is visible means something died that no
+   handler caught -- a lost context, a NaN matrix, a throw inside the loop */
+setInterval(function(){
+  if(!booted || fatal || document.hidden) return;
+  if(performance.now() - lastRender > 2500){
+    showFatal(TR("err_stop", "The animation stopped."),
+              TR("err_stop_d", "The graphics context was lost, or a frame failed to draw."));
+  }
+}, 1500);
+
+function loadThree(done){
+  /* the copy this site already serves for the simulator demo */
+  import("../../vendor/three/three.module.min.js").then(function(m){
+    window.THREE = m; done();
+  }, function(err){
+    showFatal(TR("err_three", "Could not load the 3-D library (three.js)."),
+              err && err.message);
+  });
+}
+
+function hasWebGL(){
+  try{
+    var c = document.createElement("canvas");
+    return !!(c.getContext("webgl") || c.getContext("experimental-webgl"));
+  }catch(_){ return false; }
+}
+
+function boot(){
+  if(!hasWebGL()){
+    showFatal(TR("err_webgl", "This browser cannot run WebGL."),
+              TR("err_webgl_d", "The animation needs hardware-accelerated 3-D graphics."));
+    return;
+  }
+  function grab(url, as){
+    return fetch(url).then(function(r){
+      if(!r.ok) throw new Error(url + " returned HTTP " + r.status);
+      return as === "json" ? r.json() : r.text();
+    });
+  }
+  Promise.all([grab("data/trajectory.json", "json"),
+               grab("assets/satellite.obj", "text")])
+    .then(function(res){
+      try{ start(res[0], res[1]); }
+      catch(err){
+        showFatal(TR("err_build", "The scene could not be built."),
+                  err && err.message);
+        throw err;
+      }
+    })
+    .catch(function(err){
+      showFatal("Could not load the scene data.",
+                (err && err.message) ||
+                "Serve this folder over HTTP, e.g. python3 -m http.server");
+    });
+}
+
+/* ==================================================================== */
+function start(D, objText){
+  var CSS = getComputedStyle(document.documentElement);
+  var C = {
+    boresight:CSS.getPropertyValue("--boresight").trim(),
+    governor :CSS.getPropertyValue("--governor").trim(),
+    sun      :CSS.getPropertyValue("--sun").trim(),
+    violate  :CSS.getPropertyValue("--violate").trim(),
+    ink      :CSS.getPropertyValue("--ink").trim(),
+    inkDim   :CSS.getPropertyValue("--ink-dim").trim(),
+    inkFaint :CSS.getPropertyValue("--ink-faint").trim(),
+    edge     :CSS.getPropertyValue("--edge").trim()
+  };
+
+  var S = D.scenario, SUM = D.summary, E = D.erg, B = D.baseline;
+  var T = E.t, N = T.length, TEND = T[N-1];
+  var SUN = new THREE.Vector3(S.sun[0], S.sun[1], S.sun[2]).normalize();
+  var reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var VIEW = D.view;
+  var EARTH_DIR = new THREE.Vector3(VIEW.earth_dir[0], VIEW.earth_dir[1], VIEW.earth_dir[2]).normalize();
+  var CAM_UP = new THREE.Vector3(VIEW.cam_up[0], VIEW.cam_up[1], VIEW.cam_up[2]).normalize();
+  var CAM_FWD = new THREE.Vector3(VIEW.cam_dir[0], VIEW.cam_dir[1], VIEW.cam_dir[2]).normalize().negate();
+  var CAM_RIGHT = new THREE.Vector3().crossVectors(CAM_FWD, CAM_UP).normalize();
+  var A_B = new THREE.Vector3(S.a_b[0], S.a_b[1], S.a_b[2]).normalize();
+  var KEEPOUT = S.keepout_deg * Math.PI/180;
+  var SPH = VIEW.sphere;                              // radius of the celestial sphere
+  var EARTH_R = VIEW.earth_radius, EARTH_D = VIEW.earth_dist;
+
+  /* ---------- renderer ---------- */
+  var canvas = document.getElementById("stage");
+  var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1, 2));
+  renderer.setClearColor(0x070a12, 1);
+  if(THREE.sRGBEncoding!==undefined) renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+
+  canvas.addEventListener("webglcontextlost", function(e){
+    e.preventDefault();
+    showFatal(TR("err_lost", "The graphics context was lost."),
+                TR("err_lost_d", "This can follow a long idle period, a driver reset or a GPU switch. Reloading rebuilds the scene."));
+  });
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(VIEW.fov, 1, 0.3, 6000);
+  camera.up.copy(CAM_UP);
+
+  /* ---------- camera: trackball state with three preset views ---------- */
+  var camPos = CAM_FWD.clone().negate().multiplyScalar(VIEW.radius);
+  var camUpV = CAM_UP.clone();
+  var tPos = camPos.clone(), tUp = camUpV.clone();
+  var autoSpin = true, lookK = -1.35, tLookK = -1.35;
+
+  var _c = new THREE.Vector3(), _g = new THREE.Vector3(),
+      _ax = new THREE.Vector3(), _look = new THREE.Vector3();
+  /* slerp the direction, lerp the radius -- a plain lerp would cut through
+     the interior and, for the up vector, could pass through zero */
+  function approach(cur, tgt, a){
+    var lc = cur.length(), lt = tgt.length();
+    if(lc < 1e-9 || lt < 1e-9){ cur.copy(tgt); return; }
+    _c.copy(cur).divideScalar(lc);
+    _g.copy(tgt).divideScalar(lt);
+    var ang = Math.acos(Math.max(-1, Math.min(1, _c.dot(_g))));
+    if(ang > 1e-5){
+      _ax.crossVectors(_c, _g);
+      if(_ax.lengthSq() < 1e-12){ _ax.set(0, 0, 1); } else { _ax.normalize(); }
+      _c.applyAxisAngle(_ax, ang * a);
+    }
+    cur.copy(_c).multiplyScalar(lc + (lt - lc) * a);
+  }
+  function applyCam(){
+    _look.copy(camUpV).multiplyScalar(lookK);   // frame the content per view
+    camera.position.copy(camPos).add(_look);
+    camera.up.copy(camUpV);
+    camera.lookAt(_look);
+  }
+  applyCam();
+
+  /* the boresight at closest approach, and at target B */
+  function boresightAt(i){
+    var q = E.q[i];
+    return A_B.clone().applyQuaternion(
+      new THREE.Quaternion(q[1], q[2], q[3], q[0])).normalize();
+  }
+  var iMin = 0;
+  for(var ii = 1; ii < E.sun_angle.length; ii++){
+    if(E.sun_angle[ii] < E.sun_angle[iMin]) iMin = ii;
+  }
+  var bStar = boresightAt(iMin), bEnd = boresightAt(E.q.length - 1);
+
+  var PRESETS = (function(){
+    /* 1. the cinematic three-quarter view the page opens on */
+    var p1 = {pos: CAM_FWD.clone().negate().multiplyScalar(VIEW.radius),
+              up: CAM_UP.clone(), spin: true, look: -1.35, earth: true};
+    /* 2. looking back down the Sun line: the keep-out cone becomes a circle,
+          so "inside the ring" reads as a violation with no depth ambiguity */
+    var ax2 = new THREE.Vector3().crossVectors(SUN, CAM_UP).normalize();
+    var d2 = SUN.clone().applyAxisAngle(ax2, 10 * Math.PI / 180).normalize();
+    var up2 = bEnd.clone().addScaledVector(d2, -bEnd.dot(d2)).normalize();
+    var p2 = {pos: d2.multiplyScalar(25), up: up2, spin: false, look: -1.0, earth: false};
+    /* 3. normal to the Sun/boresight plane: the separation angle is drawn
+          on screen at true size */
+    var ax3 = new THREE.Vector3().crossVectors(SUN, bStar).normalize();
+    if(ax3.dot(CAM_FWD) > 0) ax3.negate();
+    var up3 = SUN.clone().add(bStar).normalize();
+    var p3 = {pos: ax3.multiplyScalar(23), up: up3, spin: false, look: 3.3, earth: false};
+    return [p1, p2, p3];
+  })();
+
+  function goView(i){
+    tPos.copy(PRESETS[i].pos);
+    tUp.copy(PRESETS[i].up);
+    tLookK = PRESETS[i].look;
+    autoSpin = PRESETS[i].spin && !reducedMotion;
+    setEarth(PRESETS[i].earth);
+    if(sunLabel) sunLabel.visible = (i === 0);   // it collides in the analytic views
+  }
+
+  (function trackball(){
+    var down = false, lx = 0, ly = 0, pinch = 0;
+    var up = new THREE.Vector3(), right = new THREE.Vector3(), dir = new THREE.Vector3();
+    var qy = new THREE.Quaternion(), qp = new THREE.Quaternion();
+    function drag(dx, dy){
+      up.copy(tUp).normalize();
+      dir.copy(tPos).normalize();
+      right.crossVectors(dir, up);
+      /* only degenerate if the camera ever sits on its own up axis; skip the
+         pitch rather than build a non-unit quaternion out of a zero axis */
+      var canPitch = right.lengthSq() > 1e-8;
+      if(canPitch) right.normalize();
+      qy.setFromAxisAngle(up, -dx * 0.006);
+      if(canPitch){
+        qp.setFromAxisAngle(right, -dy * 0.006);
+        qy.multiply(qp);
+      }
+      tPos.applyQuaternion(qy); tUp.applyQuaternion(qy);
+      tUp.normalize();
+      autoSpin = false;
+    }
+    function zoom(f){
+      tPos.setLength(Math.max(9, Math.min(120, tPos.length() * f)));
+    }
+    canvas.addEventListener("pointerdown", function(e){
+      down = true; lx = e.clientX; ly = e.clientY; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener("pointerup", function(e){
+      down = false; try{ canvas.releasePointerCapture(e.pointerId); }catch(_){} });
+    canvas.addEventListener("pointercancel", function(){ down = false; });
+    canvas.addEventListener("pointermove", function(e){
+      if(!down) return;
+      drag(e.clientX - lx, e.clientY - ly); lx = e.clientX; ly = e.clientY; });
+    canvas.addEventListener("wheel", function(e){
+      /* framed: only zoom when the reader asks for it, so the page still scrolls */
+      if(FRAMED && !(e.ctrlKey || e.metaKey)) return;
+      e.preventDefault(); zoom(1 + Math.sign(e.deltaY) * 0.09); }, {passive:false});
+    canvas.addEventListener("touchmove", function(e){
+      if(e.touches.length === 2){
+        var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX,
+                           e.touches[0].clientY - e.touches[1].clientY);
+        if(pinch) zoom(pinch / d);
+        pinch = d; e.preventDefault();
+      } else pinch = 0;
+    }, {passive:false});
+  })();
+
+  /* ---------- lighting ---------- */
+  var sunLight = new THREE.DirectionalLight(0xfff0dc, 2.0);
+  sunLight.position.copy(SUN).multiplyScalar(400);
+  scene.add(sunLight);
+  scene.add(new THREE.AmbientLight(0x27324c, 0.62));
+  var earthBounce = new THREE.DirectionalLight(0x3a7ec0, 0.45);
+  earthBounce.position.copy(EARTH_DIR).multiplyScalar(200);
+  scene.add(earthBounce);
+
+  /* ---------- starfield ---------- */
+  (function stars(){
+    var n=2600, pos=new Float32Array(n*3), col=new Float32Array(n*3);
+    var tint=[[0.72,0.80,1.0],[1.0,0.94,0.84],[1.0,0.86,0.72],[0.88,0.93,1.0]];
+    for(var i=0;i<n;i++){
+      var u=Math.random()*2-1, th=Math.random()*Math.PI*2, s=Math.sqrt(1-u*u), r=1500;
+      pos[3*i]=r*s*Math.cos(th); pos[3*i+1]=r*s*Math.sin(th); pos[3*i+2]=r*u;
+      var t=tint[(Math.random()*tint.length)|0], b=0.26+Math.pow(Math.random(),2.4)*0.95;
+      col[3*i]=t[0]*b; col[3*i+1]=t[1]*b; col[3*i+2]=t[2]*b;
+    }
+    var g=new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos,3));
+    g.setAttribute("color", new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+      size:2.0, sizeAttenuation:false, vertexColors:true, transparent:true, depthWrite:false
+    })));
+  })();
+
+  /* ---------- Sun ---------- */
+  (function sun(){
+    var c=document.createElement("canvas"); c.width=c.height=256;
+    var x=c.getContext("2d"), g=x.createRadialGradient(128,128,0,128,128,128);
+    g.addColorStop(0.00,"rgba(255,255,248,1)");
+    g.addColorStop(0.11,"rgba(255,238,205,0.98)");
+    g.addColorStop(0.26,"rgba(255,169,96,0.42)");
+    g.addColorStop(0.55,"rgba(255,122,70,0.11)");
+    g.addColorStop(1.00,"rgba(255,110,60,0)");
+    x.fillStyle=g; x.fillRect(0,0,256,256);
+    var sp=new THREE.Sprite(new THREE.SpriteMaterial({
+      map:new THREE.CanvasTexture(c), blending:THREE.AdditiveBlending,
+      depthWrite:false, depthTest:false, transparent:true
+    }));
+    sp.position.copy(SUN).multiplyScalar(SPH*1.06); sp.scale.setScalar(3.9);
+    scene.add(sp);
+  })();
+
+  /* ---------- Earth (procedural, evaluated per pixel) ---------- */
+  /* At 600 km the Earth subtends 66 deg, so only ~10 deg of surface is ever
+     in frame -- far more detail than an equirectangular texture can hold.
+     The surface is therefore value noise evaluated in the fragment shader. */
+  var earth = new THREE.Group();
+  (function planet(){
+    var NOISE = [
+      "float hash(vec3 p){ return fract(sin(dot(p, vec3(127.1,311.7,74.7)))*43758.5453); }",
+      "float vnoise(vec3 x){",
+      "  vec3 i=floor(x), f=fract(x), u=f*f*(3.0-2.0*f);",
+      "  float a=hash(i), b=hash(i+vec3(1.0,0.0,0.0));",
+      "  float c=hash(i+vec3(0.0,1.0,0.0)), d=hash(i+vec3(1.0,1.0,0.0));",
+      "  float e=hash(i+vec3(0.0,0.0,1.0)), g=hash(i+vec3(1.0,0.0,1.0));",
+      "  float h=hash(i+vec3(0.0,1.0,1.0)), k=hash(i+vec3(1.0,1.0,1.0));",
+      "  return mix(mix(mix(a,b,u.x),mix(c,d,u.x),u.y),",
+      "             mix(mix(e,g,u.x),mix(h,k,u.x),u.y), u.z); }",
+      "float fbm(vec3 p, int oct){",
+      "  float a=0.5, s=0.0, n=0.0;",
+      "  for(int i=0;i<7;i++){ if(i>=oct) break;",
+      "    s+=a*vnoise(p); n+=a; a*=0.52; p*=2.03; }",
+      "  return s/n; }"
+    ].join("\n");
+
+    var globe = new THREE.Mesh(
+      new THREE.SphereGeometry(EARTH_R, 160, 96),
+      new THREE.ShaderMaterial({
+        uniforms:{ uSun:{value:SUN.clone()} },
+        vertexShader:
+          "varying vec3 vN; varying vec3 vP; varying vec3 vW;"+
+          "void main(){ vN=normalize(normalMatrix*normal); vP=normalize(position);"+
+          "vec4 w=modelMatrix*vec4(position,1.0); vW=w.xyz;"+
+          "gl_Position=projectionMatrix*viewMatrix*w; }",
+        fragmentShader: [
+          "varying vec3 vN; varying vec3 vP; varying vec3 vW; uniform vec3 uSun;",
+          NOISE,
+          "void main(){",
+          "  vec3 d=normalize(vP);",
+          "  float h=fbm(d*3.4+vec3(11.3,-4.7,2.9), 6);",
+          "  h+=0.18*(fbm(d*11.0+vec3(-3.1,8.4,-1.2), 5)-0.5);",
+          "  float land=(h-0.505)/0.30;",
+          "  vec3 col;",
+          "  if(land<=0.0){",
+          "    col=mix(vec3(0.015,0.075,0.17), vec3(0.05,0.26,0.40),",
+          "            clamp(1.0+land*3.6, 0.0, 1.0));",
+          "  } else {",
+          "    float t=min(land,1.0);",
+          "    col = t<0.14 ? mix(vec3(0.58,0.50,0.34), vec3(0.15,0.30,0.14), t/0.14)",
+          "        : t<0.55 ? mix(vec3(0.15,0.30,0.14), vec3(0.40,0.35,0.20), (t-0.14)/0.41)",
+          "                 : mix(vec3(0.40,0.35,0.20), vec3(0.33,0.33,0.31), (t-0.55)/0.45);",
+          "  }",
+          "  float cl=max(0.0, fbm(d*9.5+vec3(40.2,-17.6,5.5), 6)-0.495)*2.6;",
+          "  col=mix(col, vec3(0.93,0.955,0.98), min(0.6, cl));",
+          "  vec3 n=normalize(vN), v=normalize(cameraPosition-vW);",
+          "  float lam=clamp(dot(n, normalize(uSun)), 0.0, 1.0);",
+          "  float rim=pow(1.0-clamp(dot(n,v),0.0,1.0), 3.0);",
+          "  vec3 lit=col*(0.05+1.18*lam);",
+          "  lit+=vec3(0.22,0.46,0.92)*rim*lam*0.85;",
+          "  gl_FragColor=vec4(lit, 1.0); }"
+        ].join("\n")
+      })
+    );
+    earth.add(globe);
+
+    var halo=new THREE.Mesh(
+      new THREE.SphereGeometry(EARTH_R*1.018, 96, 64),
+      new THREE.ShaderMaterial({
+        transparent:true, side:THREE.BackSide, depthWrite:false,
+        blending:THREE.AdditiveBlending,
+        uniforms:{ uSun:{value:SUN.clone()},
+                   uCen:{value:EARTH_DIR.clone().multiplyScalar(EARTH_D)} },
+        vertexShader:
+          "varying vec3 vN; varying vec3 vW;"+
+          "void main(){ vN=normalize(normalMatrix*normal);"+
+          "vec4 w=modelMatrix*vec4(position,1.0); vW=w.xyz;"+
+          "gl_Position=projectionMatrix*viewMatrix*w; }",
+        fragmentShader:
+          "varying vec3 vN; varying vec3 vW; uniform vec3 uSun; uniform vec3 uCen;"+
+          "void main(){ vec3 v=normalize(cameraPosition-vW);"+
+          "float rim=pow(1.0-abs(dot(vN,v)),3.2);"+
+          "float lit=clamp(dot(normalize(uSun),normalize(vW-uCen))*0.5+0.6,0.0,1.0);"+
+          "gl_FragColor=vec4(vec3(0.30,0.58,1.0)*rim*lit*1.2, rim*lit*0.9); }"
+      })
+    );
+    earth.add(halo);
+    earth.position.copy(EARTH_DIR).multiplyScalar(EARTH_D);
+    scene.add(earth);
+  })();
+
+  /* ---------- celestial-sphere graticule ---------- */
+  (function graticule(){
+    var pts=[], i, j, a, b;
+    for(j=1;j<6;j++){
+      var el=(j/6)*Math.PI - Math.PI/2, r=SPH*Math.cos(el), z=SPH*Math.sin(el);
+      for(i=0;i<72;i++){
+        a=(i/72)*2*Math.PI; b=((i+1)/72)*2*Math.PI;
+        pts.push(r*Math.cos(a), r*Math.sin(a), z, r*Math.cos(b), r*Math.sin(b), z);
+      }
+    }
+    for(j=0;j<8;j++){
+      var lon=(j/8)*Math.PI;
+      for(i=0;i<72;i++){
+        a=(i/72)*2*Math.PI; b=((i+1)/72)*2*Math.PI;
+        pts.push(SPH*Math.cos(a)*Math.cos(lon), SPH*Math.cos(a)*Math.sin(lon), SPH*Math.sin(a),
+                 SPH*Math.cos(b)*Math.cos(lon), SPH*Math.cos(b)*Math.sin(lon), SPH*Math.sin(b));
+      }
+    }
+    var g=new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pts),3));
+    scene.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({
+      color:0x2b3b57, transparent:true, opacity:0.15, depthWrite:false
+    })));
+  })();
+
+  /* ---------- Sun keep-out cone ---------- */
+  var coneGroup = new THREE.Group();
+  (function keepout(){
+    var L=SPH*1.0, rad=L*Math.tan(KEEPOUT);
+    var geo=new THREE.ConeGeometry(rad, L, 96, 1, true);
+    geo.translate(0,-L/2,0);                              // apex at the spacecraft
+    var mesh=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      color:0xff5a1e, transparent:true, opacity:0.085,
+      side:THREE.DoubleSide, depthWrite:false, blending:THREE.AdditiveBlending
+    }));
+    coneGroup.add(mesh);
+
+    var ring=[], i, a;
+    for(i=0;i<=192;i++){ a=(i/192)*2*Math.PI; ring.push(rad*Math.cos(a), -L, rad*Math.sin(a)); }
+    var rg=new THREE.BufferGeometry();
+    rg.setAttribute("position", new THREE.BufferAttribute(new Float32Array(ring),3));
+    coneGroup.add(new THREE.Line(rg, new THREE.LineBasicMaterial({
+      color:new THREE.Color(C.sun), transparent:true, opacity:0.80, depthWrite:false })));
+
+    var gen=[];
+    for(i=0;i<12;i++){ a=(i/12)*2*Math.PI; gen.push(0,0,0, rad*Math.cos(a), -L, rad*Math.sin(a)); }
+    var gg=new THREE.BufferGeometry();
+    gg.setAttribute("position", new THREE.BufferAttribute(new Float32Array(gen),3));
+    coneGroup.add(new THREE.LineSegments(gg, new THREE.LineBasicMaterial({
+      color:new THREE.Color(C.sun), transparent:true, opacity:0.26, depthWrite:false })));
+
+    coneGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0,-1,0), SUN);
+    scene.add(coneGroup);
+  })();
+
+  /* ---------- boresight trajectories on the celestial sphere ---------- */
+  function boresightPath(qs){
+    var out=[], q=new THREE.Quaternion(), v=new THREE.Vector3();
+    for(var i=0;i<qs.length;i++){
+      q.set(qs[i][1],qs[i][2],qs[i][3],qs[i][0]);
+      v.copy(A_B).applyQuaternion(q).multiplyScalar(SPH);
+      out.push(v.clone());
+    }
+    return out;
+  }
+  var TUBE_RADIAL = 7;
+  function tube(points, radius, color, opacity){
+    var curve=new THREE.CatmullRomCurve3(points);
+    var geo=new THREE.TubeGeometry(curve, Math.min(points.length, 1400), radius,
+                                   TUBE_RADIAL, false);
+    var m=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      color:new THREE.Color(color), transparent:opacity<1, opacity:opacity, depthWrite:opacity>=1
+    }));
+    m.userData.total = geo.index ? geo.index.count : geo.attributes.position.count;
+    m.userData.step = 6 * TUBE_RADIAL;          // indices per tubular segment
+    /* TubeGeometry is arc-length parameterised while the trajectory is not:
+       the boresight covers the whole path well before the horizon and then
+       sits still. Growing the draw range with the clock would leave the trail
+       creeping toward the target long after the telescope arrived, so the
+       cumulative chord length of the sampled path drives it instead. */
+    var lut = new Float32Array(points.length), acc = 0;
+    for(var i = 1; i < points.length; i++){
+      acc += points[i].distanceTo(points[i-1]); lut[i] = acc;
+    }
+    if(acc > 0){ for(i = 0; i < lut.length; i++) lut[i] /= acc; }
+    m.userData.lut = lut;
+    return m;
+  }
+  function revealTube(m, p){
+    var lut = m.userData.lut;
+    var f = lut[p.i] + (lut[Math.min(p.i+1, lut.length-1)] - lut[p.i]) * p.f;
+    var n = Math.round(m.userData.total * f / m.userData.step) * m.userData.step;
+    m.geometry.setDrawRange(0, n);
+  }
+  var pErg = boresightPath(E.q), pRef = boresightPath(E.q_ref), pBase = boresightPath(B.q);
+
+  var baseTube = tube(pBase, 0.030, C.violate, 0.6);
+  var ergTube  = tube(pErg,  0.044, C.boresight, 1.0);
+  var refTube  = tube(pRef,  0.025, C.governor, 0.6);
+  scene.add(baseTube); scene.add(refTube); scene.add(ergTube);
+
+  /* the stretch of the PD path that is actually inside the cone */
+  (function breach(){
+    var seg=[], i;
+    for(i=0;i<B.sun_angle.length;i++) if(B.sun_angle[i] < S.keepout_deg) seg.push(pBase[i]);
+    if(seg.length<2) return;
+    scene.add(tube(seg, 0.068, C.violate, 1.0));
+    var s=makeLabel(TR("lbl_violate", "KEEP-OUT VIOLATED"), C.violate, 0.40);
+    scene.add(s);
+    s.position.copy(seg[0]).multiplyScalar(1.04)
+      .addScaledVector(CAM_UP, 1.05).addScaledVector(CAM_RIGHT, -1.1);
+  })();
+
+  var sunLabel = null;
+  function ring3(p, r, color, op){
+    var pts=[], i, a;
+    var n=p.clone().normalize();
+    var e1=new THREE.Vector3(0,0,1).cross(n); if(e1.lengthSq()<1e-6) e1.set(1,0,0);
+    e1.normalize();
+    var e2=new THREE.Vector3().crossVectors(n,e1);
+    for(i=0;i<=64;i++){
+      a=(i/64)*2*Math.PI;
+      var v=p.clone().addScaledVector(e1, r*Math.cos(a)).addScaledVector(e2, r*Math.sin(a));
+      pts.push(v.x,v.y,v.z);
+    }
+    var g=new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pts),3));
+    return new THREE.Line(g, new THREE.LineBasicMaterial({color:new THREE.Color(color),
+      transparent:true, opacity:op, depthWrite:false}));
+  }
+  function makeLabel(text, color, size){
+    size = size || 0.42;                       // world height of the glyphs
+    var c=document.createElement("canvas"), x=c.getContext("2d");
+    var font="600 56px 'Chakra Petch', 'Bahnschrift', sans-serif";
+    x.font=font;
+    c.width=Math.ceil(x.measureText(text).width)+56; c.height=96;
+    x=c.getContext("2d"); x.font=font;
+    x.fillStyle=color; x.textAlign="center"; x.textBaseline="middle";
+    x.shadowColor="rgba(7,10,18,0.95)"; x.shadowBlur=18;
+    x.fillText(text, c.width/2, 52);
+    var sp=new THREE.Sprite(new THREE.SpriteMaterial({
+      map:new THREE.CanvasTexture(c), transparent:true, depthWrite:false, depthTest:false }));
+    sp.scale.set(size*c.width/56, size*c.height/56, 1);
+    return sp;
+  }
+  (function markers(){
+    scene.add(ring3(pErg[0], 0.30, C.ink, 0.6));
+    var tgt=pErg[pErg.length-1];
+    scene.add(ring3(tgt, 0.42, C.ink, 0.85));
+    scene.add(ring3(tgt, 0.19, C.ink, 0.5));
+    var l1=makeLabel(TR("lbl_b", "TARGET  B"), C.ink, 0.40);
+    l1.position.copy(tgt).multiplyScalar(1.13); scene.add(l1);
+    var l0=makeLabel(TR("lbl_a", "TARGET  A"), C.inkDim, 0.40);
+    l0.position.copy(pErg[0]).multiplyScalar(1.13); scene.add(l0);
+    sunLabel = makeLabel(TR("lbl_sun", "SUN"), C.sun, 0.40);
+    sunLabel.position.copy(SUN).multiplyScalar(SPH*1.02)
+      .addScaledVector(CAM_RIGHT, -0.15).addScaledVector(CAM_UP, 1.5);
+    scene.add(sunLabel);
+  })();
+
+  /* ---------- spacecraft ---------- */
+  var sat = new THREE.Group();
+  (function mesh(){
+    var MAT = {
+      BusFoil:{c:0xc79a33, s:0x8c7a4c, sh:42}, Metal:{c:0x9ea4ae, s:0x74787f, sh:60},
+      Radioator:{c:0xe0e4ea, s:0x4c4f55, sh:25}, Radiator:{c:0xe0e4ea, s:0x4c4f55, sh:25},
+      Telescope:{c:0x4c525c, s:0x666b76, sh:55}, Baffle:{c:0x1c1f24, s:0x1a1c20, sh:12},
+      Aperture:{c:0x07090d, s:0x9aa3b4, sh:90}, Wheel:{c:0x6b7079, s:0x585c63, sh:45},
+      Antenna:{c:0xe6e9ee, s:0x595c62, sh:30}, PanelFrame:{c:0x8c9199, s:0x40434a, sh:30},
+      SolarCell:{c:0x11255c, s:0x8f9fd0, sh:80}
+    };
+    var V=[], Nn=[], groups={}, cur="Metal";
+    objText.split("\n").forEach(function(line){
+      var p=line.trim().split(/\s+/);
+      if(p[0]==="v") V.push([+p[1],+p[2],+p[3]]);
+      else if(p[0]==="vn") Nn.push([+p[1],+p[2],+p[3]]);
+      else if(p[0]==="usemtl") cur=p[1];
+      else if(p[0]==="f"){
+        var g=groups[cur]||(groups[cur]={pos:[],nrm:[]});
+        var idx=p.slice(1).map(function(tok){
+          var a=tok.split("//"); return [parseInt(a[0],10)-1, parseInt(a[1],10)-1];
+        });
+        for(var k=1;k<idx.length-1;k++){
+          [idx[0], idx[k], idx[k+1]].forEach(function(t){
+            var v=V[t[0]], n=Nn[t[1]]||[0,0,1];
+            g.pos.push(v[0],v[1],v[2]); g.nrm.push(n[0],n[1],n[2]);
+          });
+        }
+      }
+    });
+    Object.keys(groups).forEach(function(name){
+      var g=groups[name], geo=new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(g.pos),3));
+      geo.setAttribute("normal",   new THREE.BufferAttribute(new Float32Array(g.nrm),3));
+      var m=MAT[name]||MAT.Metal;
+      sat.add(new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+        color:m.c, specular:m.s, shininess:m.sh, side:THREE.DoubleSide, flatShading:false
+      })));
+    });
+    sat.scale.setScalar(1.05);
+    scene.add(sat);
+  })();
+
+  /* boresight ray + reference ray, re-oriented every frame */
+  function ray(len, radius, color, opacity){
+    var g=new THREE.CylinderGeometry(radius, radius, len, 10, 1, true);
+    g.translate(0, len/2, 0);
+    return new THREE.Mesh(g, new THREE.MeshBasicMaterial({
+      color:new THREE.Color(color), transparent:true, opacity:opacity, depthWrite:false }));
+  }
+  var rayErg = ray(SPH, 0.020, C.boresight, 0.9);
+  var rayRef = ray(SPH*0.94, 0.013, C.governor, 0.5);
+  scene.add(rayErg); scene.add(rayRef);
+  var tipErg = (function(){
+    var pts=[];
+    for(var i=0;i<=64;i++){ var a=(i/64)*2*Math.PI; pts.push(0.26*Math.cos(a), 0.26*Math.sin(a), 0); }
+    var g=new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pts),3));
+    return new THREE.Line(g, new THREE.LineBasicMaterial({color:new THREE.Color(C.boresight),
+      transparent:true, opacity:0.95, depthWrite:false}));
+  })();
+  scene.add(tipErg);
+
+  /* ---------- live Sun-separation wedge: the angle, drawn in the scene ---- */
+  var WEDGE_N = 44, WEDGE_R = SPH * 0.52;
+  var wedge = (function(){
+    var g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(WEDGE_N*9), 3));
+    var m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({
+      color:new THREE.Color(C.boresight), transparent:true, opacity:0.22,
+      side:THREE.DoubleSide, depthWrite:false }));
+    m.renderOrder = 2; scene.add(m); return m;
+  })();
+  var wedgeArc = (function(){
+    var g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array((WEDGE_N+1)*3), 3));
+    var l = new THREE.Line(g, new THREE.LineBasicMaterial({
+      color:new THREE.Color(C.boresight), transparent:true, opacity:0.9, depthWrite:false }));
+    l.renderOrder = 3; scene.add(l); return l;
+  })();
+  var angTag = (function(){
+    var c = document.createElement("canvas"); c.width = 360; c.height = 150;
+    var tex = new THREE.CanvasTexture(c);
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({
+      map:tex, transparent:true, depthWrite:false, depthTest:false }));
+    sp.scale.set(360/150*1.3, 1.3, 1);
+    sp.userData = {c:c, tex:tex, last:null};
+    scene.add(sp); return sp;
+  })();
+  var _wa = new THREE.Vector3(), _wb = new THREE.Vector3(), _wax = new THREE.Vector3();
+  function updateWedge(b, deg){
+    var safe = deg >= S.keepout_deg;
+    var col = safe ? C.boresight : C.violate;
+    _wax.crossVectors(SUN, b);
+    if(_wax.lengthSq() < 1e-10){
+      wedge.visible = wedgeArc.visible = angTag.visible = false; return;
+    }
+    wedge.visible = wedgeArc.visible = angTag.visible = true;
+    _wax.normalize();
+    var ang = Math.acos(Math.max(-1, Math.min(1, SUN.dot(b))));
+    var pos = wedge.geometry.attributes.position.array;
+    var arc = wedgeArc.geometry.attributes.position.array;
+    var k = 0;
+    for(var i = 0; i <= WEDGE_N; i++){
+      _wa.copy(SUN).applyAxisAngle(_wax, ang*i/WEDGE_N).multiplyScalar(WEDGE_R);
+      arc[3*i] = _wa.x; arc[3*i+1] = _wa.y; arc[3*i+2] = _wa.z;
+      if(i < WEDGE_N){
+        _wb.copy(SUN).applyAxisAngle(_wax, ang*(i+1)/WEDGE_N).multiplyScalar(WEDGE_R);
+        pos[k++] = 0; pos[k++] = 0; pos[k++] = 0;
+        pos[k++] = _wa.x; pos[k++] = _wa.y; pos[k++] = _wa.z;
+        pos[k++] = _wb.x; pos[k++] = _wb.y; pos[k++] = _wb.z;
+      }
+    }
+    wedge.geometry.attributes.position.needsUpdate = true;
+    wedgeArc.geometry.attributes.position.needsUpdate = true;
+    wedge.material.color.set(col); wedgeArc.material.color.set(col);
+
+    _wa.copy(SUN).applyAxisAngle(_wax, ang*0.74).multiplyScalar(WEDGE_R*1.24);
+    angTag.position.copy(_wa);
+    var txt = deg.toFixed(1) + col;
+    if(angTag.userData.last !== txt){
+      angTag.userData.last = txt;
+      var x = angTag.userData.c.getContext("2d");
+      x.clearRect(0, 0, 360, 150);
+      x.textAlign = "center"; x.shadowColor = "rgba(7,10,18,.95)"; x.shadowBlur = 20;
+      x.fillStyle = col;
+      x.font = "700 74px 'Chakra Petch','Bahnschrift',sans-serif";
+      x.fillText(deg.toFixed(1) + "\u00b0", 180, 66);
+      x.fillStyle = safe ? C.inkDim : C.violate;
+      x.font = "600 25px 'Chakra Petch','Bahnschrift',sans-serif";
+      x.fillText(safe ? TR("wedge_safe", "FROM THE SUN")
+                : TR("wedge_bad", "INSIDE THE ZONE"), 180, 116);
+      angTag.userData.tex.needsUpdate = true;
+    }
+  }
+  (function coneLabel(){
+    var ax = new THREE.Vector3().crossVectors(SUN, CAM_UP).normalize();
+    var rim = SUN.clone().applyAxisAngle(ax, KEEPOUT);
+    var l = makeLabel(TR("lbl_cone", "NO-LOOK ZONE  ") + S.keepout_deg + String.fromCharCode(176),
+                      C.sun, 0.34);
+    l.position.copy(rim).multiplyScalar(SPH * 1.09);
+    scene.add(l);
+  })();
+
+  /* ---------- gauges ---------- */
+  var rail=document.getElementById("rail");
+  function gauge(id,label,unit,foot){
+    var el=document.createElement("div"); el.className="gauge";
+    el.innerHTML='<div class="grow"><span class="glabel">'+label+'</span>'+
+                 '<span class="gval" id="v-'+id+'">--<u>'+unit+'</u></span></div>'+
+                 '<div class="meter"><i id="m-'+id+'"></i><b id="t-'+id+'"></b></div>'+
+                 '<div class="gfoot">'+foot+'</div>';
+    rail.appendChild(el);
+    return {box:el, val:el.querySelector("#v-"+id), bar:el.querySelector("#m-"+id),
+            tick:el.querySelector("#t-"+id)};
+  }
+  var gSun = gauge("sun",TR("g_sun","Angle to the Sun"),"&deg;",
+    '<span>0</span><span style="color:var(--sun)">'+
+    (JA ? S.keepout_deg+"&deg; 以上を保つ"
+        : "must stay above "+S.keepout_deg+"&deg;")+
+    '</span><span>60</span>');
+  var gTau = gauge("tau",TR("g_tau","Motor effort"),"N&middot;m",
+    '<span>0</span><span style="color:var(--violate)">'+
+    TR("f_tau_limit","wheel limit ")+S.tau_max+
+    '</span><span>'+TR("f_tau_peak","peak ")+SUM.max_u.toFixed(3)+'</span>');
+  var gMar = gauge("mar",TR("g_mar","Safety budget used"),"",
+    '<span>0</span><span style="color:var(--governor)">V / &Gamma;</span><span>100%</span>');
+  var gErr = gauge("err",TR("g_err","Still to turn"),"&deg;",
+    '<span>0</span><span>'+TR("f_err_mid","attitude error")+
+    '</span><span>100</span>');
+  gSun.tick.style.left = (100*S.keepout_deg/60)+"%";
+  gSun.tick.style.background = C.sun;
+  gTau.tick.style.left = "100%"; gTau.tick.style.background = C.violate;
+  gMar.tick.style.left = "100%"; gMar.tick.style.background = C.governor;
+  gErr.tick.style.display = "none";
+
+  var note=document.createElement("div");
+  note.className="gauge";
+  note.innerHTML='<div class="grow"><span class="glabel">'+
+    TR("fd","Flight data")+'</span></div>'+
+    '<div class="gfoot" style="margin-top:7px"><span>'+TR("fd_rate","body rate")+'</span>'+
+    '<span id="v-rate" style="color:var(--ink)">0.000 deg/s</span></div>'+
+    '<div class="gfoot"><span>'+TR("fd_lead","reference lead / rate")+'</span>'+
+    '<span id="v-lead" style="color:var(--governor)">0.00&deg; &middot; 0.000&deg;/s</span></div>'+
+    '<div class="gfoot"><span>'+TR("fd_mom","stored momentum")+'</span>'+
+    '<span id="v-mom" style="color:var(--ink)">0.000 N&middot;m&middot;s</span></div>'+
+    '<div class="gfoot" style="margin-top:8px; padding-top:7px;'+
+    ' border-top:1px solid var(--edge-soft)"><span>'+TR("fd_J","J (diag)")+
+    '</span><span>'+
+    S.J.join(" / ")+' kg m<sup>2</sup></span></div>'+
+    '<div class="gfoot"><span>k<sub>p</sub> / k<sub>d</sub> &middot; &kappa;</span><span>'+
+    S.k_p+' / '+S.k_d+' &middot; '+S.kappa+'</span></div>'+
+    '<div class="gfoot"><span>'+
+    TR("fd_alt","&Gamma;<sub>d</sub> &middot; orbit altitude")+'</span><span>'+
+    S.Gamma_d.toFixed(4)+' &middot; '+VIEW.orbit_alt_km+' km</span></div>';
+  rail.appendChild(note);
+  var verdict=document.createElement("div");
+  verdict.className="gauge breach";
+  verdict.innerHTML='<div class="grow"><span class="glabel" style="color:var(--violate)">'+
+    TR("vd_h","If it took the shortest path")+'</span></div>'+
+    '<div class="gfoot" style="margin-top:7px"><span>'+
+    TR("vd_sun","closest to the Sun")+'</span>'+
+    '<span style="color:var(--violate)">'+SUM.baseline_min_sun_angle.toFixed(1)+
+    '&deg; (&minus;'+(S.keepout_deg-SUM.baseline_min_sun_angle).toFixed(1)+'&deg;)</span></div>'+
+    '<div class="gfoot"><span>'+TR("vd_tau","peak motor effort")+
+    '</span><span style="color:var(--violate)">'+
+    SUM.baseline_max_u.toFixed(3)+timesLimit((SUM.baseline_max_u/S.tau_max).toFixed(1))+
+    '</span></div>'+
+    '<div class="gfoot"><span>'+TR("vd_ctl","with the controller")+
+    '</span><span style="color:var(--boresight)">'+
+    SUM.min_sun_angle.toFixed(1)+'&deg; / '+SUM.max_u.toFixed(3)+' N&middot;m</span></div>';
+  document.getElementById("verdict").appendChild(verdict);
+  var vRate=note.querySelector("#v-rate"), vMom=note.querySelector("#v-mom"),
+      vLead=note.querySelector("#v-lead");
+
+  /* ---------- strip chart ---------- */
+  var chart=document.getElementById("chart"), cx=chart.getContext("2d");
+  var chartBG=document.createElement("canvas"), bg=chartBG.getContext("2d");
+  var CW=0, CH=0, PAD={l:40,r:10,t:10,b:18};
+  var TICK = TEND<=200 ? 25 : (TEND<=500 ? 50 : 100);
+  var tracks=[
+    {key:"sun_angle", lo:0, hi:75,  limit:S.keepout_deg, below:true,  unit:"deg",
+     name:TR("g_sun","Angle to the Sun")},
+    {key:"u_norm",    lo:0, hi:0.55,limit:S.tau_max,     below:false, unit:"N\u00b7m",
+     name:TR("g_tau","Motor effort")}
+  ];
+  var chartReady = false;
+  function drawChartBG(){
+    var dpr=Math.min(devicePixelRatio||1,2);
+    CW=chart.clientWidth; CH=chart.clientHeight;
+    /* a collapsed layout would give a zero-size backing canvas, and
+       drawImage() of a zero-size canvas throws on every later frame */
+    if(CW < 32 || CH < 32){ chartReady = false; return; }
+    chartReady = true;
+    chart.width=chartBG.width=CW*dpr; chart.height=chartBG.height=CH*dpr;
+    bg.setTransform(dpr,0,0,dpr,0,0); cx.setTransform(dpr,0,0,dpr,0,0);
+    bg.clearRect(0,0,CW,CH);
+    var th=(CH-PAD.t-PAD.b-10)/2;
+    tracks.forEach(function(tr,ti){
+      var y0=PAD.t+ti*(th+10), x0=PAD.l, w=CW-PAD.l-PAD.r;
+      function X(t){ return x0 + w*t/TEND; }
+      function Y(v){ return y0 + th*(1-(v-tr.lo)/(tr.hi-tr.lo)); }
+      bg.fillStyle="rgba(14,20,32,.62)"; bg.fillRect(x0,y0,w,th);
+      bg.strokeStyle=C.edge; bg.lineWidth=1; bg.strokeRect(x0+.5,y0+.5,w-1,th-1);
+      /* forbidden band */
+      bg.fillStyle="rgba(255,77,106,.13)";
+      if(tr.below) bg.fillRect(x0, Y(tr.limit), w, y0+th-Y(tr.limit));
+      else bg.fillRect(x0, y0, w, Y(tr.limit)-y0);
+      bg.strokeStyle=tr.below?C.sun:C.violate; bg.setLineDash([4,3]); bg.lineWidth=1;
+      bg.beginPath(); bg.moveTo(x0, Y(tr.limit)+.5); bg.lineTo(x0+w, Y(tr.limit)+.5); bg.stroke();
+      bg.setLineDash([]);
+      /* x ticks */
+      bg.strokeStyle="rgba(120,140,170,.16)";
+      for(var t=TICK;t<TEND;t+=TICK){
+        bg.beginPath(); bg.moveTo(X(t)+.5,y0); bg.lineTo(X(t)+.5,y0+th); bg.stroke();
+      }
+      function series(arr,color,width,alpha){
+        bg.strokeStyle=color; bg.lineWidth=width; bg.globalAlpha=alpha;
+        bg.beginPath();
+        for(var i=0;i<N;i++){
+          var v=Math.max(tr.lo, Math.min(tr.hi, arr[i]));
+          i ? bg.lineTo(X(T[i]),Y(v)) : bg.moveTo(X(T[i]),Y(v));
+        }
+        bg.stroke(); bg.globalAlpha=1;
+      }
+      series(B[tr.key], C.violate, 1.2, 0.62);
+      series(E[tr.key], C.boresight, 1.7, 1);
+      /* labels */
+      bg.font="500 9.5px 'IBM Plex Mono', monospace"; bg.textAlign="right";
+      bg.fillStyle=C.inkFaint;
+      bg.fillText(String(tr.hi), x0-6, y0+8);
+      bg.fillText(String(tr.lo), x0-6, y0+th);
+      bg.textAlign="right";
+      bg.font="600 9.5px 'Chakra Petch', sans-serif";
+      var lbl=tr.name.toUpperCase()+"  ["+tr.unit+"]";
+      var lw=bg.measureText(lbl).width;
+      bg.fillStyle="rgba(7,10,18,.85)";
+      bg.fillRect(x0+w-lw-14, y0+1, lw+13, 15);
+      bg.fillStyle=C.inkDim;
+      bg.fillText(lbl, x0+w-8, y0+12);
+    });
+    bg.font="500 9.5px 'IBM Plex Mono', monospace";
+    bg.fillStyle=C.inkFaint; bg.textAlign="center";
+    for(var t=0;t<=TEND;t+=TICK){
+      bg.fillText(t+"s", PAD.l+(CW-PAD.l-PAD.r)*t/TEND, CH-4);
+    }
+  }
+  function drawChart(tNow){
+    if(!chartReady) return;
+    cx.clearRect(0,0,CW,CH);
+    cx.drawImage(chartBG, 0,0, CW, CH);
+    var th=(CH-PAD.t-PAD.b-10)/2, x0=PAD.l, w=CW-PAD.l-PAD.r;
+    var x=x0+w*tNow/TEND;
+    cx.strokeStyle="rgba(220,229,242,.55)"; cx.lineWidth=1;
+    cx.beginPath(); cx.moveTo(x+.5,PAD.t); cx.lineTo(x+.5,CH-PAD.b); cx.stroke();
+    tracks.forEach(function(tr,ti){
+      var y0=PAD.t+ti*(th+10);
+      var v=Math.max(tr.lo, Math.min(tr.hi, sample(E[tr.key], tNow)));
+      var y=y0+th*(1-(v-tr.lo)/(tr.hi-tr.lo));
+      cx.fillStyle=C.boresight; cx.beginPath(); cx.arc(x,y,2.6,0,6.3); cx.fill();
+    });
+  }
+
+  /* ---------- playback ---------- */
+  var state={t:0, rate:25, playing:!reducedMotion};
+  if(reducedMotion) state.t = T[argmin(E.sun_angle)];
+
+  function argmin(a){ var k=0; for(var i=1;i<a.length;i++) if(a[i]<a[k]) k=i; return k; }
+  function frac(t){
+    var k=Math.min(N-2, Math.max(0, Math.floor(t/ (TEND/(N-1)))));
+    return {i:k, f:Math.min(1, Math.max(0, (t-T[k])/(T[k+1]-T[k])))};
+  }
+  function sample(arr, t){ var p=frac(t); return arr[p.i]+(arr[p.i+1]-arr[p.i])*p.f; }
+  var qa=new THREE.Quaternion(), qb=new THREE.Quaternion(), qo=new THREE.Quaternion();
+  function sampleQ(qs, t, out){
+    var p=frac(t), A=qs[p.i], Bq=qs[p.i+1];
+    qa.set(A[1],A[2],A[3],A[0]); qb.set(Bq[1],Bq[2],Bq[3],Bq[0]);
+    return out.copy(qa).slerp(qb, p.f);
+  }
+
+  var earthWanted = true;
+  function setEarth(on){
+    earthWanted = on;
+    earth.visible = on;
+    var b = document.getElementById("tgl-earth");
+    if(b) b.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+  var YAXIS=new THREE.Vector3(0,1,0), vTmp=new THREE.Vector3();
+  var lastHud=-1;
+  function render(tNow){
+    sampleQ(E.q, tNow, qo);
+    sat.quaternion.copy(qo);
+    vTmp.copy(A_B).applyQuaternion(qo).normalize();
+    rayErg.quaternion.setFromUnitVectors(YAXIS, vTmp);
+    tipErg.position.copy(vTmp).multiplyScalar(SPH);
+    tipErg.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1), vTmp);
+    updateWedge(vTmp, sample(E.sun_angle, tNow));
+
+    sampleQ(E.q_ref, tNow, qo);
+    vTmp.copy(A_B).applyQuaternion(qo).normalize();
+    rayRef.quaternion.setFromUnitVectors(YAXIS, vTmp);
+
+    var p=frac(tNow);
+    revealTube(ergTube, p);
+    revealTube(refTube, p);
+  }
+
+  function hud(tNow){
+    var sunA=sample(E.sun_angle, tNow), tau=sample(E.u_norm, tNow);
+    var V=sample(E.V, tNow), G=sample(E.Gamma, tNow), err=sample(E.att_err, tNow);
+    document.getElementById("met").innerHTML = tNow.toFixed(1).padStart(5,"0")+"<small>s</small>";
+
+    gSun.val.innerHTML = sunA.toFixed(2)+"<u>&deg;</u>";
+    gSun.bar.style.width = Math.min(100, 100*sunA/60)+"%";
+    gSun.bar.style.background = sunA < S.keepout_deg ? C.violate : C.boresight;
+    gSun.box.classList.toggle("breach", sunA < S.keepout_deg);
+
+    gTau.val.innerHTML = tau.toFixed(4)+"<u>N&middot;m</u>";
+    gTau.bar.style.width = Math.min(100, 100*tau/S.tau_max)+"%";
+    gTau.bar.style.background = tau > S.tau_max ? C.violate : C.boresight;
+
+    var ratio = G>0 ? V/G : 0;
+    gMar.val.innerHTML = (100*ratio).toFixed(0)+"<u>%</u>";
+    gMar.bar.style.width = Math.min(100, 100*ratio)+"%";
+    gMar.bar.style.background = ratio > 1 ? C.violate : C.boresight;
+
+    gErr.val.innerHTML = err.toFixed(2)+"<u>&deg;</u>";
+    gErr.bar.style.width = Math.min(100, err)+"%";
+
+    vRate.textContent = sample(E.omega, tNow).toFixed(3)+" deg/s";
+    vLead.innerHTML = sample(E.ref_lead, tNow).toFixed(2)+"&deg; \u00b7 "+
+                      sample(E.ref_rate, tNow).toFixed(3)+"&deg;/s";
+    vMom.textContent = sample(E.momentum, tNow).toFixed(3)+" N\u00b7m\u00b7s";
+
+    var ph = sunA < 36 ? TR("phase_slide", "Sliding around the no-look zone")
+           : err > 40 ? TR("phase_turn",  "Turning away from target A")
+           : err > 1  ? TR("phase_close", "Closing on target B")
+           :            TR("phase_lock",  "Locked on target B");
+    document.getElementById("phase").textContent = ph;
+  }
+
+  /* ---------- loop ---------- */
+  var last=performance.now();
+  function tick(now){
+    requestAnimationFrame(tick);
+    if(now===undefined) now=performance.now();
+    var dt=Math.min((now-last)/1000, 0.08); last=now;
+    if(state.playing){
+      var rate = state.t < 12 ? Math.min(state.rate, 5) : state.rate;   // slow opening
+      state.t += dt*rate;
+      if(state.t >= TEND){ state.t = TEND; state.playing=false;
+                           playBtn.textContent=TR("btn_replay","Replay"); }
+    }
+    if(autoSpin && state.playing){
+      var qs = new THREE.Quaternion().setFromAxisAngle(tUp.clone().normalize(), dt*0.045);
+      tPos.applyQuaternion(qs);
+    }
+    approach(camPos, tPos, 0.11);
+    approach(camUpV, tUp, 0.13);
+    lookK += (tLookK - lookK) * 0.12;
+    applyCam();
+    /* zoomed far enough toward the Earth the camera would sit inside the
+       globe, which reads as an unexplained black wall */
+    earth.visible = earthWanted &&
+      camera.position.distanceTo(earth.position) > EARTH_R * 1.02;
+    render(state.t);
+    if(state.t!==lastHud){ hud(state.t); drawChart(state.t); lastHud=state.t; }
+    renderer.render(scene, camera);
+    lastRender = performance.now();
+    if(!booted){
+      booted = true;
+      if(overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }
+  }
+
+  /* ---------- controls ---------- */
+  var playBtn=document.getElementById("play");
+  playBtn.textContent = state.playing ? TR("btn_pause","Pause")
+                                      : TR("btn_play","Play");
+  playBtn.addEventListener("click", function(){
+    if(state.t>=TEND) state.t=0;
+    state.playing=!state.playing;
+    playBtn.textContent = state.playing ? TR("btn_pause","Pause")
+                                      : TR("btn_play","Play");
+  });
+  document.getElementById("restart").addEventListener("click", function(){
+    state.t=0; state.playing=true; playBtn.textContent=TR("btn_pause","Pause");
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-view]"), function(b){
+    b.addEventListener("click", function(){
+      goView(+b.dataset.view);
+      document.querySelectorAll("[data-view]").forEach(function(o){
+        o.setAttribute("aria-pressed", o===b ? "true":"false"); });
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-rate]"), function(b){
+    b.addEventListener("click", function(){
+      state.rate=+b.dataset.rate;
+      document.querySelectorAll("[data-rate]").forEach(function(o){
+        o.setAttribute("aria-pressed", o===b ? "true":"false"); });
+    });
+  });
+  function toggle(id, fn){
+    var b=document.getElementById(id);
+    b.addEventListener("click", function(){
+      var on = b.getAttribute("aria-pressed")!=="true";
+      b.setAttribute("aria-pressed", on?"true":"false"); fn(on);
+    });
+  }
+  toggle("tgl-base", function(on){ baseTube.visible=on; });
+  toggle("tgl-cone", function(on){ coneGroup.visible=on; });
+  toggle("tgl-earth", setEarth);
+  goView(0);
+  chart.addEventListener("click", function(e){
+    var r=chart.getBoundingClientRect();
+    var span=r.width-PAD.l-PAD.r;
+    if(span <= 0) return;
+    var x=(e.clientX-r.left-PAD.l)/span;
+    state.t = Math.max(0, Math.min(TEND, x*TEND)); lastHud=-1;
+  });
+
+  function resize(){
+    var w=Math.max(1, innerWidth|0), h=Math.max(1, innerHeight|0);
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h; camera.updateProjectionMatrix();
+    drawChartBG(); lastHud=-1;
+  }
+  addEventListener("resize", resize);
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ drawChartBG(); lastHud=-1; });
+  }
+
+  resize();
+  hud(state.t); render(state.t); drawChart(state.t);
+  tick();
+}
+
+loadThree(boot);
+})();
+</script>
+</body>
+</html>
