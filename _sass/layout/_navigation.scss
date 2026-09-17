@@ -457,3 +457,127 @@
     }
   }
 }
+
+/*
+   Header submenu
+   ========================================================================== */
+
+/* One header entry opens a menu rather than going somewhere (see
+   _data/navigation.yml and assets/js/nav-submenu.js). Two things shape the
+   rules below:
+
+   - .visible-links lays its items out as a table, and the theme writes
+     `.visible-links li`, which reaches the items of a nested list too. Display,
+     weight and borders all have to be put back inside the submenu.
+   - the same markup serves two places. In the header bar the submenu is a panel
+     floating under its parent; in the overflow menu, where items are already
+     stacked, it is an indented list in the flow. */
+
+.greedy-nav .masthead__group {
+  position: relative;
+  display: inline-block;
+}
+
+.greedy-nav .masthead__group-toggle {
+  cursor: pointer;
+  -webkit-user-select: none;
+          user-select: none;
+}
+
+.greedy-nav .masthead__group-caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.45em;
+  vertical-align: 0.15em;
+  border: 0.3em solid transparent;
+  border-bottom: 0;
+  border-top-color: currentColor;
+  opacity: 0.65;
+  transition: transform 0.15s ease;
+}
+
+.greedy-nav .masthead__menu-item--group.is-open .masthead__group-caret {
+  transform: rotate(180deg);
+}
+
+.greedy-nav .masthead__submenu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.greedy-nav .masthead__submenu li,
+.greedy-nav .masthead__submenu li:first-child {
+  display: block;
+  font-weight: normal;
+  white-space: nowrap;
+  border-bottom: 0;
+}
+
+.greedy-nav .masthead__submenu a {
+  margin: 0;
+  padding: 0.5rem 1.1rem;
+  font-size: $type-size-6;
+
+  /* .visible-links a carries an underline that slides in from the left on
+     hover. Under every row of a panel it reads as a set of dividers. */
+  &:before {
+    display: none;
+  }
+
+  &:hover {
+    background: var(--global-border-color);
+  }
+}
+
+/* In the header bar: a panel under the parent. */
+
+.greedy-nav .visible-links .masthead__submenu {
+  position: absolute;
+  top: 100%;
+  /* The panel's own text sits 1.1rem in; the parent's sits 1rem in, from the
+     margin .greedy-nav gives every nav link. Zero here lines the two up. */
+  left: 0;
+  z-index: 30;
+  min-width: 100%;
+  padding: 0.3rem 0;
+  border: 1px solid var(--global-border-color);
+  border-radius: $border-radius;
+  background: var(--global-bg-color);
+  box-shadow: 0 6px 18px rgba(#000, 0.16);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.35rem);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.greedy-nav .visible-links .masthead__menu-item--group.is-open .masthead__submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* In the overflow menu: an indented list, shown only when the menu is open. */
+
+.greedy-nav .hidden-links .masthead__group {
+  position: static;
+  display: block;
+}
+
+.greedy-nav .hidden-links .masthead__submenu {
+  display: none;
+}
+
+.greedy-nav .hidden-links .masthead__menu-item--group.is-open .masthead__submenu {
+  display: block;
+}
+
+.greedy-nav .hidden-links .masthead__submenu li {
+  border-top: 1px solid var(--global-border-color);
+}
+
+.greedy-nav .hidden-links .masthead__submenu a {
+  padding-left: 2.6rem;
+  font-size: $type-size-6;
+}

@@ -1,0 +1,24 @@
+{%- comment -%}
+  Resolves one navigation URL for the language of the page being rendered, and
+  leaves the answer in `nav_url`, with `nav_external` true for an off-site link.
+
+      {% include nav-url.html url=link.url %}
+
+  Japanese pages live under /ja/, so a path written once in navigation.yml
+  serves both languages. A URL that already contains /ja/, or an absolute URL,
+  is taken as it stands.
+{%- endcomment -%}
+{%- include base_path -%}
+{%- if include.url contains 'http' -%}
+  {%- assign nav_url = include.url -%}
+  {%- assign nav_external = true -%}
+{%- else -%}
+  {%- assign nav_external = false -%}
+  {%- if include.url contains '/ja/' -%}
+    {%- assign nav_url = include.url | prepend: base_path -%}
+  {%- elsif page.lang == 'ja' -%}
+    {%- assign nav_url = include.url | prepend: '/ja' | prepend: base_path -%}
+  {%- else -%}
+    {%- assign nav_url = include.url | prepend: base_path -%}
+  {%- endif -%}
+{%- endif -%}

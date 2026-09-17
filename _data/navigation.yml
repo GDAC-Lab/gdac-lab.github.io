@@ -4,32 +4,33 @@
 # the site. Two pages are deliberately absent: /policy/ (still in preparation)
 # and /terms/ (linked from the footer, where a reader looks for it).
 #
-# The order tells the visitor what the lab is, then shows it, then backs it up:
-# what we work on, the record that backs it up, the two things you can watch in
-# the browser, the people, the equipment, and how to get here. The order also
-# decides what survives a narrow window: the masthead keeps as many items as fit
-# and moves the rest into the overflow menu, in this order, so anything put last
-# is the first to disappear on a small laptop.
+# An entry with `children:` becomes a menu instead of a link. The parent is not
+# itself a link — it opens the menu — so whatever page it would have pointed at
+# has to appear as the first child. The children are ordinary <a> elements in
+# the markup of every page whether the menu is open or not, so they are links a
+# search engine follows, not something JavaScript conjures up.
+#
+# The order also decides what survives a narrow window: the masthead keeps as
+# many items as fit and moves the rest into the overflow menu, from the end, so
+# anything put last is the first to disappear on a small laptop.
 
 main:
   - title: "Research"
     title_ja: "研究内容"
-    url: /research/
+    children:
+      - title: "Overview"
+        title_ja: "研究の概要"
+        url: /research/
+      - title: "Simulator"
+        title_ja: "シミュレータ"
+        url: /simulator/
+      - title: "Sun-safe slew"
+        title_ja: "太陽を避ける姿勢変更"
+        url: /sun-safe-slew/
 
   - title: "Publications"
     title_ja: "論文"
     url: /publications/
-
-  - title: "Simulator"
-    title_ja: "シミュレータ"
-    url: /simulator/
-
-  # Labelled by its subject rather than by the page's own title: 「太陽を避ける
-  # 姿勢変更」 is ten characters wide, which squeezed the wordmark onto two lines
-  # and pushed four items into the overflow menu on a small laptop.
-  - title: "Sun-safe slew"
-    title_ja: "衛星の姿勢制御"
-    url: /sun-safe-slew/
 
   - title: "People"
     title_ja: "メンバー"

@@ -7,28 +7,37 @@
         <button><div class="navicon"></div></button>
         <ul class="visible-links">
           <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{% if page.lang == 'ja' %}{{ base_path }}/ja/{% else %}{{ base_path }}/{% endif %}">{% if page.lang == 'ja' and site.title_ja_short %}{{ site.title_ja_short }}{% else %}{{ site.title }}{% endif %}</a></li>
+          {%- comment -%}
+            An entry with `children:` in navigation.yml becomes a menu. Its
+            toggle is an <a role="button"> rather than a <button>, because
+            greedy-nav claims every <button> inside #site-nav as its own
+            overflow control. assets/js/nav-submenu.js opens and closes it.
+          {%- endcomment -%}
           {% for link in site.data.navigation.main %}
             {% assign nav_label = link.title %}
             {% if page.lang == 'ja' and link.title_ja %}
               {% assign nav_label = link.title_ja %}
             {% endif %}
-            {% if link.url contains 'http' %}
-              {% assign domain = '' %}
-              {% assign url = link.url %}
-            {% elsif link.url contains '/ja/' %}
-              {% assign domain = base_path %}
-              {% assign url = link.url %}
+            {% if link.children %}
+            <li class="masthead__menu-item masthead__menu-item--group">
+              <div class="masthead__group">
+                <a role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-controls="nav-group-{{ forloop.index }}" class="masthead__group-toggle">{{ nav_label }}<span class="masthead__group-caret" aria-hidden="true"></span></a>
+                <ul class="masthead__submenu" id="nav-group-{{ forloop.index }}">
+                  {% for child in link.children %}
+                    {% assign child_label = child.title %}
+                    {% if page.lang == 'ja' and child.title_ja %}
+                      {% assign child_label = child.title_ja %}
+                    {% endif %}
+                    {% include nav-url.html url=child.url %}
+                    <li><a href="{{ nav_url }}"{% if nav_external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ child_label }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </li>
             {% else %}
-              {% assign domain = base_path %}
-              {% if page.lang == 'ja' and link.url == '/publications/' %}
-                {% assign url = '/ja/publications/' %}
-              {% elsif page.lang == 'ja' %}
-                {% assign url = link.url | prepend: '/ja' %}
-              {% else %}
-                {% assign url = link.url %}
-              {% endif %}
+            {% include nav-url.html url=link.url %}
+            <li class="masthead__menu-item"><a href="{{ nav_url }}"{% if nav_external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ nav_label }}</a></li>
             {% endif %}
-            <li class="masthead__menu-item"><a href="{{ domain }}{{ url }}"{% if link.url contains 'http' %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ nav_label }}</a></li>
           {% endfor %}
           {%- comment -%}
             Language switcher. Each page links to its counterpart in the other

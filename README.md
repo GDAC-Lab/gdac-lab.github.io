@@ -17,7 +17,7 @@ The site is bilingual: English pages live at the site root, Japanese pages under
 | Pages (EN) | `_pages/*.md`, `_pages/*.html` |
 | Pages (JA) | `_pages/ja/` |
 | Publications | `_publications/` — **generated, see below** |
-| Header navigation | `_data/navigation.yml` |
+| Header navigation | `_data/navigation.yml` — see "The header menu" below |
 | Home page news items | `_data/news.yml` |
 | Collaborators shown on People | `_data/collaborators.yml` |
 | Site/author settings, publication categories | `_config.yml` |
@@ -26,6 +26,44 @@ The site is bilingual: English pages live at the site root, Japanese pages under
 
 Home page composition is `_pages/about.md` (EN) / `_pages/ja/index.md` (JA), which pull in
 `_includes/home-slideshow.html`, `home-extra.html` and `home-news.html`.
+
+## The header menu
+
+`_data/navigation.yml` drives the header. Each entry carries `title` and
+`title_ja`, and one path in `url:` that serves both languages — Japanese pages
+live under `/ja/`, and `_includes/nav-url.html` works the prefix out.
+
+An entry with `children:` becomes a drop-down instead of a link:
+
+```yaml
+- title: "Research"
+  title_ja: "研究内容"
+  children:
+    - title: "Overview"
+      title_ja: "研究の概要"
+      url: /research/
+```
+
+Three things about that are easy to break:
+
+* **The parent is not a link.** It opens the menu, so the page it would have
+  pointed at has to be the first child. The children are ordinary `<a>`
+  elements present in the markup of every page whether the menu is open or not,
+  so they are links a crawler follows, not something JavaScript conjures up.
+* **The toggle is an `<a role="button">`, not a `<button>`.** greedy-nav — the
+  script that moves overflowing items into the ☰ menu — claims every `<button>`
+  inside `#site-nav` as its own overflow control, so a real button here breaks
+  the header.
+* **The same markup renders in two places.** In the header bar the menu is a
+  panel floating under its parent; once greedy-nav has moved the item into the
+  ☰ list it is an indented list in the flow. Both are styled at the end of
+  `_sass/layout/_navigation.scss`; `assets/js/nav-submenu.js` decides when it
+  is open, and is the single source of truth for that, hover included.
+
+Header items are dropped from the end when the window is too narrow, so what
+goes last is what disappears first on a small laptop. Two pages stay out of the
+header on purpose: `/policy/`, still in preparation, and `/terms/`, which is in
+the footer where a reader looks for it.
 
 ## Publications are generated — do not hand-edit
 
