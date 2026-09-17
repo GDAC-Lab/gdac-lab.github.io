@@ -24,8 +24,8 @@ main:
       - title: "Simulator"
         title_ja: "シミュレータ"
         url: /simulator/
-      - title: "Sun-safe slew"
-        title_ja: "太陽を避ける姿勢変更"
+      - title: "A telescope that avoids the Sun"
+        title_ja: "太陽を避ける宇宙望遠鏡"
         url: /sun-safe-slew/
 
   - title: "Publications"

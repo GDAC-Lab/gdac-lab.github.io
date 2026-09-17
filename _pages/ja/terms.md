@@ -37,7 +37,7 @@ researchmap や出版社ページなど，外部サービスへのリンクが�
 
 本サイトは，[Academic Pages](https://github.com/academicpages/academicpages.github.io)（[Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/) のフォーク，© 2016 Michael Rose，MIT License）を [Jekyll](https://jekyllrb.com) で構築しています。
 
-[シミュレータ]({{ base_path }}/ja/simulator/)と[太陽を避ける姿勢変更]({{ base_path }}/ja/sun-safe-slew/)のページでは，[MuJoCo](https://mujoco.org/)（© Google DeepMind，Apache License 2.0），[three.js](https://threejs.org/)（MIT License），書体の [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)（© 2018 The Chakra Petch Project Authors）と [IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono)（© 2017 IBM Corp.，いずれも SIL Open Font License 1.1）を使用し，基本図形から生成した衛星の形状データを CC0-1.0 として同梱しています。いずれも外部のサーバではなく本サイト内から配信しており，ライセンス全文も同梱しています。
+[シミュレータ]({{ base_path }}/ja/simulator/)と[太陽を避ける宇宙望遠鏡]({{ base_path }}/ja/sun-safe-slew/)のページでは，[MuJoCo](https://mujoco.org/)（© Google DeepMind，Apache License 2.0），[three.js](https://threejs.org/)（MIT License），書体の [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)（© 2018 The Chakra Petch Project Authors）と [IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono)（© 2017 IBM Corp.，いずれも SIL Open Font License 1.1）を使用し，基本図形から生成した衛星の形状データを CC0-1.0 として同梱しています。いずれも外部のサーバではなく本サイト内から配信しており，ライセンス全文も同梱しています。
 
 ## お問い合わせ
 

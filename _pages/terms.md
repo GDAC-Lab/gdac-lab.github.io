@@ -60,8 +60,8 @@ The site is built with [Jekyll](https://jekyllrb.com) from
 [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)
 (© 2016 Michael Rose, MIT License).
 
-The [Simulator]({{ base_path }}/simulator/) and [Sun-safe slew]({{ base_path }}/sun-safe-slew/)
-pages use [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0),
+The [Simulator]({{ base_path }}/simulator/) and
+[telescope that avoids the Sun]({{ base_path }}/sun-safe-slew/) pages use [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0),
 [three.js](https://threejs.org/) (MIT License), the
 [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)
 (© 2018 The Chakra Petch Project Authors) and
