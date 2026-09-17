@@ -6,11 +6,27 @@
 {% endif %}
 {% assign seo_url = seo_url | default: site.github.url %}
 
-{% if page.title %}
-  {% assign seo_title = page.title | append: " " | append: site.title_separator | append: " " | append: site.title %}
+{%- comment -%}
+  The <title> is not the <h1>. A page heading wants to read as a heading, while
+  a title has to say, out of context and in a list of ten other results, whose
+  site this is -- which for a Japanese search means the lab's Japanese name and
+  the university. So the suffix follows the page's language, and a page may
+  override the whole thing with `seo_title` when the composed form would read
+  badly (the home pages do).
+{%- endcomment -%}
+{% assign seo_site_title = site.title %}
+{% if page.lang == 'ja' and site.title_ja %}
+  {% assign seo_site_title = site.title_ja %}
 {% endif %}
-
-{% if seo_title %}
+{% if page.seo_title %}
+  {%- comment -%}
+    Not markdownified. A page title may carry markdown and has to be rendered
+    and stripped, but an explicit seo_title is already the exact string wanted,
+    and passing it through kramdown loses any "|" in it to a half-built table.
+  {%- endcomment -%}
+  {% assign seo_title = page.seo_title | strip_newlines | escape_once %}
+{% elsif page.title %}
+  {% assign seo_title = page.title | append: " " | append: site.title_separator | append: " " | append: seo_site_title %}
   {% assign seo_title = seo_title | markdownify | strip_html | strip_newlines | escape_once %}
 {% endif %}
 
@@ -20,9 +36,23 @@
 
 <title>{{ seo_title | default: site.title }}{% if paginator %}{% unless paginator.page == 1 %} {{ site.title_separator }} {{ site.data.ui-text[site.locale].page | default: "Page" }} {{ paginator.page }}{% endunless %}{% endif %}</title>
 
-{% assign seo_description = page.description | default: page.excerpt | default: site.description %}
+{%- comment -%}
+  A publication record has no prose to excerpt, so it used to reach the
+  markdownify/strip pass with something that stripped to nothing and publish an
+  empty description -- 25 pages saying nothing about themselves. Compose one out
+  of the fields the record already carries, and fall back to the site
+  description only when the composed string is still empty.
+{%- endcomment -%}
+{% if page.collection == 'publications' and page.description == nil %}
+  {% capture seo_description %}{{ page.authors }}{% if page.authors and page.venue %}. {% endif %}{{ page.venue }}{% if page.venue and page.date %}, {% endif %}{{ page.date | date: "%Y" }}.{% endcapture %}
+{% else %}
+  {% assign seo_description = page.description | default: page.excerpt %}
+{% endif %}
 {% if seo_description %}
-  {% assign seo_description = seo_description | markdownify | strip_html | strip_newlines | escape_once %}
+  {% assign seo_description = seo_description | markdownify | strip_html | strip_newlines | strip | escape_once %}
+{% endif %}
+{% if seo_description == nil or seo_description == "" %}
+  {% assign seo_description = site.description | escape_once %}
 {% endif %}
 <meta name="description" content="{{ seo_description }}">
 
@@ -86,17 +116,11 @@
   <link rel="next" href="{{ paginator.next_page_path | prepend: seo_url }}">
 {% endif %}
 
-{% if site.social %}
-  <script type="application/ld+json">
-    {
-      "@context" : "http://schema.org",
-      "@type" : "{% if site.social.type %}{{ site.social.type }}{% else %}Person{% endif %}",
-      "name" : "{{ site.social.name | default: site.name }}",
-      "url" : {{ seo_url | jsonify }},
-      "sameAs" : {{ site.social.links | jsonify }}
-    }
-  </script>
-{% endif %}
+{%- comment -%}
+  The theme emitted a Person here named after the site, which described the
+  laboratory as a human being. head/structured-data.html replaces it with the
+  lab, the person who runs it and the site, cross-referenced.
+{%- endcomment -%}
 
 {% if site.google_site_verification %}
   <meta name="google-site-verification" content="{{ site.google_site_verification }}" />
@@ -113,31 +137,33 @@
 <!-- end SEO -->
 
 <!-- Open Graph protocol data (https://ogp.me/), used by social media -->
-<meta property="og:locale" content="{{ site.locale | default: "en" }}">
-<meta property="og:site_name" content="{{ site.title }}"> 
+{%- comment -%} site.locale is en-US, which was wrong on every Japanese page {%- endcomment -%}
+<meta property="og:locale" content="{% if page.lang == 'ja' %}ja_JP{% else %}{{ site.locale | default: "en" | replace: "-", "_" }}{% endif %}">
+<meta property="og:site_name" content="{{ seo_site_title }}">
 <meta property="og:title" content="{{ page.title | default: site.title | markdownify | strip_html | strip_newlines | escape_once }}">
 {% if page.date %}
   <meta property="og:type" content="article">
 {% endif %}
-{% if page.excerpt %}
-  <meta property="og:description" name="description" content="{{ seo_description }}">
-{% elsif site.og_description %}
-  <meta property="og:description" name="description" content="{{ site.og_description }}">
+{%- comment -%}
+  og:description used to appear only where a page happened to carry an excerpt.
+  Every page now has a description of its own, so share it.
+{%- endcomment -%}
+{% if seo_description %}
+  <meta property="og:description" content="{{ seo_description }}">
+{% endif %}
+<meta property="og:type" content="{% if page.date %}article{% else %}website{% endif %}">
+{% if site.og_image %}
+  <meta property="og:image" content="{{ site.og_image | prepend: "/images/" | prepend: base_path }}">
 {% endif %}
 {% if seo_url %}
   <meta property="og:url" content="{{ page.url | prepend: seo_url | replace: "/index.html", "/" }}">
 {% endif %}
 
-{% if site.og_image %}
-  <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "Organization",
-      "url": {{ seo_url | jsonify }},
-      "logo": {{ site.og_image | prepend: "/images/" | prepend: base_path | jsonify }}
-    }
-  </script>
-{% endif %}
+{%- comment -%}
+  Setting og_image used to switch on a second, anonymous Organization here with
+  no @id and no name -- a competing entity for the same URL. The image belongs
+  to the lab node in head/structured-data.html, which is where it now sits.
+{%- endcomment -%}
 
 {% if page.header.image %}
   <meta property="og:image" content="{% if page.header.image contains "://" %}{{ page.header.image }}{% else %}{{ page.header.image | prepend: "/images/" | prepend: base_path }}{% endif %}">

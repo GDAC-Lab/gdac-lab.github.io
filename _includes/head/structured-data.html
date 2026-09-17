@@ -1,0 +1,87 @@
+{% comment %}
+  What this site is, and whose it is, in the form a search engine reads.
+
+  The theme's own block declared `{"@type":"Person","name":"GDAC Lab"}` -- a
+  person called GDAC Lab, with an empty sameAs. That is worse than nothing: the
+  lab is not a person, and the one claim search engines most need here is that
+  the laboratory of Satoshi Nakano at Nagoya Institute of Technology and this
+  site are the same thing. Hence a graph of three nodes, cross-referenced by
+  @id: the lab, the person, and the site.
+
+  sameAs is the load-bearing part. Everything listed is a page the site already
+  links to from the sidebar or from People, so nothing here is a claim the site
+  does not make in plain sight as well.
+{% endcomment %}
+{% include base_path %}
+{%- assign lab_ja = "仲野研究室（GDAC Lab）" -%}
+{%- assign lab_en = "GDAC Lab" -%}
+{%- assign lab_full = "Geometric Dynamics, Autonomy, and Control Laboratory" -%}
+{%- comment -%}
+  Built as a delimited string and split, rather than pushed onto an array:
+  Jekyll 3.10 ships Liquid 4, which has neither `push` nor `remove_last`.
+  jsonify then does the escaping. The researchmap URL is the site-wide one with
+  its language parameter dropped -- sameAs wants the identity, not a view of it.
+{%- endcomment -%}
+{%- assign rm = site.researchmap_url | split: "?" | first -%}
+{%- capture same_as_raw -%}
+{%- if site.author.uri %}{{ site.author.uri }}|{% endif -%}
+{%- if site.nitech_faculty_url %}{{ site.nitech_faculty_url }}|{% endif -%}
+{%- if site.author.pure_url %}{{ site.author.pure_url }}|{% endif -%}
+{%- if rm %}{{ rm }}|{% endif -%}
+{%- if site.author.googlescholar %}{{ site.author.googlescholar }}|{% endif -%}
+{%- if site.author.orcid %}{{ site.author.orcid }}|{% endif -%}
+{%- if site.author.github %}https://github.com/{{ site.author.github }}|{% endif -%}
+{%- endcapture -%}
+{%- assign same_as = same_as_raw | split: "|" -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ResearchOrganization",
+      "@id": "{{ base_path }}/#lab",
+      "name": {% if page.lang == 'ja' %}{{ lab_ja | jsonify }}{% else %}{{ lab_en | jsonify }}{% endif %},
+      "alternateName": [{{ lab_full | jsonify }}, {{ lab_en | jsonify }}, {{ lab_ja | jsonify }}, "仲野研究室", "仲野聡史研究室"],
+      "url": "{{ base_path }}/{% if page.lang == 'ja' %}ja/{% endif %}",
+      "parentOrganization": {
+        "@type": "CollegeOrUniversity",
+        "name": {% if page.lang == 'ja' %}"名古屋工業大学"{% else %}"Nagoya Institute of Technology"{% endif %},
+        "url": "https://www.nitech.ac.jp/"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": {% if page.lang == 'ja' %}"名古屋市"{% else %}"Nagoya"{% endif %},
+        "addressRegion": {% if page.lang == 'ja' %}"愛知県"{% else %}"Aichi"{% endif %},
+        "addressCountry": "JP"
+      },
+      "member": { "@id": "{{ base_path }}/#nakano" },
+{%- if site.og_image %}
+      "logo": "{{ site.og_image | prepend: "/images/" | prepend: base_path }}",
+{%- endif %}
+      "knowsAbout": {% if page.lang == 'ja' %}["制御理論", "拘束付き制御", "幾何学的制御", "姿勢制御", "ロボティクス", "ドローン", "人工衛星"]{% else %}["control theory", "constrained control", "geometric control", "attitude control", "robotics", "drones", "spacecraft"]{% endif %}
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ base_path }}/#nakano",
+      "name": {% if page.lang == 'ja' %}"仲野 聡史"{% else %}"Satoshi Nakano"{% endif %},
+      "alternateName": ["仲野 聡史", "仲野聡史", "Satoshi Nakano"],
+      "jobTitle": {% if page.lang == 'ja' %}"助教"{% else %}"Assistant Professor"{% endif %},
+      "worksFor": { "@id": "{{ base_path }}/#lab" },
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": {% if page.lang == 'ja' %}"名古屋工業大学"{% else %}"Nagoya Institute of Technology"{% endif %},
+        "url": "https://www.nitech.ac.jp/"
+      }{% if same_as.size > 0 %},
+      "sameAs": {{ same_as | jsonify }}{% endif %}
+    },
+    {
+      "@type": "WebSite",
+      "@id": "{{ base_path }}/#website",
+      "url": "{{ base_path }}/",
+      "name": {% if page.lang == 'ja' %}{{ lab_ja | jsonify }}{% else %}{{ lab_en | jsonify }}{% endif %},
+      "inLanguage": {% if page.lang == 'ja' %}"ja"{% else %}"en"{% endif %},
+      "publisher": { "@id": "{{ base_path }}/#lab" }
+    }
+  ]
+}
+</script>
