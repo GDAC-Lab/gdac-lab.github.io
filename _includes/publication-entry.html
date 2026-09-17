@@ -1,13 +1,16 @@
 {% comment %}
-  One entry in a publication list. Expects `post` from the enclosing loop and an
-  optional `pub_index` for the running number.
+  One entry in a publication list. Expects `post` from the enclosing loop, plus
+  one of two ways of filling the left gutter:
 
-  Laid out as a bibliography rather than a blog archive: the running number sits
-  in a gutter and every line of the entry shares one left edge, so the eye can
-  follow a single column down the page. Hierarchy comes from weight, colour and
-  italics — the type sizes stay close to body size, which is what reference lists
-  and publisher listings do. Field labels ("Authors:", "Published in") are
-  dropped; position already says what each line is.
+      pub_index   a running number, printed as "12."
+      rail        true, with `rail_year` the year to print (blank for a repeat)
+
+  Laid out as a bibliography rather than a blog archive: the gutter carries the
+  number or the year and every line of the entry shares one left edge, so the
+  eye can follow a single column down the page. Hierarchy comes from weight,
+  colour and italics — the type sizes stay close to body size, which is what
+  reference lists and publisher listings do. Field labels ("Authors:",
+  "Published in") are dropped; position already says what each line is.
 {% endcomment %}
 {% include base_path %}
 
@@ -25,9 +28,11 @@
   {%- endfor -%}
 {%- endif -%}
 
-<li class="publication-entry" itemscope itemtype="http://schema.org/ScholarlyArticle">
+<li class="publication-entry{% if include.rail and include.rail_year != '' %} publication-entry--year-start{% endif %}" itemscope itemtype="http://schema.org/ScholarlyArticle">
   {%- if include.pub_index %}
   <span class="publication-entry__index" aria-hidden="true">{{ include.pub_index }}.</span>
+  {%- elsif include.rail %}
+  <span class="publication-entry__rail" aria-hidden="true">{{ include.rail_year }}</span>
   {%- endif %}
   <div class="publication-entry__body">
     <h3 class="publication-entry__title" itemprop="headline">{{ post.title }}</h3>
@@ -38,7 +43,7 @@
 
     <p class="publication-entry__venue">
       {%- if post.venue %}<cite itemprop="publisher">{{ post.venue }}</cite>{%- endif -%}
-      {%- if post.venue and post.date %}<span class="publication-entry__dot" aria-hidden="true">·</span>{% endif -%}
+      {%- if post.venue and post.date %}<span class="publication-entry__dot" aria-hidden="true">&#8288;·&#8203;</span>{% endif -%}
       {%- if post.date %}<span class="publication-entry__year" itemprop="datePublished">{{ post.date | date: "%Y" }}{% if _pl == 'ja' %}年{% endif %}</span>{% endif -%}
     </p>
 

@@ -59,6 +59,18 @@
   font-weight: 600;
 }
 
+/* How many entries the section holds. On a page that lists every year this is
+   what tells the reader whether a heading is worth scrolling to. */
+.publications-page__jump-count {
+  margin-left: 0.5em;
+  padding-left: 0.5em;
+  border-left: 1px solid;
+  border-left-color: currentColor;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
 .publication-link-sep {
   color: var(--global-text-color-light);
 }

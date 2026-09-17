@@ -1,12 +1,14 @@
 /* ==========================================================================
    PUBLICATION LIST
-   Bibliography layout: a numbered gutter plus one shared left edge, with
+   Bibliography layout: a gutter (a year, or a number) plus one shared left
+   edge for every line of an entry, with
    hierarchy carried by weight, colour and italics rather than large jumps in
    type size. Sizes stay within one step of body text so the metadata — authors
    above all — is comfortably readable.
    ========================================================================== */
 
 $pub-gutter: 2.35rem;
+$pub-rail-gutter: 3.1rem;
 
 .publication-list {
   margin: 0 0 2.5rem;
@@ -42,6 +44,55 @@ $pub-gutter: 2.35rem;
   color: var(--global-text-color-light);
   text-align: right;
   white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------- year rail
+
+   A full list runs to a dozen years, so the gutter carries the date instead of
+   a serial number: printed once where the year changes, blank underneath, it
+   gives the eye a column of dates to scan without a heading per year. The
+   entries are already in date order, so a blank cell can only mean "same year
+   as above".
+*/
+
+.publication-list--rail .publication-entry {
+  grid-template-columns: $pub-rail-gutter 1fr;
+}
+
+.publication-entry__rail {
+  padding-right: 0.6rem;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  color: var(--global-text-color-light);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* A little more air where a new year starts, so the groups read as groups. */
+.publication-entry + .publication-entry--year-start {
+  padding-top: 1.7rem;
+}
+
+/* Narrow screens have no room for a gutter beside the text: the year becomes a
+   small label above the first entry of its group, and the repeats show nothing
+   at all rather than an empty column. */
+@include breakpoint(max-width 600px) {
+  .publication-list--rail .publication-entry {
+    grid-template-columns: 1fr;
+  }
+
+  .publication-entry__rail {
+    padding-right: 0;
+    margin-bottom: 0.3rem;
+    text-align: left;
+  }
+
+  .publication-entry__rail:empty {
+    display: none;
+  }
 }
 
 .publication-entry__body {
@@ -99,8 +150,11 @@ h3.publication-entry__title {
   opacity: 0.6;
 }
 
+/* Japanese line breaking is happy to leave the 年 of "2023年" alone at the head
+   of the next line; keep the year in one piece. */
 .publication-entry__year {
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* --------------------------------------------------------------------- links */

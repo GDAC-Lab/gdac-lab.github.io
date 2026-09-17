@@ -10,11 +10,20 @@ lang_ref: publications_ja
 
 {% include publication-window.html %}
 
+{%- comment -%}
+  何年ぶんを何件載せているのかを最初に示す。年の範囲と件数は文献データから
+  数えるので，同期のたびに書き換える必要はない。
+{%- endcomment -%}
+{%- include publication-recent-count.html docs=site.publications -%}
+{%- assign _total = recent_count -%}
+{%- assign _from_y = recent_min_y -%}
+{%- assign _to_y = recent_max_y -%}
+
 <p class="publications-page__lede">
   {% if pub_years > 0 %}
     区分ごとに，<strong>{{ min_pub_y }}年〜{{ current_y }}年</strong>（直近{{ pub_years }}年）に発表した文献を掲載しています。{% if site.researchmap_url %}それ以前の文献は <a href="{{ site.researchmap_url }}">researchmap</a> をご覧ください。{% endif %}
   {% else %}
-    区分ごとに文献を掲載しています。
+    <strong>{{ _from_y }}年〜{{ _to_y }}年</strong>の文献 <strong>{{ _total }} 件</strong>を，区分ごとに新しい順で掲載しています。
   {% endif %}
 </p>
 
@@ -50,9 +59,8 @@ lang_ref: publications_ja
 {%- comment -%}
   日本語ページは日本語・英語の両方の文献を載せる（英語ページは英語の文献のみ）。
   一つの区分に両方あるときだけ「日本語」「英語」の小見出しを立て，片方だけの
-  ときは小見出しを出さない。通し番号 pub_counter はページ全体で連続する。
+  ときは小見出しを出さない。各一覧は左端に発表年を並べる（publication-list.html）。
 {%- endcomment -%}
-{% assign pub_counter = 0 %}
 {% if site.publication_category %}
   {% for category in site.publication_category %}
     {% assign cat_key = category[0] %}

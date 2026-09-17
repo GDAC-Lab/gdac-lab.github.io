@@ -10,10 +10,22 @@ lang_ref: publications
 
 {% include publication-window.html %}
 
+{%- comment -%}
+  Say up front how much is here. The span and the count are read off the
+  records themselves, so neither has to be edited when the list syncs.
+{%- endcomment -%}
+{%- assign _all_en = site.publications | where_exp: "p", "p.lang != 'ja'" -%}
+{%- include publication-recent-count.html docs=_all_en -%}
+{%- assign _total = recent_count -%}
+{%- assign _from_y = recent_min_y -%}
+{%- assign _to_y = recent_max_y -%}
+
 <p class="publications-page__lede">
   English-language publications, by category.
   {% if pub_years > 0 %}
     Only <strong>{{ min_pub_y }}–{{ current_y }}</strong> (the last {{ pub_years }} years) are shown.{% if site.researchmap_url %} Earlier work is listed on <a href="{{ site.researchmap_url }}">researchmap</a>.{% endif %}
+  {% else %}
+    All <strong>{{ _total }}</strong> records, <strong>{{ _from_y }}–{{ _to_y }}</strong>, newest first within each section.
   {% endif %}
 </p>
 
@@ -44,9 +56,9 @@ lang_ref: publications
 
 {%- comment -%}
   English list: every publication whose title is not Japanese. The Japanese page
-  (_pages/ja/publications.html) shows both languages; see there for why.
+  (_pages/ja/publications.html) shows both languages; see there for why. Each
+  list carries the year in its left gutter — see publication-list.html.
 {%- endcomment -%}
-{% assign pub_counter = 0 %}
 {% if site.publication_category %}
   {% for category in site.publication_category %}
     {% assign cat_key = category[0] %}

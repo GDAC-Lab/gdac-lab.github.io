@@ -131,9 +131,11 @@ publication_category:
     title: 'Preprints'
     title_ja: 'プレプリント'
 
-# Publications index: only the last N calendar years are listed (inclusive). Set to 0 to list all years.
-# Older works: see researchmap_url on the Publications page.
-publication_list_last_n_years: 5
+# Publications index: only the last N calendar years are listed (inclusive). 0 lists every year,
+# which is the setting here -- the list is short enough to read whole, and the year in each
+# entry's left gutter keeps a long page navigable. With a window set, works from before it are
+# left to researchmap_url, which the Publications page then points at.
+publication_list_last_n_years: 0
 
 # Site Settings
 teaser                   :  # filename of teaser fallback teaser image placed in /images/ for social media previews

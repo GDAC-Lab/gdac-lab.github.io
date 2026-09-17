@@ -1,6 +1,10 @@
 {%- comment -%}
-  Counts how many of `include.docs` fall inside the year window and leaves the
-  answer in `recent_count`.
+  Counts how many of `include.docs` fall inside the year window, and works out
+  the span of years they cover. Leaves three values behind:
+
+      recent_count  how many records are in the window
+      recent_min_y  the earliest year among them (0 when there are none)
+      recent_max_y  the latest year among them (0 when there are none)
 
   A category heading, a jump button and a list all have to agree on which
   entries are in the window, so they all count them here rather than each
@@ -9,14 +13,18 @@
       {% include publication-recent-count.html docs=_docs %}
       {% if recent_count == 0 %}{% continue %}{% endif %}
 
-  `recent_count` is overwritten by the next call, so store it in a variable of
-  your own if you need two counts at once.
+  All three are overwritten by the next call, so store what you need in
+  variables of your own if you want two counts at once.
 {%- endcomment -%}
 {%- include publication-window.html -%}
 {%- assign recent_count = 0 -%}
+{%- assign recent_min_y = 0 -%}
+{%- assign recent_max_y = 0 -%}
 {%- for _doc in include.docs -%}
   {%- assign _doc_y = _doc.date | date: "%Y" | plus: 0 -%}
   {%- if pub_years == 0 or _doc_y >= min_pub_y -%}
     {%- assign recent_count = recent_count | plus: 1 -%}
+    {%- if recent_min_y == 0 or _doc_y < recent_min_y -%}{%- assign recent_min_y = _doc_y -%}{%- endif -%}
+    {%- if _doc_y > recent_max_y -%}{%- assign recent_max_y = _doc_y -%}{%- endif -%}
   {%- endif -%}
 {%- endfor -%}

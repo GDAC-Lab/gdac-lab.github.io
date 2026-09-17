@@ -4,18 +4,26 @@
 
       {% include publication-list.html docs=_docs %}
 
-  The running number is kept in `pub_counter`, which the caller initialises to 0
-  once per page and this include then advances, so the numbering continues
-  across the categories (and, on the Japanese page, the language sections) of
-  one page instead of restarting at each heading.
+  The left gutter carries a year rail rather than a running number. The records
+  arrive in date order, so the year is printed once at the head of each run and
+  left blank for the entries below it — the reader gets a column of dates to
+  scan down a long page, and the groups stay visible without a heading per year.
+
+  Numbering an arbitrary list (1., 2., 3.) is still available; ask
+  publication-entry.html for it directly with `pub_index`, as /sitemap/ does.
 {%- endcomment -%}
 {%- include publication-window.html -%}
-<ol class="publication-list">
+<ol class="publication-list publication-list--rail">
+{%- assign _rail_prev = "" -%}
 {%- for post in include.docs reversed -%}
   {%- assign _post_y = post.date | date: "%Y" | plus: 0 -%}
   {%- if pub_years == 0 or _post_y >= min_pub_y -%}
-    {%- assign pub_counter = pub_counter | plus: 1 -%}
-    {% include publication-entry.html pub_index=pub_counter %}
+    {%- assign _rail_y = "" -%}
+    {%- if _post_y != _rail_prev -%}
+      {%- assign _rail_y = _post_y -%}
+      {%- assign _rail_prev = _post_y -%}
+    {%- endif -%}
+    {% include publication-entry.html rail=true rail_year=_rail_y %}
   {%- endif -%}
 {%- endfor %}
 </ol>

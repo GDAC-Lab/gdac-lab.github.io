@@ -3,7 +3,11 @@
 
   A category gets a button only when it has entries inside the year window —
   the same test the lists themselves apply, made through
-  publication-recent-count.html so the two cannot drift apart.
+  publication-recent-count.html so the two cannot drift apart. That count is
+  also printed on the button: on a page that lists every year, the length of a
+  section is what decides whether it is worth scrolling to. The printed count is
+  a bare number with a rule beside it, which reads as "学術雑誌論文11" when
+  spoken, so the button carries a spelt-out aria-label instead.
 
   The English page counts English-language works only; the Japanese page shows
   both languages under one heading per category, so it counts all of them.
@@ -23,7 +27,7 @@
     {%- endif -%}
     {%- include publication-recent-count.html docs=_docs -%}
     {%- if recent_count > 0 %}
-    <a href="#publication-{{ cat_key }}" class="btn btn--inverse publications-page__jump-btn">{{ _label }}</a>
+    <a href="#publication-{{ cat_key }}" class="btn btn--inverse publications-page__jump-btn" aria-label="{{ _label }}{% if _jump_ja %} {{ recent_count }}件{% else %}, {{ recent_count }} entries{% endif %}">{{ _label }}<span class="publications-page__jump-count" aria-hidden="true">{{ recent_count }}</span></a>
     {%- endif -%}
   {%- endfor %}
 </nav>

@@ -1,5 +1,13 @@
 {% comment %}
   Primary link + optional DOI text, slides, BibTeX. plang: page language (en|ja).
+
+  Each separator is written as U+2060 U+00B7 U+200B: a word joiner, the dot,
+  then a zero-width space. Japanese line breaking is free to break between a
+  label such as 出版元ページ and the "·" after it, which on a narrow screen left
+  the separator stranded at the head of the next line; and the DOI that follows
+  is set `white-space: nowrap`, so without a break opportunity of its own the
+  line broke inside the label instead (出版元ペー / ジ). The pair pins the dot to
+  the label and puts the only break after it, where it belongs.
 {% endcomment %}
 {% assign _pl = include.plang | default: 'en' %}
 {% assign pu = include.paperurl %}
@@ -20,13 +28,13 @@
       with an empty DOI after it.
     {%- endcomment -%}
     {% if _doi_id != "" and _doi_id contains "arXiv" %}
-      <a href="https://arxiv.org/abs/{{ _doi_id | split: 'arXiv.' | last }}">arXiv</a><span class="publication-link-sep" aria-hidden="true">·</span><span class="publication-doi-inline">DOI <a href="https://doi.org/{{ _doi_id }}">{{ _doi_id }}</a></span>
+      <a href="https://arxiv.org/abs/{{ _doi_id | split: 'arXiv.' | last }}">arXiv</a><span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span><span class="publication-doi-inline">DOI <a href="https://doi.org/{{ _doi_id }}">{{ _doi_id }}</a></span>
     {% elsif _doi_id != "" %}
       {% capture _doi_resolved %}https://doi.org/{{ _doi_id }}{% endcapture %}
       {% if _pl == 'ja' %}
-        <a href="{{ pu }}">出版元ページ</a><span class="publication-link-sep" aria-hidden="true">·</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
+        <a href="{{ pu }}">出版元ページ</a><span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
       {% else %}
-        <a href="{{ pu }}">Publisher page</a><span class="publication-link-sep" aria-hidden="true">·</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
+        <a href="{{ pu }}">Publisher page</a><span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
       {% endif %}
     {% elsif pu contains "arxiv.org" %}
       <a href="{{ pu }}">arXiv</a>
@@ -39,11 +47,11 @@
     {% endif %}
   {% endif %}
   {% if su %}
-    {% if pu %}<span class="publication-link-sep" aria-hidden="true">·</span>{% endif %}
+    {% if pu %}<span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span>{% endif %}
     <a href="{{ su }}">{% if _pl == 'ja' %}スライド{% else %}Slides{% endif %}</a>
   {% endif %}
   {% if bu %}
-    {% if pu or su %}<span class="publication-link-sep" aria-hidden="true">·</span>{% endif %}
+    {% if pu or su %}<span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span>{% endif %}
     <a href="{{ bu }}">BibTeX</a>
   {% endif %}
 </p>
