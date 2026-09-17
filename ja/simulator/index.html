@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789635846">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789636509">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789635846"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789636509"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -354,7 +354,7 @@
       <h1 class="page__title">シミュレータ</h1>
     
     
-<p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは録画ではなく，そのシミュレータの物理計算をブラウザの中でその場で実行しています。</p>
+<p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは録画ではありません。そのシミュレータの物理計算を，いまブラウザの中で解いています。</p>
 
 <div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-mesh="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav/drone-mesh.bin" data-sim-strings="{&quot;loading&quot;:&quot;物理エンジンを読み込んでいます…&quot;,&quot;ready&quot;:&quot;準備完了。&quot;,&quot;play&quot;:&quot;再生&quot;,&quot;pause&quot;:&quot;一時停止&quot;,&quot;contactYes&quot;:&quot;壁に接触中&quot;,&quot;contactNo&quot;:&quot;非接触&quot;,&quot;failed&quot;:&quot;このブラウザではデモを開始できませんでした。&quot;,&quot;meteredNote&quot;:&quot;モバイル回線または通信量節約モードのようです。Wi-Fi でのご利用をおすすめします。&quot;}">
 
@@ -439,15 +439,15 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1789635846"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1789636509"></script>
 
 <h2 id="何を見ているか">何を見ているか</h2>
 
 <p>4つのロータと2つの車輪を持つ機体です。形は，研究室の実機を採寸して起こしたものです。</p>
 
-<p>壁面を登るときも，特別なことはしていません。<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが壁に阻まれ，その反力が車輪を壁に押し付ける力になります。車輪は壁の上を転がるので，上下方向には自由に動けます。押し付けのための専用の制御は入っていません。</p>
+<p>壁面を登るときも，特別なことはしていません。<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが，壁に阻まれます。このとき壁から受ける反力が，そのまま車輪を壁に押し付ける力になります。車輪は壁の上を転がるので，上下方向には自由に動けます。押し付けのための専用の制御は入っていません。</p>
 
-<p>姿勢の制御には，回転を3つの角度に分解せず，回転行列のまま扱う定式化を用いています。どの姿勢でも計算が破綻しないという性質があり，本研究室の回転運動の制御の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
+<p>姿勢の制御には，回転を3つの角度に分解せず，回転行列のまま扱う定式化を用いています。どの姿勢でも計算が破綻しないという利点があり，本研究室の研究の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
 
 <h2 id="シミュレータ本体">シミュレータ本体</h2>
 
@@ -494,14 +494,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-17 18:04 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-17 18:15 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789635846"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789635846"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789636509"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789636509"></script>
 
 
 
