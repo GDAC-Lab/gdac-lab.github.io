@@ -16,13 +16,10 @@
 
 
 
-
-
 <title>Wind-load Estimation with Equivalent-input-disturbance Approach - GDAC Lab</title>
 
 
-
-<meta name="description" content="">
+<meta name="description" content="Kou Miyamoto, Daiki Sato, Yinli Chen, Jinhua She, Satoshi Nakano. Proc. of 2022 IEEE/ASME International Conference on Advanced Intelligent Mechatronics, pp. 921–925, 2022.">
 
 
 
@@ -47,41 +44,80 @@
 
 
 
-  <script type="application/ld+json">
-    {
-      "@context" : "http://schema.org",
-      "@type" : "Person",
-      "name" : "GDAC Lab",
-      "url" : "https://gdaclab.web.nitech.ac.jp",
-      "sameAs" : null
-    }
-  </script>
-
-
-
-
-
 
 <!-- end SEO -->
 
-<!-- Open Graph protocol data (https://ogp.me/), used by social media -->
-<meta property="og:locale" content="en-US">
-<meta property="og:site_name" content="GDAC Lab"> 
+<!-- Open Graph protocol data (https://ogp.me/), used by social media --><meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="GDAC Lab">
 <meta property="og:title" content="Wind-load Estimation with Equivalent-input-disturbance Approach">
 
   <meta property="og:type" content="article">
 
+  <meta property="og:description" content="Kou Miyamoto, Daiki Sato, Yinli Chen, Jinhua She, Satoshi Nakano. Proc. of 2022 IEEE/ASME International Conference on Advanced Intelligent Mechatronics, pp. 921–925, 2022.">
 
-  <meta property="og:description" name="description" content="">
+<meta property="og:type" content="article">
+
+  <meta property="og:image" content="https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg">
 
 
   <meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/publication/rm-50028741">
 
-
-
-
-
 <!-- end Open Graph protocol -->
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ResearchOrganization",
+      "@id": "https://gdaclab.web.nitech.ac.jp/#lab",
+      "name": "GDAC Lab",
+      "alternateName": ["Geometric Dynamics, Autonomy, and Control Laboratory", "GDAC Lab", "仲野研究室（GDAC Lab）", "仲野研究室", "仲野聡史研究室"],
+      "url": "https://gdaclab.web.nitech.ac.jp/",
+      "parentOrganization": {
+        "@type": "CollegeOrUniversity",
+        "name": "Nagoya Institute of Technology",
+        "url": "https://www.nitech.ac.jp/"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nagoya",
+        "addressRegion": "Aichi",
+        "addressCountry": "JP"
+      },
+      "member": { "@id": "https://gdaclab.web.nitech.ac.jp/#nakano" },
+      "logo": "https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg",
+      "knowsAbout": ["control theory", "constrained control", "geometric control", "attitude control", "robotics", "drones", "spacecraft"]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://gdaclab.web.nitech.ac.jp/#nakano",
+      "name": "Satoshi Nakano",
+      "alternateName": ["仲野 聡史", "仲野聡史", "Satoshi Nakano"],
+      "jobTitle": "Assistant Professor",
+      "worksFor": { "@id": "https://gdaclab.web.nitech.ac.jp/#lab" },
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "Nagoya Institute of Technology",
+        "url": "https://www.nitech.ac.jp/"
+      },
+      "sameAs": ["https://mcontrol.web.nitech.ac.jp/nakano/","https://www.nitech.ac.jp/faculty/nakano-satoshi.html","https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/","https://researchmap.jp/satoshi-nakano","https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en","https://github.com/gdac-lab"]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://gdaclab.web.nitech.ac.jp/#website",
+      "url": "https://gdaclab.web.nitech.ac.jp/",
+      "name": "GDAC Lab",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://gdaclab.web.nitech.ac.jp/#lab" }
+    }
+  ]
+}
+</script>
+
 
 <link href="https://gdaclab.web.nitech.ac.jp/feed.xml" type="application/atom+xml" rel="alternate" title="GDAC Lab Feed">
 
@@ -97,7 +133,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789494823">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789614132">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -105,7 +141,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789494823"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789614132"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -416,13 +452,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-09-16 02:53 JST
+  Last updated 2026-09-17 12:02 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789494823"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789614132"></script>
 
 
 
