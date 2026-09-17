@@ -152,3 +152,19 @@
     font-size: $type-size-7;
   }
 }
+
+/*
+   Buttons in prose
+   ========================================================================== */
+
+/* Both content wrappers underline every link inside them — `.page__content a`
+   for prose pages, `.archive a` for the archive layout the publication indexes
+   use — and each outranks the `text-decoration: none` above on specificity, so
+   a button placed in the content came out underlined. On a Japanese label the
+   underline cuts straight through the lower strokes of characters like 雑 and
+   誌, which is why this restates the rule with enough reach to win. Anchors
+   only: a real <button> was never affected. */
+.page__content a.btn,
+.archive a.btn {
+  text-decoration: none;
+}
