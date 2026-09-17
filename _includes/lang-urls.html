@@ -1,0 +1,39 @@
+{% comment %}
+  Works out this page's English and Japanese URLs, and whether it really has a
+  counterpart. Two places need the same answer and must not drift apart: the
+  language switcher in the masthead, and the hreflang links in the head. A
+  switcher pointing one way while hreflang points another tells a search engine
+  the site contradicts itself.
+
+  Assigns:
+    lang_is_ja     - is this page the Japanese one
+    lang_url_en    - path of the English page
+    lang_url_ja    - path of the Japanese page
+    lang_has_pair  - true when both of those are real, translated pages
+
+  A publication document is one record, held in whichever language the work was
+  written in, and has no counterpart at a mirrored URL: the switcher sends it to
+  each language's index instead, so those URLs are a way out rather than a
+  translation, and lang_has_pair is false. 404 and the sitemap have no language
+  at all.
+{% endcomment %}
+{%- assign lang_is_ja = false -%}
+{%- if page.lang == 'ja' or page.lang_ref == 'publications_ja' -%}
+  {%- assign lang_is_ja = true -%}
+{%- endif -%}
+{%- assign lang_has_pair = false -%}
+{%- if page.collection == 'publications' -%}
+  {%- assign lang_url_en = '/publications/' -%}
+  {%- assign lang_url_ja = '/ja/publications/' -%}
+{%- elsif page.lang == 'ja' -%}
+  {%- assign lang_url_en = page.url | replace_first: '/ja/', '/' -%}
+  {%- assign lang_url_ja = page.url -%}
+  {%- assign lang_has_pair = true -%}
+{%- elsif page.lang == 'en' -%}
+  {%- assign lang_url_en = page.url -%}
+  {%- assign lang_url_ja = page.url | prepend: '/ja' -%}
+  {%- assign lang_has_pair = true -%}
+{%- else -%}
+  {%- assign lang_url_en = page.url -%}
+  {%- assign lang_url_ja = '/ja/' -%}
+{%- endif -%}

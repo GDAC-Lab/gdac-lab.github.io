@@ -1,0 +1,17 @@
+{% comment %}
+  hreflang. Without it a bilingual site offers a search engine two pages with
+  the same subject and no statement that they are the same page in two
+  languages, which invites it to pick one and drop the other -- and the one it
+  drops here is the Japanese page, which is the one Japanese searches want.
+
+  Only emitted where a real counterpart exists (see lang-urls.html): a
+  publication record has none, and neither do 404 or the sitemap. x-default
+  points at the English page, which is the site root.
+{% endcomment %}
+{% include base_path %}
+{% include lang-urls.html %}
+{%- if lang_has_pair -%}
+<link rel="alternate" hreflang="ja" href="{{ lang_url_ja | prepend: base_path }}">
+<link rel="alternate" hreflang="en" href="{{ lang_url_en | prepend: base_path }}">
+<link rel="alternate" hreflang="x-default" href="{{ lang_url_en | prepend: base_path }}">
+{%- endif -%}

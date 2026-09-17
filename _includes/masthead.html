@@ -6,7 +6,7 @@
       <nav id="site-nav" class="greedy-nav">
         <button><div class="navicon"></div></button>
         <ul class="visible-links">
-          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{% if page.lang == 'ja' %}{{ base_path }}/ja/{% else %}{{ base_path }}/{% endif %}">{{ site.title }}</a></li>
+          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{% if page.lang == 'ja' %}{{ base_path }}/ja/{% else %}{{ base_path }}/{% endif %}">{% if page.lang == 'ja' and site.title_ja_short %}{{ site.title_ja_short }}{% else %}{{ site.title }}{% endif %}</a></li>
           {% for link in site.data.navigation.main %}
             {% assign nav_label = link.title %}
             {% if page.lang == 'ja' and link.title_ja %}
@@ -31,32 +31,11 @@
             <li class="masthead__menu-item"><a href="{{ domain }}{{ url }}"{% if link.url contains 'http' %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ nav_label }}</a></li>
           {% endfor %}
           {%- comment -%}
-            Language switcher. Each page links to its counterpart in the other language.
-
-            Publication documents are the exception: a publication is one record, held in
-            whichever language the work was written in, and has no counterpart at a
-            mirrored URL. Sending them through the generic rule below produced a 404 on
-            /ja/publication/<slug> for English works, and a link back to the same page for
-            Japanese ones, so they point at the publications index of each language instead.
+            Language switcher. Each page links to its counterpart in the other
+            language; lang-urls.html works out which URL that is, and the hreflang
+            links in the head read the same answer from it.
           {%- endcomment -%}
-          {%- assign lang_is_ja = false -%}
-          {%- if page.lang == 'ja' or page.lang_ref == 'publications_ja' -%}
-            {%- assign lang_is_ja = true -%}
-          {%- endif -%}
-          {%- if page.collection == 'publications' or page.lang_ref == 'publications' or page.lang_ref == 'publications_ja' -%}
-            {%- assign lang_url_en = '/publications/' -%}
-            {%- assign lang_url_ja = '/ja/publications/' -%}
-          {%- elsif page.lang == 'ja' -%}
-            {%- assign lang_url_en = page.url | replace_first: '/ja/', '/' -%}
-            {%- assign lang_url_ja = page.url -%}
-          {%- elsif page.lang == 'en' -%}
-            {%- assign lang_url_en = page.url -%}
-            {%- assign lang_url_ja = page.url | prepend: '/ja' -%}
-          {%- else -%}
-            {%- comment -%} Pages with no `lang` and so no counterpart (404, sitemap). {%- endcomment -%}
-            {%- assign lang_url_en = page.url -%}
-            {%- assign lang_url_ja = '/ja/' -%}
-          {%- endif -%}
+          {%- include lang-urls.html -%}
           <li class="masthead__menu-item persist">{% if lang_is_ja %}<a href="{{ base_path }}{{ lang_url_en }}" class="masthead__lang-link">{% include lang-flag.html code="gb" %}EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current">{% include lang-flag.html code="jp" %}日本語</span>{% else %}<span class="masthead__lang-current">{% include lang-flag.html code="gb" %}EN</span><span class="masthead__lang-sep">|</span><a href="{{ base_path }}{{ lang_url_ja }}" class="masthead__lang-link">{% include lang-flag.html code="jp" %}日本語</a>{% endif %}</li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-label="{% if page.lang == 'ja' %}表示テーマを切り替える{% else %}Toggle light and dark theme{% endif %}"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="{% if page.lang == 'ja' %}表示テーマの切り替え{% else %}Toggle theme{% endif %}"></i></a>
