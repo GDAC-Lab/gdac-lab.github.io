@@ -1,17 +1,35 @@
-# The following is the order of the links in the header of the website.
+# The order of the links in the header.
 #
-# Changing the order here will adjust the order and you can also add additional
-# links. Removing a link prevents it from showing in the header, but does not
-# prevent it from being included in the site.
+# Removing a link here only takes it out of the header; the page itself stays on
+# the site. Two pages are deliberately absent: /policy/ (still in preparation)
+# and /terms/ (linked from the footer, where a reader looks for it).
+#
+# The order tells the visitor what the lab is, then shows it, then backs it up:
+# what we work on, the record that backs it up, the two things you can watch in
+# the browser, the people, the equipment, and how to get here. The order also
+# decides what survives a narrow window: the masthead keeps as many items as fit
+# and moves the rest into the overflow menu, in this order, so anything put last
+# is the first to disappear on a small laptop.
 
 main:
+  - title: "Research"
+    title_ja: "研究内容"
+    url: /research/
+
   - title: "Publications"
     title_ja: "論文"
     url: /publications/
 
-  - title: "Research"
-    title_ja: "研究内容"
-    url: /research/
+  - title: "Simulator"
+    title_ja: "シミュレータ"
+    url: /simulator/
+
+  # Labelled by its subject rather than by the page's own title: 「太陽を避ける
+  # 姿勢変更」 is ten characters wide, which squeezed the wordmark onto two lines
+  # and pushed four items into the overflow menu on a small laptop.
+  - title: "Sun-safe slew"
+    title_ja: "衛星の姿勢制御"
+    url: /sun-safe-slew/
 
   - title: "People"
     title_ja: "メンバー"
@@ -21,16 +39,6 @@ main:
     title_ja: "実験装置"
     url: /facilities/
 
-  - title: "Simulator"
-    title_ja: "シミュレータ"
-    url: /simulator/
-    
   - title: "Access"
     title_ja: "アクセス"
     url: /access/
-
-  # Japanese-only Blogger; label shows (外部). Same wording on EN/JA nav.
-  - title: "アルバム（外部）"
-    title_ja: "アルバム（外部）"
-    url: "https://gdaclab.blogspot.com/"
-

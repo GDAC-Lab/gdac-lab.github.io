@@ -218,9 +218,15 @@
       display: table-cell;
       vertical-align: middle;
 
+      /* The wordmark. It used to be allowed to wrap, from before the masthead
+         took `title_ja_short`; as a table cell in a table too narrow for its
+         contents that meant 仲野研究室 breaking one character per line and the
+         masthead growing to five rows. Keeping it on one line pushes the
+         pressure back onto the nav items, which is what the overflow menu is
+         there to absorb. */
       &:first-child {
         font-weight: bold;
-        text-wrap: wrap;
+        white-space: nowrap;
 
         a {
           margin-left: 0;

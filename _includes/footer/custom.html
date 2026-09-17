@@ -1,16 +1,20 @@
 <!-- start custom footer snippets -->
 {% include base_path %}
 {%- comment -%}
-  The two pages that belong in a footer rather than in the navigation: the
-  sitemap, and the terms and privacy page. /terms/ carries the conditions for
-  reusing the lab's text and photographs, and the licence notices for the
-  software the demos use; it was reachable only through the sitemap listing,
-  which is not reachable in any real sense.
+  What belongs at the foot of the page rather than in the navigation: the
+  sitemap, the terms and privacy page, and the lab's photo album. /terms/
+  carries the conditions for reusing the lab's text and photographs, and the
+  licence notices for the software the demos use; it was reachable only through
+  the sitemap listing, which is not reachable in any real sense. The album is
+  also linked from the home page and from Facilities, and left the header when
+  the sun-safe slew page took its place.
 {%- endcomment -%}
 <p class="page__footer-links">
   <a href="{{ base_path }}/sitemap/">{% if page.lang == 'ja' %}サイトマップ{% else %}Sitemap{% endif %}</a>
   <span class="page__footer-links-sep" aria-hidden="true">·</span>
   <a href="{{ base_path }}{% if page.lang == 'ja' %}/ja{% endif %}/terms/">{% if page.lang == 'ja' %}利用規約・プライバシー{% else %}Terms and privacy{% endif %}</a>
+  <span class="page__footer-links-sep" aria-hidden="true">·</span>
+  <a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">{% if page.lang == 'ja' %}アルバム（外部）{% else %}Album (external){% endif %}</a>
 </p>
 
 {% comment %}
@@ -20,6 +24,11 @@
 
   - MathJax: opt in per page with `mathjax: true` in the front matter.
   - Plotly and Mermaid: detected automatically from a ```plotly / ```mermaid code block.
+
+  No page uses any of them today, which is why /terms/ is able to say plainly
+  that every page serves its fonts, styles, scripts and images from this site.
+  Turning one on makes that sentence untrue: update /terms/ in both languages
+  at the same time.
 {% endcomment %}
 
 {% if page.mathjax %}
