@@ -15,6 +15,10 @@ which its content may be used. It covers this site only
 (<https://gdaclab.web.nitech.ac.jp>), not Nagoya Institute of Technology as a whole and
 not the external services linked from these pages.
 
+The pages under <https://gdaclab.web.nitech.ac.jp/nakano/> share this domain but are the
+principal investigator's own site, built and run separately with different software
+(WordPress). Nothing below applies to them.
+
 ## Privacy
 
 ### What this site does not do

@@ -58,6 +58,19 @@ jobs:
           bundle install
           bundle exec jekyll build
 
+      # /nakano/ on the live server is a WordPress site that this repository does
+      # not build and must not touch. The two coexist only because Plesk's git
+      # deploy leaves files it does not know about in place -- but an index.html
+      # written there would be served ahead of WordPress's index.php and would
+      # silently replace that site with a blank Jekyll page. Nothing creates one
+      # today; this is here so that nothing ever does by accident.
+      - name: Refuse to publish anything at /nakano/
+        run: |
+          if [ -e _site/nakano ]; then
+            echo "::error title=/nakano/ would be overwritten::The build produced _site/nakano, but on the server that path is a separate WordPress site. Remove whatever page or permalink creates it before deploying."
+            exit 1
+          fi
+
       - name: Deploy to plesk-deploy branch
         uses: peaceiris/actions-gh-pages@v3
         with:

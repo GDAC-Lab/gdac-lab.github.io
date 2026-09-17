@@ -183,7 +183,29 @@ with no depth to argue about. Downscale the 2x screenshot to 1280x720 before com
 
 Pushing to `master` triggers `.github/workflows/deploy.yml`, which re-runs the publication sync,
 builds with Jekyll, and publishes `_site` to the `plesk-deploy` branch, from which the NITech
-Plesk host serves the site. There is no GitHub Pages deployment.
+Plesk host serves the site. There is no GitHub Pages deployment. The pull from `plesk-deploy`
+into `httpdocs` is done by hand in Plesk, so a push here does not reach the live site until
+someone does that.
+
+### The WordPress site at /nakano/
+
+`https://gdaclab.web.nitech.ac.jp/nakano/` is the PI's own page. It is a WordPress install
+living in `httpdocs/nakano/` on the server, it is **not** built from this repository, and
+nothing here should ever write to that path.
+
+The two coexist because Plesk's git deploy only adds and updates the files the repository
+carries — it leaves anything else in `httpdocs` alone (verified by experiment). So the
+WordPress directory survives every deploy.
+
+What would break it is this repository producing a page there. Apache serves `index.html`
+ahead of `index.php`, so a single `permalink: /nakano/` anywhere in `_pages/` would put a
+blank Jekyll page in front of that site, with no error and nothing in the deploy log to say
+so. **Never give a page, collection, or redirect the permalink `/nakano/` or anything below
+it.** The deploy workflow fails the build if `_site/nakano` appears, which is the backstop,
+not the rule.
+
+`site.author.uri` in `_config.yml` points at that site; the sidebar link, the People page and
+the `url` of the Person in the structured data all follow from it.
 
 ## Running locally
 
