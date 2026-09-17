@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "太陽を避ける姿勢変更"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）による拘束付き姿勢制御のアニメーション。太陽を避けながら宇宙望遠鏡の向きを 95° 変える計算結果を，ブラウザ上で再生できます。"
 permalink: /ja/sun-safe-slew/
 author_profile: true
 lang: ja

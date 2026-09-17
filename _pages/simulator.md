@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "Simulator"
+description: "The wheeled-drone simulator of GDAC Lab, Nagoya Institute of Technology, with a demo that solves MuJoCo physics in your own browser."
 permalink: /simulator/
 author_profile: true
 lang: en

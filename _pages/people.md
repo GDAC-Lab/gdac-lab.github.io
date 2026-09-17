@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "People"
+description: "Members of GDAC Lab, Nagoya Institute of Technology: Satoshi Nakano, graduate and undergraduate students, and collaborating researchers."
 permalink: /people/
 author_profile: true
 lang: en

@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "Facilities"
+description: "Experimental facilities at GDAC Lab, Nagoya Institute of Technology: wheeled drones, the motion-capture flight space and the apparatus used in our experiments."
 permalink: /facilities/
 author_profile: true
 lang: en

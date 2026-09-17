@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "研究内容"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）の研究内容。SO(3) 上の拘束を考慮した回転運動の制御，Explicit Reference Governor と制御バリア関数，小型衛星の姿勢制御，車輪付きドローンによるインフラ点検。"
 permalink: /ja/research/
 author_profile: true
 lang: ja

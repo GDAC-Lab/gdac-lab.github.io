@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "Research"
+description: "Research at GDAC Lab, Nagoya Institute of Technology: constrained control of rotational motion on SO(3), explicit reference governors and control barrier functions, small-satellite attitude control, and wheeled drones for infrastructure inspection."
 permalink: /research/
 author_profile: true
 lang: en

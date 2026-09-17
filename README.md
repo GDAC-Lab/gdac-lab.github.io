@@ -91,6 +91,32 @@ between 2026-07-06 and 2026-09-05. If the workflow shows as disabled, press **En
 The heartbeat step in the workflow now commits a timestamp whenever the repository has been quiet
 for a month, so the 60-day timer should not run out again.
 
+## What search engines are told
+
+The site has to answer 「名工大 仲野」, and until now it did not say so anywhere a
+search engine reads. Four things carry that, and all four are easy to undo by
+accident:
+
+| Where | What it must say |
+| --- | --- |
+| `<title>` | `_includes/seo.html` composes `<page title> - <site title>`, taking the Japanese suffix from `title_ja` in `_config.yml`, so every Japanese page says 仲野研究室. A page may set `seo_title` in its front matter to state the whole thing itself; both home pages do, because the composed form would repeat the name. |
+| `description` | Every content page carries its own, in its own language, front-loaded for the ~90 Japanese or ~155 Latin characters a result shows. Publication records have no prose, so seo.html composes one from their authors, venue and year. `site.description` is a fallback that should never be reached. |
+| `hreflang` | `_includes/head/alternate-languages.html`, from the same `_includes/lang-urls.html` the language switcher uses — the switcher and hreflang must not contradict each other. Only emitted where a counterpart exists. |
+| structured data | `_includes/head/structured-data.html`: the lab as a research organization inside the university, 仲野 聡史 as a person, the site, cross-referenced by `@id`. `sameAs` is what ties the person here to the same person on researchmap, Pure and the university's own pages, so keep those URLs live — `nitech_faculty_url` in `_config.yml` is one of them. |
+
+The theme's own structured data used to declare `{"@type":"Person","name":"GDAC
+Lab"}` — a person named after the laboratory — and switching `og_image` on added
+a second, anonymous `Organization` for the same URL. Both are gone from
+`seo.html`; do not restore them from upstream.
+
+Names: Japanese pages say 仲野研究室（GDAC Lab）, English ones GDAC Lab. The
+masthead uses `title_ja_short` (仲野研究室) because the full form breaks over two
+lines on a laptop and three on a phone.
+
+What the repository cannot do: register the site in Google Search Console and
+submit `sitemap.xml`, and get the older 機械制御研究室 site to link here. Those
+matter more than anything above and have to be done outside it.
+
 ## The two browser demos
 
 Both live under `assets/`, are served entirely from this site, and are reached from their

@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "Lab operating guidelines"
+description: "How to join GDAC Lab, Nagoya Institute of Technology, as an undergraduate or graduate student, and how the lab is run."
 permalink: /policy/
 author_profile: true
 lang: en

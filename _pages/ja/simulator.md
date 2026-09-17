@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "シミュレータ"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）が公開している車輪付きドローンのシミュレータ。MuJoCo の物理計算をブラウザ上でそのまま実行するデモを掲載しています。"
 permalink: /ja/simulator/
 author_profile: true
 lang: ja

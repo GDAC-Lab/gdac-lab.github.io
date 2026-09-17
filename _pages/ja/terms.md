@@ -1,6 +1,7 @@
 ---
 permalink: /ja/terms/
 title: "利用規約・プライバシーポリシー"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）ウェブサイトの利用規約とプライバシーポリシーです。"
 modified: 2026-09-15
 lang: ja
 lang_ref: terms

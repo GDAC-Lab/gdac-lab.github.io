@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "Sun-safe slew"
+description: "A space telescope slews 95 degrees with the Sun in the way, and the controller finds its own way around the keep-out cone: an animation of constrained attitude control from GDAC Lab, Nagoya Institute of Technology."
 permalink: /sun-safe-slew/
 author_profile: true
 lang: en

@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "メンバー"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）のメンバー。仲野 聡史（助教），大学院生・学部生，および共同研究者の一覧です。"
 permalink: /ja/people/
 author_profile: true
 lang: ja

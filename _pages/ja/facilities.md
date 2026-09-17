@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "実験装置・設備"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）の実験装置・設備。車輪付きドローンの実機，モーションキャプチャを備えた飛行スペース，実験に用いる装置を紹介します。"
 permalink: /ja/facilities/
 author_profile: true
 lang: ja

@@ -10,14 +10,29 @@
 locale                   : "en-US"
 site_theme               : "default" # Currently available options are "default", "air"
 title                    : "GDAC Lab"
+# The suffix on Japanese page titles. English searches look for "GDAC Lab";
+# Japanese ones look for 仲野研究室, and a title is the one line a search result
+# always shows, so the Japanese pages say the name Japanese readers search for.
+title_ja                 : "仲野研究室（GDAC Lab）"
+# The masthead brand, where the full form breaks over two lines on a laptop and
+# three on a phone. The parenthesis is what a wordmark can afford to drop: the
+# title, the heading and the structured data all still carry it.
+title_ja_short           : "仲野研究室"
 title_separator          : "-"
 name                     : &name "GDAC Lab"
-description              : &description "Geometric Dynamics, Autonomy, and Control Laboratory"   # Update this with a general description of your site, this is the default if not overridden by a page
+# Fallback only: every content page carries a description of its own, in its own
+# language. A page that reaches this line is showing English to a Japanese
+# reader, so if one turns up in a search result, give that page a description.
+description              : &description "Geometric Dynamics, Autonomy, and Control Laboratory, Nagoya Institute of Technology"
 url                      : https://gdaclab.web.nitech.ac.jp # Must match the live host (see CNAME). Wrong host breaks absolute links and assets.
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "gdac-lab/gdac-lab.github.io"
 # Source for automated _publications (scripts/fetch_researchmap_publications.py)
 researchmap_url          : "https://researchmap.jp/satoshi-nakano?lang=english"
+# Listed in the structured data as another page about the same person, alongside
+# researchmap and Pure. Leave blank rather than guess: a sameAs pointing at a
+# 404 is worse than a shorter list.
+nitech_faculty_url       : "https://www.nitech.ac.jp/faculty/nakano-satoshi.html"
 
 # Site Author - The following control what appear as part of the author content on the side bar.
 #               If a field is blank the icon and link will not appear, otherwise it will be shown.
@@ -171,16 +186,10 @@ facebook:
   username               :
   app_id                 :
   publisher              :
-og_image                 :  # Social media default site image
+og_image                 : "lab/group-photo.jpg"  # shown when a link to this site is unfurled by a chat app or a social platform
 og_description           :  # Social media default site image description
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
-social:
-  type                   : # Person or Organization (defaults to Person)
-  name                   : # If the user or organization name differs from the site's name
-  links: # An array of links to social media profiles
-
-
 # Analytics
 analytics:
   provider               :  "false" # false (default), "google", "google-universal", "google-analytics-4", "custom"

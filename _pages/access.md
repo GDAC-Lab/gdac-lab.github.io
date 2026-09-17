@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "Access"
+description: "How to reach GDAC Lab, Nagoya Institute of Technology: address, campus location and directions."
 permalink: /access/
 author_profile: true
 lang: en

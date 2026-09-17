@@ -1,6 +1,7 @@
 ---
 layout: archive
 title: "研究室の運営方針"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）の運営方針。学部・大学院の配属や研究室の進め方についてまとめています。"
 permalink: /ja/policy/
 author_profile: true
 lang: ja

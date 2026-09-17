@@ -1,6 +1,7 @@
 ---
 permalink: /terms/
 title: "Terms and privacy policy"
+description: "Terms of use and privacy policy for the website of GDAC Lab, Nagoya Institute of Technology."
 modified: 2026-09-15
 lang: en
 lang_ref: terms
