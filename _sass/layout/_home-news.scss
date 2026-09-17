@@ -1,12 +1,12 @@
 /* Homepage news / お知らせ */
 .home-news {
   margin: 2rem 0 1.5rem;
-  padding-top: 1.25rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--global-border-color);
 }
 
 .home-news__heading {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.7rem;
   font-size: 1.4375rem;   /* matches the prose h2 */
   font-weight: 700;
   line-height: 1.4;
@@ -19,9 +19,20 @@
   list-style: none;
 }
 
+/* Most entries are one short line, and giving the date a line of its own made
+   the list twice as tall as it needed to be. The date sits in a column instead,
+   the way the year does in the publication list, so a one-line item takes one
+   line. An entry with a title, a body and a link still stacks those in the
+   right-hand column. */
 .home-news__item {
-  margin: 0 0 1.25rem;
-  padding: 0 0 1.15rem;
+  display: grid;
+  grid-template-columns: 5.75rem 1fr;
+  /* `baseline` looks right on the first row but leaves a row with only the link
+     in it 23px taller than the link, so the date is nudged onto the body's
+     baseline by hand instead. */
+  align-items: start;
+  margin: 0 0 0.7rem;
+  padding: 0 0 0.7rem;
   border-bottom: 1px solid var(--global-border-color);
 
   &:last-child {
@@ -32,34 +43,34 @@
 }
 
 .home-news__date {
-  display: block;
-  margin: 0 0 0.25rem;
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  padding: 0.15rem 0.75rem 0 0;
   font-size: 0.8125rem;
   color: var(--global-text-color-light);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .home-news__title {
-  margin: 0 0 0.35rem;
+  grid-column: 2;
+  margin: 0 0 0.3rem;
   font-size: 1.0625rem;
   font-weight: 700;
   line-height: 1.4;
   color: var(--global-text-color-strong, var(--global-text-color));
 }
 
-/* Title omitted: date flows into body */
-.home-news__item--no-title .home-news__body {
-  margin-top: 0.15rem;
-}
-
 .home-news__body {
+  grid-column: 2;
   margin: 0;
   font-size: 0.9375rem;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--global-text-color);
 
   p {
-    margin: 0 0 0.5em;
+    margin: 0 0 0.4em;
 
     &:last-child {
       margin-bottom: 0;
@@ -67,9 +78,30 @@
   }
 }
 
-.home-news__link-wrap {
-  margin: 0.5rem 0 0;
+/* Qualified by the tag: the theme's own paragraph rule is more specific than a
+   lone class here, and it was adding 23px under the link. */
+.home-news p.home-news__link-wrap {
+  grid-column: 2;
+  margin: 0.25rem 0 0;
   font-size: 0.9375rem;
+}
+
+/* No room for a column beside the text on a phone: the date goes back above. */
+@include breakpoint(max-width 600px) {
+  .home-news__item {
+    grid-template-columns: 1fr;
+  }
+
+  .home-news__date {
+    padding-right: 0;
+    margin-bottom: 0.15rem;
+  }
+
+  .home-news__title,
+  .home-news__body,
+  .home-news p.home-news__link-wrap {
+    grid-column: 1;
+  }
 }
 
 .home-news__more {
