@@ -173,7 +173,10 @@ atom_feed:
 
 
 # SEO Related
-google_site_verification :
+# Search Console, https://gdaclab.web.nitech.ac.jp/ (URL prefix property).
+# Not a secret: seo.html puts it in the head of every page, which is the point
+# of it. Removing it un-verifies the property.
+google_site_verification : "9R2JrmzriaDdkLuCmC8LwMKuFrELVBbz8avjXg3pWUg"
 bing_site_verification   :
 alexa_site_verification  :
 yandex_site_verification :
