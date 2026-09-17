@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789624530">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789633332">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789624530"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789633332"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -334,7 +334,7 @@
       <h1 class="page__title">シミュレータ</h1>
     
     
-<p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは，そのシミュレータが使っている物理エンジンをブラウザ上でそのまま動かしたものです。録画ではありません。</p>
+<p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは録画ではなく，そのシミュレータの物理計算をブラウザの中でその場で実行しています。</p>
 
 <div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-mesh="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav/drone-mesh.bin" data-sim-strings="{&quot;loading&quot;:&quot;物理エンジンを読み込んでいます…&quot;,&quot;ready&quot;:&quot;準備完了。&quot;,&quot;play&quot;:&quot;再生&quot;,&quot;pause&quot;:&quot;一時停止&quot;,&quot;contactYes&quot;:&quot;壁に接触中&quot;,&quot;contactNo&quot;:&quot;非接触&quot;,&quot;failed&quot;:&quot;このブラウザではデモを開始できませんでした。&quot;,&quot;meteredNote&quot;:&quot;モバイル回線または通信量節約モードのようです。Wi-Fi でのご利用をおすすめします。&quot;}">
 
@@ -410,7 +410,7 @@
     </dl>
 
     <p class="simdemo__hint" id="simdemo-pad-help">
-      目標は，3D 表示の<b>緑の球を直接ドラッグ</b>するか，左下の<b>パッド</b>をドラッグして動かします（パッドにフォーカスがあれば矢印キー，Shift で大きく）。3D 表示のそれ以外の場所はドラッグで視点回転，ホイールで拡大縮小です。壁面は <b>1.95 m</b> の位置にあり，車輪（半径 0.15 m）が触れると機体は <b>1.80 m</b> より先へは進めません。目標をそれより奥へ置くと，届かない分がそのまま壁への押し付け力になります。押し付けのための専用の制御は入っていません。
+      目標は，3D 表示の<b>緑の球を直接ドラッグ</b>するか，左下の<b>パッド</b>をドラッグして動かします（パッドにフォーカスがあれば矢印キー，Shift で大きく）。3D 表示のそれ以外の場所はドラッグで視点回転，ホイールで拡大縮小です。
     </p>
   </div>
 </div>
@@ -419,43 +419,19 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1789624530"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1789633332"></script>
 
-<h2 id="このデモについて">このデモについて</h2>
+<h2 id="何を見ているか">何を見ているか</h2>
 
-<p><strong>物理計算はブラウザの中で実行されています。</strong>WebAssembly 版の MuJoCo を読み込み，デスクトップ版のシミュレータが生成するものと同一のモデルファイルを，同じ 1 ms 刻みで解いています。制御則も，シミュレータの幾何学的制御器をそのまま JavaScript へ移植したものです（数値が一致することを確認しています）。</p>
+<p>4つのロータと2つの車輪を持つ機体です。形は，研究室の実機を採寸して起こしたものです。</p>
 
-<p>目標位置を動かすと，機体はその場で計算し直して動きます。あらかじめ用意した動きを再生しているわけではありません。</p>
-
-<h2 id="何が起きているか">何が起きているか</h2>
-
-<p>画面の機体は，研究室で実機を採寸して起こした CAD を，ブラウザ向けに簡略化して表示したものです。車輪の回転は物理計算の結果をそのまま描いています（プロペラの回転だけは見た目のためのものです）。</p>
-
-<p>機体は4つのロータと2つの車輪を持ちます。壁面を登るときは，<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが壁に阻まれ，壁からの反力がその分だけ押し付け力として働きます。車輪は壁の上を転がるので，上下方向には自由に動けます。押し付けのための専用の制御は入っていません。</p>
+<p>壁面を登るときも，特別なことはしていません。<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが壁に阻まれ，その反力が車輪を壁に押し付ける力になります。車輪は壁の上を転がるので，上下方向には自由に動けます。押し付けのための専用の制御は入っていません。</p>
 
 <p>姿勢の制御には，回転を3つの角度に分解せず，回転行列のまま扱う定式化を用いています。どの姿勢でも計算が破綻しないという性質があり，本研究室の回転運動の制御の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
 
-<ul>
-  <li><strong>目標の動かし方</strong> — 3D 表示の緑の球を直接ドラッグするか，3D 表示の左下にあるパッド（横軸が壁方向，縦軸が高さ）をドラッグします。パッドにフォーカスがあれば矢印キーでも動かせます。</li>
-  <li><strong>壁方向位置の「+」表示</strong> — 車輪が壁に触れる位置（1.80 m）より，目標がどれだけ奥にあるかを示します。この分が押し付け力になります。</li>
-  <li><strong>実時間比</strong> — 実時間に対する計算の進み具合です。1.00× なら実時間どおりに解けています。</li>
-</ul>
-
 <h2 id="シミュレータ本体">シミュレータ本体</h2>
 
-<p>シミュレータは，MuJoCo による物理計算部（Python）と，UDP で接続する制御器（MATLAB／Python）からなります。単機・複数機，壁面や曲面地形のほか，実機の PX4 フライトコントローラを組み込んだ HITL（hardware-in-the-loop）にも対応しています。</p>
-
-<ul>
-  <li>リポジトリ：<a href="https://github.com/GDAC-Lab/mujoco-wheeled-uav-simulator">GDAC-Lab/mujoco-wheeled-uav-simulator</a></li>
-  <li>ライセンス：リポジトリ内の <code class="language-plaintext highlighter-rouge">LICENSE</code> を参照</li>
-  <li>引用情報：リポジトリ内の <code class="language-plaintext highlighter-rouge">CITATION.cff</code> を参照</li>
-</ul>
-
-<p>このページのデモは，<a href="https://mujoco.org/">MuJoCo</a>（Apache-2.0）の WebAssembly ビルドと <a href="https://threejs.org/">three.js</a>（MIT）を用いています。いずれも本サイト内に配置しており，外部への通信は発生しません。</p>
-
-<h2 id="動作環境">動作環境</h2>
-
-<p>デモの実行には，WebGL と WebAssembly に対応したブラウザが必要です。物理エンジンの読み込みには数 MB の通信が発生するため，ページを開いただけでは転送せず，<strong>「読み込んで実行する」を押したときに初めて</strong>転送します。転送は初回のみで，このページ以外には影響しません。デモが動かない場合も，研究の概要は<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページでご覧いただけます。</p>
+<p>単機・複数機，壁面や曲面地形に対応し，実機のフライトコントローラを組み込んだ試験も行えます。ソースコード・ライセンス・引用情報は <a href="https://github.com/GDAC-Lab/mujoco-wheeled-uav-simulator">GitHub</a> で公開しています。</p>
 
   </div>
 </div>
@@ -493,13 +469,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-17 14:55 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-17 17:22 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789624530"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789633332"></script>
 
 
 
