@@ -2,18 +2,16 @@
 permalink: /terms/
 title: "Terms and privacy policy"
 description: "Terms of use and privacy policy for the website of GDAC Lab, Nagoya Institute of Technology."
-modified: 2026-09-15
+modified: 2026-09-17
 lang: en
 lang_ref: terms
 ---
 
 {% include base_path %}
-{% include toc %}
 
-This page describes how this website handles visitor information, and the terms under
-which its content may be used. It covers this site only
-(<https://gdaclab.web.nitech.ac.jp>), not Nagoya Institute of Technology as a whole and
-not the external services linked from these pages.
+How this website (<https://gdaclab.web.nitech.ac.jp>) handles visitor information, and the
+terms under which its content may be used. It does not cover Nagoya Institute of Technology
+as a whole, nor the external services linked from these pages.
 
 The pages under <https://gdaclab.web.nitech.ac.jp/nakano/> share this domain but are the
 principal investigator's own site, built and run separately with different software
@@ -21,103 +19,56 @@ principal investigator's own site, built and run separately with different softw
 
 ## Privacy
 
-### What this site does not do
+This is a static website. It has no accounts, no comment form and no contact form, and it
+collects nothing from you. **It uses no analytics, no advertising and no cookies.** Every
+page serves its fonts, styles, scripts and images from this site itself, so simply reading
+one sends no request to any other company's server.
 
-This is a static website. It has no accounts, no comment form, and no contact form, and
-it collects nothing from you directly.
+The demos solve their physics in your own browser. No result, no interaction and no
+measurement of your device leaves it.
 
-Specifically, this site does **not**:
+If you switch the site between light and dark appearance, that one choice is saved in your
+browser. It stays on your device and is removed when you clear your browser's site data.
 
-* use Google Analytics or any other analytics or tracking service;
-* show advertising, or embed third-party ad or tracking scripts;
-* set any cookies;
-* host a comment system.
+The site is served from a web server operated by Nagoya Institute of Technology, which — as
+is normal for any web server — may keep access records. Those are handled by the university
+under its own policies; please refer to Nagoya Institute of Technology for details.
 
-Pages load their fonts, stylesheets, scripts, and images from this site itself, so simply
-reading a page does not send a request to any other company's server. Pages that display
-mathematics or generated diagrams are the one exception: those load a rendering library
-from a public CDN, and only on the pages that actually use one.
+Pages link out to services such as researchmap and publisher pages. These are ordinary
+links: nothing is sent to those services unless you choose to follow them.
 
-### Theme preference
+## Using the content
 
-If you switch the site between light and dark appearance, that choice is saved in your
-own browser using `localStorage`. It stays on your device, is readable only by this site,
-and is never transmitted anywhere. Clearing your browser's site data removes it.
+Text and images published here describing the laboratory, its research and its members may
+be quoted or cited for non-commercial academic and educational purposes with attribution to
+the GDAC Lab, Nagoya Institute of Technology. **Please ask before reusing photographs of lab
+members, and before any commercial use.**
 
-### Server logs
+Publication entries are bibliographic records compiled automatically from researchmap and
+from Crossref and arXiv metadata. The papers themselves remain under the copyright of their
+publishers and authors; follow the DOI or arXiv link on each entry for the authoritative
+version and its license terms.
 
-This site is served from a web server operated by Nagoya Institute of Technology. As is
-normal for any web server, it may record standard access information such as IP address,
-date and time, requested page, referring page, and browser identification. That data is
-handled by the university under its own policies; please refer to Nagoya Institute of
-Technology for details of its handling and retention.
+Nothing here is an official statement of Nagoya Institute of Technology. For admissions,
+procedures and official dates, follow the university's own announcements. Some pages are
+still in preparation.
 
-### Links and share buttons to other services
+## Software used
 
-Pages link out to services such as researchmap, Google Scholar, publisher and DOI pages,
-arXiv, GitHub, and the lab's external photo album. Publication pages also carry share
-buttons for external social platforms. These are ordinary links: nothing is sent to those
-services unless you choose to follow or use them. Once you do, that service's own privacy
-policy applies, not this one.
+The site is built with [Jekyll](https://jekyllrb.com) from
+[Academic Pages](https://github.com/academicpages/academicpages.github.io), a fork of
+[Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)
+(© 2016 Michael Rose, MIT License).
 
-## Terms of use
-
-### Site content
-
-Text and images published here describing the laboratory, its research, and its members
-may be quoted or cited for non-commercial academic and educational purposes with
-attribution to the GDAC Lab, Nagoya Institute of Technology. Please ask before reusing
-photographs of lab members, and before any commercial use.
-
-### Publications
-
-Publication entries on this site are bibliographic records, compiled automatically from
-researchmap and from Crossref and arXiv metadata. The papers themselves remain under the
-copyright of their publishers and authors; follow the DOI or arXiv link on each entry for
-the authoritative version and its license terms. Records here may lag behind, or differ
-in detail from, the publisher's own listing.
-
-### Accuracy
-
-Pages are maintained on a best-effort basis, and some pages are still in preparation.
-Nothing here should be treated as an official statement of Nagoya Institute of Technology.
-For formal matters — admissions, procedures, and official dates — follow the university's
-own announcements.
-
-### Website software
-
-The site is built with [Jekyll](https://jekyllrb.com) from a fork of the
-[Academic Pages](https://github.com/academicpages/academicpages.github.io) template, in
-turn a fork of [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)
-(© 2016 Michael Rose). That template code is used under the MIT License and remains under
-its own copyright; the license text ships with the site's source repository.
-
-The [Simulator]({{ base_path }}/simulator/) page additionally carries a WebAssembly
-build of [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0) and
-[three.js](https://threejs.org/) (MIT License). Both are served from this site, not
-from a third party, and both license texts ship alongside them.
-
-The [Sun-safe slew]({{ base_path }}/sun-safe-slew/) page uses the same copy of three.js,
-along with the [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)
+The [Simulator]({{ base_path }}/simulator/) and [Sun-safe slew]({{ base_path }}/sun-safe-slew/)
+pages use [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0),
+[three.js](https://threejs.org/) (MIT License), the
+[Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)
 (© 2018 The Chakra Petch Project Authors) and
 [IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono) (© 2017 IBM Corp.)
 typefaces under the SIL Open Font License 1.1, and a spacecraft mesh generated from
-primitives and released under CC0-1.0. The fonts are served from this site rather than
-from a font service, so that page makes no external requests either.
-
-### Running the demos
-
-The demo on the Simulator page solves the physics in your own browser. It transfers
-several megabytes of program code when you press "Load and run" — not merely by opening
-the page — and while it is running it uses the processor and the graphics hardware of your device, which on a
-laptop or phone will draw more battery than an ordinary page. It sends nothing back:
-no result, no interaction, and no measurement of your device leaves your browser. The
-demo pauses itself whenever the page is not visible, and pausing it by hand stops the
-computation entirely.
-
-The animation on the Sun-safe slew page is lighter: it plays back a run computed in
-advance rather than solving anything, so it transfers a few hundred kilobytes when the
-page opens and after that only draws. It sends nothing back either.
+primitives and released under CC0-1.0. All of them are served from this site rather than
+from a third party, and their license texts ship alongside them.
 
 ## Contact
 
