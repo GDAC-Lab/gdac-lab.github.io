@@ -57,6 +57,17 @@
   }
 }
 
+.page__footer-links {
+  margin: 0 0 0.35em;
+  font-family: $global-font-family;
+  font-size: $type-size-7;
+}
+
+.page__footer-links-sep {
+  margin: 0 0.4em;
+  opacity: 0.6;
+}
+
 .page__footer-copyright {
   font-family: $global-font-family;
   font-size: $type-size-7;

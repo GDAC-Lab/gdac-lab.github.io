@@ -1,6 +1,17 @@
 <!-- start custom footer snippets -->
 {% include base_path %}
-<a href="{{ base_path }}/sitemap/">{% if page.lang == 'ja' %}サイトマップ{% else %}Sitemap{% endif %}</a>
+{%- comment -%}
+  The two pages that belong in a footer rather than in the navigation: the
+  sitemap, and the terms and privacy page. /terms/ carries the conditions for
+  reusing the lab's text and photographs, and the licence notices for the
+  software the demos use; it was reachable only through the sitemap listing,
+  which is not reachable in any real sense.
+{%- endcomment -%}
+<p class="page__footer-links">
+  <a href="{{ base_path }}/sitemap/">{% if page.lang == 'ja' %}サイトマップ{% else %}Sitemap{% endif %}</a>
+  <span class="page__footer-links-sep" aria-hidden="true">·</span>
+  <a href="{{ base_path }}{% if page.lang == 'ja' %}/ja{% endif %}/terms/">{% if page.lang == 'ja' %}利用規約・プライバシー{% else %}Terms and privacy{% endif %}</a>
+</p>
 
 {% comment %}
   MathJax / Plotly / Mermaid are large third-party bundles. They used to load on every
