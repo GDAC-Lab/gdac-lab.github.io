@@ -49,7 +49,12 @@ author:
   location_ja      : "名古屋"
   employer         : "Nagoya Institute of Technology"
   employer_ja      : "名古屋工業大学"
-  uri              : "https://mcontrol.web.nitech.ac.jp/nakano/" # PI / lab intro (NITech)
+  # The PI's own page: a separate WordPress site, served from /nakano/ of this
+  # same domain. Nothing in this repository builds it -- see README, "The
+  # WordPress site at /nakano/". The old address
+  # (mcontrol.web.nitech.ac.jp/nakano/) still answers and is on business cards,
+  # so it is being kept for now; this is the one to link.
+  uri              : "https://gdaclab.web.nitech.ac.jp/nakano/" # PI's personal page
   pure_url         : "https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/" # PI profile (NITech Pure)
   # Email: plain `email` adds a mailto link in the sidebar. `email_image` is shown only on People (教員 block).
   email            : # used only if email_image is unset, for sidebar mailto

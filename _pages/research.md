@@ -131,4 +131,4 @@ We also take part in the following themes as **collaborators**.
 
 Our wheeled-drone simulator is publicly available, and the [Simulator]({{ base_path }}/simulator/) page runs a demo of it in your browser.
 
-A full list of papers is on the [Publications]({{ base_path }}/publications/) page, and our collaborators are listed under [People]({{ base_path }}/people/). Funding, awards, and other details are on the [faculty page](https://mcontrol.web.nitech.ac.jp/nakano/).
+A full list of papers is on the [Publications]({{ base_path }}/publications/) page, and our collaborators are listed under [People]({{ base_path }}/people/). Funding, awards, and other details are on [Satoshi Nakano's personal page](https://gdaclab.web.nitech.ac.jp/nakano/).

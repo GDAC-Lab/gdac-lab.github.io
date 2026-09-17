@@ -18,7 +18,8 @@ lang_ref: people
 - **所属**：名古屋工業大学 工学専攻
 - **研究室（学生室）**：3号館10階1010室
 - **researchmap**：[仲野 聡史](https://researchmap.jp/satoshi-nakano)
-- **教員ページ（名工大）**：[mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
+- **個人ページ**：[gdaclab.web.nitech.ac.jp/nakano](https://gdaclab.web.nitech.ac.jp/nakano/)
+- **教員紹介（名工大）**：[www.nitech.ac.jp/faculty/nakano-satoshi.html](https://www.nitech.ac.jp/faculty/nakano-satoshi.html)
 
 {% include people-faculty-email-image.html %}
 

@@ -18,7 +18,8 @@ lang_ref: people
 - **Affiliation**: Nagoya Institute of Technology, Department of Engineering
 - **Lab room**: Building 3, 10th floor, Room 1010
 - **researchmap**: [Satoshi Nakano](https://researchmap.jp/satoshi-nakano?lang=english)
-- **Faculty page (NITech)**: [mcontrol.web.nitech.ac.jp/nakano](https://mcontrol.web.nitech.ac.jp/nakano/)
+- **Personal page**: [gdaclab.web.nitech.ac.jp/nakano](https://gdaclab.web.nitech.ac.jp/nakano/)
+- **Faculty directory (NITech)**: [www.nitech.ac.jp/faculty/nakano-satoshi.html](https://www.nitech.ac.jp/faculty/nakano-satoshi.html)
 
 {% include people-faculty-email-image.html %}
 

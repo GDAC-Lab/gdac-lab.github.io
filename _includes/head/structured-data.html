@@ -10,7 +10,10 @@
 
   sameAs is the load-bearing part. Everything listed is a page the site already
   links to from the sidebar or from People, so nothing here is a claim the site
-  does not make in plain sight as well.
+  does not make in plain sight as well. site.author.uri is not among them: the
+  PI's own page now sits at /nakano/ of this same domain, which makes it the
+  Person's `url` -- the page that is about him -- rather than one more identity
+  held somewhere else.
 {% endcomment %}
 {% include base_path %}
 {%- assign lab_ja = "仲野研究室（GDAC Lab）" -%}
@@ -24,7 +27,6 @@
 {%- endcomment -%}
 {%- assign rm = site.researchmap_url | split: "?" | first -%}
 {%- capture same_as_raw -%}
-{%- if site.author.uri %}{{ site.author.uri }}|{% endif -%}
 {%- if site.nitech_faculty_url %}{{ site.nitech_faculty_url }}|{% endif -%}
 {%- if site.author.pure_url %}{{ site.author.pure_url }}|{% endif -%}
 {%- if rm %}{{ rm }}|{% endif -%}
@@ -71,7 +73,8 @@
         "@type": "CollegeOrUniversity",
         "name": {% if page.lang == 'ja' %}"名古屋工業大学"{% else %}"Nagoya Institute of Technology"{% endif %},
         "url": "https://www.nitech.ac.jp/"
-      }{% if same_as.size > 0 %},
+      }{% if site.author.uri %},
+      "url": "{{ site.author.uri }}"{% endif %}{% if same_as.size > 0 %},
       "sameAs": {{ same_as | jsonify }}{% endif %}
     },
     {

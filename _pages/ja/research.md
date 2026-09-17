@@ -131,4 +131,4 @@ Liquid コメントなので，このブロックは公開 HTML には一切出�
 
 車輪付きドローンのシミュレータは公開しており，[シミュレータ]({{ base_path }}/ja/simulator/)のページでブラウザ上のデモを動かせます。
 
-論文の一覧は[論文・著作]({{ base_path }}/ja/publications/)のページ，共同研究者は[メンバー]({{ base_path }}/ja/people/)のページにあります。外部資金や受賞を含む詳細は[教員ページ](https://mcontrol.web.nitech.ac.jp/nakano/ja/)をご覧ください。
+論文の一覧は[論文・著作]({{ base_path }}/ja/publications/)のページ，共同研究者は[メンバー]({{ base_path }}/ja/people/)のページにあります。外部資金や受賞を含む詳細は[仲野の個人ページ](https://gdaclab.web.nitech.ac.jp/nakano/ja/)をご覧ください。
