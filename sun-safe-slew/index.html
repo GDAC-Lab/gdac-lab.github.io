@@ -16,10 +16,10 @@
 
 
 
-<title>A telescope that avoids the Sun - GDAC Lab</title>
+<title>A satellite that avoids the Sun - GDAC Lab</title>
 
 
-<meta name="description" content="A space telescope turns 95 degrees with the Sun in the way, and the controller finds its own way around: an animation of constrained attitude control from GDAC Lab, Nagoya Institute of Technology.">
+<meta name="description" content="A satellite turns 95 degrees with the Sun in the way, and the controller finds its own way around: an animation of constrained attitude control from GDAC Lab, Nagoya Institute of Technology.">
 
 
 
@@ -49,9 +49,9 @@
 
 <!-- Open Graph protocol data (https://ogp.me/), used by social media --><meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="GDAC Lab">
-<meta property="og:title" content="A telescope that avoids the Sun">
+<meta property="og:title" content="A satellite that avoids the Sun">
 
-  <meta property="og:description" content="A space telescope turns 95 degrees with the Sun in the way, and the controller finds its own way around: an animation of constrained attitude control from GDAC Lab, Nagoya Institute of Technology.">
+  <meta property="og:description" content="A satellite turns 95 degrees with the Sun in the way, and the controller finds its own way around: an animation of constrained attitude control from GDAC Lab, Nagoya Institute of Technology.">
 
 <meta property="og:type" content="website">
 
@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789635514">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789635846">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789635514"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789635846"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -194,7 +194,7 @@
                     
                     
                     
-                    <li><a href="https://gdaclab.web.nitech.ac.jp/sun-safe-slew/">A telescope that avoids the Sun</a></li>
+                    <li><a href="https://gdaclab.web.nitech.ac.jp/sun-safe-slew/">A satellite that avoids the Sun</a></li>
                   
                 </ul>
               </div>
@@ -351,10 +351,10 @@
 
   <div class="archive">
     
-      <h1 class="page__title">A telescope that avoids the Sun</h1>
+      <h1 class="page__title">A satellite that avoids the Sun</h1>
     
     
-<p class="notice">A space telescope has to turn 95° to its next science target, and the Sun sits almost exactly in the way. Pointing the optics at the Sun would destroy them, so the short way round is not available. The animation below is this lab’s controller solving that problem.</p>
+<p class="notice">A satellite has to turn 95° to put its telescope on the next science target, and the Sun sits almost exactly in the way. Pointing the telescope at the Sun would destroy it, so the short way round is not available. The animation below is this lab’s controller solving that problem.</p>
 
 <figure class="slewdemo">
   <iframe class="slewdemo__frame" src="https://gdaclab.web.nitech.ac.jp/assets/demos/sun-safe-slew/" loading="lazy" title="Animation of a satellite slewing around the Sun"></iframe>
@@ -370,27 +370,27 @@
 <p>The Sun, the keep-out region and the two science targets are labelled on screen. The lines are:</p>
 
 <ul>
-  <li><strong>Teal</strong> — where the telescope is actually looking, and the trail behind it</li>
+  <li><strong>Teal</strong> — where the satellite is actually pointing, and the trail behind it</li>
   <li><strong>Amber</strong> — the direction the controller is currently aiming for; the teal ray follows it a little behind</li>
   <li><strong>Red</strong> — the path taken by turning the short way without avoiding the Sun, which runs through the keep-out region</li>
   <li><strong>Orange cone</strong> — the 25° keep-out region around the Sun</li>
 </ul>
 
-<p>The angle between the Sun and the telescope’s line of sight is shown as a number on screen. It turns red below 25°.</p>
+<p>The angle to the Sun is shown as a number on screen. It turns red below 25°.</p>
 
 <h2 id="the-path-is-not-planned-in-advance">The path is not planned in advance</h2>
 
 <p>No detour around the Sun is worked out beforehand. The controller itself is an ordinary one that knows nothing about the Sun or about the torque limit. The only thing that changes is <strong>where the target is put</strong>.</p>
 
-<p>The target is moved a little at a time towards the final attitude, but it is not moved in a direction that would take it somewhere unsafe. The amber ray on screen is that target. The telescope goes around the keep-out region because that is what is left of the directions it may move in, not because the detour was specified. The “safety margin used” gauge shows how close the current state is to the constraints.</p>
+<p>The target is moved a little at a time towards the final attitude, but it is not moved in a direction that would take it somewhere unsafe. The amber ray on screen is that target. The satellite goes around the keep-out region because that is what is left of the directions it may move in, not because the detour was specified. The “safety margin used” gauge shows how close the current state is to the constraints.</p>
 
 <p>What makes this practical is that <strong>no optimization is solved while it runs</strong>. The controller evaluates expressions worked out in advance, which is why it fits on the small, radiation-hardened computers a spacecraft carries. The <a href="https://gdaclab.web.nitech.ac.jp/research/">Research</a> page sets out the idea.</p>
 
 <h2 id="results">Results</h2>
 
-<p>With this controller, the telescope never comes closer to the Sun than <strong>33°</strong> — the limit is 25° — and never asks the reaction wheels for more than <strong>18 %</strong> of their torque.</p>
+<p>With this controller, the satellite never points closer to the Sun than <strong>33°</strong> — the limit is 25° — and never asks the reaction wheels for more than <strong>18 %</strong> of their torque.</p>
 
-<p>For comparison: give the same controller the final attitude directly as its target (the red path on screen), and the telescope passes <strong>6.9°</strong> from the Sun and demands <strong>2.9 times</strong> the torque the wheels can produce. The constrained run takes five times as long to get there, which is what respecting the constraints costs.</p>
+<p>For comparison: give the same controller the final attitude directly as its target (the red path on screen), and it passes <strong>6.9°</strong> from the Sun and demands <strong>2.9 times</strong> the torque the wheels can produce. The constrained run takes five times as long to get there, which is what respecting the constraints costs.</p>
 
 <h2 id="what-this-is-not">What this is not</h2>
 
@@ -448,14 +448,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-09-17 17:58 JST
+  Last updated 2026-09-17 18:04 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789635514"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789635514"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789635846"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789635846"></script>
 
 
 

@@ -16,10 +16,10 @@
 
 
 
-<title>太陽を避ける宇宙望遠鏡 - 仲野研究室（GDAC Lab）</title>
+<title>太陽を避ける人工衛星 - 仲野研究室（GDAC Lab）</title>
 
 
-<meta name="description" content="名古屋工業大学 仲野研究室（GDAC Lab）による拘束付き姿勢制御のアニメーション。太陽を避けながら宇宙望遠鏡の向きを 95° 変える計算結果を，ブラウザ上で再生できます。">
+<meta name="description" content="名古屋工業大学 仲野研究室（GDAC Lab）による拘束付き姿勢制御のアニメーション。太陽を避けながら人工衛星の姿勢を 95° 変える計算結果を，ブラウザ上で再生できます。">
 
 
 
@@ -49,9 +49,9 @@
 
 <!-- Open Graph protocol data (https://ogp.me/), used by social media --><meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="仲野研究室（GDAC Lab）">
-<meta property="og:title" content="太陽を避ける宇宙望遠鏡">
+<meta property="og:title" content="太陽を避ける人工衛星">
 
-  <meta property="og:description" content="名古屋工業大学 仲野研究室（GDAC Lab）による拘束付き姿勢制御のアニメーション。太陽を避けながら宇宙望遠鏡の向きを 95° 変える計算結果を，ブラウザ上で再生できます。">
+  <meta property="og:description" content="名古屋工業大学 仲野研究室（GDAC Lab）による拘束付き姿勢制御のアニメーション。太陽を避けながら人工衛星の姿勢を 95° 変える計算結果を，ブラウザ上で再生できます。">
 
 <meta property="og:type" content="website">
 
@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789635514">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789635846">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789635514"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789635846"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -194,7 +194,7 @@
                     
                     
                     
-                    <li><a href="https://gdaclab.web.nitech.ac.jp/ja/sun-safe-slew/">太陽を避ける宇宙望遠鏡</a></li>
+                    <li><a href="https://gdaclab.web.nitech.ac.jp/ja/sun-safe-slew/">太陽を避ける人工衛星</a></li>
                   
                 </ul>
               </div>
@@ -351,10 +351,10 @@
 
   <div class="archive">
     
-      <h1 class="page__title">太陽を避ける宇宙望遠鏡</h1>
+      <h1 class="page__title">太陽を避ける人工衛星</h1>
     
     
-<p class="notice">宇宙望遠鏡が次の観測対象へ 95° 向きを変えようとすると，その経路上にほぼ太陽があります。太陽に向けると光学系が壊れるため，最短経路は通れません。下のアニメーションは，本研究室の制御則がこの姿勢変更を解いた結果です。</p>
+<p class="notice">人工衛星が，搭載した望遠鏡を次の観測対象へ向けるため 95° 姿勢を変えようとすると，その経路上にほぼ太陽があります。望遠鏡を太陽に向けると壊れてしまうため，最短経路は通れません。下のアニメーションは，本研究室の制御則がこの姿勢変更を解いた結果です。</p>
 
 <figure class="slewdemo">
   <iframe class="slewdemo__frame" src="https://gdaclab.web.nitech.ac.jp/assets/demos/sun-safe-slew/?lang=ja" loading="lazy" title="太陽を避けて姿勢を変更する衛星のアニメーション"></iframe>
@@ -370,25 +370,25 @@
 <p>太陽・禁止領域・2つの観測対象には，画面上に名前が付いています。線の色は次のとおりです。</p>
 
 <ul>
-  <li><strong>青緑</strong> — 望遠鏡が実際に向いている方向と，通ってきた軌跡</li>
+  <li><strong>青緑</strong> — 衛星が実際に向いている方向と，通ってきた軌跡</li>
   <li><strong>黄</strong> — 制御器がいま目指している方向。青緑がこれを少し遅れて追いかけます</li>
-  <li><strong>赤</strong> — 太陽を避けずに最短で向きを変えた場合の経路。禁止領域を貫くため，実際には通れません</li>
+  <li><strong>赤</strong> — 太陽を避けずに最短で姿勢を変えた場合の経路。禁止領域を貫くため，実際には通れません</li>
   <li><strong>橙の円錐</strong> — 太陽のまわり 25° の禁止領域</li>
 </ul>
 
-<p>太陽と望遠鏡の視線がなす角は，画面上に数値で表示されます。25° を下回ると赤くなります。</p>
+<p>太陽との角度は画面上に数値で表示され，25° を下回ると赤くなります。</p>
 
 <h2 id="経路をあらかじめ引いているのではありません">経路をあらかじめ引いているのではありません</h2>
 
 <p>太陽を避ける回り道を，事前に計算しているわけではありません。制御器そのものは，太陽のことも，トルクの上限のことも知らない普通の制御器です。変えているのは，<strong>目標をどこに置くか</strong>だけです。</p>
 
-<p>目標は最終的な向きへ向かって少しずつ動かされますが，そのまま進むと危ない方向へは動かされません。黄の光線がその目標です。望遠鏡が禁止領域を回り込むのは，そうやって「いま動いてよい方向」だけが残るからであって，回り道が最初から指定されているわけではありません。「安全余裕の使用率」の計器は，いまの状態が拘束にどれだけ近いかを示しています。</p>
+<p>目標は最終的な向きへ向かって少しずつ動かされますが，そのまま進むと危ない方向へは動かされません。黄の光線がその目標です。衛星が禁止領域を回り込むのは，そうやって「いま動いてよい方向」だけが残るからであって，回り道が最初から指定されているわけではありません。「安全余裕の使用率」の計器は，いまの状態が拘束にどれだけ近いかを示しています。</p>
 
 <p>この方式の利点は，<strong>動作中に最適化計算をしない</strong>ことです。あらかじめ導いておいた式を評価するだけで済むので，衛星に積まれる小さく堅牢な計算機でも実行できます。考え方は<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページに記してあります。</p>
 
 <h2 id="結果">結果</h2>
 
-<p>この制御則を使うと，望遠鏡は太陽に最も近づいたときでも <strong>33°</strong> 離れており（下限は 25°），リアクションホイールに要求するトルクは上限の <strong>18 %</strong> で収まります。</p>
+<p>この制御則を使うと，太陽に最も近づいたときでも <strong>33°</strong> 離れており（下限は 25°），リアクションホイールに要求するトルクは上限の <strong>18 %</strong> で収まります。</p>
 
 <p>比較のため，同じ制御器に最終姿勢をそのまま目標として与えると（画面の赤い経路），太陽まで <strong>6.9°</strong> に近づき，トルクは上限の <strong>2.9 倍</strong>を要求します。姿勢変更にかかる時間は 5 倍になりますが，それが拘束を守るための代償です。</p>
 
@@ -448,14 +448,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-17 17:58 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-17 18:04 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789635514"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789635514"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789635846"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789635846"></script>
 
 
 
