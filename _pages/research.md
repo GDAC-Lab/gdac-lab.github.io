@@ -78,7 +78,7 @@ This theme is a collaboration with [Takahiro Sasaki](https://researchmap.jp/jaxa
 We are also engaged in a collaboration on control design for mechanisms that produce three-dimensional rotation, aimed at achieving **high-precision rotational control**.
 
 {% comment %}
-Once disclosure is cleared, add the partner, project name and period here.
+Add the partner, project name and period here once they can be listed.
 A Liquid comment never reaches the published HTML.
 {% endcomment %}
 

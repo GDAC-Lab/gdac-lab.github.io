@@ -14,7 +14,8 @@ lang_ref: publications_ja
   冒頭は，読者が必要とすることだけ。件数と年の範囲は著者の関心事で，区分ボタンに
   各節の件数が出ているのでスクロール量の目安もそちらで足ります。同期の仕組み
   （researchmap との週次同期，Crossref・arXiv からの取得）は利用規約のページに
-  記載しています。
+  記載しています。同期が読むのは published_papers のみなので，講演・口頭発表等は
+  このページには現れない。冒頭で researchmap を案内しているのはそのため。
 {%- endcomment -%}
 {%- comment -%}
   researchmap_url は英語ページ用（?lang=english）を既定にしているので，日本語ページ
@@ -27,7 +28,7 @@ lang_ref: publications_ja
   {% if pub_years > 0 %}
     区分ごとに，<strong>{{ min_pub_y }}年〜{{ current_y }}年</strong>（直近{{ pub_years }}年）に発表した文献を掲載しています。{% if site.researchmap_url %}それ以前の文献は <a href="{{ rm_ja }}">researchmap</a> をご覧ください。{% endif %}
   {% else %}
-    区分ごとに，新しい順で掲載しています。{% if site.researchmap_url or gs_profile %}{% if rm_ja %}<a href="{{ rm_ja }}">researchmap</a>{% endif %}{% if site.researchmap_url and gs_profile %} と {% endif %}{% if gs_profile %}<a href="{{ gs_profile }}" rel="noopener">Google Scholar</a>{% endif %} からもご覧いただけます。{% endif %}
+    区分ごとに，新しい順で掲載しています。{% if rm_ja %}国内学会での発表を含む全記録は <a href="{{ rm_ja }}">researchmap</a>{% if gs_profile %}，被引用数は <a href="{{ gs_profile }}" rel="noopener">Google Scholar</a>{% endif %} でご覧いただけます。{% elsif gs_profile %}被引用数は <a href="{{ gs_profile }}" rel="noopener">Google Scholar</a> でご覧いただけます。{% endif %}
   {% endif %}
 </p>
 
