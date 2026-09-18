@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: "メンバー"
-description: "名古屋工業大学 仲野研究室（GDAC Lab）のメンバー。仲野 聡史（助教），大学院生・学部生，および共同研究者の一覧です。"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）のメンバー。仲野 聡史（助教），事務，大学院生・学部生，および共同研究者の一覧です。"
 permalink: /ja/people/
 author_profile: true
 lang: ja
@@ -22,6 +22,10 @@ lang_ref: people
 - **教員紹介（名工大）**：[www.nitech.ac.jp/faculty/nakano-satoshi.html](https://www.nitech.ac.jp/faculty/nakano-satoshi.html)
 
 {% include people-faculty-email-image.html %}
+
+## 事務
+
+- **服部 幸子** — 事務補佐員
 
 ## 研究室メンバー
 
@@ -53,6 +57,9 @@ lang_ref: people
   ### 氏名 — 役職
   - **所属**：
   - **研究室**（任意）：
+
+  事務:
+  - **氏名** — 役職
 
   大学院生 — 学部も本研究室だった場合のみ，入れ子の行を付ける:
   - **氏名** — 修士課程：YYYY年M月〜

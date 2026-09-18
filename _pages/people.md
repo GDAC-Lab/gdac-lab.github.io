@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: "People"
-description: "Members of GDAC Lab, Nagoya Institute of Technology: Satoshi Nakano, graduate and undergraduate students, and collaborating researchers."
+description: "Members of GDAC Lab, Nagoya Institute of Technology: Satoshi Nakano, administrative staff, graduate and undergraduate students, and collaborating researchers."
 permalink: /people/
 author_profile: true
 lang: en
@@ -22,6 +22,10 @@ lang_ref: people
 - **Faculty directory (NITech)**: [www.nitech.ac.jp/faculty/nakano-satoshi.html](https://www.nitech.ac.jp/faculty/nakano-satoshi.html)
 
 {% include people-faculty-email-image.html %}
+
+## Administrative staff
+
+- **Sachiko Hattori** — Administrative assistant
 
 ## Lab members
 
