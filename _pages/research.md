@@ -64,7 +64,7 @@ The optimization-free methods described above are effective in precisely this se
 
 <figure class="media-figure">
   <img src="{{ base_path }}/images/research/sun-safe-slew.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="The scene viewed from the Sun. The 25-degree keep-out cone around the Sun appears as an orange circle with the satellite at its centre. The red shortest path between two science targets runs through the circle; a second path bulges well outside it.">
-  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly on the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone projects to the orange circle, and inside the ring is a breach. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, while the teal path the governor commands stays outside it — and never asks the reaction wheels for more than 18 % of their torque. The animation runs in your browser on the <a href="{{ base_path }}/sun-safe-slew/">satellite that avoids the Sun</a> page.</figcaption>
+  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly on the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone projects to the orange circle, and inside the ring is a breach. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, the teal one stays outside it. The animation runs in your browser on the <a href="{{ base_path }}/sun-safe-slew/">satellite that avoids the Sun</a> page.</figcaption>
 </figure>
 
 > **JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)** (FY2026–2029, 26K00967)
@@ -128,7 +128,5 @@ We also take part in the following themes as **collaborators**.
 
 - **Vibration control of building structures** — suppressing the sway of buildings under earthquakes and wind. Disturbance estimation based on the equivalent-input-disturbance (EID) approach is applied to tuned-mass-damper design and to the control of base-isolated buildings. [Representative paper (*Control Engineering Practice*, 2024)](https://doi.org/10.1016/j.conengprac.2024.105853)
 - **Visual feedback control** — estimating the position and orientation of an object from camera images and using them for control. [Representative paper (*SICE JCMSI*, 2023)](https://doi.org/10.1080/18824889.2023.2247853)
-
-Our wheeled-drone simulator is publicly available, and the [Simulator]({{ base_path }}/simulator/) page runs a demo of it in your browser.
 
 A full list of papers is on the [Publications]({{ base_path }}/publications/) page, and our collaborators are listed under [People]({{ base_path }}/people/). Funding, awards, and other details are on [Satoshi Nakano's personal page](https://gdaclab.web.nitech.ac.jp/nakano/).
