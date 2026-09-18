@@ -15,17 +15,31 @@ lang_ref: people
 ## Faculty
 
 ### Satoshi Nakano — Assistant Professor
-- **Affiliation**: Nagoya Institute of Technology, Department of Engineering
-- **Lab room**: Building 3, 10th floor, Room 1010
-- **researchmap**: [Satoshi Nakano](https://researchmap.jp/satoshi-nakano?lang=english)
-- **Personal page**: [gdaclab.web.nitech.ac.jp/nakano](https://gdaclab.web.nitech.ac.jp/nakano/)
-- **Faculty directory (NITech)**: [www.nitech.ac.jp/faculty/nakano-satoshi.html](https://www.nitech.ac.jp/faculty/nakano-satoshi.html)
+{: .people-name}
+
+Affiliation
+: Nagoya Institute of Technology, Department of Engineering
+
+Lab room
+: Building 3, 10th floor, Room 1010
+
+researchmap
+: [Satoshi Nakano](https://researchmap.jp/satoshi-nakano?lang=english)
+
+Personal page
+: [gdaclab.web.nitech.ac.jp/nakano](https://gdaclab.web.nitech.ac.jp/nakano/)
+
+Faculty directory (NITech)
+: [www.nitech.ac.jp/faculty/nakano-satoshi.html](https://www.nitech.ac.jp/faculty/nakano-satoshi.html)
+{: .people-fields}
 
 {% include people-faculty-email-image.html %}
 
 ## Administrative staff
 
-- **Sachiko Hattori** — Administrative assistant
+Sachiko Hattori
+: Administrative assistant
+{: .people-roster}
 
 ## Lab members
 
@@ -33,18 +47,32 @@ lang_ref: people
 
 ### Master's students
 
-- **Katsuki Matsunaga** — Master's program: from April 2026
-  - *Undergraduate in this lab*: October 2024 – March 2026
+Katsuki Matsunaga
+: Master's program: from April 2026
+: Undergraduate in this lab: October 2024 – March 2026
+{: .people-roster}
 
 ### Undergraduate students
-- **Kyuta Kawai** — from October 2025
-- **Keisuke Sano** — from October 2025
-- **Eita Sugiyama** — from October 2025
+
+Kyuta Kawai
+: from October 2025
+
+Keisuke Sano
+: from October 2025
+
+Eita Sugiyama
+: from October 2025
+{: .people-roster}
 
 ### Co-advised students
-- **Itsuki Asada** — Primary supervisor: Prof. Manabu Yamada · from April 2025
-  - *Undergraduate in this lab*: October 2023 – March 2025
-- **Yuki Dotaka** — Primary supervisor: Prof. Manabu Yamada · from April 2025
+
+Itsuki Asada
+: Primary supervisor: Prof. Manabu Yamada · from April 2025
+: Undergraduate in this lab: October 2023 – March 2025
+
+Yuki Dotaka
+: Primary supervisor: Prof. Manabu Yamada · from April 2025
+{: .people-roster}
 
 {% include people-collaborators.html %}
 

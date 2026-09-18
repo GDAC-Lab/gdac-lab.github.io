@@ -66,21 +66,6 @@
     font-weight: 600;
   }
 
-  /* Optional detail lines (e.g. undergraduate history under a master's entry) */
-  li > ul {
-    margin: 0.2em 0 0.5em;
-    padding-left: 1rem;
-    list-style: none;
-    border-left: 2px solid var(--global-border-color);
-  }
-
-  li > ul > li {
-    margin: 0.15em 0 0;
-    font-size: $type-size-6;
-    line-height: 1.45;
-    color: var(--global-text-color-light);
-  }
-
   p {
     margin-top: 0.35em;
     margin-bottom: 0.75em;
@@ -151,6 +136,128 @@
     margin-bottom: 0.4em;
     font-size: 1em;
     color: var(--global-callout-text, var(--global-text-color));
+  }
+}
+
+/* ========================================================== name and value
+
+   Two kinds of list on this page. Both are written as a definition list in the
+   markdown — see the editing template at the foot of _pages/ja/people.md — and
+   both are laid out as a single grid, so the left column lines up down the
+   whole block instead of every row starting wherever the previous word ended:
+
+     .people-fields   the name of a field and its value (the faculty details)
+     .people-roster   a person and their period (staff and students)
+
+   The column is sized to its own longest entry, with a floor so that a short
+   section does not collapse into a narrow column. Latin names need more of a
+   floor than Japanese ones, hence the rule keyed on the page language.
+
+   Everything here is qualified by both classes because the theme styles `dt`
+   and `dd` under `.page__content`, which outranks a single class.
+   ========================================================================== */
+
+.people-directory .people-fields,
+.people-directory .people-roster {
+  display: grid;
+  grid-template-columns: minmax(6.5em, max-content) 1fr;
+  column-gap: 1.5rem;
+  row-gap: 0.25rem;
+  margin: 0 0 1em;
+  /* The two halves of a row are set at different sizes, so align what the eye
+     actually reads — the baseline — rather than the tops of the boxes. It also
+     absorbs the margin that separates one entry from the next, which is on the
+     name alone and would otherwise drop the name below its own date. */
+  align-items: baseline;
+}
+
+:root[lang="en"] .people-directory .people-fields,
+:root[lang="en"] .people-directory .people-roster {
+  grid-template-columns: minmax(9em, max-content) 1fr;
+}
+
+.people-directory .people-fields dt,
+.people-directory .people-roster dt {
+  grid-column: 1;
+  margin: 0;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.people-directory .people-fields dd,
+.people-directory .people-roster dd {
+  grid-column: 2;
+  margin: 0;
+  font-family: inherit;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+/* Space between entries, not between the lines of one entry. `dd + dt` is the
+   name of every entry after the first; `dd + dt + dd` is that entry's own first
+   value, which shares the row with it. */
+.people-directory .people-fields dd + dt,
+.people-directory .people-roster dd + dt,
+.people-directory .people-fields dd + dt + dd,
+.people-directory .people-roster dd + dt + dd {
+  margin-top: 0.75rem;
+}
+
+/* The faculty details: the field name is the quieter half. */
+.people-directory .people-fields dt {
+  font-size: $type-size-6;
+  font-weight: 500;
+  color: var(--global-text-color-light);
+}
+
+.people-directory .people-fields dd + dt,
+.people-directory .people-fields dd + dt + dd {
+  margin-top: 0.45rem;
+}
+
+/* The roster: the person is the louder half, the dates the quieter one. */
+.people-directory .people-roster dt {
+  font-weight: 600;
+  color: var(--global-text-color-strong, var(--global-text-color));
+}
+
+.people-directory .people-roster dd {
+  font-size: $type-size-6;
+  color: var(--global-text-color-light);
+}
+
+/* A second value under the same name — where a student was here as an
+   undergraduate — reads as a footnote to the first. */
+.people-directory .people-roster dd + dd {
+  font-size: $type-size-7;
+}
+
+/* The faculty member's own name is not a section label and should not look
+   like one. */
+.people-directory h3.people-name {
+  margin-bottom: 0.55em;
+  font-size: 1.1875rem;
+}
+
+/* A phone has no room for two columns: the value goes under its name. */
+@include breakpoint(max-width 600px) {
+  .people-directory .people-fields,
+  .people-directory .people-roster,
+  :root[lang="en"] .people-directory .people-fields,
+  :root[lang="en"] .people-directory .people-roster {
+    grid-template-columns: 1fr;
+    row-gap: 0.1rem;
+  }
+
+  .people-directory .people-fields dd,
+  .people-directory .people-roster dd {
+    grid-column: 1;
+  }
+
+  .people-directory .people-fields dd + dt,
+  .people-directory .people-roster dd + dt {
+    margin-top: 0.85rem;
   }
 }
 
