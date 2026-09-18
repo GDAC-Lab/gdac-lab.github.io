@@ -11,46 +11,25 @@ lang_ref: publications_ja
 {% include publication-window.html %}
 
 {%- comment -%}
-  何年ぶんを何件載せているのかを最初に示す。年の範囲と件数は文献データから
-  数えるので，同期のたびに書き換える必要はない。
+  冒頭は，読者が必要とすることだけ。件数と年の範囲は著者の関心事で，区分ボタンに
+  各節の件数が出ているのでスクロール量の目安もそちらで足ります。同期の仕組み
+  （researchmap との週次同期，Crossref・arXiv からの取得）は利用規約のページに
+  記載しています。
 {%- endcomment -%}
-{%- include publication-recent-count.html docs=site.publications -%}
-{%- assign _total = recent_count -%}
-{%- assign _from_y = recent_min_y -%}
-{%- assign _to_y = recent_max_y -%}
+{%- comment -%}
+  researchmap_url は英語ページ用（?lang=english）を既定にしているので，日本語ページ
+  では言語パラメータを落として日本語の表示へ送る。構造化データ側も同じ扱い。
+{%- endcomment -%}
+{%- assign gs_profile = site.author.googlescholar_ja | default: site.author.googlescholar -%}
+{%- assign rm_ja = site.researchmap_url | split: "?" | first -%}
 
 <p class="publications-page__lede">
   {% if pub_years > 0 %}
-    区分ごとに，<strong>{{ min_pub_y }}年〜{{ current_y }}年</strong>（直近{{ pub_years }}年）に発表した文献を掲載しています。{% if site.researchmap_url %}それ以前の文献は <a href="{{ site.researchmap_url }}">researchmap</a> をご覧ください。{% endif %}
+    区分ごとに，<strong>{{ min_pub_y }}年〜{{ current_y }}年</strong>（直近{{ pub_years }}年）に発表した文献を掲載しています。{% if site.researchmap_url %}それ以前の文献は <a href="{{ rm_ja }}">researchmap</a> をご覧ください。{% endif %}
   {% else %}
-    <strong>{{ _from_y }}年〜{{ _to_y }}年</strong>の文献 <strong>{{ _total }} 件</strong>を，区分ごとに新しい順で掲載しています。
+    区分ごとに，新しい順で掲載しています。{% if site.researchmap_url or gs_profile %}{% if rm_ja %}<a href="{{ rm_ja }}">researchmap</a>{% endif %}{% if site.researchmap_url and gs_profile %} と {% endif %}{% if gs_profile %}<a href="{{ gs_profile }}" rel="noopener">Google Scholar</a>{% endif %} からもご覧いただけます。{% endif %}
   {% endif %}
 </p>
-
-{% assign gs_profile = '' %}
-{% if site.author.googlescholar_ja or site.author.googlescholar %}
-  {% assign gs_profile = site.author.googlescholar_ja | default: site.author.googlescholar %}
-{% endif %}
-{% assign _pp_d = 0 %}
-{% assign _pp_a = 0 %}
-{% if site.data.preprint_sources %}
-  {% assign _pp_d = site.data.preprint_sources.dois | size %}
-  {% assign _pp_a = site.data.preprint_sources.arxiv_ids | size %}
-{% endif %}
-{% if gs_profile != '' or site.researchmap_url or _pp_d > 0 or _pp_a > 0 %}
-  <small class="publications-page__anno" role="note">{%- if gs_profile != '' -%}
-    この一覧のほか，<a href="{{ gs_profile }}" rel="noopener">Google Scholar</a> からも論文をたどれます。
-  {%- endif -%}
-  {%- if site.researchmap_url -%}
-    {%- if gs_profile != '' %} {% endif -%}
-    文献情報は，おおむね週に1回，<a href="{{ site.researchmap_url }}">researchmap</a> の登録内容と同期しています。
-  {%- endif -%}
-  {%- if _pp_d > 0 or _pp_a > 0 -%}
-    {%- if gs_profile != '' or site.researchmap_url %} {% endif -%}
-    プレプリントの書誌情報は，サイトの生成時に <a href="https://www.crossref.org">Crossref</a> と <a href="https://arxiv.org">arXiv</a> から取得しています。
-  {%- endif -%}
-  </small>
-{% endif %}
 
 {% include publications-category-jump.html %}
 

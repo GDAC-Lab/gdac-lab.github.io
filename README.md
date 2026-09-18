@@ -83,9 +83,8 @@ committing any changes to `master`. `scripts/test_pubsync.py` runs first and cov
 logic offline — run it locally after touching either script.
 
 `publication_list_last_n_years:` in `_config.yml` limits the index to the last N years (0 = all,
-which is the current setting). Both pages read the span and the number of records off the records
-themselves, so the lead paragraph and the counts on the jump buttons follow the setting without
-being edited.
+which is the current setting). The counts on the category jump buttons follow it without being
+edited, and so does the lead paragraph, which says a window is in force only when there is one.
 
 ### How the two publication indexes are built
 
@@ -96,7 +95,7 @@ window and the "is this category empty?" test cannot drift apart between the two
 | Include | Does what |
 | --- | --- |
 | `publication-window.html` | Derives `pub_years`, `current_y`, `min_pub_y` from `publication_list_last_n_years`. Safe to include more than once. |
-| `publication-recent-count.html` | `docs=` a list of records → how many fall inside the window, in `recent_count`, and their span in `recent_min_y` / `recent_max_y`. |
+| `publication-recent-count.html` | `docs=` a list of records → how many fall inside the window, in `recent_count`. |
 | `publication-list.html` | `docs=` a list of records → the `<ol>` of those inside the window, newest first, with the year in the left gutter (printed where it changes, blank below). |
 | `publication-entry.html` | One `<li>`; `publication-author-names.html` works out its author line. Fills the gutter from `rail`/`rail_year`, or from `pub_index` for a numbered list — which is what `/sitemap/` uses. |
 

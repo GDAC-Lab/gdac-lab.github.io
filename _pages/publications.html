@@ -11,44 +11,20 @@ lang_ref: publications
 {% include publication-window.html %}
 
 {%- comment -%}
-  Say up front how much is here. The span and the count are read off the
-  records themselves, so neither has to be edited when the list syncs.
+  The opening line carries only what a reader needs. The number of records and
+  the span of years are the author's concern, and the jump buttons already show
+  how long each section is. How the list is produced -- the weekly researchmap
+  sync, the Crossref and arXiv lookups -- is on /terms/.
 {%- endcomment -%}
-{%- assign _all_en = site.publications | where_exp: "p", "p.lang != 'ja'" -%}
-{%- include publication-recent-count.html docs=_all_en -%}
-{%- assign _total = recent_count -%}
-{%- assign _from_y = recent_min_y -%}
-{%- assign _to_y = recent_max_y -%}
 
 <p class="publications-page__lede">
-  English-language publications, by category.
+  English-language publications, by category, newest first.
   {% if pub_years > 0 %}
-    Only <strong>{{ min_pub_y }}–{{ current_y }}</strong> (the last {{ pub_years }} years) are shown.{% if site.researchmap_url %} Earlier work is listed on <a href="{{ site.researchmap_url }}">researchmap</a>.{% endif %}
+    Only <strong>{{ min_pub_y }}&ndash;{{ current_y }}</strong> (the last {{ pub_years }} years) are shown.{% if site.researchmap_url %} Earlier work is listed on <a href="{{ site.researchmap_url }}">researchmap</a>.{% endif %}
   {% else %}
-    All <strong>{{ _total }}</strong> records, <strong>{{ _from_y }}–{{ _to_y }}</strong>, newest first within each section.
+    {% if site.researchmap_url %}The full record, including work published in Japanese, is on <a href="{{ site.researchmap_url }}">researchmap</a>{% if site.author.googlescholar %}; <a href="{{ site.author.googlescholar }}" rel="noopener">Google Scholar</a> tracks citations{% endif %}.{% endif %}
   {% endif %}
 </p>
-
-{% assign _pp_d = 0 %}
-{% assign _pp_a = 0 %}
-{% if site.data.preprint_sources %}
-  {% assign _pp_d = site.data.preprint_sources.dois | size %}
-  {% assign _pp_a = site.data.preprint_sources.arxiv_ids | size %}
-{% endif %}
-{% if site.author.googlescholar or site.researchmap_url or _pp_d > 0 or _pp_a > 0 %}
-  <small class="publications-page__anno" role="note">{%- if site.author.googlescholar -%}
-    You can also browse publications on <a href="{{ site.author.googlescholar }}" rel="noopener">Google Scholar</a>.
-  {%- endif -%}
-  {%- if site.researchmap_url -%}
-    {%- if site.author.googlescholar %}{{ ' ' }}{% endif -%}
-    The list is synchronized with <a href="{{ site.researchmap_url }}">researchmap</a> roughly once a week.
-  {%- endif -%}
-  {%- if _pp_d > 0 or _pp_a > 0 -%}
-    {%- if site.author.googlescholar or site.researchmap_url %}{{ ' ' }}{% endif -%}
-    Preprint entries are filled in from <a href="https://www.crossref.org">Crossref</a> and <a href="https://arxiv.org">arXiv</a> metadata when the site is built.
-  {%- endif -%}
-  </small>
-{% endif %}
 
 {% include publications-category-jump.html %}
 

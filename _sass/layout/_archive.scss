@@ -19,31 +19,6 @@
   word-wrap: break-word;
 }
 
-/* Unobtrusive annotation: visually tied to the paragraph above */
-.publications-page__anno {
-  display: block;
-  margin: -0.2em 0 1rem;
-  padding: 0.15em 0 0.2em 0.75rem;
-  border-left: 2px solid var(--global-border-color);
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  font-weight: 400;
-  color: var(--global-text-color-light);
-  opacity: 0.9;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-.publications-page__anno a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 0.12em;
-
-  &:hover {
-    color: var(--global-link-color);
-  }
-}
-
 /* Category jump nav (Journal Articles, Conference Papers, Preprints, …) */
 .publications-page__jump {
   display: flex;
