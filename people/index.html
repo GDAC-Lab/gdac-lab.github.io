@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789711397">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789712071">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789711397"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789712071"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -358,14 +358,20 @@
 
   <h2 id="faculty">Faculty</h2>
 
-  <h3 id="satoshi-nakano--assistant-professor">Satoshi Nakano — Assistant Professor</h3>
-  <ul>
-    <li><strong>Affiliation</strong>: Nagoya Institute of Technology, Department of Engineering</li>
-    <li><strong>Lab room</strong>: Building 3, 10th floor, Room 1010</li>
-    <li><strong>researchmap</strong>: <a href="https://researchmap.jp/satoshi-nakano?lang=english">Satoshi Nakano</a></li>
-    <li><strong>Personal page</strong>: <a href="https://gdaclab.web.nitech.ac.jp/nakano/">gdaclab.web.nitech.ac.jp/nakano</a></li>
-    <li><strong>Faculty directory (NITech)</strong>: <a href="https://www.nitech.ac.jp/faculty/nakano-satoshi.html">www.nitech.ac.jp/faculty/nakano-satoshi.html</a></li>
-  </ul>
+  <h3 class="people-name" id="satoshi-nakano--assistant-professor">Satoshi Nakano — Assistant Professor</h3>
+
+  <dl class="people-fields">
+    <dt>Affiliation</dt>
+    <dd>Nagoya Institute of Technology, Department of Engineering</dd>
+    <dt>Lab room</dt>
+    <dd>Building 3, 10th floor, Room 1010</dd>
+    <dt>researchmap</dt>
+    <dd><a href="https://researchmap.jp/satoshi-nakano?lang=english">Satoshi Nakano</a></dd>
+    <dt>Personal page</dt>
+    <dd><a href="https://gdaclab.web.nitech.ac.jp/nakano/">gdaclab.web.nitech.ac.jp/nakano</a></dd>
+    <dt>Faculty directory (NITech)</dt>
+    <dd><a href="https://www.nitech.ac.jp/faculty/nakano-satoshi.html">www.nitech.ac.jp/faculty/nakano-satoshi.html</a></dd>
+  </dl>
 
   <div class="people-faculty-email">
   <p class="people-faculty-email__label"><strong>Email</strong></p>
@@ -374,9 +380,10 @@
 
   <h2 id="administrative-staff">Administrative staff</h2>
 
-  <ul>
-    <li><strong>Sachiko Hattori</strong> — Administrative assistant</li>
-  </ul>
+  <dl class="people-roster">
+    <dt>Sachiko Hattori</dt>
+    <dd>Administrative assistant</dd>
+  </dl>
 
   <h2 id="lab-members">Lab members</h2>
 
@@ -389,30 +396,32 @@
 
   <h3 id="masters-students">Master’s students</h3>
 
-  <ul>
-    <li><strong>Katsuki Matsunaga</strong> — Master’s program: from April 2026
-      <ul>
-        <li><em>Undergraduate in this lab</em>: October 2024 – March 2026</li>
-      </ul>
-    </li>
-  </ul>
+  <dl class="people-roster">
+    <dt>Katsuki Matsunaga</dt>
+    <dd>Master’s program: from April 2026</dd>
+    <dd>Undergraduate in this lab: October 2024 – March 2026</dd>
+  </dl>
 
   <h3 id="undergraduate-students">Undergraduate students</h3>
-  <ul>
-    <li><strong>Kyuta Kawai</strong> — from October 2025</li>
-    <li><strong>Keisuke Sano</strong> — from October 2025</li>
-    <li><strong>Eita Sugiyama</strong> — from October 2025</li>
-  </ul>
+
+  <dl class="people-roster">
+    <dt>Kyuta Kawai</dt>
+    <dd>from October 2025</dd>
+    <dt>Keisuke Sano</dt>
+    <dd>from October 2025</dd>
+    <dt>Eita Sugiyama</dt>
+    <dd>from October 2025</dd>
+  </dl>
 
   <h3 id="co-advised-students">Co-advised students</h3>
-  <ul>
-    <li><strong>Itsuki Asada</strong> — Primary supervisor: Prof. Manabu Yamada · from April 2025
-      <ul>
-        <li><em>Undergraduate in this lab</em>: October 2023 – March 2025</li>
-      </ul>
-    </li>
-    <li><strong>Yuki Dotaka</strong> — Primary supervisor: Prof. Manabu Yamada · from April 2025</li>
-  </ul>
+
+  <dl class="people-roster">
+    <dt>Itsuki Asada</dt>
+    <dd>Primary supervisor: Prof. Manabu Yamada · from April 2025</dd>
+    <dd>Undergraduate in this lab: October 2023 – March 2025</dd>
+    <dt>Yuki Dotaka</dt>
+    <dd>Primary supervisor: Prof. Manabu Yamada · from April 2025</dd>
+  </dl>
 
   <details class="people-directory__collapsible">
   <summary>
@@ -692,14 +701,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-09-18 15:03 JST
+  Last updated 2026-09-18 15:14 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789711397"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789711397"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789712071"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789712071"></script>
 
 
 

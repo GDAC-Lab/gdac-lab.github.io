@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789711397">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1789712071">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789711397"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1789712071"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -358,14 +358,20 @@
 
   <h2 id="section">教員</h2>
 
-  <h3 id="section-1">仲野 聡史 — 助教</h3>
-  <ul>
-    <li><strong>所属</strong>：名古屋工業大学 工学専攻</li>
-    <li><strong>研究室（学生室）</strong>：3号館10階1010室</li>
-    <li><strong>researchmap</strong>：<a href="https://researchmap.jp/satoshi-nakano">仲野 聡史</a></li>
-    <li><strong>個人ページ</strong>：<a href="https://gdaclab.web.nitech.ac.jp/nakano/">gdaclab.web.nitech.ac.jp/nakano</a></li>
-    <li><strong>教員紹介（名工大）</strong>：<a href="https://www.nitech.ac.jp/faculty/nakano-satoshi.html">www.nitech.ac.jp/faculty/nakano-satoshi.html</a></li>
-  </ul>
+  <h3 class="people-name" id="section-1">仲野 聡史 — 助教</h3>
+
+  <dl class="people-fields">
+    <dt>所属</dt>
+    <dd>名古屋工業大学 工学専攻</dd>
+    <dt>研究室（学生室）</dt>
+    <dd>3号館10階1010室</dd>
+    <dt>researchmap</dt>
+    <dd><a href="https://researchmap.jp/satoshi-nakano">仲野 聡史</a></dd>
+    <dt>個人ページ</dt>
+    <dd><a href="https://gdaclab.web.nitech.ac.jp/nakano/">gdaclab.web.nitech.ac.jp/nakano</a></dd>
+    <dt>教員紹介（名工大）</dt>
+    <dd><a href="https://www.nitech.ac.jp/faculty/nakano-satoshi.html">www.nitech.ac.jp/faculty/nakano-satoshi.html</a></dd>
+  </dl>
 
   <div class="people-faculty-email">
   <p class="people-faculty-email__label"><strong>メール</strong></p>
@@ -374,9 +380,10 @@
 
   <h2 id="section-2">事務</h2>
 
-  <ul>
-    <li><strong>服部 幸子</strong> — 事務補佐員</li>
-  </ul>
+  <dl class="people-roster">
+    <dt>服部 幸子</dt>
+    <dd>事務補佐員</dd>
+  </dl>
 
   <h2 id="section-3">研究室メンバー</h2>
 
@@ -389,30 +396,32 @@
 
   <h3 id="section-4">大学院生（修士課程）</h3>
 
-  <ul>
-    <li><strong>松永 勝希</strong> — 修士課程：2026年4月〜
-      <ul>
-        <li><em>学部生として在籍</em>：2024年10月〜2026年3月</li>
-      </ul>
-    </li>
-  </ul>
+  <dl class="people-roster">
+    <dt>松永 勝希</dt>
+    <dd>修士課程：2026年4月〜</dd>
+    <dd>学部生として在籍：2024年10月〜2026年3月</dd>
+  </dl>
 
   <h3 id="section-5">学部生</h3>
-  <ul>
-    <li><strong>川合 球太</strong> — 2025年10月〜</li>
-    <li><strong>佐野 圭亮</strong> — 2025年10月〜</li>
-    <li><strong>杉山 瑛大</strong> — 2025年10月〜</li>
-  </ul>
+
+  <dl class="people-roster">
+    <dt>川合 球太</dt>
+    <dd>2025年10月〜</dd>
+    <dt>佐野 圭亮</dt>
+    <dd>2025年10月〜</dd>
+    <dt>杉山 瑛大</dt>
+    <dd>2025年10月〜</dd>
+  </dl>
 
   <h3 id="section-6">副指導学生</h3>
-  <ul>
-    <li><strong>浅田 樹</strong> — 主指導：山田 学 教授 · 2025年4月〜
-      <ul>
-        <li><em>学部生として在籍</em>：2023年10月〜2025年3月</li>
-      </ul>
-    </li>
-    <li><strong>堂高 友樹</strong> — 主指導：山田 学 教授 · 2025年4月〜</li>
-  </ul>
+
+  <dl class="people-roster">
+    <dt>浅田 樹</dt>
+    <dd>主指導：山田 学 教授 · 2025年4月〜</dd>
+    <dd>学部生として在籍：2023年10月〜2025年3月</dd>
+    <dt>堂高 友樹</dt>
+    <dd>主指導：山田 学 教授 · 2025年4月〜</dd>
+  </dl>
 
   <details class="people-directory__collapsible">
   <summary>
@@ -627,25 +636,39 @@
 </div>
 
 <!--
-  編集用テンプレート（表示されません）。区切りの記号は全角コロン「：」，期間の波ダッシュは「〜」（U+301C）。
+  編集用テンプレート（表示されません）。
 
-  教員:
+  定義リスト記法です。行頭の「: 」が値の行で，直前の行がその見出し（氏名・項目名）
+  になります。空行で区切った塊は，最後に付けた `{: .people-…}` のクラスで1つの表に
+  まとまり，左の列幅が自動で揃います。クラスは「その塊の最後の項目の直後」に1行だけ
+  書きます。期間の波ダッシュは「〜」（U+301C）。
+
+  教員 — 項目名と値の表。氏名の見出しには {: .people-name} を付ける:
   ### 氏名 — 役職
-  - **所属**：
-  - **研究室**（任意）：
+  {: .people-name}
 
-  事務:
-  - **氏名** — 役職
+  所属
+  : 名古屋工業大学 工学専攻
 
-  大学院生 — 学部も本研究室だった場合のみ，入れ子の行を付ける:
-  - **氏名** — 修士課程：YYYY年M月〜
-    - *学部生として在籍*：YYYY年M月〜YYYY年M月
+  研究室（学生室）
+  : ○号館○階○○○室
+  {: .people-fields}
+
+  事務・学生 — 氏名と在籍期間の表。2行目の値は補足として小さく表示される:
+  氏名
+  : 修士課程：YYYY年M月〜
+  : 学部生として在籍：YYYY年M月〜YYYY年M月
+  {: .people-roster}
 
   学部生:
-  - **氏名** — YYYY年M月〜
+  氏名
+  : YYYY年M月〜
+  {: .people-roster}
 
   副指導学生:
-  - **氏名** — 主指導：○○ ○○ 教授 · YYYY年M月〜
+  氏名
+  : 主指導：○○ ○○ 教授 · YYYY年M月〜
+  {: .people-roster}
 
   集合写真: `people-group-photo.html` は `## 研究室メンバー` の直後・`### 大学院生（修士課程）` の前。
 
@@ -695,14 +718,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-18 15:03 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-09-18 15:14 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789711397"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789711397"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1789712071"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1789712071"></script>
 
 
 
