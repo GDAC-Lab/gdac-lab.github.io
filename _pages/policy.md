@@ -28,21 +28,23 @@ student joins.
 
 What the lab aims at is to work control theory out properly and put it on the record, as conference talks and papers. We do not stop at "it ran" or "the numbers came out": what matters is making clear what is new, and why the method works.
 
-At the same time, laying out a route on which ordinary, steady effort produces a real result is the supervisor's job too. Plans here are not built on excessive workloads or unreasonable demands. Through the choice of topic, the reading, the meetings and the daily discussion, the aim is that you gradually become able to carry the research yourself.
+At the same time, laying out a route on which ordinary, steady effort produces a real result is the supervisor's job too. Plans here are not built on excessive workloads or unreasonable demands. Through the choice of topic, the reading and the daily discussion, the aim is that you gradually become able to carry the research yourself.
+
+Experiments on real hardware carry particular weight here. Computers and tools have made it quicker than it used to be to work a theory through or to run a simulation, and that only raises the value of what you find out by building something and switching it on. Running the hardware is not the point in itself, though. What matters is experimenting with a proper grasp of the theory you are working with, so that when the thing does not behave as expected you can work out for yourself whether the theory or the hardware is at fault.
 
 In research, the answer is almost never known at the outset. You look things up for yourself, cut a large problem into pieces small enough to attack, think, try them, and explain what came out to other people. That way of approaching problems outlasts any particular topic you worked on.
 
-Research is not easy, and it does not always go as planned. Even so — thinking about a hard problem, working through it by trial and error, and becoming able to do something you could not do before is where the interest lies. One goal is that nobody leaves this lab with regrets.
+Research is not easy, and it does not always go as planned. Even so — thinking about a hard problem, working through it by trial and error, and becoming able to do something you could not do before is where the interest lies. One goal is that nobody leaves this lab with regrets, and that they leave thinking the research they did here was worth doing.
 
 ## Day-to-day
 
 Students come to the lab on weekdays as a rule, because being able to see the supervisor, the senior students and the other members, and to talk about the research as a matter of course, matters too. There is no core time, though. If you need a weekday off, that is fine as long as you say so in advance.
 
-Research reports and seminars are each held about once a week. A research report is not only for sharing progress: it is where we sort out what is giving trouble and what to take on next, and where the discussion goes into detail when it needs to. Students who have just started get fairly close support from the supervisor and from senior students.
+Research reports and seminars are held regularly. A research report is not only for sharing progress: it is where we sort out what is giving trouble and what to take on next, and where the discussion goes into detail when it needs to. Students who have just started get fairly close support from the supervisor and from senior students.
 
 You are not expected to sit on a problem alone for long. Thinking it through yourself matters, but when you are stuck, ask the supervisor or the other members — informally is fine.
 
-Job hunting and other activities outside the research are largely left to your own judgement. If the research stalls for a while, making the time up when things ease off is enough.
+When it comes to job hunting, tell me once your plans firm up. If I know when you will be away and roughly how much time it will take, the research schedule can be arranged around it. Rather than settling it one way in advance, we talk it over as it comes up and look for an arrangement that lets both the job hunting and the research move.
 
 ## How research topics are chosen
 
