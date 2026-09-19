@@ -37,7 +37,7 @@ In research, the answer is almost never known at the outset. You look things up,
 
 Research is not easy, and it does not always go as planned. Even so, working at a hard problem and becoming able to do something you could not do before is the interesting part. One goal is that nobody leaves with regrets, and that they leave thinking the research they did here was worth doing.
 
-## Day-to-day
+## Life in the lab
 
 Students come to the lab on weekdays as a rule, because being able to see the supervisor and the other members, and talk things over, matters too. There is **no core time**, though. If you need a day off, that is fine as long as you say so in advance.
 
@@ -69,10 +69,12 @@ Past work is listed on the [Publications]({{ base_path }}/publications/) page.
 
 ## Joining the lab from abroad
 
-If you are thinking of joining from outside Japan, email me with your CV, your transcript, and a short account of what you would like to work on. I will normally suggest an online meeting first, so we can both judge honestly whether the fit is right, and whether the topic you have in mind is one this lab can support well.
+If you are thinking of joining from outside Japan, email me{% if site.author.email_as_text and site.author.email_text %} at [{{ site.author.email_text }}](mailto:{{ site.author.email_text }}){% endif %} with your CV, your transcript, and a short account of what you would like to work on. I will normally suggest an online meeting first, so we can both judge honestly whether the fit is right, and whether the topic you have in mind is one this lab can support well.
 
 Admission goes through the university rather than the lab: the application routes and the entrance examination are set by Nagoya Institute of Technology, and the outcome is not mine to decide. What I can do is talk it through with you beforehand and point you at the right route.
 
 ## Visits and contact
 
-If you have questions about the research or about how the lab is run, get in touch at any time. You are welcome to visit. The contact address is on the [People]({{ base_path }}/people/) page, and the location is on the [Access]({{ base_path }}/access/) page.
+If you have questions about the research or about how the lab is run, get in touch at any time — write to me{% if site.author.email_as_text and site.author.email_text %} at [{{ site.author.email_text }}](mailto:{{ site.author.email_text }}){% endif %}. You are welcome to visit; the location is on the [Access]({{ base_path }}/access/) page.
+
+When enquiries arrive in a cluster, around the graduate entrance examination for instance, I may propose a few set times rather than answering each one separately.
