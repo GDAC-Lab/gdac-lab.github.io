@@ -29,9 +29,9 @@ messages -- are not stated here. They are covered after a student joins.
 
 The aim is to work control theory out properly and put it on the record, as conference talks and papers. We do not stop at "it ran" or "the numbers came out": what matters is making clear what is new, and why the method works.
 
-At the same time, **laying out a route on which ordinary, steady effort produces a real result is the supervisor's job too**. Excessive workloads and unreasonable demands are not the premise here. The choice of topic, the reading and the daily discussion are where that support goes.
+At the same time, **laying out a route on which ordinary, steady effort produces a real result is the supervisor's job too**. Excessive workloads and unreasonable demands are not the premise here. Time goes into the choice of topic, the reading and the daily discussion for exactly that reason.
 
-Experiments on real hardware matter as well. Tools have made it quicker than it used to be to work a theory through or run a simulation, which raises the value of what you find out by building something and switching it on. Running the hardware is not the point in itself, though. What counts is experimenting with a proper grasp of the theory, so that when it misbehaves you can **work out for yourself whether the theory or the hardware is at fault**.
+Experiments on real hardware matter as well. Tools have made it quicker than it used to be to work a theory through or run a simulation, which raises the value of what you find out by building something and switching it on. Running the hardware is not the point in itself, though. What counts is experimenting with a proper grasp of the theory, so that when it misbehaves you can **pin down for yourself whether the theory or the hardware is at fault**.
 
 In research, the answer is almost never known at the outset. You look things up, cut a problem into pieces small enough to attack, try them, and explain what came out. That way of working outlasts any particular topic.
 
