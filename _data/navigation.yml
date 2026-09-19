@@ -1,8 +1,8 @@
 # The order of the links in the header.
 #
 # Removing a link here only takes it out of the header; the page itself stays on
-# the site. Two pages are deliberately absent: /policy/ (still in preparation)
-# and /terms/ (linked from the footer, where a reader looks for it).
+# the site. One page is deliberately absent: /terms/, which is linked from the
+# footer, where a reader looks for it.
 #
 # An entry with `children:` becomes a menu instead of a link. The parent is not
 # itself a link — it opens the menu — so whatever page it would have pointed at
@@ -35,6 +35,10 @@ main:
   - title: "People"
     title_ja: "メンバー"
     url: /people/
+
+  - title: "Lab policy"
+    title_ja: "運営方針"
+    url: /policy/
 
   - title: "Facilities"
     title_ja: "実験装置"

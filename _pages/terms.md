@@ -50,8 +50,7 @@ publishers and authors; follow the DOI or arXiv link on each entry for the autho
 version and its license terms.
 
 Nothing here is an official statement of Nagoya Institute of Technology. For admissions,
-procedures and official dates, follow the university's own announcements. Some pages are
-still in preparation.
+procedures and official dates, follow the university's own announcements.
 
 ## Software used
 

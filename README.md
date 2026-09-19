@@ -61,9 +61,9 @@ Three things about that are easy to break:
   is open, and is the single source of truth for that, hover included.
 
 Header items are dropped from the end when the window is too narrow, so what
-goes last is what disappears first on a small laptop. Two pages stay out of the
-header on purpose: `/policy/`, still in preparation, and `/terms/`, which is in
-the footer where a reader looks for it.
+goes last is what disappears first on a small laptop. One page stays out of the
+header on purpose: `/terms/`, which is in the footer where a reader looks for
+it.
 
 ## Publications are generated — do not hand-edit
 
