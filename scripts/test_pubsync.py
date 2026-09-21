@@ -333,6 +333,37 @@ class TestPreprints(TempPubDir):
         self.assertEqual(rc, 0)
         self.assertIn("2025-03-20-pp-arxiv-2503-16715.md", self.names())
 
+    def test_arxiv_failure_falls_back_to_crossref_without_moving_the_permalink(self):
+        """arXiv has answered 406 from CI since 2026-09-14; Crossref holds the same DOI."""
+        def boom(_aid):
+            raise urllib.error.HTTPError(
+                "https://export.arxiv.org/", 406, "Not Acceptable", {}, None
+            )
+
+        seen = {}
+
+        def fake_crossref(doi):
+            seen["doi"] = doi
+            return {
+                "title": ["A Constrained Attitude Result"],
+                "issued": {"date-parts": [[2025, 3, 20]]},
+                "author": [{"given": "Satoshi", "family": "Nakano"}],
+            }
+
+        saved = (pp.arxiv_fetch, pp.crossref_fetch)
+        pp.arxiv_fetch, pp.crossref_fetch = boom, fake_crossref
+        try:
+            name, content = pp.resolve_arxiv("2503.16715")
+        finally:
+            pp.arxiv_fetch, pp.crossref_fetch = saved
+
+        self.assertEqual(seen["doi"], "10.48550/arXiv.2503.16715")
+        # The slug must stay in the arXiv form, or the published URL moves and
+        # carry_forward stops finding the existing file.
+        self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
+        self.assertIn("permalink: /publication/pp-arxiv-2503-16715", content)
+        self.assertIn("https://arxiv.org/abs/2503.16715", content)
+
     def test_lookup_with_nothing_to_fall_back_on_fails_the_run(self):
         """No existing entry means the preprint is missing from the site."""
         rc = self._main_with_failing_lookup(["2604.04001"])

@@ -273,16 +273,45 @@ def carry_forward(slug_suffix: str) -> tuple[str, str] | None:
 
 
 def resolve_arxiv(aid: str) -> tuple[str, str] | None:
-    meta = arxiv_fetch(aid)
-    if not meta:
+    """arXiv's Atom API first; Crossref as a standby when it will not answer.
+
+    export.arxiv.org has answered 406 to every request from GitHub's runners
+    since 2026-09-14, with or without an Accept header. arXiv registers a DOI
+    (10.48550/arXiv.*) for each submission, so Crossref holds the same record
+    and is reachable. The slug stays in the arXiv form either way, so the
+    permalink and the carried-forward file do not move.
+    """
+    aid = aid.strip().replace("arxiv:", "")
+    slug = f"arxiv-{aid.replace('.', '-')}"
+
+    try:
+        meta = arxiv_fetch(aid)
+    except Exception as exc:
+        log(f"[preprint] arxiv {aid}: {type(exc).__name__}: {exc}; trying Crossref")
+        meta = None
+    if meta:
+        return render(
+            date_iso=meta["date"],
+            slug_suffix=f"arxiv-{meta['arxiv_id'].replace('.', '-')}",
+            title=meta["title"],
+            venue="arXiv preprint",
+            authors=meta["authors"] or "—",
+            paperurl=meta["url"],
+        )
+
+    doi = f"10.48550/arXiv.{aid}"
+    msg = crossref_fetch(doi)
+    title = crossref_title(msg) if msg else ""
+    if not title:
         return None
+    log(f"[preprint] arxiv {aid}: resolved via Crossref ({doi})")
     return render(
-        date_iso=meta["date"],
-        slug_suffix=f"arxiv-{meta['arxiv_id'].replace('.', '-')}",
-        title=meta["title"],
+        date_iso=crossref_date(msg),
+        slug_suffix=slug,
+        title=title,
         venue="arXiv preprint",
-        authors=meta["authors"] or "—",
-        paperurl=meta["url"],
+        authors=crossref_authors(msg) or "—",
+        paperurl=f"https://arxiv.org/abs/{aid}",
     )
 
 
