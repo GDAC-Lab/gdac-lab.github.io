@@ -376,6 +376,44 @@ class TestPreprints(TempPubDir):
         self.assertIn("Satoshi Nakano, Noboru Sakamoto", content)
         self.assertIn("A Constrained Attitude Result", content)
 
+    def test_standby_source_never_moves_a_published_date(self):
+        """The 2026-09-21 regression: publicationYear renamed three files to Jan 1."""
+        self.seed("2025-03-20-pp-arxiv-2503-16715.md")
+        # Overwrite the seeded stub with a realistic front matter block.
+        (self.pub / "2025-03-20-pp-arxiv-2503-16715.md").write_text(
+            "---\ntitle: 'T'\npermalink: /publication/pp-arxiv-2503-16715\n"
+            "date: 2025-03-20\n---\n",
+            encoding="utf-8",
+        )
+        saved = (pp.arxiv_fetch, pp.datacite_fetch)
+        pp.arxiv_fetch = self._arxiv_406
+        pp.datacite_fetch = lambda _doi: {          # year only, as the real record was
+            "titles": [{"title": "T"}],
+            "publicationYear": 2025,
+            "creators": [{"name": "Nakano, Satoshi"}],
+        }
+        try:
+            name, content = pp.resolve_arxiv("2503.16715")
+        finally:
+            pp.arxiv_fetch, pp.datacite_fetch = saved
+
+        self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
+        self.assertIn("date: 2025-03-20", content)
+        self.assertIn("- /publication/2025-03-20-pp-arxiv-2503-16715", content)
+
+    def test_datacite_date_reads_any_dated_entry(self):
+        """Only fall back to the year when no dates[] entry carries a day."""
+        self.assertEqual(
+            pp.datacite_date({"dates": [{"date": "2025-03-20", "dateType": "Other"}],
+                              "publicationYear": 2025}),
+            "2025-03-20",
+        )
+        self.assertEqual(
+            pp.datacite_date({"published": "2025-03-20", "publicationYear": 2025}),
+            "2025-03-20",
+        )
+        self.assertEqual(pp.datacite_date({"dates": [], "publicationYear": 2025}), "2025-01-01")
+
     def test_crossref_is_tried_when_datacite_has_nothing(self):
         saved = (pp.arxiv_fetch, pp.datacite_fetch, pp.crossref_fetch)
         pp.arxiv_fetch = self._arxiv_406

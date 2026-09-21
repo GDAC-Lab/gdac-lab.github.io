@@ -202,18 +202,37 @@ def datacite_title(attrs: dict) -> str:
     return ""
 
 
+def _as_iso_day(raw: object) -> str | None:
+    text = str(raw or "")[:10]
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        return text
+    if re.fullmatch(r"\d{4}-\d{2}", text):
+        return f"{text}-01"
+    return None
+
+
 def datacite_date(attrs: dict) -> str:
-    for want in ("Issued", "Submitted", "Available", "Created"):
-        for d in attrs.get("dates") or []:
-            if str(d.get("dateType") or "") != want:
-                continue
-            raw = str(d.get("date") or "")[:10]
-            if re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):
-                return raw
-            if re.fullmatch(r"\d{4}-\d{2}", raw):
-                return f"{raw}-01"
-            if re.fullmatch(r"\d{4}", raw):
-                return f"{raw}-01-01"
+    """The submission day if the record carries one anywhere, else the year.
+
+    Falling straight through to publicationYear turned three real dates into
+    January 1 on 2026-09-21, which renamed the files and broke the redirects
+    from the old date-based URLs. Every dates[] entry is examined first.
+    """
+    entries = attrs.get("dates") or []
+    for want in ("Issued", "Submitted", "Available", "Accepted", "Created"):
+        for d in entries:
+            if str(d.get("dateType") or "") == want:
+                day = _as_iso_day(d.get("date"))
+                if day:
+                    return day
+    for d in entries:                      # any type, rather than invent a date
+        day = _as_iso_day(d.get("date"))
+        if day:
+            return day
+    for key in ("published", "created", "registered", "updated"):
+        day = _as_iso_day(attrs.get(key))
+        if day:
+            return day
     year = attrs.get("publicationYear")
     return f"{int(year):04d}-01-01" if str(year or "").isdigit() else "1900-01-01"
 
@@ -331,6 +350,15 @@ def render(
     return f"{date_iso}-pp-{slug_suffix}.md", front_matter(fields)
 
 
+def published_date(slug_suffix: str) -> str | None:
+    """The date already published for this entry, if there is one on disk."""
+    existing = carry_forward(slug_suffix)
+    if not existing:
+        return None
+    m = re.search(r"^date:\s*(\d{4}-\d{2}-\d{2})\s*$", existing[1], re.M)
+    return m.group(1) if m else None
+
+
 def carry_forward(slug_suffix: str) -> tuple[str, str] | None:
     """Reuse the previously generated file for an entry whose lookup just failed."""
     for path in sorted(PUB_DIR.glob(f"*-pp-{slug_suffix}.md")):
@@ -379,9 +407,13 @@ def resolve_arxiv(aid: str) -> tuple[str, str] | None:
         title = get_title(rec) if rec else ""
         if not title:
             continue
-        log(f"[preprint] arxiv {aid}: resolved via {source} ({doi})")
+        # arXiv gave the submission day; a standby source may only know the year.
+        # Keeping the published date means the file name, the redirect from the
+        # old date-based URL and the ordering on the page all stay put.
+        date_iso = published_date(slug) or get_date(rec)
+        log(f"[preprint] arxiv {aid}: resolved via {source} ({doi}), date {date_iso}")
         return render(
-            date_iso=get_date(rec),
+            date_iso=date_iso,
             slug_suffix=slug,
             title=title,
             venue="arXiv preprint",
