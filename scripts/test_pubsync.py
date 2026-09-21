@@ -333,29 +333,39 @@ class TestPreprints(TempPubDir):
         self.assertEqual(rc, 0)
         self.assertIn("2025-03-20-pp-arxiv-2503-16715.md", self.names())
 
-    def test_arxiv_failure_falls_back_to_crossref_without_moving_the_permalink(self):
-        """arXiv has answered 406 from CI since 2026-09-14; Crossref holds the same DOI."""
-        def boom(_aid):
-            raise urllib.error.HTTPError(
-                "https://export.arxiv.org/", 406, "Not Acceptable", {}, None
-            )
+    # A DataCite record as arXiv actually registers one.
+    DATACITE = {
+        "titles": [{"title": "A Constrained\n   Attitude Result"}],
+        "dates": [{"date": "2026-01-02", "dateType": "Created"},
+                  {"date": "2025-03-20", "dateType": "Issued"}],
+        "publicationYear": 2025,
+        "creators": [
+            {"name": "Nakano, Satoshi", "nameType": "Personal",
+             "givenName": "Satoshi", "familyName": "Nakano"},
+            {"name": "Sakamoto, Noboru", "nameType": "Personal"},
+        ],
+    }
 
+    @staticmethod
+    def _arxiv_406(_aid):
+        raise urllib.error.HTTPError(
+            "https://export.arxiv.org/", 406, "Not Acceptable", {}, None
+        )
+
+    def test_arxiv_failure_falls_back_to_datacite(self):
+        """arXiv has answered 406 from CI since 2026-09-14; 10.48550 is a DataCite prefix."""
         seen = {}
 
-        def fake_crossref(doi):
+        def fake_datacite(doi):
             seen["doi"] = doi
-            return {
-                "title": ["A Constrained Attitude Result"],
-                "issued": {"date-parts": [[2025, 3, 20]]},
-                "author": [{"given": "Satoshi", "family": "Nakano"}],
-            }
+            return self.DATACITE
 
-        saved = (pp.arxiv_fetch, pp.crossref_fetch)
-        pp.arxiv_fetch, pp.crossref_fetch = boom, fake_crossref
+        saved = (pp.arxiv_fetch, pp.datacite_fetch)
+        pp.arxiv_fetch, pp.datacite_fetch = self._arxiv_406, fake_datacite
         try:
             name, content = pp.resolve_arxiv("2503.16715")
         finally:
-            pp.arxiv_fetch, pp.crossref_fetch = saved
+            pp.arxiv_fetch, pp.datacite_fetch = saved
 
         self.assertEqual(seen["doi"], "10.48550/arXiv.2503.16715")
         # The slug must stay in the arXiv form, or the published URL moves and
@@ -363,6 +373,36 @@ class TestPreprints(TempPubDir):
         self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
         self.assertIn("permalink: /publication/pp-arxiv-2503-16715", content)
         self.assertIn("https://arxiv.org/abs/2503.16715", content)
+        self.assertIn("Satoshi Nakano, Noboru Sakamoto", content)
+        self.assertIn("A Constrained Attitude Result", content)
+
+    def test_crossref_is_tried_when_datacite_has_nothing(self):
+        saved = (pp.arxiv_fetch, pp.datacite_fetch, pp.crossref_fetch)
+        pp.arxiv_fetch = self._arxiv_406
+        pp.datacite_fetch = lambda _doi: None
+        pp.crossref_fetch = lambda _doi: {
+            "title": ["Fallback Title"],
+            "issued": {"date-parts": [[2025, 3, 20]]},
+            "author": [{"given": "Satoshi", "family": "Nakano"}],
+        }
+        try:
+            name, _ = pp.resolve_arxiv("2503.16715")
+        finally:
+            pp.arxiv_fetch, pp.datacite_fetch, pp.crossref_fetch = saved
+        self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
+
+    def test_datacite_field_extraction(self):
+        self.assertEqual(pp.datacite_title(self.DATACITE), "A Constrained Attitude Result")
+        # Issued wins over Created even though Created comes first in the list.
+        self.assertEqual(pp.datacite_date(self.DATACITE), "2025-03-20")
+        self.assertEqual(
+            pp.datacite_authors(self.DATACITE), "Satoshi Nakano, Noboru Sakamoto"
+        )
+        self.assertEqual(pp.datacite_date({"publicationYear": 2024}), "2024-01-01")
+        self.assertEqual(
+            pp.datacite_authors({"creators": [{"name": "arXiv", "nameType": "Organizational"}]}),
+            "arXiv",
+        )
 
     def test_lookup_with_nothing_to_fall_back_on_fails_the_run(self):
         """No existing entry means the preprint is missing from the site."""

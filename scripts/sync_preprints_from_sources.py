@@ -171,6 +171,72 @@ def crossref_url(msg: dict, doi: str) -> str:
     return doi if doi.lower().startswith("http") else f"https://doi.org/{doi}"
 
 
+# ------------------------------------------------------------------------- DataCite
+
+
+def datacite_fetch(doi: str) -> dict | None:
+    """Attributes for a DOI, or None if DataCite does not hold it.
+
+    arXiv registers 10.48550/arXiv.* through DataCite, not Crossref, so this is
+    where an arXiv record can be read when export.arxiv.org will not answer.
+    """
+    url = f"https://api.datacite.org/dois/{urllib.parse.quote(doi.strip(), safe='')}"
+    req = urllib.request.Request(
+        url, headers={"User-Agent": user_agent(), "Accept": "application/json"}
+    )
+    try:
+        with urlopen_with_retry(req) as resp:
+            payload = json.load(resp)
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            return None
+        raise
+    return (payload.get("data") or {}).get("attributes") or None
+
+
+def datacite_title(attrs: dict) -> str:
+    for t in attrs.get("titles") or []:
+        title = str(t.get("title") or "").strip()
+        if title:
+            return " ".join(title.split())
+    return ""
+
+
+def datacite_date(attrs: dict) -> str:
+    for want in ("Issued", "Submitted", "Available", "Created"):
+        for d in attrs.get("dates") or []:
+            if str(d.get("dateType") or "") != want:
+                continue
+            raw = str(d.get("date") or "")[:10]
+            if re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):
+                return raw
+            if re.fullmatch(r"\d{4}-\d{2}", raw):
+                return f"{raw}-01"
+            if re.fullmatch(r"\d{4}", raw):
+                return f"{raw}-01-01"
+    year = attrs.get("publicationYear")
+    return f"{int(year):04d}-01-01" if str(year or "").isdigit() else "1900-01-01"
+
+
+def datacite_authors(attrs: dict) -> str:
+    names: list[str] = []
+    for c in attrs.get("creators") or []:
+        given = str(c.get("givenName") or "").strip()
+        family = str(c.get("familyName") or "").strip()
+        if given and family:
+            names.append(f"{given} {family}")
+            continue
+        raw = str(c.get("name") or "").strip()
+        if not raw:
+            continue
+        # DataCite stores personal names as "Family, Given".
+        if c.get("nameType") != "Organizational" and raw.count(",") == 1:
+            fam, _, giv = raw.partition(",")
+            raw = f"{giv.strip()} {fam.strip()}".strip()
+        names.append(raw)
+    return ", ".join(n for n in names if n)
+
+
 def arxiv_id_from_doi(doi: str) -> str | None:
     m = re.search(r"10\.48550/\s*arXiv\.(\d{4}\.\d{4,5})", doi, re.I)
     return m.group(1) if m else None
@@ -277,9 +343,10 @@ def resolve_arxiv(aid: str) -> tuple[str, str] | None:
 
     export.arxiv.org has answered 406 to every request from GitHub's runners
     since 2026-09-14, with or without an Accept header. arXiv registers a DOI
-    (10.48550/arXiv.*) for each submission, so Crossref holds the same record
-    and is reachable. The slug stays in the arXiv form either way, so the
-    permalink and the carried-forward file do not move.
+    (10.48550/arXiv.*) for every submission through DataCite, so the same
+    record can be read there; Crossref is tried last because it does not hold
+    that prefix. The slug stays in the arXiv form whichever source answers, so
+    the permalink and the carried-forward file do not move.
     """
     aid = aid.strip().replace("arxiv:", "")
     slug = f"arxiv-{aid.replace('.', '-')}"
@@ -300,19 +367,28 @@ def resolve_arxiv(aid: str) -> tuple[str, str] | None:
         )
 
     doi = f"10.48550/arXiv.{aid}"
-    msg = crossref_fetch(doi)
-    title = crossref_title(msg) if msg else ""
-    if not title:
-        return None
-    log(f"[preprint] arxiv {aid}: resolved via Crossref ({doi})")
-    return render(
-        date_iso=crossref_date(msg),
-        slug_suffix=slug,
-        title=title,
-        venue="arXiv preprint",
-        authors=crossref_authors(msg) or "—",
-        paperurl=f"https://arxiv.org/abs/{aid}",
-    )
+    for source, fetch, get_title, get_date, get_authors in (
+        ("DataCite", datacite_fetch, datacite_title, datacite_date, datacite_authors),
+        ("Crossref", crossref_fetch, crossref_title, crossref_date, crossref_authors),
+    ):
+        try:
+            rec = fetch(doi)
+        except Exception as exc:
+            log(f"[preprint] arxiv {aid}: {source}: {type(exc).__name__}: {exc}")
+            continue
+        title = get_title(rec) if rec else ""
+        if not title:
+            continue
+        log(f"[preprint] arxiv {aid}: resolved via {source} ({doi})")
+        return render(
+            date_iso=get_date(rec),
+            slug_suffix=slug,
+            title=title,
+            venue="arXiv preprint",
+            authors=get_authors(rec) or "—",
+            paperurl=f"https://arxiv.org/abs/{aid}",
+        )
+    return None
 
 
 def resolve_doi(doi: str) -> tuple[str, str] | None:
