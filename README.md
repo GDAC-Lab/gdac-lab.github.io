@@ -224,6 +224,12 @@ Plesk host serves the site. There is no GitHub Pages deployment. The pull from `
 into `httpdocs` is done by hand in Plesk, so a push here does not reach the live site until
 someone does that.
 
+One push does not: the weekly `researchmap-sync.yml` commits with the default `GITHUB_TOKEN`,
+and GitHub does not start a workflow from such a push, so no deploy follows it. The site does
+not go stale from this, because `deploy.yml` re-runs both sync scripts before it builds — but a
+paper the weekly sync commits is published on the next deploy, not straight away. A
+`workflow_run` trigger on `deploy.yml` would close that gap at the cost of a weekly rebuild.
+
 ### The WordPress site at /nakano/
 
 `https://gdaclab.web.nitech.ac.jp/nakano/` is the PI's own page. It is a WordPress install

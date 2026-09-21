@@ -1,5 +1,13 @@
 # Refresh _publications from researchmap and preprint sources, push to master if changed.
-# Pushes trigger deploy.yml (Jekyll → plesk-deploy).
+#
+# This push does NOT deploy. GitHub does not start a workflow from a push made with the
+# default GITHUB_TOKEN, so deploy.yml never runs for the commits this job creates. That
+# is not a gap in what the site shows, because deploy.yml re-runs both sync scripts at
+# build time, so any later deploy publishes the current publication list either way.
+# What this job does is keep the committed files in step with researchmap, so the
+# repository is a complete record and a build is reproducible from it. The consequence
+# is that a newly published paper reaches the live site on the next deploy, not on the
+# next sync; add a workflow_run trigger to deploy.yml if that wait ever matters.
 #
 # Note on the schedule: GitHub disables a scheduled workflow after 60 days without
 # repository activity, and that is exactly what happened here — the sync went
