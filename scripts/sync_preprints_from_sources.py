@@ -12,9 +12,11 @@ script only owns the "-pp-" files.
 Failure handling
 ----------------
 Nothing is deleted until every entry has been resolved. When a single lookup
-fails — arXiv rate limiting is the common case, and it is what broke the sync on
-2026-06-22 and 06-29 — the previously generated file for that entry is carried
-forward instead of being dropped, and the script exits non-zero so CI reports it.
+fails — arXiv rate limiting and 406 responses are the common cases — the
+previously generated file for that entry is carried forward instead of being
+dropped. That outcome is reported as a warning and the script still exits 0,
+because nothing was lost. It exits non-zero only when a source fails and there
+is no existing entry to fall back on, which does leave a preprint off the site.
 
 arXiv rate limits: at most one request per ARXIV_MIN_INTERVAL_SEC (default 3.5s);
 429/503 are retried with backoff.
@@ -58,6 +60,13 @@ def user_agent() -> str:
     mail = (os.environ.get("CROSSREF_CONTACT_EMAIL") or "").strip()
     base = "gdac-lab-site/1.0 (https://github.com/gdac-lab/gdac-lab.github.io)"
     return f"{base}; mailto:{mail}" if mail else base
+
+
+def annotate(level: str, msg: str) -> None:
+    """Log, and raise it to the run summary when running under Actions."""
+    log(f"[{level.upper()}] {msg}" if level != "warning" else f"WARNING: {msg}")
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::{level}::{msg}")
 
 
 def _arxiv_throttle() -> None:
@@ -174,7 +183,15 @@ def arxiv_fetch(arxiv_id: str) -> dict | None:
     _arxiv_throttle()
     aid = arxiv_id.strip().replace("arxiv:", "")
     url = f"https://export.arxiv.org/api/query?id_list={urllib.parse.quote(aid)}"
-    req = urllib.request.Request(url, headers={"User-Agent": user_agent()})
+    # The API is content-negotiated and answers 406 when no Accept header is sent;
+    # urllib sends none by default, which is what broke the sync on 2026-09-14.
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": user_agent(),
+            "Accept": "application/atom+xml, text/xml;q=0.9, */*;q=0.8",
+        },
+    )
     try:
         with urlopen_with_retry(req) as resp:
             xml = resp.read()
@@ -336,7 +353,8 @@ def main() -> int:
     sources = [(k, v) for k, v in sources if v.strip() and not v.strip().startswith("#")]
 
     generated: dict[str, str] = {}
-    failures: list[str] = []
+    kept: list[str] = []   # lookup failed, the existing entry still stands
+    lost: list[str] = []   # lookup failed and nothing is left to show
 
     for kind, value in sources:
         try:
@@ -351,15 +369,17 @@ def main() -> int:
             fallback = carry_forward(slug_for_source(kind, value))
             if fallback:
                 generated[fallback[0]] = fallback[1]
-                failures.append(f"{kind} {value}: {reason} — kept the existing entry")
+                kept.append(f"{kind} {value}: {reason} — kept the existing entry")
             else:
-                failures.append(f"{kind} {value}: {reason} — no existing entry to keep")
+                lost.append(f"{kind} {value}: {reason} — no existing entry to keep")
             continue
 
         generated[result[0]] = result[1]
 
-    for note in failures:
-        log(f"[preprint] WARNING: {note}")
+    for note in kept:
+        annotate("warning", f"[preprint] {note}")
+    for note in lost:
+        annotate("error", f"[preprint] {note}")
 
     # An empty sources list legitimately means "no preprints"; allow the clear-out.
     try:
@@ -377,7 +397,10 @@ def main() -> int:
         f"[preprint] {len(generated)} entr(ies) from {len(sources)} source(s): "
         f"{written} written, {deleted} removed, {unchanged} unchanged"
     )
-    return 1 if failures else 0
+    # A lookup that failed while the published entry still stands loses nothing:
+    # report it, but do not fail the run every week over an upstream outage.
+    # A source with nothing to fall back on means the site is missing a preprint.
+    return 1 if lost else 0
 
 
 if __name__ == "__main__":

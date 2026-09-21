@@ -280,6 +280,64 @@ class TestPreprints(TempPubDir):
         name, _ = pp.carry_forward("arxiv-2503-16715")
         self.assertEqual(name, existing)
 
+    def test_arxiv_request_sends_an_accept_header(self):
+        """The API answers 406 without one; that broke the sync on 2026-09-14."""
+        seen = {}
+
+        class _Resp:
+            def __enter__(self_inner):
+                return self_inner
+
+            def __exit__(self_inner, *a):
+                return False
+
+            def read(self_inner):
+                return b"<feed xmlns='http://www.w3.org/2005/Atom'></feed>"
+
+        def fake_urlopen(req, timeout=60):
+            seen["headers"] = dict(req.headers)
+            return _Resp()
+
+        real_open, real_throttle = pp.urlopen_with_retry, pp._arxiv_throttle
+        pp.urlopen_with_retry, pp._arxiv_throttle = fake_urlopen, lambda: None
+        try:
+            pp.arxiv_fetch("2503.16715")
+        finally:
+            pp.urlopen_with_retry, pp._arxiv_throttle = real_open, real_throttle
+
+        # urllib title-cases header names on the Request object.
+        accept = seen["headers"].get("Accept", "")
+        self.assertIn("atom+xml", accept)
+        self.assertIn("User-agent", seen["headers"])
+
+    def _main_with_failing_lookup(self, arxiv_ids):
+        """Run main() with every lookup failing, against a scratch sources file."""
+        def boom(_value):
+            raise urllib.error.HTTPError(
+                "https://export.arxiv.org/", 406, "Not Acceptable", {}, None
+            )
+
+        src = Path(self._tmp.name) / "preprint_sources.json"
+        src.write_text(json.dumps({"dois": [], "arxiv_ids": arxiv_ids}), encoding="utf-8")
+        saved = (pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi)
+        pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi = src, boom, boom
+        try:
+            return pp.main()
+        finally:
+            pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi = saved
+
+    def test_carried_forward_entry_does_not_fail_the_run(self):
+        """An upstream outage that loses nothing must not fail CI every week."""
+        self.seed("2025-03-20-pp-arxiv-2503-16715.md")
+        rc = self._main_with_failing_lookup(["2503.16715"])
+        self.assertEqual(rc, 0)
+        self.assertIn("2025-03-20-pp-arxiv-2503-16715.md", self.names())
+
+    def test_lookup_with_nothing_to_fall_back_on_fails_the_run(self):
+        """No existing entry means the preprint is missing from the site."""
+        rc = self._main_with_failing_lookup(["2604.04001"])
+        self.assertEqual(rc, 1)
+
     def test_slug_matches_between_render_and_carry_forward(self):
         """carry_forward can only work if both sides derive the same slug."""
         name, _ = pp.render(

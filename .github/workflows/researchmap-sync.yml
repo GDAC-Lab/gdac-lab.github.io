@@ -36,9 +36,12 @@ jobs:
         id: researchmap
         run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
 
-      # Preprint lookups hit arXiv/Crossref rate limits from shared CI IPs. A failure
-      # here must not discard an already-successful researchmap sync (it did on
-      # 2026-06-22 and 06-29), so record the outcome and fail the job at the end.
+      # Preprint lookups hit arXiv/Crossref rate limits and 406 responses from shared
+      # CI IPs. A failure here must not discard an already-successful researchmap sync
+      # (it did on 2026-06-22 and 06-29), so record the outcome and fail at the end.
+      # The script exits non-zero only when a lookup failed AND there was no existing
+      # entry to carry forward; an outage that loses nothing is a warning, not a
+      # failure, so a broken upstream no longer reports a red run every week.
       - name: Sync preprints (DOI / arXiv)
         id: preprints
         continue-on-error: true
@@ -77,6 +80,6 @@ jobs:
       - name: Report preprint sync failure
         if: steps.preprints.outcome == 'failure'
         run: |
-          echo "::error::Preprint sync reported failures (see the step log above)."
+          echo "::error::A preprint could not be resolved and nothing was on file to fall back on; it is missing from the site."
           echo "Publications from researchmap were still committed."
           exit 1
