@@ -47,3 +47,10 @@ main:
   - title: "Access"
     title_ja: "アクセス"
     url: /access/
+
+  # The lab's Blogger album. Japanese-only, so the label says so on both
+  # languages; last because an outside link is the first thing to give up
+  # when the header runs out of room.
+  - title: "Album (external)"
+    title_ja: "アルバム（外部）"
+    url: "https://gdaclab.blogspot.com/"

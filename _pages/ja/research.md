@@ -129,4 +129,4 @@ Liquid コメントなので，このブロックは公開 HTML には一切出�
 - **建築構造物の振動制御** — 地震や風による建物の揺れを抑える研究です。等価入力外乱（EID）に基づく外乱推定の考え方を，制振ダンパの設計や免震建物の制御へ応用しています。[代表例（*Control Engineering Practice*, 2024）](https://doi.org/10.1016/j.conengprac.2024.105853)
 - **ビジュアルフィードバック制御** — カメラで取得した画像から対象の位置と姿勢を推定し，制御に利用する研究です。[代表例（*SICE JCMSI*, 2023）](https://doi.org/10.1080/18824889.2023.2247853)
 
-論文の一覧は[論文・著作]({{ base_path }}/ja/publications/)のページ，共同研究者は[メンバー]({{ base_path }}/ja/people/)のページにあります。外部資金や受賞を含む詳細は[仲野の個人ページ](https://gdaclab.web.nitech.ac.jp/nakano/ja/)をご覧ください。
+論文の一覧は[論文・発表]({{ base_path }}/ja/publications/)のページ，共同研究者は[メンバー]({{ base_path }}/ja/people/)のページにあります。外部資金や受賞を含む詳細は[仲野の個人ページ](https://gdaclab.web.nitech.ac.jp/nakano/ja/)をご覧ください。
