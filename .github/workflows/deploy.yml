@@ -1,8 +1,25 @@
+# Build the site and publish _site to the plesk-deploy branch, from which the
+# NITech Plesk host is pulled by hand.
+#
+# Runs on every push to master, and when researchmap-sync.yml dispatches it
+# after committing refreshed publication files. It builds exactly what is
+# committed: the publication lists are fetched by researchmap-sync.yml, not
+# here, so a deploy never waits on researchmap, arXiv or DataCite and cannot
+# fail because one of them is down.
 name: Build and Deploy to Plesk
+
 on:
   push:
     branches:
-      - master # リポジトリのメインブランチが main の場合は main に書き換えてください
+      - master
+  workflow_dispatch:
+
+# One build at a time, in commit order. A newer push supersedes a run that is
+# still queued, never one that is already writing plesk-deploy.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -10,53 +27,24 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      # The publication list is refreshed from researchmap and arXiv/Crossref on
-      # every deploy, but the committed _publications/ files are already a
-      # complete list (the weekly researchmap-sync workflow keeps them current).
-      # An outage at one of those services must not stop the rest of the site
-      # from going out: record the outcome, build from what is committed, and
-      # flag it in the run summary below.
-      - name: Fetch publications from researchmap
-        id: researchmap
-        continue-on-error: true
-        run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
-
-      - name: Sync preprints (DOI / arXiv from _data/preprint_sources.json)
-        id: preprints
-        continue-on-error: true
-        run: python3 scripts/sync_preprints_from_sources.py
-        env:
-          CROSSREF_CONTACT_EMAIL: ${{ vars.CROSSREF_CONTACT_EMAIL }}
-
-      - name: Note a failed publication fetch
-        if: steps.researchmap.outcome == 'failure' || steps.preprints.outcome == 'failure'
-        run: |
-          if [ "${{ steps.researchmap.outcome }}" = "failure" ]; then
-            echo "::warning title=researchmap fetch failed::The site was built from the committed publication list. See the step log; the weekly sync will retry."
-          fi
-          if [ "${{ steps.preprints.outcome }}" = "failure" ]; then
-            echo "::warning title=Preprint sync failed::The site was built from the committed preprint entries. See the step log; the weekly sync will retry."
-          fi
-
-      - name: Setup Ruby
+      # bundler-cache runs `bundle install` against Gemfile.lock and caches the
+      # result, so there is nothing more to install before the build.
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: "3.1"
           bundler-cache: true
 
       # LANG matters: several SCSS partials carry Japanese comments, and Jekyll's
       # SCSS converter aborts on them under a US-ASCII locale. ubuntu-latest
       # happens to default to C.UTF-8, so this only makes the requirement
       # explicit rather than depending on the runner image (see README).
-      - name: Build Jekyll site
+      - name: Build the site
         env:
           LANG: C.UTF-8
-        run: |
-          gem install bundler
-          bundle install
-          bundle exec jekyll build
+        run: bundle exec jekyll build
 
       # /nakano/ on the live server is a WordPress site that this repository does
       # not build and must not touch. The two coexist only because Plesk's git
@@ -71,8 +59,8 @@ jobs:
             exit 1
           fi
 
-      - name: Deploy to plesk-deploy branch
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Publish _site to the plesk-deploy branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site

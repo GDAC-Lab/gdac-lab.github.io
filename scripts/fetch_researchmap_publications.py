@@ -13,11 +13,11 @@ Design notes
 * Results are paginated until the API stops returning new records, and the
   count is checked against the reported total. A short read is an error, not a
   silently truncated list.
-* A dropped connection, a timeout or an HTTP 429/5xx from the API is retried a
-  few times with a growing pause before the run is declared failed, and a
-  failure is reported as one line rather than a traceback. researchmap does
-  drop connections now and then ("Remote end closed connection without
-  response", 2026-09-05), and one such blip must not fail a deploy.
+* A dropped connection, a timeout or an HTTP 429/5xx from the API is retried
+  (pubsync_common.http_get: five attempts, growing pauses) before the run is
+  declared failed, and a failure is reported as one line rather than a
+  traceback. researchmap does drop connections now and then ("Remote end
+  closed connection without response", 2026-09-05).
 * Permalinks are keyed on the researchmap record id alone. The publication date
   is metadata that researchmap does edit, and folding it into the URL meant a
   date correction silently moved the page. `redirect_from` keeps the previous
@@ -26,13 +26,8 @@ Design notes
 
 from __future__ import annotations
 
-import http.client
-import json
-import re
 import sys
-import time
 import urllib.error
-import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -40,22 +35,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pubsync_common import (  # noqa: E402
     SyncAbort,
     allow_shrink_from_env,
+    annotate,
     apply_generated,
     build_citation,
     front_matter,
+    http_get_json,
+    iso_day,
     log,
 )
 
 API_ROOT = "https://api.researchmap.jp"
 PAGE_SIZE = 100
 MAX_PAGES = 50
-USER_AGENT = "gdac-lab-site/1.0 (https://github.com/gdac-lab/gdac-lab.github.io)"
-
-# Transient failures are retried with these pauses (seconds) between attempts.
-RETRY_ATTEMPTS = 5
-RETRY_DELAYS = (3.0, 6.0, 12.0, 24.0)
-TRANSIENT_HTTP = {408, 425, 429, 500, 502, 503, 504}
-_sleep = time.sleep  # replaced in tests
 
 # researchmap published_paper_type -> _config.yml publication_category key.
 # Unknown types are reported rather than silently filed under "conferences".
@@ -134,23 +125,13 @@ def format_authors(item: dict) -> str:
 
 
 def normalize_date(pub_date: object) -> str | None:
-    """researchmap dates arrive as YYYY, YYYY-MM or YYYY-MM-DD. Anything else is unusable.
+    """researchmap dates arrive as YYYY, YYYY-MM or YYYY-MM-DD.
 
-    Returns None when there is no usable date; callers report that rather than
-    substituting a record's modification timestamp, which is not a publication
-    date and silently mis-sorts the entry.
+    None when there is no usable date; the caller reports that rather than
+    substituting the record's modification timestamp, which is not a
+    publication date and silently mis-sorts the entry.
     """
-    if not pub_date:
-        return None
-    text = str(pub_date).strip()
-    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
-        return text
-    if re.fullmatch(r"\d{4}-\d{2}", text):
-        return f"{text}-01"
-    if re.fullmatch(r"\d{4}", text):
-        return f"{text}-01-01"
-    m = re.match(r"(\d{4})-(\d{2})-(\d{2})", text)
-    return m.group(0) if m else None
+    return iso_day(pub_date, allow_year=True)
 
 
 def paper_url(item: dict) -> str:
@@ -195,40 +176,15 @@ def category_for(item: dict, unknown_types: set[str]) -> str:
 
 
 def fetch_page(url: str) -> object:
-    """GET one API page as parsed JSON, retrying transient failures.
+    """GET one API page as parsed JSON.
 
-    Retried: a dropped or reset connection, a timeout, a DNS or connect
-    failure, and HTTP 408/429/5xx. Anything else — a 404 for a wrong slug, a
-    body that is not JSON — is reported at once.
+    Transient failures are retried inside http_get_json. Anything else — a 404
+    for a wrong slug, a body that is not JSON — is a SyncAbort at once.
     """
-    req = urllib.request.Request(
-        url, headers={"Accept": "application/json", "User-Agent": USER_AGENT}
-    )
-    for attempt in range(1, RETRY_ATTEMPTS + 1):
-        try:
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                return json.load(resp)
-        except urllib.error.HTTPError as exc:
-            if exc.code not in TRANSIENT_HTTP:
-                raise SyncAbort(f"researchmap API returned HTTP {exc.code} for {url}") from exc
-            problem = f"HTTP {exc.code}"
-        except urllib.error.URLError as exc:
-            problem = f"unreachable ({exc.reason})"
-        except (http.client.HTTPException, OSError) as exc:
-            # RemoteDisconnected, IncompleteRead, a reset or a read timeout:
-            # urllib lets these through without wrapping them in URLError.
-            problem = type(exc).__name__ + (f": {exc}" if str(exc) else "")
-        except json.JSONDecodeError as exc:
-            raise SyncAbort(f"researchmap API returned non-JSON for {url}: {exc}") from exc
-
-        if attempt == RETRY_ATTEMPTS:
-            raise SyncAbort(
-                f"researchmap API failed {RETRY_ATTEMPTS} times for {url}; last: {problem}"
-            )
-        wait = RETRY_DELAYS[min(attempt, len(RETRY_DELAYS)) - 1]
-        log(f"[researchmap] {problem}; retry {attempt}/{RETRY_ATTEMPTS - 1} in {wait:.0f}s ({url})")
-        _sleep(wait)
-    raise AssertionError("unreachable")  # pragma: no cover
+    try:
+        return http_get_json(url, tag="researchmap")
+    except urllib.error.HTTPError as exc:
+        raise SyncAbort(f"researchmap API returned HTTP {exc.code} for {url}") from exc
 
 
 def fetch_items(slug: str) -> list[dict]:
@@ -329,7 +285,7 @@ def main() -> int:
     try:
         items = fetch_items(slug)
     except SyncAbort as exc:
-        log(f"[researchmap] ERROR: {exc}")
+        annotate("error", f"[researchmap] {exc}")
         return 1
 
     unknown_types: set[str] = set()
@@ -344,10 +300,11 @@ def main() -> int:
     for note in skipped:
         log(f"[researchmap] skipped: {note}")
     if unknown_types:
-        log(
-            "[researchmap] WARNING: unmapped published_paper_type(s) filed under "
+        annotate(
+            "warning",
+            "[researchmap] unmapped published_paper_type(s) filed under "
             f"'{DEFAULT_CATEGORY}': {', '.join(sorted(unknown_types))}. "
-            "Add them to TYPE_TO_CATEGORY."
+            "Add them to TYPE_TO_CATEGORY.",
         )
 
     try:
@@ -358,7 +315,7 @@ def main() -> int:
             allow_shrink=allow_shrink_from_env(),
         )
     except SyncAbort as exc:
-        log(f"[researchmap] ERROR: {exc}")
+        annotate("error", f"[researchmap] {exc}")
         return 1
 
     log(

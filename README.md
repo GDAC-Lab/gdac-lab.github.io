@@ -79,8 +79,11 @@ A one-off preprint that needs no lookup can be a normal `.md` with `category: pr
 as its filename contains no `-pp-`; the scripts only own the `-rm-` and `-pp-` files.
 
 `.github/workflows/researchmap-sync.yml` runs both weekly (Mondays 00:00 UTC) and on demand,
-committing any changes to `master`. `scripts/test_pubsync.py` runs first and covers the sync
-logic offline — run it locally after touching either script.
+commits any changes to `master`, and then dispatches `deploy.yml` so the new files go out.
+`scripts/test_pubsync.py` runs first and covers the sync logic offline — run it locally after
+touching either script. Everything the scripts share — the retry policy, the User-Agent, the
+Actions annotations, date normalisation, the swap-in of generated files — lives in
+`scripts/pubsync_common.py`.
 
 `publication_list_last_n_years:` in `_config.yml` limits the index to the last N years (0 = all,
 which is the current setting). The counts on the category jump buttons follow it without being
@@ -111,12 +114,20 @@ button never points at a heading that was not rendered.
   set `SYNC_ALLOW_SHRINK=1` when a large removal is genuinely intended.
 * researchmap is paged through to the end and the count is checked against the API's reported
   total, so a truncated read cannot quietly publish a partial list.
-* A dropped connection, a timeout or an HTTP 429/5xx from researchmap is retried (five attempts,
-  pauses of 3–24 s) before the run is called failed. In `deploy.yml` a failed fetch is a warning on
-  the run, not a failed deploy: the site is built from the committed list, which the weekly sync
-  keeps current, and the warning names which fetch failed.
-* A failed preprint lookup (arXiv rate limiting is the usual cause) keeps the previously
-  generated entry rather than dropping it, and does not discard the researchmap results.
+* A dropped connection, a timeout or an HTTP 408/429/5xx from any of the APIs is retried (five
+  attempts, pauses of 3–24 s, a `Retry-After` header honoured up to 90 s) before the run is
+  called failed. `deploy.yml` never fetches: it builds the committed list, so a deploy cannot
+  fail because researchmap, arXiv or DataCite is down.
+* An arXiv id is read from arXiv's Atom API; when arXiv will not answer (it has returned 406 to
+  every request from GitHub's runners since 2026-09-14) the same record is read from DataCite,
+  which is where arXiv registers its `10.48550/arXiv.*` DOIs, and Crossref is tried last. A
+  standby source never changes the date of an entry already on disk, so the file name, the
+  redirect from the old date-based URL and the ordering stay put even when the standby only
+  knows the year.
+* A preprint that no source can resolve keeps its previously generated entry rather than
+  being dropped; that is a warning on the run. The run fails only when a preprint cannot be
+  resolved *and* has no existing entry, because then it really is missing from the site.
+  Either way the researchmap result is still committed and deployed.
 * Permalinks are keyed on the record id (`/publication/rm-<id>`, `/publication/pp-<id>`), not on
   the publication date, because researchmap does edit dates. `redirect_from` keeps the old
   date-based URLs working.
@@ -218,17 +229,17 @@ with no depth to argue about. Downscale the 2x screenshot to 1280x720 before com
 
 ## Deployment
 
-Pushing to `master` triggers `.github/workflows/deploy.yml`, which re-runs the publication sync,
-builds with Jekyll, and publishes `_site` to the `plesk-deploy` branch, from which the NITech
-Plesk host serves the site. There is no GitHub Pages deployment. The pull from `plesk-deploy`
-into `httpdocs` is done by hand in Plesk, so a push here does not reach the live site until
-someone does that.
+`.github/workflows/deploy.yml` builds the committed tree with Jekyll and publishes `_site` to
+the `plesk-deploy` branch, from which the NITech Plesk host serves the site. There is no GitHub
+Pages deployment. The pull from `plesk-deploy` into `httpdocs` is done by hand in Plesk, so
+nothing here reaches the live site until someone does that.
 
-One push does not: the weekly `researchmap-sync.yml` commits with the default `GITHUB_TOKEN`,
-and GitHub does not start a workflow from such a push, so no deploy follows it. The site does
-not go stale from this, because `deploy.yml` re-runs both sync scripts before it builds — but a
-paper the weekly sync commits is published on the next deploy, not straight away. A
-`workflow_run` trigger on `deploy.yml` would close that gap at the cost of a weekly rebuild.
+It runs on every push to `master` and on demand (Actions → *Build and Deploy to Plesk* → *Run
+workflow*). The weekly `researchmap-sync.yml` cannot trigger it by pushing — GitHub does not
+start a workflow from a push made with the default `GITHUB_TOKEN` — so, when it has committed
+something, it dispatches `deploy.yml` explicitly; `workflow_dispatch` is the documented exception
+to that rule. A week with no publication changes therefore does not rebuild the site. Builds
+run one at a time in commit order (`concurrency: deploy`).
 
 ### The WordPress site at /nakano/
 

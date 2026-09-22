@@ -26,6 +26,19 @@ import pubsync_common as common  # noqa: E402
 import sync_preprints_from_sources as pp  # noqa: E402
 
 
+# No test may reach the network or sleep. A test that needs a response installs
+# its own urlopen; anything that slips through fails at once with a clear
+# message instead of hanging in real retries (which is what happened when a
+# lookup table bound the fetch functions at import time).
+def _no_network(req, timeout=None):
+    raise AssertionError(f"unexpected network call in tests: {req.full_url}")
+
+
+common.urllib.request.urlopen = _no_network
+common._sleep = lambda seconds: None
+pp._arxiv_throttle = lambda: None
+
+
 def paper(rm_id: str, *, title_en="A Paper", title_ja=None, date="2024-05-06",
           ptype="scientific_journal", see_also=None, name="J. Test") -> dict:
     titles: dict[str, str] = {}
@@ -298,12 +311,12 @@ class TestPreprints(TempPubDir):
             seen["headers"] = dict(req.headers)
             return _Resp()
 
-        real_open, real_throttle = pp.urlopen_with_retry, pp._arxiv_throttle
-        pp.urlopen_with_retry, pp._arxiv_throttle = fake_urlopen, lambda: None
+        real_open, real_throttle = common.urllib.request.urlopen, pp._arxiv_throttle
+        common.urllib.request.urlopen, pp._arxiv_throttle = fake_urlopen, lambda: None
         try:
             pp.arxiv_fetch("2503.16715")
         finally:
-            pp.urlopen_with_retry, pp._arxiv_throttle = real_open, real_throttle
+            common.urllib.request.urlopen, pp._arxiv_throttle = real_open, real_throttle
 
         # urllib title-cases header names on the Request object.
         accept = seen["headers"].get("Accept", "")
@@ -455,6 +468,28 @@ class TestPreprints(TempPubDir):
         )
         self.assertEqual(name, f"2025-03-20-pp-{pp.slug_for_source('arxiv', '2503.16715')}.md")
 
+    def test_arxiv_doi_is_resolved_as_its_arxiv_id(self):
+        """A dois: entry of 10.48550/arXiv.* must get DataCite too, not just arXiv."""
+        seen = {}
+        saved = pp.resolve_arxiv
+        pp.resolve_arxiv = lambda aid: seen.setdefault("aid", aid) and ("f", "c")
+        try:
+            out = pp.resolve_doi("https://doi.org/10.48550/arXiv.2503.16715")
+        finally:
+            pp.resolve_arxiv = saved
+        self.assertEqual(seen["aid"], "2503.16715")
+        self.assertEqual(out, ("f", "c"))
+
+    def test_every_source_kind_shares_one_slug_rule(self):
+        for kind, value in (
+            ("arxiv", "2503.16715"),
+            ("arxiv", "arxiv:2503.16715"),
+            ("doi", "10.48550/arXiv.2503.16715"),
+            ("doi", "https://doi.org/10.48550/arXiv.2503.16715"),
+        ):
+            self.assertEqual(pp.slug_for_source(kind, value), "arxiv-2503-16715", (kind, value))
+        self.assertEqual(pp.slug_for_source("doi", "10.1000/A.B"), "doi-10-1000-a-b")
+
     def test_doi_slug_routes_arxiv_dois_to_arxiv_slug(self):
         self.assertEqual(
             pp.slug_for_source("doi", "10.48550/arXiv.2503.16715"), "arxiv-2503-16715"
@@ -495,12 +530,12 @@ class TestRetry(unittest.TestCase):
     def _fetch(self, urlopen):
         """Run fetch_items with `urlopen` in place and sleeps recorded, not slept."""
         sleeps: list[float] = []
-        orig_open, orig_sleep = rm.urllib.request.urlopen, rm._sleep
-        rm.urllib.request.urlopen, rm._sleep = urlopen, sleeps.append
+        orig_open, orig_sleep = common.urllib.request.urlopen, common._sleep
+        common.urllib.request.urlopen, common._sleep = urlopen, sleeps.append
         try:
             return rm.fetch_items("slug"), sleeps
         finally:
-            rm.urllib.request.urlopen, rm._sleep = orig_open, orig_sleep
+            common.urllib.request.urlopen, common._sleep = orig_open, orig_sleep
 
     def test_dropped_connection_is_retried(self):
         calls = {"n": 0}
@@ -515,7 +550,7 @@ class TestRetry(unittest.TestCase):
         items, sleeps = self._fetch(flaky)
         self.assertEqual([i["rm:id"] for i in items], ["1"])
         self.assertEqual(calls["n"], 2)
-        self.assertEqual(sleeps, [rm.RETRY_DELAYS[0]])
+        self.assertEqual(sleeps, [common.RETRY_DELAYS[0]])
 
     def test_server_error_is_retried(self):
         calls = {"n": 0}
@@ -540,7 +575,7 @@ class TestRetry(unittest.TestCase):
 
         with self.assertRaises(common.SyncAbort) as ctx:
             self._fetch(dead)
-        self.assertEqual(calls["n"], rm.RETRY_ATTEMPTS)
+        self.assertEqual(calls["n"], common.RETRY_ATTEMPTS)
         self.assertIn("RemoteDisconnected", str(ctx.exception))
 
     def test_pauses_grow_between_attempts(self):
@@ -548,14 +583,55 @@ class TestRetry(unittest.TestCase):
             raise TimeoutError("timed out")
 
         sleeps: list[float] = []
-        orig_open, orig_sleep = rm.urllib.request.urlopen, rm._sleep
-        rm.urllib.request.urlopen, rm._sleep = dead, sleeps.append
+        orig_open, orig_sleep = common.urllib.request.urlopen, common._sleep
+        common.urllib.request.urlopen, common._sleep = dead, sleeps.append
         try:
             with self.assertRaises(common.SyncAbort):
                 rm.fetch_items("slug")
         finally:
-            rm.urllib.request.urlopen, rm._sleep = orig_open, orig_sleep
-        self.assertEqual(sleeps, list(rm.RETRY_DELAYS[:rm.RETRY_ATTEMPTS - 1]))
+            common.urllib.request.urlopen, common._sleep = orig_open, orig_sleep
+        self.assertEqual(sleeps, list(common.RETRY_DELAYS[:common.RETRY_ATTEMPTS - 1]))
+
+    def test_retry_after_is_honoured_up_to_the_cap(self):
+        calls = {"n": 0}
+
+        def throttled(req, timeout=None):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                hdrs = {"Retry-After": "600"}
+                raise urllib.error.HTTPError(req.full_url, 429, "slow down", hdrs, None)
+            return self._Resp({"items": [paper("1")]})
+
+        _, sleeps = self._fetch(throttled)
+        self.assertEqual(sleeps, [common.RETRY_MAX_WAIT])
+
+    def test_preprint_lookups_share_the_retry(self):
+        """The preprint script used to give up on the first dropped connection."""
+        calls = {"n": 0}
+
+        class _Json:
+            def read(self_inner):
+                return json.dumps({"status": "ok", "message": {"title": ["T"]}}).encode()
+            def __enter__(self_inner):
+                return self_inner
+            def __exit__(self_inner, *a):
+                return False
+
+        def flaky(req, timeout=None):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise http.client.RemoteDisconnected("gone")
+            return _Json()
+
+        sleeps: list[float] = []
+        orig_open, orig_sleep = common.urllib.request.urlopen, common._sleep
+        common.urllib.request.urlopen, common._sleep = flaky, sleeps.append
+        try:
+            msg = pp.crossref_fetch("10.1000/x")
+        finally:
+            common.urllib.request.urlopen, common._sleep = orig_open, orig_sleep
+        self.assertEqual(msg, {"title": ["T"]})
+        self.assertEqual(calls["n"], 2)
 
     def test_not_found_is_not_retried(self):
         calls = {"n": 0}
@@ -567,6 +643,18 @@ class TestRetry(unittest.TestCase):
         with self.assertRaises(common.SyncAbort):
             self._fetch(missing)
         self.assertEqual(calls["n"], 1)
+
+
+class TestIsoDay(unittest.TestCase):
+    def test_shapes(self):
+        self.assertEqual(common.iso_day("2024-07-09"), "2024-07-09")
+        self.assertEqual(common.iso_day("2024-07-09T12:00:00Z"), "2024-07-09")
+        self.assertEqual(common.iso_day("2024-07"), "2024-07-01")
+        self.assertIsNone(common.iso_day("2024"))
+        self.assertEqual(common.iso_day("2024", allow_year=True), "2024-01-01")
+        self.assertIsNone(common.iso_day(""))
+        self.assertIsNone(common.iso_day(None))
+        self.assertIsNone(common.iso_day("July 2024"))
 
 
 class TestFrontMatter(unittest.TestCase):

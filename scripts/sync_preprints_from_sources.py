@@ -1,25 +1,34 @@
 #!/usr/bin/env python3
 """Regenerate _publications/*-pp-*.md from _data/preprint_sources.json.
 
-Sources: Crossref for DOIs (https://api.crossref.org/works/{doi}); the arXiv Atom
-API for bare arXiv ids and for 10.48550/arXiv.* DOIs Crossref does not hold.
+Edit preprint_sources.json ("dois" / "arxiv_ids"), then run this script (or let
+CI run it). A preprint that needs no external lookup can be added as an ordinary
+.md in _publications with `category: preprints` and no "-pp-" in the filename;
+this script only owns the "-pp-" files.
 
-Edit preprint_sources.json ("dois" / "arxiv_ids"), then run this script (or let CI
-run it). A preprint that needs no external lookup can be added as an ordinary .md
-in _publications with `category: preprints` and no "-pp-" in the filename; this
-script only owns the "-pp-" files.
+Where the records come from
+---------------------------
+* A DOI is read from Crossref.
+* An arXiv id is read from arXiv's Atom API. When arXiv will not answer — it has
+  returned 406 to every request from GitHub's runners since 2026-09-14 — the
+  same record is read from DataCite, which is where arXiv registers its
+  10.48550/arXiv.* DOIs, and Crossref is tried last. A DOI of that form is
+  handled as the arXiv id it names, so it gets the same standby sources.
+
+Two invariants keep the published URLs still whichever source answers:
+* the file's slug comes from the id in preprint_sources.json, never from the
+  record, so `/publication/pp-arxiv-2503-16715` does not move; and
+* a standby source never changes the date of an entry already on disk. arXiv
+  gives the submission day; DataCite may only know the year, and letting that
+  through renamed three files to January 1 on 2026-09-21.
 
 Failure handling
 ----------------
-Nothing is deleted until every entry has been resolved. When a single lookup
-fails — arXiv rate limiting and 406 responses are the common cases — the
-previously generated file for that entry is carried forward instead of being
-dropped. That outcome is reported as a warning and the script still exits 0,
-because nothing was lost. It exits non-zero only when a source fails and there
-is no existing entry to fall back on, which does leave a preprint off the site.
-
-arXiv rate limits: at most one request per ARXIV_MIN_INTERVAL_SEC (default 3.5s);
-429/503 are retried with backoff.
+Nothing is deleted until every entry has been resolved. When a lookup fails on
+every source, the previously generated file for that entry is carried forward.
+That is reported as a warning and the script still exits 0, because nothing was
+lost. It exits non-zero only when a source fails and there is no existing entry
+to fall back on, which does leave a preprint off the site.
 """
 
 from __future__ import annotations
@@ -31,9 +40,9 @@ import sys
 import time
 import urllib.error
 import urllib.parse
-import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -42,31 +51,29 @@ from pubsync_common import (  # noqa: E402
     REPO_ROOT,
     SyncAbort,
     allow_shrink_from_env,
+    annotate,
     apply_generated,
     build_citation,
     front_matter,
+    http_get,
+    http_get_json,
+    iso_day,
     log,
     title_language,
 )
 
+DATA_PATH = REPO_ROOT / "_data" / "preprint_sources.json"
+
+CROSSREF_API = "https://api.crossref.org/works/"
+DATACITE_API = "https://api.datacite.org/dois/"
+ARXIV_API = "https://export.arxiv.org/api/query?id_list="
+ARXIV_ACCEPT = "application/atom+xml, text/xml;q=0.9, */*;q=0.8"
+ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
+UNKNOWN_DATE = "1900-01-01"
+
+# arXiv asks for no more than one request every few seconds.
 _ARXIV_MIN_INTERVAL_SEC = float(os.environ.get("ARXIV_MIN_INTERVAL_SEC", "3.5"))
 _ARXIV_NEXT_MONO = 0.0
-
-DATA_PATH = REPO_ROOT / "_data" / "preprint_sources.json"
-ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
-
-
-def user_agent() -> str:
-    mail = (os.environ.get("CROSSREF_CONTACT_EMAIL") or "").strip()
-    base = "gdac-lab-site/1.0 (https://github.com/gdac-lab/gdac-lab.github.io)"
-    return f"{base}; mailto:{mail}" if mail else base
-
-
-def annotate(level: str, msg: str) -> None:
-    """Log, and raise it to the run summary when running under Actions."""
-    log(f"[{level.upper()}] {msg}" if level != "warning" else f"WARNING: {msg}")
-    if os.environ.get("GITHUB_ACTIONS") == "true":
-        print(f"::{level}::{msg}")
 
 
 def _arxiv_throttle() -> None:
@@ -77,46 +84,49 @@ def _arxiv_throttle() -> None:
     _ARXIV_NEXT_MONO = time.monotonic() + _ARXIV_MIN_INTERVAL_SEC
 
 
-def urlopen_with_retry(req: urllib.request.Request, timeout: float = 60):
-    """Retry on 429 / 503 (arXiv and Crossref rate limits)."""
-    backoff = 5.0
-    last_err: Exception | None = None
-    for attempt in range(6):
-        try:
-            return urllib.request.urlopen(req, timeout=timeout)
-        except urllib.error.HTTPError as exc:
-            last_err = exc
-            if exc.code not in (429, 503) or attempt >= 5:
-                raise
-            retry_after = exc.headers.get("Retry-After") if exc.headers else None
-            try:
-                wait = float(retry_after)
-            except (TypeError, ValueError):
-                wait = backoff
-            wait = max(3.0, wait)
-            log(f"[preprint] HTTP {exc.code} ({req.full_url}), sleep {wait:.1f}s "
-                f"retry {attempt + 1}/5")
-            time.sleep(wait)
-            backoff = min(backoff * 1.5, 90.0)
-    raise last_err  # pragma: no cover
+# ------------------------------------------------------------------- ids and slugs
 
 
-# --------------------------------------------------------------------------- Crossref
+def strip_doi(doi: str) -> str:
+    doi = doi.strip()
+    prefix = "https://doi.org/"
+    return doi[len(prefix):] if doi.lower().startswith(prefix) else doi
+
+
+def arxiv_id_from_doi(doi: str) -> str | None:
+    m = re.search(r"10\.48550/\s*arXiv\.(\d{4}\.\d{4,5})", doi, re.I)
+    return m.group(1) if m else None
+
+
+def clean_arxiv_id(aid: str) -> str:
+    return aid.strip().replace("arxiv:", "")
+
+
+def slug_for_source(kind: str, value: str) -> str:
+    """The one place a slug is derived. render() and carry_forward() both key
+    on it, so a file written by one run is found by the next."""
+    if kind == "arxiv":
+        return f"arxiv-{clean_arxiv_id(value).replace('.', '-')}"
+    doi = strip_doi(value)
+    aid = arxiv_id_from_doi(doi)
+    if aid:
+        return f"arxiv-{aid.replace('.', '-')}"
+    return f"doi-{re.sub(r'[^a-z0-9]+', '-', doi.lower()).strip('-')[:72]}"
+
+
+# ------------------------------------------------------------------------ Crossref
 
 
 def crossref_fetch(doi: str) -> dict | None:
-    url = f"https://api.crossref.org/works/{urllib.parse.quote(doi.strip(), safe='')}"
-    req = urllib.request.Request(
-        url, headers={"User-Agent": user_agent(), "Accept": "application/json"}
-    )
+    """The Crossref work record, or None when Crossref does not hold the DOI."""
+    url = CROSSREF_API + urllib.parse.quote(doi.strip(), safe="")
     try:
-        with urlopen_with_retry(req) as resp:
-            payload = json.load(resp)
+        payload = http_get_json(url, tag="crossref")
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             return None
         raise
-    if payload.get("status") != "ok":
+    if not isinstance(payload, dict) or payload.get("status") != "ok":
         return None
     return payload.get("message") or {}
 
@@ -130,7 +140,7 @@ def crossref_date(msg: dict) -> str:
             month = int(dp[1]) if len(dp) > 1 else 1
             day = int(dp[2]) if len(dp) > 2 else 1
             return f"{year:04d}-{month:02d}-{day:02d}"
-    return "1900-01-01"
+    return UNKNOWN_DATE
 
 
 def crossref_title(msg: dict) -> str:
@@ -171,26 +181,20 @@ def crossref_url(msg: dict, doi: str) -> str:
     return doi if doi.lower().startswith("http") else f"https://doi.org/{doi}"
 
 
-# ------------------------------------------------------------------------- DataCite
+# ------------------------------------------------------------------------ DataCite
 
 
 def datacite_fetch(doi: str) -> dict | None:
-    """Attributes for a DOI, or None if DataCite does not hold it.
-
-    arXiv registers 10.48550/arXiv.* through DataCite, not Crossref, so this is
-    where an arXiv record can be read when export.arxiv.org will not answer.
-    """
-    url = f"https://api.datacite.org/dois/{urllib.parse.quote(doi.strip(), safe='')}"
-    req = urllib.request.Request(
-        url, headers={"User-Agent": user_agent(), "Accept": "application/json"}
-    )
+    """The DataCite attributes for a DOI, or None when DataCite does not hold it."""
+    url = DATACITE_API + urllib.parse.quote(doi.strip(), safe="")
     try:
-        with urlopen_with_retry(req) as resp:
-            payload = json.load(resp)
+        payload = http_get_json(url, tag="datacite")
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             return None
         raise
+    if not isinstance(payload, dict):
+        return None
     return (payload.get("data") or {}).get("attributes") or None
 
 
@@ -202,39 +206,25 @@ def datacite_title(attrs: dict) -> str:
     return ""
 
 
-def _as_iso_day(raw: object) -> str | None:
-    text = str(raw or "")[:10]
-    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
-        return text
-    if re.fullmatch(r"\d{4}-\d{2}", text):
-        return f"{text}-01"
-    return None
-
-
 def datacite_date(attrs: dict) -> str:
-    """The submission day if the record carries one anywhere, else the year.
-
-    Falling straight through to publicationYear turned three real dates into
-    January 1 on 2026-09-21, which renamed the files and broke the redirects
-    from the old date-based URLs. Every dates[] entry is examined first.
-    """
+    """The submission day if the record carries one anywhere, else the year."""
     entries = attrs.get("dates") or []
     for want in ("Issued", "Submitted", "Available", "Accepted", "Created"):
         for d in entries:
             if str(d.get("dateType") or "") == want:
-                day = _as_iso_day(d.get("date"))
+                day = iso_day(d.get("date"))
                 if day:
                     return day
-    for d in entries:                      # any type, rather than invent a date
-        day = _as_iso_day(d.get("date"))
+    for d in entries:  # any type, rather than invent a date
+        day = iso_day(d.get("date"))
         if day:
             return day
     for key in ("published", "created", "registered", "updated"):
-        day = _as_iso_day(attrs.get(key))
+        day = iso_day(attrs.get(key))
         if day:
             return day
     year = attrs.get("publicationYear")
-    return f"{int(year):04d}-01-01" if str(year or "").isdigit() else "1900-01-01"
+    return f"{int(year):04d}-01-01" if str(year or "").isdigit() else UNKNOWN_DATE
 
 
 def datacite_authors(attrs: dict) -> str:
@@ -256,30 +246,15 @@ def datacite_authors(attrs: dict) -> str:
     return ", ".join(n for n in names if n)
 
 
-def arxiv_id_from_doi(doi: str) -> str | None:
-    m = re.search(r"10\.48550/\s*arXiv\.(\d{4}\.\d{4,5})", doi, re.I)
-    return m.group(1) if m else None
-
-
-# ------------------------------------------------------------------------------ arXiv
+# --------------------------------------------------------------------------- arXiv
 
 
 def arxiv_fetch(arxiv_id: str) -> dict | None:
+    """The arXiv Atom record, or None when arXiv has no such id."""
     _arxiv_throttle()
-    aid = arxiv_id.strip().replace("arxiv:", "")
-    url = f"https://export.arxiv.org/api/query?id_list={urllib.parse.quote(aid)}"
-    # The API is content-negotiated and answers 406 when no Accept header is sent;
-    # urllib sends none by default, which is what broke the sync on 2026-09-14.
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": user_agent(),
-            "Accept": "application/atom+xml, text/xml;q=0.9, */*;q=0.8",
-        },
-    )
+    aid = clean_arxiv_id(arxiv_id)
     try:
-        with urlopen_with_retry(req) as resp:
-            xml = resp.read()
+        xml = http_get(ARXIV_API + urllib.parse.quote(aid), accept=ARXIV_ACCEPT, tag="arxiv")
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             return None
@@ -288,15 +263,9 @@ def arxiv_fetch(arxiv_id: str) -> dict | None:
     if entry is None:
         return None
 
-    title_el = entry.find("atom:title", ATOM_NS)
-    title = " ".join(title_el.text.split()) if title_el is not None and title_el.text else ""
-
-    published_el = entry.find("atom:published", ATOM_NS)
-    published = (
-        published_el.text.strip()[:10]
-        if published_el is not None and published_el.text
-        else "1900-01-01"
-    )
+    def text(tag: str) -> str:
+        el = entry.find(f"atom:{tag}", ATOM_NS)
+        return " ".join(el.text.split()) if el is not None and el.text else ""
 
     names = [
         name_el.text.strip()
@@ -304,23 +273,21 @@ def arxiv_fetch(arxiv_id: str) -> dict | None:
         for name_el in [author.find("atom:name", ATOM_NS)]
         if name_el is not None and name_el.text
     ]
-
     href = f"https://arxiv.org/abs/{aid}"
     for link in entry.findall("atom:link", ATOM_NS):
         if link.get("rel") == "alternate" and link.get("type") == "text/html" and link.get("href"):
             href = link.get("href")
             break
-
     return {
-        "title": title,
-        "date": published,
+        "title": text("title"),
+        "date": iso_day(text("published")) or UNKNOWN_DATE,
         "authors": ", ".join(names),
         "url": href,
         "arxiv_id": aid,
     }
 
 
-# ----------------------------------------------------------------------------- render
+# -------------------------------------------------------------------------- render
 
 
 def render(
@@ -344,14 +311,21 @@ def render(
         ("date", date_iso),
         ("venue", venue),
         ("paperurl", paperurl),
-        ("authors", authors),
-        ("citation", build_citation(authors, date_iso[:4], title, venue)),
+        ("authors", authors or "—"),
+        ("citation", build_citation(authors or "—", date_iso[:4], title, venue)),
     ]
     return f"{date_iso}-pp-{slug_suffix}.md", front_matter(fields)
 
 
+def carry_forward(slug_suffix: str) -> tuple[str, str] | None:
+    """The previously generated file for a slug, as (name, content), if any."""
+    for path in sorted(PUB_DIR.glob(f"*-pp-{slug_suffix}.md")):
+        return path.name, path.read_text(encoding="utf-8")
+    return None
+
+
 def published_date(slug_suffix: str) -> str | None:
-    """The date already published for this entry, if there is one on disk."""
+    """The date already published for this slug, if there is a file on disk."""
     existing = carry_forward(slug_suffix)
     if not existing:
         return None
@@ -359,46 +333,43 @@ def published_date(slug_suffix: str) -> str | None:
     return m.group(1) if m else None
 
 
-def carry_forward(slug_suffix: str) -> tuple[str, str] | None:
-    """Reuse the previously generated file for an entry whose lookup just failed."""
-    for path in sorted(PUB_DIR.glob(f"*-pp-{slug_suffix}.md")):
-        return path.name, path.read_text(encoding="utf-8")
-    return None
+_Standby = tuple[str, Callable[[str], dict | None], Callable[[dict], str],
+                 Callable[[dict], str], Callable[[dict], str]]
 
 
-def resolve_arxiv(aid: str) -> tuple[str, str] | None:
-    """arXiv's Atom API first; Crossref as a standby when it will not answer.
+def arxiv_standby_sources() -> tuple[_Standby, ...]:
+    """Where an arXiv record is read when arXiv itself will not answer: how to
+    fetch its 10.48550 DOI record and read the title, date and authors out of
+    it, in the order tried. Looked up at call time, not bound at import, so
+    the tests can stand in for any one of them."""
+    return (
+        ("DataCite", datacite_fetch, datacite_title, datacite_date, datacite_authors),
+        ("Crossref", crossref_fetch, crossref_title, crossref_date, crossref_authors),
+    )
 
-    export.arxiv.org has answered 406 to every request from GitHub's runners
-    since 2026-09-14, with or without an Accept header. arXiv registers a DOI
-    (10.48550/arXiv.*) for every submission through DataCite, so the same
-    record can be read there; Crossref is tried last because it does not hold
-    that prefix. The slug stays in the arXiv form whichever source answers, so
-    the permalink and the carried-forward file do not move.
-    """
-    aid = aid.strip().replace("arxiv:", "")
-    slug = f"arxiv-{aid.replace('.', '-')}"
+
+def resolve_arxiv(arxiv_id: str) -> tuple[str, str] | None:
+    """Render an arXiv preprint from arXiv, or from a standby source."""
+    aid = clean_arxiv_id(arxiv_id)
+    slug = slug_for_source("arxiv", aid)
 
     try:
         meta = arxiv_fetch(aid)
-    except Exception as exc:
-        log(f"[preprint] arxiv {aid}: {type(exc).__name__}: {exc}; trying Crossref")
+    except Exception as exc:  # 406, a rate limit past its retries, a parse error
+        log(f"[preprint] arxiv {aid}: {type(exc).__name__}: {exc}; trying a standby source")
         meta = None
     if meta:
         return render(
             date_iso=meta["date"],
-            slug_suffix=f"arxiv-{meta['arxiv_id'].replace('.', '-')}",
+            slug_suffix=slug,
             title=meta["title"],
             venue="arXiv preprint",
-            authors=meta["authors"] or "—",
+            authors=meta["authors"],
             paperurl=meta["url"],
         )
 
     doi = f"10.48550/arXiv.{aid}"
-    for source, fetch, get_title, get_date, get_authors in (
-        ("DataCite", datacite_fetch, datacite_title, datacite_date, datacite_authors),
-        ("Crossref", crossref_fetch, crossref_title, crossref_date, crossref_authors),
-    ):
+    for source, fetch, get_title, get_date, get_authors in arxiv_standby_sources():
         try:
             rec = fetch(doi)
         except Exception as exc:
@@ -408,8 +379,8 @@ def resolve_arxiv(aid: str) -> tuple[str, str] | None:
         if not title:
             continue
         # arXiv gave the submission day; a standby source may only know the year.
-        # Keeping the published date means the file name, the redirect from the
-        # old date-based URL and the ordering on the page all stay put.
+        # Keeping the published date keeps the file name, the redirect from the
+        # old date-based URL and the ordering on the page where they are.
         date_iso = published_date(slug) or get_date(rec)
         log(f"[preprint] arxiv {aid}: resolved via {source} ({doi}), date {date_iso}")
         return render(
@@ -417,77 +388,63 @@ def resolve_arxiv(aid: str) -> tuple[str, str] | None:
             slug_suffix=slug,
             title=title,
             venue="arXiv preprint",
-            authors=get_authors(rec) or "—",
+            authors=get_authors(rec),
             paperurl=f"https://arxiv.org/abs/{aid}",
         )
     return None
 
 
 def resolve_doi(doi: str) -> tuple[str, str] | None:
-    doi = doi.strip()
-    if doi.lower().startswith("https://doi.org/"):
-        doi = doi[len("https://doi.org/"):]
+    """Render a DOI preprint from Crossref. An arXiv DOI is the arXiv id it
+    names, and goes through resolve_arxiv so it gets the same standby sources."""
+    doi = strip_doi(doi)
+    aid = arxiv_id_from_doi(doi)
+    if aid:
+        return resolve_arxiv(aid)
 
     msg = crossref_fetch(doi)
-    if msg is None:
-        aid = arxiv_id_from_doi(doi)
-        if not aid:
-            return None
-        meta = arxiv_fetch(aid)
-        if not meta:
-            return None
-        return render(
-            date_iso=meta["date"],
-            slug_suffix=f"arxiv-{meta['arxiv_id'].replace('.', '-')}",
-            title=meta["title"],
-            venue="arXiv preprint",
-            authors=meta["authors"] or "—",
-            paperurl=f"https://doi.org/{doi}",
-        )
-
-    title = crossref_title(msg)
+    title = crossref_title(msg) if msg else ""
     if not title:
         return None
     return render(
         date_iso=crossref_date(msg),
-        slug_suffix=f"doi-{re.sub(r'[^a-z0-9]+', '-', doi.lower()).strip('-')[:72]}",
+        slug_suffix=slug_for_source("doi", doi),
         title=title,
         venue=crossref_venue(msg),
-        authors=crossref_authors(msg) or "—",
+        authors=crossref_authors(msg),
         paperurl=crossref_url(msg, doi),
     )
 
 
-def slug_for_source(kind: str, value: str) -> str:
-    if kind == "arxiv":
-        return f"arxiv-{value.strip().replace('arxiv:', '').replace('.', '-')}"
-    doi = value.strip()
-    if doi.lower().startswith("https://doi.org/"):
-        doi = doi[len("https://doi.org/"):]
-    aid = arxiv_id_from_doi(doi)
-    if aid:
-        return f"arxiv-{aid.replace('.', '-')}"
-    return f"doi-{re.sub(r'[^a-z0-9]+', '-', doi.lower()).strip('-')[:72]}"
+# ---------------------------------------------------------------------------- main
+
+
+def read_sources() -> list[tuple[str, str]] | None:
+    """(kind, value) pairs from preprint_sources.json; None when the file is bad."""
+    try:
+        raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        annotate("error", f"[preprint] {DATA_PATH.name} is not valid JSON: {exc}")
+        return None
+    if not isinstance(raw, dict):
+        annotate("error", f"[preprint] {DATA_PATH.name} must hold an object")
+        return None
+
+    def listed(key: str) -> list[str]:
+        values = raw.get(key)
+        return [str(v) for v in values] if isinstance(values, list) else []
+
+    sources = [("doi", d) for d in listed("dois")] + [("arxiv", a) for a in listed("arxiv_ids")]
+    return [(k, v.strip()) for k, v in sources if v.strip() and not v.strip().startswith("#")]
 
 
 def main() -> int:
     if not DATA_PATH.is_file():
         log(f"[preprint] no {DATA_PATH.relative_to(REPO_ROOT)}; nothing to do")
         return 0
-
-    try:
-        raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        log(f"[preprint] ERROR: {DATA_PATH.name} is not valid JSON: {exc}")
+    sources = read_sources()
+    if sources is None:
         return 1
-
-    dois = [str(d) for d in (raw.get("dois") or []) if isinstance(raw.get("dois"), list)]
-    arxiv_ids = [
-        str(a) for a in (raw.get("arxiv_ids") or []) if isinstance(raw.get("arxiv_ids"), list)
-    ]
-
-    sources = [("doi", d) for d in dois] + [("arxiv", a) for a in arxiv_ids]
-    sources = [(k, v) for k, v in sources if v.strip() and not v.strip().startswith("#")]
 
     generated: dict[str, str] = {}
     kept: list[str] = []   # lookup failed, the existing entry still stands
@@ -496,22 +453,19 @@ def main() -> int:
     for kind, value in sources:
         try:
             result = resolve_doi(value) if kind == "doi" else resolve_arxiv(value)
-        except Exception as exc:  # network / rate limit / malformed response
-            result = None
-            reason = f"{type(exc).__name__}: {exc}"
-        else:
             reason = "no record found"
+        except Exception as exc:  # network, rate limit, malformed response
+            result, reason = None, f"{type(exc).__name__}: {exc}"
 
-        if result is None:
-            fallback = carry_forward(slug_for_source(kind, value))
-            if fallback:
-                generated[fallback[0]] = fallback[1]
-                kept.append(f"{kind} {value}: {reason} — kept the existing entry")
-            else:
-                lost.append(f"{kind} {value}: {reason} — no existing entry to keep")
+        if result is not None:
+            generated[result[0]] = result[1]
             continue
-
-        generated[result[0]] = result[1]
+        fallback = carry_forward(slug_for_source(kind, value))
+        if fallback:
+            generated[fallback[0]] = fallback[1]
+            kept.append(f"{kind} {value}: {reason} — kept the existing entry")
+        else:
+            lost.append(f"{kind} {value}: {reason} — no existing entry to keep")
 
     for note in kept:
         annotate("warning", f"[preprint] {note}")
@@ -527,15 +481,14 @@ def main() -> int:
             allow_shrink=allow_shrink_from_env() or not sources,
         )
     except SyncAbort as exc:
-        log(f"[preprint] ERROR: {exc}")
+        annotate("error", f"[preprint] {exc}")
         return 1
 
     log(
         f"[preprint] {len(generated)} entr(ies) from {len(sources)} source(s): "
         f"{written} written, {deleted} removed, {unchanged} unchanged"
     )
-    # A lookup that failed while the published entry still stands loses nothing:
-    # report it, but do not fail the run every week over an upstream outage.
+    # A lookup that failed while the published entry still stands loses nothing.
     # A source with nothing to fall back on means the site is missing a preprint.
     return 1 if lost else 0
 

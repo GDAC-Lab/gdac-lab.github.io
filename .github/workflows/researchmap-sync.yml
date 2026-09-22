@@ -1,21 +1,18 @@
-# Refresh _publications from researchmap and preprint sources, push to master if changed.
+# Refresh _publications from researchmap and the preprint sources, commit to
+# master if anything changed, and then deploy.
 #
-# This push does NOT deploy. GitHub does not start a workflow from a push made with the
-# default GITHUB_TOKEN, so deploy.yml never runs for the commits this job creates. That
-# is not a gap in what the site shows, because deploy.yml re-runs both sync scripts at
-# build time, so any later deploy publishes the current publication list either way.
-# What this job does is keep the committed files in step with researchmap, so the
-# repository is a complete record and a build is reproducible from it. The consequence
-# is that a newly published paper reaches the live site on the next deploy, not on the
-# next sync; add a workflow_run trigger to deploy.yml if that wait ever matters.
+# The deploy has to be asked for: GitHub does not start a workflow from a push
+# made with the default GITHUB_TOKEN, so the commit this job creates would never
+# trigger deploy.yml on its own. workflow_dispatch is the documented exception
+# to that rule, so the last step dispatches deploy.yml — and only when something
+# was actually pushed, so a quiet week does not rebuild the site for nothing.
 #
-# Note on the schedule: GitHub disables a scheduled workflow after 60 days without
-# repository activity, and that is exactly what happened here — the sync went
-# `disabled_inactivity` on 2026-07-06 and stopped running for two months without
-# any failure notice. The heartbeat step below commits a timestamp whenever the
-# repository has been quiet for a month, so the 60-day timer cannot run out.
-# If it is ever disabled again, re-enable it under Actions → this workflow → Enable.
-
+# Note on the schedule: GitHub disables a scheduled workflow after 60 days
+# without repository activity, and that is exactly what happened here — the
+# sync went `disabled_inactivity` on 2026-07-06 and stopped running for two
+# months without any failure notice. The heartbeat step commits a timestamp
+# whenever the repository has been quiet for a month, so the 60-day timer cannot
+# run out. If it is ever disabled again, re-enable it under Actions.
 name: Researchmap publication sync
 
 on:
@@ -32,30 +29,34 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write   # push the refreshed publication files
+      actions: write    # dispatch deploy.yml afterwards
+    env:
+      # Puts the requests in Crossref's and DataCite's polite pools. Set under
+      # Settings → Secrets and variables → Actions → Variables.
+      CROSSREF_CONTACT_EMAIL: ${{ vars.CROSSREF_CONTACT_EMAIL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Test sync scripts
+      - name: Test the sync scripts offline
         run: python3 scripts/test_pubsync.py
 
+      # A failure here stops the job: there is nothing to commit and nothing to
+      # deploy, and the site keeps the list it already has.
       - name: Fetch publications from researchmap
-        id: researchmap
         run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
 
-      # Preprint lookups hit arXiv/Crossref rate limits and 406 responses from shared
-      # CI IPs. A failure here must not discard an already-successful researchmap sync
-      # (it did on 2026-06-22 and 06-29), so record the outcome and fail at the end.
-      # The script exits non-zero only when a lookup failed AND there was no existing
-      # entry to carry forward; an outage that loses nothing is a warning, not a
-      # failure, so a broken upstream no longer reports a red run every week.
-      - name: Sync preprints (DOI / arXiv)
+      # The script exits non-zero only when a preprint could not be resolved
+      # from any source AND there was no existing entry to carry forward — the
+      # one case where the site is actually missing something. An outage that
+      # loses nothing is a warning on the run. Either way the researchmap
+      # result above must still be committed, hence continue-on-error and the
+      # report at the end.
+      - name: Resolve preprints (arXiv, DataCite, Crossref)
         id: preprints
         continue-on-error: true
         run: python3 scripts/sync_preprints_from_sources.py
-        env:
-          CROSSREF_CONTACT_EMAIL: ${{ vars.CROSSREF_CONTACT_EMAIL }}
 
       - name: Heartbeat when the repository has been quiet
         run: |
@@ -69,25 +70,33 @@ jobs:
             echo "Wrote heartbeat to keep the schedule from being auto-disabled."
           fi
 
-      # -A stages deletions. The old `git add _publications/*-rm-*.md` matched only
-      # files still present, so a paper removed from researchmap — or renamed by a
-      # date correction — was never staged and lingered on the site as a duplicate.
-      - name: Commit and push if changed
+      # -A stages deletions: a paper removed from researchmap, or renamed by a
+      # date correction, must leave the site too.
+      - name: Commit and push if anything changed
+        id: push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A _publications _data
           if git diff --staged --quiet; then
             echo "No publication file changes."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git diff --staged --name-status
           git commit -m "chore: sync publications (researchmap + preprints)"
           git push origin HEAD:master
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Report preprint sync failure
+      - name: Deploy the refreshed publication files
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref master
+
+      - name: Report a preprint that is missing from the site
         if: steps.preprints.outcome == 'failure'
         run: |
-          echo "::error::A preprint could not be resolved and nothing was on file to fall back on; it is missing from the site."
-          echo "Publications from researchmap were still committed."
+          echo "::error::A preprint could not be resolved from any source and nothing was on file to fall back on; it is missing from the site. See the preprint step above."
+          echo "The researchmap result was still committed and deployed."
           exit 1
