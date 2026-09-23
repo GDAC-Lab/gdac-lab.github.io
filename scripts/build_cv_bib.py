@@ -110,10 +110,22 @@ def doi_of(item: dict) -> str | None:
 # ------------------------------------------------------------------------ text
 
 
+_TAG = re.compile(r"<[^>]+>")
+_MATH = re.compile(r"<((?:\w+:)?math)\b[^>]*>(.*?)</\1\s*>", re.S)
+
+
+def _math_text(m: re.Match) -> str:
+    # Inline MathML puts every symbol in an element of its own: SO(3) arrives
+    # as <mi>S</mi><mi>O</mi><mo>(</mo>..., which must read "SO(3)", not
+    # "S O ( 3 )". Drop the layout whitespace between elements, keep the text.
+    return _TAG.sub("", re.sub(r">\s+<", "><", m.group(2))).strip()
+
+
 def _clean(value: object) -> str:
     """Plain text from a Crossref or researchmap string: no markup, one space."""
     text = html.unescape(str(value or ""))
-    text = re.sub(r"<[^>]+>", " ", text)            # JATS/MathML tags
+    text = _MATH.sub(_math_text, text)
+    text = _TAG.sub(" ", text)                      # JATS tags
     text = text.replace("{", "").replace("}", "")   # would unbalance BibTeX
     return " ".join(text.split())
 

@@ -741,6 +741,17 @@ class TestCvBib(unittest.TestCase):
         self.assertEqual(cv.title_tex("Control on <mml:math><mml:mi>SO</mml:mi><mml:mo>(</mml:mo>"
                                       "<mml:mn>3</mml:mn><mml:mo>)</mml:mo></mml:math> &amp; beyond"),
                          "Control on ${SO(3)}$ \\& beyond")
+        # Each symbol in an element of its own, as in Crossref's record of the
+        # Automatica paper, with namespace attributes and line breaks.
+        self.assertEqual(cv.title_tex(
+            'Explicit reference governor on <mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML">'
+            '\n<mml:mrow><mml:mi mathvariant="normal">S</mml:mi><mml:mi mathvariant="normal">O</mml:mi>'
+            '\n<mml:mo stretchy="false">(</mml:mo><mml:mn>3</mml:mn><mml:mo stretchy="false">)</mml:mo>'
+            '</mml:mrow></mml:math> for torque and pointing constraint management'),
+            "Explicit reference governor on ${SO(3)}$ for torque and pointing constraint management")
+        # Spaces inside the math's text stay; only the layout between elements goes.
+        self.assertEqual(cv._clean("<math>\n<mtext>for all </mtext>\n<mi>x</mi>\n</math> holds"),
+                         "for all x holds")
 
     def test_capitalised_names_are_printed_as_names(self):
         self.assertEqual(cv.name_tex("NAKANO", "SATOSHI"), "{\\textbf{Nakano}}, {\\textbf{Satoshi}}")

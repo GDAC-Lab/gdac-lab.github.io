@@ -1,6 +1,6 @@
 # Refresh _publications from researchmap and the preprint sources, rebuild the
 # English CV's publication lists in _cv/, commit to master if anything changed,
-# and then deploy.
+# deploy, and copy the CV lists into the CV's Overleaf project.
 #
 # The deploy has to be asked for: GitHub does not start a workflow from a push
 # made with the default GITHUB_TOKEN, so the commit this job creates would never
@@ -105,14 +105,58 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run deploy.yml --ref master
 
+      # Copy the two .bib files into the CV's Overleaf project, as
+      # generated/journals.bib and generated/proceedings.bib, through Overleaf's
+      # git bridge. Only those two paths are ever staged, so nothing else in the
+      # project is touched, and nothing is committed when they are unchanged.
+      # Skipped until both secrets exist (Settings → Secrets and variables →
+      # Actions). The credential helper hands git the token when it asks; the
+      # token is never written into a URL, a file or the log. The copy on
+      # GitHub is already committed by now, so a failure here is reported at
+      # the end rather than stopping the job.
+      - name: Copy the CV bibliography into Overleaf
+        id: overleaf
+        continue-on-error: true
+        env:
+          OVERLEAF_GIT_TOKEN: ${{ secrets.OVERLEAF_GIT_TOKEN }}
+          OVERLEAF_CV_PROJECT_ID: ${{ secrets.OVERLEAF_CV_PROJECT_ID }}
+        run: |
+          if [ -z "$OVERLEAF_GIT_TOKEN" ] || [ -z "$OVERLEAF_CV_PROJECT_ID" ]; then
+            echo "::notice::OVERLEAF_GIT_TOKEN / OVERLEAF_CV_PROJECT_ID are not set; the CV bibliography was not copied to Overleaf."
+            exit 0
+          fi
+          helper='!f() { echo username=git; echo "password=$OVERLEAF_GIT_TOKEN"; }; f'
+          og() { git -c credential.helper="$helper" "$@"; }
+          og clone --quiet "https://git.overleaf.com/$OVERLEAF_CV_PROJECT_ID" "$RUNNER_TEMP/cv"
+          cd "$RUNNER_TEMP/cv"
+          # The commit, and the rebase below if it comes to that, need a name.
+          git config user.name "GDAC Lab publication sync"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p generated
+          cp "$GITHUB_WORKSPACE/_cv/journals.bib" "$GITHUB_WORKSPACE/_cv/proceedings.bib" generated/
+          git add generated/journals.bib generated/proceedings.bib
+          if git diff --cached --quiet; then
+            echo "Overleaf already has the current lists."
+            exit 0
+          fi
+          git diff --cached --stat
+          git commit --quiet -m "Update the publication lists from researchmap"
+          # Someone may have edited the CV between the clone and now; our two
+          # files cannot conflict with that, so rebase once and push again.
+          og push --quiet origin HEAD || { og pull --rebase --quiet origin HEAD && og push --quiet origin HEAD; }
+          echo "Copied to Overleaf: generated/journals.bib, generated/proceedings.bib"
+
       - name: Report what did not go through
-        if: ${{ !cancelled() && (steps.preprints.outcome == 'failure' || steps.cv.outcome == 'failure') }}
+        if: ${{ !cancelled() && (steps.preprints.outcome == 'failure' || steps.cv.outcome == 'failure' || steps.overleaf.outcome == 'failure') }}
         run: |
           if [ "${{ steps.preprints.outcome }}" = "failure" ]; then
             echo "::error::A preprint could not be resolved from any source and nothing was on file to fall back on; it is missing from the site. See the preprint step above."
           fi
           if [ "${{ steps.cv.outcome }}" = "failure" ]; then
             echo "::error::The CV bibliography could not be rebuilt; last week's _cv/*.bib were kept. See the CV step above."
+          fi
+          if [ "${{ steps.overleaf.outcome }}" = "failure" ]; then
+            echo "::error::The CV bibliography could not be copied into Overleaf; _cv/ on GitHub is unaffected. If the Overleaf step reports an authentication failure, the token was revoked or has expired: create a new one in Overleaf and replace the OVERLEAF_GIT_TOKEN secret."
           fi
           echo "The researchmap result was still committed and deployed."
           exit 1

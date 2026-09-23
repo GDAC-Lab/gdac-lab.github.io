@@ -146,10 +146,20 @@ is written from researchmap. The owner's name is bold, acronyms are braced so `u
 sentence case leaves them alone, and the output is byte-for-byte stable, so a week with no
 change commits nothing.
 
-The CV itself is not in this repository. It reads the two files with `\nocite{*}` and the
-`unsrt` style, which keeps the file order. Do not edit them: correct the record in
-researchmap and the next sync brings it through. `_cv/` starts with an underscore, so
-Jekyll does not publish it.
+The CV itself is not in this repository; it lives in an Overleaf project. When the
+Actions secrets `OVERLEAF_GIT_TOKEN` (an Overleaf Git authentication token) and
+`OVERLEAF_CV_PROJECT_ID` (the ID in the project's URL) are set, the sync copies the two
+files into that project as `generated/journals.bib` and `generated/proceedings.bib`
+through Overleaf's Git integration. Only those two paths are written, and nothing is
+pushed when they are unchanged. The CV reads them with `\nocite{*}` and the `unsrt`
+style, which keeps the file order. Do not edit them, here or in Overleaf: correct the
+record in researchmap and the next sync brings it through. `_cv/` starts with an
+underscore, so Jekyll does not publish it.
+
+The token opens every project on the Overleaf account, so it is kept only in the
+repository's Actions secrets. If the sync reports that the copy into Overleaf failed
+with an authentication error, the token was revoked or has expired: create a new one in
+Overleaf's account settings and replace the secret.
 
 ### If publications stop updating
 
