@@ -247,6 +247,10 @@ place, so diffing against the upstream file will show them:
 4. A `FRAMED` check that relaxes the wheel-zoom and `touch-action` so an iframe does not
    swallow the page's scroll.
 5. A doctype, charset, viewport and `noscript` fallback.
+6. A "Guided" view (`view=3`, the default): the camera starts 30° to one side of the
+   Sun line and, while the spacecraft passes under the keep-out cone, orbits to 15° on the
+   other side, so the detour and the climb to target B both read clearly. It follows run
+   time, so scrubbing moves it too; dragging or zooming hands the camera back.
 
 It is the viewer and the run, not the method: nothing that computes the control law is in
 this repository. `satellite.obj` is generated from primitives upstream and is CC0-1.0

@@ -260,7 +260,8 @@
       </div>
       <span class="seglabel" data-i18n="seg_view">View</span>
       <div class="seg" role="group" aria-label="Camera view" data-i18n-aria="aria_view">
-        <button data-view="0" aria-pressed="true" data-i18n="view0">Overview</button>
+        <button data-view="3" aria-pressed="true" data-i18n="view3">Guided</button>
+        <button data-view="0" data-i18n="view0">Overview</button>
         <button data-view="1" data-i18n="view1">From the Sun</button>
         <button data-view="2" data-i18n="view2">See the angle</button>
       </div>
@@ -356,6 +357,7 @@ var STR = { ja: {
     "view0": "全体",
     "view1": "太陽から見る",
     "view2": "角度を見る",
+    "view3": "おまかせ",
     "tgl_base": "最短経路",
     "tgl_cone": "禁止領域",
     "tgl_earth": "地球",
@@ -601,8 +603,11 @@ function start(D, objText){
     }
     cur.copy(_c).multiplyScalar(lc + (lt - lc) * a);
   }
+  var panX = 0, tPanX = 0, _pr = new THREE.Vector3();
   function applyCam(){
     _look.copy(camUpV).multiplyScalar(lookK);   // frame the content per view
+    /* sideways offset, used only by the guided view */
+    if(panX){ _pr.crossVectors(camUpV, camPos).normalize(); _look.addScaledVector(_pr, panX); }
     camera.position.copy(camPos).add(_look);
     camera.up.copy(camUpV);
     camera.lookAt(_look);
@@ -640,7 +645,45 @@ function start(D, objText){
     return [p1, p2, p3];
   })();
 
+  /* 4. guided: the default. The camera starts 30 degrees to one side of the
+        Sun line, with target A -> B running left to right, so the keep-out
+        cone shows its depth and the governed path is seen dipping under it.
+        While the spacecraft passes under the cone (run time 115-165 s) it
+        orbits to 15 degrees on the other side, from where the climb to
+        target B reads clearly outside the cone. The camera follows run time,
+        so scrubbing the chart moves it too. */
+  var GUIDE = [{yaw: -30, dist: 18.0, pan: 1.2}, {yaw: 15, dist: 18.5, pan: -0.6}],
+      GUIDE_T = [115, 165];
+  var _gab = bEnd.clone().sub(boresightAt(0));
+  function guidedCam(t, pos, up){
+    var u = Math.min(1, Math.max(0, (t - GUIDE_T[0]) / (GUIDE_T[1] - GUIDE_T[0])));
+    u = u * u * (3 - 2 * u);
+    var yaw = GUIDE[0].yaw + (GUIDE[1].yaw - GUIDE[0].yaw) * u,
+        dist = GUIDE[0].dist + (GUIDE[1].dist - GUIDE[0].dist) * u;
+    var d = SUN.clone();
+    var r = _gab.clone().addScaledVector(d, -_gab.dot(d)).normalize();
+    d.applyAxisAngle(r, 10 * Math.PI / 180).normalize();
+    r = _gab.clone().addScaledVector(d, -_gab.dot(d)).normalize();
+    d.applyAxisAngle(new THREE.Vector3().crossVectors(d, r).normalize(),
+                     yaw * Math.PI / 180).normalize();
+    r = _gab.clone().addScaledVector(d, -_gab.dot(d)).normalize();
+    pos.copy(d).multiplyScalar(dist);
+    up.crossVectors(d, r).normalize();
+    return GUIDE[0].pan + (GUIDE[1].pan - GUIDE[0].pan) * u;
+  }
+  var guided = false;
+
   function goView(i){
+    guided = (i === 3);
+    if(guided){
+      tPanX = guidedCam(state.t, tPos, tUp);
+      tLookK = FRAMED ? 0 : 1.0;
+      autoSpin = false;
+      setEarth(QS && QS.get("earth") !== null ? QS.get("earth") === "1" : false);
+      if(sunLabel) sunLabel.visible = !FIGURE;
+      return;
+    }
+    tPanX = 0;
     tPos.copy(PRESETS[i].pos);
     tUp.copy(PRESETS[i].up);
     tLookK = FRAMED ? 0 : PRESETS[i].look;
@@ -670,11 +713,13 @@ function start(D, objText){
         qp.setFromAxisAngle(right, -dy * 0.006);
         qy.multiply(qp);
       }
+      guided = false;
       tPos.applyQuaternion(qy); tUp.applyQuaternion(qy);
       tUp.normalize();
       autoSpin = false;
     }
     function zoom(f){
+      guided = false;
       tPos.setLength(Math.max(9, Math.min(120, tPos.length() * f)));
     }
     canvas.addEventListener("pointerdown", function(e){
@@ -1405,7 +1450,9 @@ function start(D, objText){
       var qs = new THREE.Quaternion().setFromAxisAngle(tUp.clone().normalize(), dt*0.045);
       tPos.applyQuaternion(qs);
     }
+    if(guided) tPanX = guidedCam(state.t, tPos, tUp);
     approach(camPos, tPos, 0.11);
+    panX += (tPanX - panX) * 0.12;
     approach(camUpV, tUp, 0.13);
     lookK += (tLookK - lookK) * 0.12;
     applyCam();
@@ -1460,7 +1507,7 @@ function start(D, objText){
   toggle("tgl-base", function(on){ baseTube.visible=on; });
   toggle("tgl-cone", function(on){ coneGroup.visible=on; });
   toggle("tgl-earth", setEarth);
-  goView(Math.max(0, Math.min(2, qnum("view", 0) | 0)));
+  goView(Math.max(0, Math.min(3, qnum("view", 3) | 0)));
   if(QS && QS.get("t") !== null) state.t = Math.max(0, Math.min(TEND, qnum("t", 0)));
   if(FIGURE){
     /* the presets ease in over a few frames; jump straight there */
