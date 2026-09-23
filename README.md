@@ -272,23 +272,6 @@ only for the view and time set there. The frame is the "from the Sun" view at th
 the run, where the keep-out cone projects to a circle and inside the ring is a breach
 with no depth to argue about. Downscale the 2x screenshot to 1280x720 before committing.
 
-The same animation as video files for slides comes from `scripts/render_slew_video.mjs`,
-with the same server running and ffmpeg on the path:
-
-```bash
-NODE_PATH=<global node_modules> \
-  node scripts/render_slew_video.mjs http://127.0.0.1:8000 <out dir> [variant ...]
-```
-
-It writes `sun-safe-slew-{full,clean}-{ja,en}.mp4`. `full` is the page as it looks in its
-own tab, without the buttons; `clean` is the scene alone, with the labels drawn in it, for
-a slide that has its own title and notes. The page's clock is replaced before the viewer
-loads, so each frame is the viewer's own frame at an exact time rather than a screen
-recording that drops frames when the software renderer falls behind. The files are
-H.264 at 1920x1080 and 30 fps, which PowerPoint plays on Windows and macOS, about 22 s
-and 10 MB each; a variant takes about six minutes to render. They are not committed:
-the script makes them again whenever they are needed.
-
 ## Deployment
 
 `.github/workflows/deploy.yml` builds the committed tree with Jekyll and publishes `_site` to
