@@ -1,11 +1,12 @@
-# Refresh _publications from researchmap and the preprint sources, commit to
-# master if anything changed, and then deploy.
+# Refresh _publications from researchmap and the preprint sources, rebuild the
+# English CV's publication lists in _cv/, commit to master if anything changed,
+# and then deploy.
 #
 # The deploy has to be asked for: GitHub does not start a workflow from a push
 # made with the default GITHUB_TOKEN, so the commit this job creates would never
 # trigger deploy.yml on its own. workflow_dispatch is the documented exception
-# to that rule, so the last step dispatches deploy.yml — and only when something
-# was actually pushed, so a quiet week does not rebuild the site for nothing.
+# to that rule, so the job dispatches deploy.yml — and only when a file the site
+# is built from changed, so a quiet week does not rebuild the site for nothing.
 #
 # Note on the schedule: GitHub disables a scheduled workflow after 60 days
 # without repository activity, and that is exactly what happened here — the
@@ -58,6 +59,14 @@ jobs:
         continue-on-error: true
         run: python3 scripts/sync_preprints_from_sources.py
 
+      # _cv/journals.bib and _cv/proceedings.bib for the English CV: researchmap
+      # says which papers, Crossref describes them. A failure keeps last week's
+      # files and must not hold back the publication list above.
+      - name: Build the CV bibliography
+        id: cv
+        continue-on-error: true
+        run: python3 scripts/build_cv_bib.py satoshi-nakano
+
       - name: Heartbeat when the repository has been quiet
         run: |
           last=$(git log -1 --format=%ct)
@@ -77,26 +86,33 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A _publications _data
+          git add -A _publications _data _cv
           if git diff --staged --quiet; then
             echo "No publication file changes."
-            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git diff --staged --name-status
-          git commit -m "chore: sync publications (researchmap + preprints)"
+          git commit -m "chore: sync publications (researchmap, preprints, CV bibliography)"
           git push origin HEAD:master
-          echo "pushed=true" >> "$GITHUB_OUTPUT"
+          # _cv/ is not part of the site; a change there alone needs no rebuild.
+          if git diff --name-only HEAD~1 HEAD | grep -qv '^_cv/'; then
+            echo "site_changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Deploy the refreshed publication files
-        if: steps.push.outputs.pushed == 'true'
+        if: steps.push.outputs.site_changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run deploy.yml --ref master
 
-      - name: Report a preprint that is missing from the site
-        if: steps.preprints.outcome == 'failure'
+      - name: Report what did not go through
+        if: ${{ !cancelled() && (steps.preprints.outcome == 'failure' || steps.cv.outcome == 'failure') }}
         run: |
-          echo "::error::A preprint could not be resolved from any source and nothing was on file to fall back on; it is missing from the site. See the preprint step above."
+          if [ "${{ steps.preprints.outcome }}" = "failure" ]; then
+            echo "::error::A preprint could not be resolved from any source and nothing was on file to fall back on; it is missing from the site. See the preprint step above."
+          fi
+          if [ "${{ steps.cv.outcome }}" = "failure" ]; then
+            echo "::error::The CV bibliography could not be rebuilt; last week's _cv/*.bib were kept. See the CV step above."
+          fi
           echo "The researchmap result was still committed and deployed."
           exit 1

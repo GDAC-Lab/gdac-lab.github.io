@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import build_cv_bib as cv  # noqa: E402
 import fetch_researchmap_publications as rm  # noqa: E402
 import pubsync_common as common  # noqa: E402
 import sync_preprints_from_sources as pp  # noqa: E402
@@ -643,6 +644,172 @@ class TestRetry(unittest.TestCase):
         with self.assertRaises(common.SyncAbort):
             self._fetch(missing)
         self.assertEqual(calls["n"], 1)
+
+
+def crossref(title, container, authors, *, year=2022, page=None, number=None,
+             volume=None, issue=None, event=None, publisher="IEEE"):
+    """A Crossref work message shaped like the real ones."""
+    msg = {
+        "title": [title],
+        "container-title": [container],
+        "author": [{"given": g, "family": f} for g, f in authors],
+        "issued": {"date-parts": [[year, 10]]},
+        "publisher": publisher,
+    }
+    for key, value in (("page", page), ("article-number", number), ("volume", volume),
+                       ("issue", issue), ("event", event)):
+        if value is not None:
+            msg[key] = value
+    return msg
+
+
+class TestCvBib(unittest.TestCase):
+    """The English CV's .bib files: the list from researchmap, details from Crossref."""
+
+    ME = ("Satoshi", "Nakano")
+
+    def _build(self, items, answers, previous=None):
+        """Run cv.build with Crossref answering from `answers` (doi -> msg or exception)."""
+        def fake(doi):
+            answer = answers.get(doi)
+            if isinstance(answer, Exception):
+                raise answer
+            return answer
+
+        saved = cv.crossref_fetch
+        cv.crossref_fetch = fake
+        try:
+            return cv.build(items, previous or {})
+        finally:
+            cv.crossref_fetch = saved
+
+    @staticmethod
+    def _item(rm_id, *, doi="10.1000/x", date="2022-08-01", ptype="scientific_journal",
+              title_en="A Paper", title_ja=None):
+        item = paper(rm_id, title_en=title_en, title_ja=title_ja, date=date, ptype=ptype,
+                     see_also=[{"label": "doi", "@id": f"https://doi.org/{doi}"}] if doi else [])
+        return item
+
+    def test_journal_entry_matches_the_hand_made_file(self):
+        msg = crossref(
+            "Design Method of Tuned Mass Damper by Linear-Matrix-Inequality-Based Robust "
+            "Control Theory for Seismic Excitation", "Journal of Vibration and Acoustics",
+            [("Kou", "Miyamoto"), self.ME, ("Qing-Long", "Han")],
+            number="041008", volume="144", issue="4", publisher="ASME International")
+        sections, notes = self._build([self._item("36586866", doi="10.1115/1.4053544")],
+                                      {"10.1115/1.4053544": msg})
+        self.assertEqual(notes, [])
+        self.assertEqual(sections["proceedings"], [])
+        self.assertEqual(sections["journals"][0], (
+            "@article{rm36586866,\n"
+            "  title = {Design Method of Tuned Mass Damper by Linear-Matrix-Inequality-Based "
+            "Robust Control Theory for Seismic Excitation},\n"
+            "  author = {Miyamoto, Kou and {\\textbf{Nakano}}, {\\textbf{Satoshi}} and Han, Qing-Long},\n"
+            "  year = {2022},\n"
+            "  journal = {Journal of Vibration and Acoustics},\n"
+            "  volume = {144},\n"
+            "  number = {4},\n"
+            "  pages = {041008},\n"
+            "  doi = {10.1115/1.4053544}\n"
+            "}\n"))
+
+    def test_proceedings_entry_has_publisher_and_address(self):
+        msg = crossref(
+            "Attitude Constrained Control on SO(3): An Explicit Reference Governor Approach",
+            "2018 IEEE Conference on Decision and Control (CDC)",
+            [self.ME, ("Tam W.", "Nguyen")], year=2018, page="1833-1838",
+            event={"name": "CDC", "location": "Miami Beach, FL"})
+        sections, _ = self._build(
+            [self._item("19751130", doi="10.1109/CDC.2018.8618908", ptype="international_conference_proceedings")],
+            {"10.1109/CDC.2018.8618908": msg})
+        text = sections["proceedings"][0]
+        self.assertTrue(text.startswith("@inproceedings{rm19751130,\n"))
+        self.assertIn("  title = {Attitude Constrained Control on ${SO(3)}$: An Explicit Reference Governor Approach},", text)
+        self.assertIn("  booktitle = {2018 IEEE Conference on Decision and Control (CDC)},", text)
+        self.assertIn("  pages = {1833--1838},", text)
+        self.assertIn("  publisher = {IEEE},", text)
+        self.assertIn("  address = {Miami Beach, FL},", text)
+        self.assertNotIn("journal", text)
+
+    def test_titles_keep_acronyms_through_unsrt(self):
+        self.assertEqual(cv.title_tex("A Distributed Reference Governor for High-Order LTI Swarm Systems"),
+                         "A Distributed Reference Governor for High-Order {LTI} Swarm Systems")
+        self.assertEqual(cv.title_tex("Wind-Load Estimation with Equivalent-Input-Disturbance Approach"),
+                         "Wind-Load Estimation with Equivalent-Input-Disturbance Approach")
+        self.assertEqual(cv.title_tex("CBF-Based iLQR for 3D and H2 & more_stuff"),
+                         "{CBF}-Based {iLQR} for {3D} and {H2} \\& more\\_stuff")
+        self.assertEqual(cv.title_tex("Control on <mml:math><mml:mi>SO</mml:mi><mml:mo>(</mml:mo>"
+                                      "<mml:mn>3</mml:mn><mml:mo>)</mml:mo></mml:math> &amp; beyond"),
+                         "Control on ${SO(3)}$ \\& beyond")
+
+    def test_capitalised_names_are_printed_as_names(self):
+        self.assertEqual(cv.name_tex("NAKANO", "SATOSHI"), "{\\textbf{Nakano}}, {\\textbf{Satoshi}}")
+        self.assertEqual(cv.name_tex("SHE", "JINHUA"), "She, Jinhua")
+        self.assertEqual(cv.name_tex("Nakano", "S."), "{\\textbf{Nakano}}, {\\textbf{S.}}")
+        self.assertEqual(cv.name_tex("Nakano", "Kenji"), "Nakano, Kenji")
+        self.assertEqual(cv.name_tex(None, None, "The Consortium"), "{The Consortium}")
+
+    def test_selection_and_order(self):
+        items = [
+            self._item("1", date="2021-10-01", ptype="international_conference_proceedings", doi="10.1000/a"),
+            self._item("2", date="2025-06-01", doi="10.1000/b"),
+            self._item("3", date="2024-10-01", doi="10.1000/c"),
+            self._item("4", title_en=None, title_ja="和文の論文", doi="10.1000/d"),   # Japanese only
+            self._item("5", ptype="misc", doi="10.1000/e"),                          # not an article
+            self._item("6", ptype="totally_new_type", doi="10.1000/f"),              # unknown type
+        ]
+        answers = {d: crossref(f"T{d}", "J", [self.ME]) for d in ("10.1000/a", "10.1000/b", "10.1000/c")}
+        sections, notes = self._build(items, answers)
+        self.assertEqual(notes, [])
+        self.assertIn("doi = {10.1000/b}", sections["journals"][0])
+        keys = {k: [e.split(",", 1)[0] for e in v] for k, v in sections.items()}
+        self.assertEqual(keys, {"journals": ["@article{rm2", "@article{rm3"],
+                                "proceedings": ["@inproceedings{rm1"]})
+
+    def test_doi_is_found_wherever_researchmap_keeps_it(self):
+        item = self._item("1", doi=None)
+        item["see_also"] = [{"label": "url", "@id": "https://example.org/page"}]
+        item["identifiers"] = {"doi": ["10.1115/1.4053544"]}
+        self.assertEqual(cv.doi_of(item), "10.1115/1.4053544")
+        self.assertIsNone(cv.doi_of(self._item("2", doi=None)))
+
+    def test_record_without_doi_is_written_from_researchmap(self):
+        item = self._item("39916160", doi=None, date="2022-05-01", ptype="international_conference_proceedings",
+                          title_en="Linearization-Based Position Tracking Control")
+        item.update(starting_page="1419", ending_page="1420",
+                    publication_name={"en": "The 13th Asian Control Conference"},
+                    authors={"en": [{"name": "Satoshi Nakano"}, {"name": "Yuya Hada"}]})
+        sections, notes = self._build([item], {})
+        self.assertEqual(notes, [])
+        text = sections["proceedings"][0]
+        self.assertIn("author = {{\\textbf{Nakano}}, {\\textbf{Satoshi}} and Hada, Yuya}", text)
+        self.assertIn("booktitle = {The 13th Asian Control Conference}", text)
+        self.assertIn("pages = {1419--1420}", text)
+        self.assertIn("year = {2022}", text)
+
+    def test_unreachable_crossref_keeps_the_previous_entry(self):
+        previous = cv.read_entries(cv.render_file("journals", [
+            "@article{rm7,\n  title = {Old but good},\n  year = {2020}\n}\n"]))
+        sections, notes = self._build([self._item("7", doi="10.1000/g")],
+                                      {"10.1000/g": common.SyncAbort("gone")}, previous)
+        self.assertEqual(sections["journals"], ["@article{rm7,\n  title = {Old but good},\n  year = {2020}\n}\n"])
+        self.assertIn("kept the previous entry", notes[0])
+
+    def test_output_is_deterministic_and_has_no_stray_at_sign(self):
+        items = [self._item("2", doi="10.1000/b"), self._item("3", doi="10.1000/c", date="2021-01-01")]
+        answers = {d: crossref(f"T{d}", "J", [self.ME]) for d in ("10.1000/b", "10.1000/c")}
+        first = {k: cv.render_file(k, v) for k, v in self._build(items, answers)[0].items()}
+        second = {k: cv.render_file(k, v) for k, v in self._build(list(reversed(items)), answers)[0].items()}
+        self.assertEqual(first, second)
+        header = cv.HEADER.format(title="X")
+        self.assertNotIn("@", header)
+        self.assertIn("\\nocite{*}", header)
+
+    def test_round_trip_reads_back_every_entry(self):
+        items = [self._item(str(i), doi=f"10.1000/{i}") for i in range(5)]
+        answers = {f"10.1000/{i}": crossref(f"T{i}", "J", [self.ME]) for i in range(5)}
+        text = cv.render_file("journals", self._build(items, answers)[0]["journals"])
+        self.assertEqual(sorted(cv.read_entries(text)), [f"rm{i}" for i in range(5)])
 
 
 class TestIsoDay(unittest.TestCase):

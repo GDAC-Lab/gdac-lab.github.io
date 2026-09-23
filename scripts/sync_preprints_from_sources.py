@@ -54,17 +54,18 @@ from pubsync_common import (  # noqa: E402
     annotate,
     apply_generated,
     build_citation,
+    crossref_fetch,
     front_matter,
     http_get,
     http_get_json,
     iso_day,
     log,
+    strip_doi,
     title_language,
 )
 
 DATA_PATH = REPO_ROOT / "_data" / "preprint_sources.json"
 
-CROSSREF_API = "https://api.crossref.org/works/"
 DATACITE_API = "https://api.datacite.org/dois/"
 ARXIV_API = "https://export.arxiv.org/api/query?id_list="
 ARXIV_ACCEPT = "application/atom+xml, text/xml;q=0.9, */*;q=0.8"
@@ -85,12 +86,6 @@ def _arxiv_throttle() -> None:
 
 
 # ------------------------------------------------------------------- ids and slugs
-
-
-def strip_doi(doi: str) -> str:
-    doi = doi.strip()
-    prefix = "https://doi.org/"
-    return doi[len(prefix):] if doi.lower().startswith(prefix) else doi
 
 
 def arxiv_id_from_doi(doi: str) -> str | None:
@@ -115,20 +110,6 @@ def slug_for_source(kind: str, value: str) -> str:
 
 
 # ------------------------------------------------------------------------ Crossref
-
-
-def crossref_fetch(doi: str) -> dict | None:
-    """The Crossref work record, or None when Crossref does not hold the DOI."""
-    url = CROSSREF_API + urllib.parse.quote(doi.strip(), safe="")
-    try:
-        payload = http_get_json(url, tag="crossref")
-    except urllib.error.HTTPError as exc:
-        if exc.code == 404:
-            return None
-        raise
-    if not isinstance(payload, dict) or payload.get("status") != "ok":
-        return None
-    return payload.get("message") or {}
 
 
 def crossref_date(msg: dict) -> str:

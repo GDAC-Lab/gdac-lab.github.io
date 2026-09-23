@@ -134,6 +134,23 @@ button never points at a heading that was not rendered.
 * An unmapped researchmap `published_paper_type` is reported in the log instead of being filed
   silently under Conference papers. Add new types to `TYPE_TO_CATEGORY`.
 
+### The CV's publication lists
+
+The weekly sync also writes `_cv/journals.bib` and `_cv/proceedings.bib`
+(`scripts/build_cv_bib.py`): the English CV's journal articles and conference papers,
+newest first. researchmap decides which papers appear — every English-titled journal
+article and conference paper, preprints aside — and Crossref, looked up by DOI, supplies
+the details, because researchmap's own fields are rougher (an author split in two at a
+comma, venue names written several ways, article numbers missing). A record without a DOI
+is written from researchmap. The owner's name is bold, acronyms are braced so `unsrt`'s
+sentence case leaves them alone, and the output is byte-for-byte stable, so a week with no
+change commits nothing.
+
+The CV itself is not in this repository. It reads the two files with `\nocite{*}` and the
+`unsrt` style, which keeps the file order. Do not edit them: correct the record in
+researchmap and the next sync brings it through. `_cv/` starts with an underscore, so
+Jekyll does not publish it.
+
 ### If publications stop updating
 
 Check **Actions → Researchmap publication sync** first. GitHub disables a scheduled workflow

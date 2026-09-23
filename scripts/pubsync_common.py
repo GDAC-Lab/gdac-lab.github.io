@@ -22,6 +22,7 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -125,6 +126,32 @@ def http_get_json(url: str, *, timeout: float = 60.0, tag: str = "http") -> obje
         return json.loads(body)
     except json.JSONDecodeError as exc:
         raise SyncAbort(f"{url} returned a body that is not JSON: {exc}") from exc
+
+
+# ---------------------------------------------------------------- Crossref
+
+# Both the preprint script and the CV bibliography read Crossref.
+CROSSREF_API = "https://api.crossref.org/works/"
+
+
+def strip_doi(doi: str) -> str:
+    doi = doi.strip()
+    prefix = "https://doi.org/"
+    return doi[len(prefix):] if doi.lower().startswith(prefix) else doi
+
+
+def crossref_fetch(doi: str) -> dict | None:
+    """The Crossref work record, or None when Crossref does not hold the DOI."""
+    url = CROSSREF_API + urllib.parse.quote(doi.strip(), safe="")
+    try:
+        payload = http_get_json(url, tag="crossref")
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            return None
+        raise
+    if not isinstance(payload, dict) or payload.get("status") != "ok":
+        return None
+    return payload.get("message") or {}
 
 
 # -------------------------------------------------------------------- text
