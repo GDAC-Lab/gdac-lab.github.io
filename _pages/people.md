@@ -26,6 +26,9 @@ Lab room
 researchmap
 : [Satoshi Nakano](https://researchmap.jp/satoshi-nakano?lang=english)
 
+CV
+: [PDF]({{ base_path }}/files/satoshi-nakano-cv.pdf)
+
 Personal page
 : [gdaclab.web.nitech.ac.jp/nakano](https://gdaclab.web.nitech.ac.jp/nakano/)
 

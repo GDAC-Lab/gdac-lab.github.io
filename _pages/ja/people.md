@@ -26,6 +26,9 @@ lang_ref: people
 researchmap
 : [仲野 聡史](https://researchmap.jp/satoshi-nakano)
 
+CV（英文）
+: [PDF]({{ base_path }}/files/satoshi-nakano-cv.pdf)
+
 個人ページ
 : [gdaclab.web.nitech.ac.jp/nakano](https://gdaclab.web.nitech.ac.jp/nakano/)
 
