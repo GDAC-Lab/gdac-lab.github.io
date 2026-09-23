@@ -1,0 +1,117 @@
+# Build the CV from its Overleaf project and publish the PDF on the site as
+# files/satoshi-nakano-cv.pdf, which both People pages link to.
+#
+# Overleaf does not announce changes, so this looks once a night: it clones the
+# project and compares its commit with the one the committed PDF was built
+# from (_data/cv.yml). Only a change is compiled, committed and deployed.
+# researchmap-sync.yml also starts this workflow after writing new publication
+# lists into the project. To publish an edit at once, run it by hand (Actions →
+# CV PDF → Run workflow); "force" rebuilds even when nothing has changed.
+#
+# The CV source never enters this repository: it is cloned into the runner's
+# temporary directory, and only the PDF is copied out.
+name: CV PDF
+
+on:
+  schedule:
+    # Nightly, 18:17 UTC (03:17 JST), when the CV is least likely to be open
+    # mid-edit: whatever the project holds at that moment is what gets built.
+    - cron: "17 18 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild even if the Overleaf project has not changed
+        type: boolean
+        default: false
+
+concurrency:
+  group: cv-pdf
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Pinned: the TeX Live packages below were chosen against 24.04's TeX Live.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write   # commit the PDF
+      actions: write    # dispatch deploy.yml afterwards
+    env:
+      CV_MAIN: cv.tex                        # the project's main document
+      CV_PDF: files/satoshi-nakano-cv.pdf    # where the site serves it
+      CV_RECORD: _data/cv.yml                # the Overleaf commit it was built from
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Fetch the CV if the Overleaf project has changed
+        id: source
+        env:
+          OVERLEAF_GIT_TOKEN: ${{ secrets.OVERLEAF_GIT_TOKEN }}
+          OVERLEAF_CV_PROJECT_ID: ${{ secrets.OVERLEAF_CV_PROJECT_ID }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ -z "$OVERLEAF_GIT_TOKEN" ] || [ -z "$OVERLEAF_CV_PROJECT_ID" ]; then
+            echo "::notice::OVERLEAF_GIT_TOKEN / OVERLEAF_CV_PROJECT_ID are not set; the CV PDF was not built."
+            exit 0
+          fi
+          scripts/overleaf_git.sh clone --quiet "https://git.overleaf.com/$OVERLEAF_CV_PROJECT_ID" "$RUNNER_TEMP/cv"
+          commit=$(git -C "$RUNNER_TEMP/cv" rev-parse HEAD)
+          built=$(sed -n 's/^overleaf_commit: *//p' "$CV_RECORD" 2>/dev/null || true)
+          echo "Overleaf is at $commit; the PDF on the site was built from ${built:-nothing yet}."
+          if [ "$commit" = "$built" ] && [ -f "$CV_PDF" ] && [ "$FORCE" != "true" ]; then
+            echo "The PDF is current."
+            exit 0
+          fi
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      # Overleaf runs a full TeX Live whose fonts can all be loaded by name.
+      # Ubuntu's packaging differs in two ways that matter here: the font behind
+      # fontawesome.sty comes in fonts-font-awesome, and TeX Live's own OpenType
+      # and TrueType fonts are invisible to fontconfig until linked into its
+      # search path.
+      - name: Install TeX Live
+        if: steps.source.outputs.commit
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            texlive-xetex texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended \
+            texlive-bibtex-extra fonts-font-awesome > /dev/null
+          sudo mkdir -p /usr/local/share/fonts
+          sudo ln -s /usr/share/texlive/texmf-dist/fonts/opentype /usr/local/share/fonts/texlive-opentype
+          sudo ln -s /usr/share/texlive/texmf-dist/fonts/truetype /usr/local/share/fonts/texlive-truetype
+          sudo fc-cache -s > /dev/null
+
+      - name: Compile the CV
+        if: steps.source.outputs.commit
+        env:
+          TZ: Asia/Tokyo   # \today in the footer is the date in Japan
+        run: scripts/build_cv_pdf.sh "$RUNNER_TEMP/cv" "$CV_MAIN"
+
+      - name: Commit the PDF
+        id: push
+        if: steps.source.outputs.commit
+        env:
+          COMMIT: ${{ steps.source.outputs.commit }}
+        run: |
+          mkdir -p "$(dirname "$CV_PDF")"
+          cp "$RUNNER_TEMP/cv/${CV_MAIN%.tex}.pdf" "$CV_PDF"
+          {
+            echo "# Written by .github/workflows/cv-pdf.yml: the Overleaf commit that"
+            echo "# $CV_PDF was last built from, and the day it was built."
+            echo "overleaf_commit: $COMMIT"
+            echo "built: $(TZ=Asia/Tokyo date +%F)"
+          } > "$CV_RECORD"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$CV_PDF" "$CV_RECORD"
+          git commit -m "chore: rebuild the CV PDF from Overleaf"
+          # researchmap-sync.yml may have pushed meanwhile. The two workflows
+          # write different files, so the rebase cannot conflict.
+          git push origin HEAD:master || { git pull --rebase origin master && git push origin HEAD:master; }
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy the new PDF
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref master

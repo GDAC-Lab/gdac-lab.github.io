@@ -161,6 +161,24 @@ repository's Actions secrets. If the sync reports that the copy into Overleaf fa
 with an authentication error, the token was revoked or has expired: create a new one in
 Overleaf's account settings and replace the secret.
 
+### The CV PDF
+
+`.github/workflows/cv-pdf.yml` compiles the CV from the same Overleaf project and
+commits the PDF as `files/satoshi-nakano-cv.pdf`, which both People pages link to.
+Overleaf does not announce changes, so the workflow clones the project every night
+(03:17 JST) and compares its commit with `_data/cv.yml`, the commit the committed PDF
+was built from. Only a change is compiled, committed and deployed. The publication sync
+also starts it as soon as it has written new lists into the project. To publish an edit
+at once, run **Actions → CV PDF → Run workflow**; tick *force* to rebuild when nothing
+has changed. The CV source stays in Overleaf: it is cloned into the runner's temporary
+directory, and only the PDF is copied out.
+
+`scripts/build_cv_pdf.sh` compiles the way Overleaf does: XeLaTeX, BibTeX for every
+bibliography (one per multibib list), then XeLaTeX twice. Like Overleaf it carries on
+past LaTeX errors, and reports them as warnings on the run. It stops instead, leaving
+the PDF on the site as it was, when no PDF comes out or a font cannot be found. A new
+PDF reaches the live site with the usual pull on Plesk.
+
 ### If publications stop updating
 
 Check **Actions → Researchmap publication sync** first. GitHub disables a scheduled workflow
