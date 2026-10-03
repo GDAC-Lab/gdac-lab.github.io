@@ -77,6 +77,7 @@ Yoshihito Sasaki
 
 Haruto Torii
 : from October 2026
+: Creative Engineering Program
 {: .people-roster}
 
 ### Co-advised students
