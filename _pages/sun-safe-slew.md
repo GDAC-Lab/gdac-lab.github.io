@@ -10,7 +10,7 @@ lang_ref: sun-safe-slew
 
 {% include base_path %}
 
-A satellite has to turn 95&deg; to put its telescope on the next science target, and the Sun sits almost exactly in the way. Pointing the telescope at the Sun would destroy it, so the short way round is not available. The animation below is this lab's controller solving that problem.
+A satellite has to turn 95&deg; to put its telescope on the next science target, and the Sun sits almost exactly in the way. Pointing the telescope at the Sun could damage it, so the short way round is not available. The animation below is this lab's controller solving that problem.
 {: .notice}
 
 {% include slew-demo.html %}
@@ -38,11 +38,11 @@ What makes this practical is that **no optimization is solved while it runs**. T
 
 With this controller, the satellite never points closer to the Sun than **33&deg;** — the limit is 25&deg; — and never asks the reaction wheels for more than **18 %** of their torque.
 
-For comparison: give the same controller the final attitude directly as its target (the red path on screen), and it passes **6.9&deg;** from the Sun and demands **2.9 times** the torque the wheels can produce. The constrained run takes five times as long to get there, which is what respecting the constraints costs.
+For comparison: give the same controller the final attitude directly as its target (the red path on screen), and it passes **6.9&deg;** from the Sun and demands **2.9 times** the torque the wheels can produce. The constrained run takes about six times as long to settle within 1&deg; (about 230 s, against 40 s without the constraints), which is what respecting the constraints costs.
 
 ## What this is not
 
-This is a calculation made to show how the control works. Disturbance torques, a limit on how fast the spacecraft may turn, and keep-out regions for the Earth and the Moon — all of which a real mission has to account for as well — are not part of it.
+This is a calculation made to show how the control works. Disturbance torques, a limit on how fast the spacecraft may turn, management of the momentum that builds up in the reaction wheels, and keep-out regions for the Earth and the Moon — all of which a real mission has to account for as well — are not part of it.
 
 ## Sources
 

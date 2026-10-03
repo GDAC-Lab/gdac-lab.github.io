@@ -15,7 +15,7 @@ lang_ref: research
 Operating a robot or a satellite as intended requires control over which direction the vehicle points. At the same time, every real machine carries limits that must be respected.
 
 - The force a motor can produce has an **upper bound**.
-- An observation camera cannot be pointed toward the sun.
+- A telescope on a satellite must not be pointed toward the Sun.
 - A vehicle running while pressed against a wall can take only a restricted set of attitudes.
 
 In control engineering, such limits are called **constraints**. Our research centers on building theory for controlling rotational motion while satisfying constraints, together with verification on real hardware.
@@ -32,39 +32,38 @@ The position of an object can be expressed by three numbers, x, y, and z. Repres
 
 Aircraft attitude is commonly described by three angles (pitch, roll, and yaw), known as **Euler angles**. This representation has a weakness: at certain attitudes the computation breaks down, a phenomenon known as gimbal lock in aviation and computer graphics.
 
-Rather than decomposing orientation into three angles, we use a mathematical framework that treats rotation itself directly: the set of rotation matrices, written SO(3). This formulation yields control designs that do not break down at any attitude.
+Rather than decomposing orientation into three angles, we use a mathematical framework that treats rotation itself directly: the set of rotation matrices, written SO(3). Because this formulation has no singularities arising from how attitude is represented, the computation does not break down at any attitude.
 
 #### Guaranteeing constraints under limited computation
 
-A straightforward approach to constraints is to add a mechanism that restricts the motion once a dangerous state is approached. Such an approach, however, provides no **guarantee** that the constraints hold in every situation.
+A quick way to handle constraints is to bolt on rules of thumb, such as slowing down when a dangerous state is near. Such rules, however, give no **guarantee** that the constraints hold in every situation.
 
-We work with the **Explicit Reference Governor (ERG)** and **control barrier functions (CBFs)**. Rather than redesigning the controller itself, these methods reshape the reference supplied to the controller so that it stays within a safe region, which allows constraint satisfaction to be guaranteed.
+We work with the **Explicit Reference Governor (ERG)** and **control barrier functions (CBFs)**. Neither replaces the existing controller; both are added around it. The ERG modifies the **reference** given to the controller, and a CBF-based safety filter modifies the **command** the controller issues, keeping each within what the constraints allow. Because the modification rule is constructed mathematically, constraint satisfaction can be guaranteed in theory.
 
-A second property is equally important: these methods require no optimization to be solved during operation.
+A second property is equally important: the computation is light.
 
-Model predictive control, the representative approach to constrained control, solves an optimization problem at every time step, which makes it difficult to run on hardware with limited computational capacity. ERG- and CBF-based methods instead evaluate expressions derived in advance, and can therefore be implemented on small computers. We are also studying this optimization-free framework in general form ([arXiv, 2026](https://arxiv.org/abs/2604.04001)).
+Model predictive control, the representative approach to constrained control, predicts future motion and solves an optimization problem at every time step, which is a heavy load for hardware with limited computational capacity. The ERG instead updates the reference by evaluating expressions derived in advance, with no optimization to solve during operation, and a CBF-based safety filter can be computed in closed form for a single constraint, and otherwise requires only a small quadratic program. Both therefore fit on small computers.
 
 **Selected results**
 
 - [Explicit reference governor on SO(3) for torque and pointing constraint management](https://doi.org/10.1016/j.automatica.2023.111103) — *Automatica*, 2023
 - [Attitude Constrained Control on SO(3): An Explicit Reference Governor Approach](https://doi.org/10.1109/CDC.2018.8618908) — *IEEE CDC*, 2018
-- [Periodic Event-Triggered Explicit Reference Governor for Constrained Attitude Control on SO(3)](https://arxiv.org/abs/2604.04041) — arXiv, 2026
 
 #### Application: attitude control of small satellites
 
 A satellite changes its attitude while orbiting the Earth, and several constraints apply simultaneously.
 
-- The observation camera must not be pointed toward the sun, as the sensor would be damaged.
-- The communication antenna must remain directed at the ground station.
+- Telescopes and other observation sensors must not be pointed toward the Sun, as intense sunlight can damage them.
+- The communication antenna must point at the ground station during communication passes.
 - The reaction wheels that reorient the spacecraft have an upper bound on the torque they can produce.
 
-Furthermore, an on-board computer must meet mass limits at launch and withstand the radiation environment of space, so its performance is considerably more limited than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.
+Furthermore, an on-board computer must meet launch-mass and on-board power limits and withstand the radiation environment of space, so its performance is considerably more limited than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.
 
-The optimization-free methods described above are effective in precisely this setting. We are currently working toward a framework in which several small satellites reorient cooperatively.
+The computationally light methods described above are effective in precisely this setting. We are currently working toward a framework in which several small satellites reorient cooperatively.
 
 <figure class="media-figure">
   <img src="{{ base_path }}/images/research/sun-safe-slew.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="The scene viewed from the Sun. The 25-degree keep-out cone around the Sun appears as an orange circle with the satellite at its centre. The red shortest path between two science targets runs through the circle; a second path bulges well outside it.">
-  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly on the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone projects to the orange circle, and inside the ring is a breach. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, the teal one stays outside it. The animation runs in your browser on the <a href="{{ base_path }}/sun-safe-slew/">satellite that avoids the Sun</a> page.</figcaption>
+  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly in the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone appears as the orange circle, and pointing anywhere inside it violates the constraint. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, the teal one stays outside it. The animation runs in your browser on the <a href="{{ base_path }}/sun-safe-slew/">satellite that avoids the Sun</a> page.</figcaption>
 </figure>
 
 > **JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)** (FY2026–2029, 26K00967)
@@ -75,12 +74,13 @@ This theme is a collaboration with [Takahiro Sasaki](https://researchmap.jp/jaxa
 
 #### Application: control design for three-dimensional rotation mechanisms
 
-We are also engaged in a collaboration on control design for mechanisms that produce three-dimensional rotation, aimed at achieving **high-precision rotational control**.
+Gimbals, with several rotation axes nested inside one another, are the usual way to turn an object mechanically. Like Euler angles, however, a gimbal has attitudes at which two axes line up and rotation in some direction becomes impossible (**singular configurations**).
 
-{% comment %}
-Add the partner, project name and period here once they can be listed.
-A Liquid comment never reaches the published HTML.
-{% endcomment %}
+In a collaboration with Osaka University, we are developing a mechanism that has no singular configurations and can keep rotating in any direction. Our part is the control design that lets this mechanism achieve **high-precision rotational control**.
+
+> **NEDO Young Researcher Support Program, joint research formation track** (selected in FY2026)
+>
+> "Development of an omnidirectional, endlessly rotating mechanism free of singular configurations based on geometric power transmission"
 
 ### 2. Wheeled drones and infrastructure inspection
 
@@ -101,14 +101,14 @@ We therefore study **drones equipped with wheels**: the vehicle presses itself a
 From a control standpoint, this vehicle presents the following difficulties.
 
 - The wheels do not slip laterally, so the directions of motion are restricted — a **nonholonomic constraint**.
-- The **pressing force against the wall** must be regulated: too little and the vehicle separates from the surface, too much and it rebounds.
+- The **pressing force against the wall** must be regulated: too little and the wheels slip or the vehicle separates from the surface, too much and rolling resistance and the load on the airframe grow. Touching down too hard also makes the vehicle bounce off.
 - Flight and ground locomotion alternate, so the nature of the dynamics itself changes.
 
 Constraints are again central. To handle the pressing force, the attitudes admissible during contact, and limits on flight altitude, we combine **control barrier functions**, **input–output linearization**, **passivity-based methods**, and **model predictive path integral (MPPI) control**.
 
 #### Application: infrastructure inspection
 
-Detecting loose or delaminated tiles on tunnels, bridges, and building walls relies on **hammering inspection**, in which the surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.
+Detecting loose or delaminated concrete in tunnels and bridges, and loose tiles on building walls, relies on **hammering inspection**, in which the surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.
 
 Using wheeled drones, we are developing inspection systems for locations that are difficult for people to approach: **hammering inspection of wall tiles**, **inspection of bridge bearings** (the components supporting the bridge girders), and **surveys inside ceiling cavities**.
 
@@ -126,7 +126,7 @@ Rather than automating every action, we also study arrangements in which the ope
 
 We also take part in the following themes as **collaborators**.
 
-- **Vibration control of building structures** — suppressing the sway of buildings under earthquakes and wind. Disturbance estimation based on the equivalent-input-disturbance (EID) approach is applied to tuned-mass-damper design and to the control of base-isolated buildings. [Representative paper (*Control Engineering Practice*, 2024)](https://doi.org/10.1016/j.conengprac.2024.105853)
-- **Visual feedback control** — estimating the position and orientation of an object from camera images and using them for control. [Representative paper (*SICE JCMSI*, 2023)](https://doi.org/10.1080/18824889.2023.2247853)
+- **Vibration control of building structures** — suppressing the sway of buildings under earthquakes and wind. The equivalent-input-disturbance (EID) approach estimates the effect of wind and earthquakes from measurements, as an equivalent disturbance on the control input, and the estimate is used for active control that counteracts the motion (for example, estimating the wind load on a base-isolated building). Tuned-mass-damper (TMD) design based on robust control theory is also covered. [Representative paper (*Control Engineering Practice*, 2024)](https://doi.org/10.1016/j.conengprac.2024.105853)
+- **Visual feedback control** — estimating the position and orientation of an object from camera images and using them for control, with estimation and control timed to the camera's frame rate. [Representative paper (*SICE JCMSI*, 2023)](https://doi.org/10.1080/18824889.2023.2247853)
 
 A full list of papers is on the [Publications]({{ base_path }}/publications/) page, and our collaborators are listed under [People]({{ base_path }}/people/). Funding, awards, and other details are on [Satoshi Nakano's personal page](https://gdaclab.web.nitech.ac.jp/nakano/).

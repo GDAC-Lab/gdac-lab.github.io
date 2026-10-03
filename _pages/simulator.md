@@ -19,9 +19,9 @@ Our wheeled-drone simulator is publicly available. The demo below is not a recor
 
 A vehicle with four rotors and two wheels. Its shape comes from measurements of the lab's own airframe.
 
-To climb the wall it does nothing special: **the target position is simply placed behind the wall face**. The vehicle tries to reach it, the wall stops it, and the wall's reaction becomes the force pressing the wheels into the surface. The wheels roll, so vertical motion stays free. There is no dedicated pressing controller.
+To climb the wall it does nothing special: **the target position is simply placed behind the wall face**. The vehicle tries to reach it and the wall stops it, so the effort to reach the target becomes the force pressing the wheels into the surface, balanced by the wall's reaction. The wheels roll, so motion up and down the wall stays free. There is no dedicated pressing controller.
 
-Attitude is controlled without decomposing rotation into three angles; the rotation matrix is used directly. That formulation does not break down at any attitude, and it is the idea at the center of our work on rotational control. See the [Research]({{ base_path }}/research/) page for more.
+Attitude is controlled without decomposing rotation into three angles; the rotation matrix is used directly. That formulation has no singularities arising from how attitude is represented, so it does not break down at any attitude, and it is the idea at the center of our work on rotational control. See the [Research]({{ base_path }}/research/) page for more.
 
 ## The simulator itself
 
