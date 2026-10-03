@@ -1,7 +1,7 @@
 ---
 layout: archive
-title: "A satellite that avoids the Sun"
-description: "A satellite turns 95 degrees with the Sun in the way, and the controller finds its own way around: an animation of constrained attitude control from GDAC Lab, Nagoya Institute of Technology."
+title: "Attitude control with a keep-out direction"
+description: "A spacecraft turns 95 degrees with the Sun in the way, and the controller finds its own way around the keep-out direction: an animation of constrained attitude control from GDAC Lab, Nagoya Institute of Technology."
 permalink: /sun-safe-slew/
 author_profile: true
 lang: en
@@ -10,7 +10,7 @@ lang_ref: sun-safe-slew
 
 {% include base_path %}
 
-A satellite has to turn 95&deg; to put its telescope on the next science target, and the Sun sits almost exactly in the way. Pointing the telescope at the Sun could damage it, so the short way round is not available. The animation below is this lab's controller solving that problem.
+A satellite has to turn 95&deg; to put its telescope on the next science target, and the Sun sits almost exactly in the way. Pointing the telescope at the Sun could damage it, so every direction within 25&deg; of the Sun is off limits — a **keep-out direction** — and the short way round would cross it. The animation below is this lab's controller solving that problem.
 {: .notice}
 
 {% include slew-demo.html %}

@@ -60,7 +60,7 @@ The site is built with [Jekyll](https://jekyllrb.com) from
 (© 2016 Michael Rose, MIT License).
 
 The [Simulator]({{ base_path }}/simulator/) and
-[satellite that avoids the Sun]({{ base_path }}/sun-safe-slew/) pages use [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0),
+[Attitude control with a keep-out direction]({{ base_path }}/sun-safe-slew/) pages use [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0),
 [three.js](https://threejs.org/) (MIT License), the
 [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)
 (© 2018 The Chakra Petch Project Authors) and

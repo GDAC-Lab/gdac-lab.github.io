@@ -63,7 +63,7 @@ The computationally light methods described above are effective in precisely thi
 
 <figure class="media-figure">
   <img src="{{ base_path }}/images/research/sun-safe-slew.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="The scene viewed from the Sun. The 25-degree keep-out cone around the Sun appears as an orange circle with the satellite at its centre. The red shortest path between two science targets runs through the circle; a second path bulges well outside it.">
-  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly in the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone appears as the orange circle, and pointing anywhere inside it violates the constraint. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, the teal one stays outside it. The animation runs in your browser on the <a href="{{ base_path }}/sun-safe-slew/">satellite that avoids the Sun</a> page.</figcaption>
+  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly in the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone appears as the orange circle, and pointing anywhere inside it violates the constraint. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, the teal one stays outside it. The animation runs in your browser on the <a href="{{ base_path }}/sun-safe-slew/">Attitude control with a keep-out direction</a> page.</figcaption>
 </figure>
 
 > **JSPS KAKENHI, Grant-in-Aid for Scientific Research (B)** (FY2026–2029, 26K00967)
@@ -72,11 +72,11 @@ The computationally light methods described above are effective in precisely thi
 
 This theme is a collaboration with [Takahiro Sasaki](https://researchmap.jp/jaxasaki) of the Japan Aerospace Exploration Agency (JAXA) and Prof. [Noboru Sakamoto](https://www.st.nanzan-u.ac.jp/info/sakanobo/index.html) of Nanzan University.
 
-#### Application: control design for three-dimensional rotation mechanisms
+#### Application: reproducing rotation in space on the ground
 
-Gimbals, with several rotation axes nested inside one another, are the usual way to turn an object mechanically. Like Euler angles, however, a gimbal has attitudes at which two axes line up and rotation in some direction becomes impossible (**singular configurations**).
+A spacecraft's attitude control system has to be checked on the ground before launch. On the ground, however, gravity makes it hard to reproduce the way a vehicle turns freely in weightless space.
 
-In a collaboration with Osaka University, we are developing a mechanism that has no singular configurations and can keep rotating in any direction. Our part is the control design that lets this mechanism achieve **high-precision rotational control**.
+In a collaboration with Osaka University, we are developing a test apparatus that holds a very small satellite while turning it in every direction, so that rotational motion under weightlessness can be reproduced on the ground. The satellite sits inside an ellipsoidal container, and several linear motors arranged around it are in contact with the container; the orientation of the ellipsoid is fixed geometrically by the positions of the linear motors. Our part is the control theory that makes the apparatus move as intended.
 
 > **NEDO Young Researcher Support Program, joint research formation track** (selected in FY2026)
 >

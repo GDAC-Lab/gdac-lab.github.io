@@ -24,8 +24,8 @@ main:
       - title: "Simulator"
         title_ja: "シミュレータ"
         url: /simulator/
-      - title: "A satellite that avoids the Sun"
-        title_ja: "太陽を避ける人工衛星"
+      - title: "Attitude control with a keep-out direction"
+        title_ja: "禁止方向を避ける姿勢制御"
         url: /sun-safe-slew/
 
   - title: "Publications"
