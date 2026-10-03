@@ -11,9 +11,18 @@
 #     (佐野君); ，。 punctuation. Students are named the way the lab speaks of them,
 #     not the way a press release would.
 items:
+  - date: "2026-10-01"
+    body_en: "Four new students, Genki, Yuto, Yoshihito, and Haruto, have joined the lab."
+    body_ja: "新たに石渡君，小野木君，佐々木君，鳥居君の4名が研究室に配属されました。"
   - date: "2026-09-03"
     body_en: "Keisuke gave a talk at RSJ2026."
     body_ja: "佐野君が RSJ2026 で発表しました。"
+  - date: "2026-08-26"
+    body_en: "A joint research project with Osaka University was selected for NEDO's Young Researcher Support Program (joint research formation track)."
+    body_ja: "NEDO「官民による若手研究者発掘支援事業」の共同研究組成型に，大阪大学との共同研究課題が採択されました。"
+    link: "https://www.nedo.go.jp/koubo/SM3_100001_00119.html"
+    link_label_en: "NEDO announcement"
+    link_label_ja: "NEDO 公募ページ"
   - date: "2026-06-20"
     body_en: "Yuki gave a talk at ASCC 2026."
     body_ja: "堂高君が ASCC 2026 で発表しました。"
