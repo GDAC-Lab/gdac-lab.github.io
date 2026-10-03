@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791031134">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791032179">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791031134"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791032179"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -374,7 +374,7 @@
 
 <ul>
   <li>モータが発生できる力には<strong>上限</strong>があります。</li>
-  <li>観測用のカメラを太陽の方向へ向けることはできません。</li>
+  <li>人工衛星の望遠鏡を太陽の方向へ向けてはなりません。</li>
   <li>壁面に押し付けながら走行する機体は，取り得る姿勢が限られます。</li>
 </ul>
 
@@ -392,24 +392,23 @@
 
 <p>航空機の姿勢は，機首の上げ下げ（ピッチ），左右の傾き（ロール），機首の向き（ヨー）という3つの角度で表すのが一般的です（<strong>オイラー角</strong>）。ただしこの表現には，特定の姿勢で計算が破綻するという弱点があります。航空分野やコンピュータグラフィックスの分野で「ジンバルロック」と呼ばれる現象です。</p>
 
-<p>本研究室では，向きを3つの角度に分解せず，回転そのものを直接扱う数学的な枠組み（回転行列の集まりで，SO(3) と表記されます）を用いています。この定式化により，あらゆる姿勢で破綻しない制御系を設計できます。</p>
+<p>本研究室では，向きを3つの角度に分解せず，回転そのものを直接扱う数学的な枠組み（回転行列の集まりで，SO(3) と表記されます）を用いています。この定式化では，姿勢の表し方に由来する特異点がないため，どの姿勢でも計算が破綻しない制御系を設計できます。</p>
 
 <h4 id="拘束の保証と計算負荷">拘束の保証と計算負荷</h4>
 
-<p>拘束を満たすための素朴な方法として，危険な状態に近づいたときに動作を制限する仕組みを後から追加する，という考え方があります。しかしこの方法では，あらゆる状況で拘束が満たされるという<strong>保証</strong>が得られません。</p>
+<p>拘束を守るための手軽な方法として，「危険な状態に近づいたら速度を落とす」といった経験的な規則を制御系に付け加える，という考え方があります。しかしこの方法では，どのような状況でも拘束が守られるという<strong>保証</strong>は得られません。</p>
 
-<p>本研究室では，<strong>Explicit Reference Governor（ERG）</strong>および<strong>制御バリア関数（CBF）</strong>に基づく手法を用いています。これらは，制御器そのものを設計し直すのではなく，制御器に与える目標値を安全な範囲へあらかじめ加工するという考え方に立つもので，拘束の充足を保証できます。</p>
+<p>本研究室では，<strong>Explicit Reference Governor（ERG）</strong>と<strong>制御バリア関数（CBF）</strong>に基づく手法を用いています。どちらも，すでにある制御器を作り直すのではなく，その外側に付け加える仕組みです。ERG は制御器に与える<strong>目標値</strong>を，CBF に基づく安全フィルタは制御器が出す<strong>指令</strong>を，拘束を破らない範囲へ修正します。こうした修正の規則を数学的に構成することで，拘束が常に守られることを理論的に保証できます。</p>
 
-<p>もう一つの重要な特徴は，動作中に最適化計算を解く必要がないという点です。</p>
+<p>もう一つの重要な特徴は，計算が軽いことです。</p>
 
-<p>拘束を扱う代表的な手法であるモデル予測制御は，各時刻で最適化問題を解きます。このため，計算能力の限られた機器では実行が困難になります。これに対して ERG や CBF に基づく手法は，あらかじめ導出しておいた式を評価するだけで済むため，小型の計算機でも実装できます。この「最適化を必要としない」枠組みそのものについても，一般的な形で研究を進めています（<a href="https://arxiv.org/abs/2604.04001">arXiv, 2026</a>）。</p>
+<p>拘束を扱う代表的な手法であるモデル予測制御は，各時刻で将来の動きを予測しながら最適化問題を解きます。このため，計算能力の限られた機器では負担が大きくなります。これに対して ERG は，あらかじめ導出しておいた式を評価するだけで目標値を更新でき，動作中に最適化問題を解く必要がありません。CBF に基づく安全フィルタも，拘束が1つであれば式で直接計算でき，複数の場合も小規模な二次計画問題を解くだけで済みます。いずれも小型の計算機に載せやすい手法です。</p>
 
 <p><strong>代表的な成果</strong></p>
 
 <ul>
   <li><a href="https://doi.org/10.1016/j.automatica.2023.111103">Explicit reference governor on SO(3) for torque and pointing constraint management</a> — <em>Automatica</em>, 2023</li>
   <li><a href="https://doi.org/10.1109/CDC.2018.8618908">Attitude Constrained Control on SO(3): An Explicit Reference Governor Approach</a> — <em>IEEE CDC</em>, 2018</li>
-  <li><a href="https://arxiv.org/abs/2604.04041">Periodic Event-Triggered Explicit Reference Governor for Constrained Attitude Control on SO(3)</a> — arXiv, 2026</li>
 </ul>
 
 <h4 id="応用小型衛星の姿勢制御">応用：小型衛星の姿勢制御</h4>
@@ -417,18 +416,18 @@
 <p>人工衛星は，地球を周回しながら姿勢を変更します。この過程では，複数の拘束が同時に課されます。</p>
 
 <ul>
-  <li>観測用のカメラを太陽の方向へ向けてはなりません（センサが損傷するためです）。</li>
-  <li>通信用のアンテナは，地上局の方向へ向け続ける必要があります。</li>
+  <li>望遠鏡や観測用のセンサを太陽の方向へ向けてはなりません（強い太陽光で損傷するおそれがあるためです）。</li>
+  <li>地上局と通信する間は，アンテナを地上局の方向へ向けておく必要があります。</li>
   <li>姿勢を変更する装置（リアクションホイール）が発生できるトルクには上限があります。</li>
 </ul>
 
-<p>さらに，衛星に搭載できる計算機は，打ち上げ時の質量制限と宇宙空間の放射線環境への耐性が求められるため，地上の計算機と比べて性能が大きく制限されます。このため，各時刻で最適化問題を解く方式は適用が困難です。</p>
+<p>さらに，衛星に搭載する計算機には，打ち上げ質量や搭載電力の制限に加えて，宇宙空間の放射線に耐えることが求められます。そのため，地上の計算機と比べて性能が大きく制限され，各時刻で最適化問題を解く方式は適用が難しくなります。</p>
 
-<p>前節で述べた最適化を必要としない手法は，このような状況で有効に働きます。現在は，複数の小型衛星が協調して姿勢を変更する枠組みの構築に取り組んでいます。</p>
+<p>前節で述べた計算の軽い手法は，このような状況で有効に働きます。現在は，複数の小型衛星が協調して姿勢を変更する枠組みの構築に取り組んでいます。</p>
 
 <figure class="media-figure">
   <img src="https://gdaclab.web.nitech.ac.jp/images/research/sun-safe-slew-ja.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="太陽の方向から見た図。太陽まわりの 25 度の禁止領域が橙色の円として描かれ，その中心に人工衛星がある。2つの観測対象を結ぶ赤い最短経路は円の中を通り，青緑の経路は円の外側へ大きく膨らんで回り込んでいる。" />
-  <figcaption>太陽がほぼ経路上にある 95&deg; の姿勢変更を，<strong>太陽の方向から見た図</strong>です。この向きから見ると，太陽まわりの 25&deg; の禁止領域は橙色の円として現れ，円の内側が拘束の破れになります。下の印が姿勢変更前の観測対象，上の印が変更後の観測対象です。赤い最短経路は円の中を通り，青緑の経路は円の外側を回り込みます。ブラウザ上で動くアニメーションは<a href="https://gdaclab.web.nitech.ac.jp/ja/sun-safe-slew/">太陽を避ける人工衛星</a>のページにあります。</figcaption>
+  <figcaption>太陽がほぼ経路上にある 95&deg; の姿勢変更を，<strong>太陽の方向から見た図</strong>です。この向きから見ると，太陽まわりの 25&deg; の禁止領域は橙色の円として現れ，円の内側を向くと拘束を破ることになります。下の印が姿勢変更前の観測対象，上の印が変更後の観測対象です。赤い最短経路は円の中を通り，青緑の経路は円の外側を回り込みます。ブラウザ上で動くアニメーションは<a href="https://gdaclab.web.nitech.ac.jp/ja/sun-safe-slew/">太陽を避ける人工衛星</a>のページにあります。</figcaption>
 </figure>
 
 <blockquote>
@@ -441,7 +440,15 @@
 
 <h4 id="応用三次元回転機構の制御系設計">応用：三次元回転機構の制御系設計</h4>
 
-<p>三次元的な回転運動を生み出す機構を対象として，<strong>高精度な回転制御</strong>の実現を目指した制御系設計に，共同研究として取り組んでいます。</p>
+<p>物体の向きを機械的に変える装置として，複数の回転軸を入れ子にしたジンバルがよく使われます。しかしジンバルにも，オイラー角と同じように，軸が重なって特定の方向へ回転できなくなる姿勢（<strong>特異姿勢</strong>）があります。</p>
+
+<p>大阪大学との共同研究として，特異姿勢を持たず，あらゆる方向へ回転し続けられる機構の開発に取り組んでいます。本研究室は，この機構で<strong>高精度な回転制御</strong>を実現するための制御系設計を担当しています。</p>
+
+<blockquote>
+  <p><strong>NEDO 官民による若手研究者発掘支援事業 共同研究組成型</strong>（2026年度採択）</p>
+
+  <p>「幾何学的動力伝達に基づく特異姿勢の無い全方向無限回転機構の開発」</p>
+</blockquote>
 
 <h3 id="2-車輪付きドローンとインフラ点検">2. 車輪付きドローンとインフラ点検</h3>
 
@@ -463,7 +470,7 @@
 
 <ul>
   <li>車輪は横方向に滑らないため，運動できる方向が制限されます（<strong>非ホロノミック拘束</strong>と呼びます）。</li>
-  <li>壁面への<strong>押し付け力の調整</strong>が必要です。押し付け力が不足すれば壁面から離れ，過大であれば機体が跳ね返ります。</li>
+  <li>壁面への<strong>押し付け力の調整</strong>が必要です。弱すぎると車輪が滑ったり壁面から離れたりし，強すぎると走行の抵抗や機体への負担が増えます。また，勢いよく接触すると機体が跳ね返ってしまいます。</li>
   <li>飛行状態と走行状態が切り替わるため，運動の性質そのものが変化します。</li>
 </ul>
 
@@ -471,7 +478,7 @@
 
 <h4 id="応用インフラ点検">応用：インフラ点検</h4>
 
-<p>トンネルや橋梁，建物の壁面では，タイルの浮きや剥離を調べるために，ハンマーで叩いた音を聞き分ける<strong>打音検査</strong>が行われています。高所での作業には足場の設置が必要となり，費用と危険を伴います。</p>
+<p>トンネルや橋梁のコンクリート，建物の外壁タイルなどでは，浮きや剥離を見つけるために，ハンマーで叩いた音を聞き分ける<strong>打音検査</strong>が行われています。高所での作業には足場の設置が必要となり，費用と危険を伴います。</p>
 
 <p>本研究室では，車輪付きドローンを用いて，<strong>壁面タイルの打音検査</strong>，<strong>橋梁支承部（橋桁を支える部分）の点検</strong>，<strong>天井裏の調査</strong>など，人が近づきにくい場所を対象とした点検システムの開発を進めています。</p>
 
@@ -492,8 +499,8 @@
 <p>上記のほか，<strong>共同研究</strong>として次のテーマにも参画しています。</p>
 
 <ul>
-  <li><strong>建築構造物の振動制御</strong> — 地震や風による建物の揺れを抑える研究です。等価入力外乱（EID）に基づく外乱推定の考え方を，制振ダンパの設計や免震建物の制御へ応用しています。<a href="https://doi.org/10.1016/j.conengprac.2024.105853">代表例（<em>Control Engineering Practice</em>, 2024）</a></li>
-  <li><strong>ビジュアルフィードバック制御</strong> — カメラで取得した画像から対象の位置と姿勢を推定し，制御に利用する研究です。<a href="https://doi.org/10.1080/18824889.2023.2247853">代表例（<em>SICE JCMSI</em>, 2023）</a></li>
+  <li><strong>建築構造物の振動制御</strong> — 地震や風による建物の揺れを抑える研究です。建物に加わる風や地震の影響を，等価入力外乱（EID）法によって制御入力に換算した外乱として測定値から推定し，揺れを打ち消す能動制御に用いています（免震建物に加わる風荷重の推定など）。ロバスト制御理論に基づく同調質量ダンパ（TMD）の設計も扱っています。<a href="https://doi.org/10.1016/j.conengprac.2024.105853">代表例（<em>Control Engineering Practice</em>, 2024）</a></li>
+  <li><strong>ビジュアルフィードバック制御</strong> — カメラで取得した画像から対象の位置と姿勢を推定し，制御に利用する研究です。カメラの撮影周期に合わせて推定と制御を行う方法を扱っています。<a href="https://doi.org/10.1080/18824889.2023.2247853">代表例（<em>SICE JCMSI</em>, 2023）</a></li>
 </ul>
 
 <p>論文の一覧は<a href="https://gdaclab.web.nitech.ac.jp/ja/publications/">論文・発表</a>のページ，共同研究者は<a href="https://gdaclab.web.nitech.ac.jp/ja/people/">メンバー</a>のページにあります。外部資金や受賞を含む詳細は<a href="https://gdaclab.web.nitech.ac.jp/nakano/ja/">仲野の個人ページ</a>をご覧ください。</p>
@@ -539,14 +546,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-10-03 21:39 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-10-03 21:56 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791031134"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791031134"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791032179"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791032179"></script>
 
 
 

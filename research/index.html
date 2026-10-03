@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791031134">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791032179">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791031134"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791032179"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -374,7 +374,7 @@
 
 <ul>
   <li>The force a motor can produce has an <strong>upper bound</strong>.</li>
-  <li>An observation camera cannot be pointed toward the sun.</li>
+  <li>A telescope on a satellite must not be pointed toward the Sun.</li>
   <li>A vehicle running while pressed against a wall can take only a restricted set of attitudes.</li>
 </ul>
 
@@ -392,24 +392,23 @@
 
 <p>Aircraft attitude is commonly described by three angles (pitch, roll, and yaw), known as <strong>Euler angles</strong>. This representation has a weakness: at certain attitudes the computation breaks down, a phenomenon known as gimbal lock in aviation and computer graphics.</p>
 
-<p>Rather than decomposing orientation into three angles, we use a mathematical framework that treats rotation itself directly: the set of rotation matrices, written SO(3). This formulation yields control designs that do not break down at any attitude.</p>
+<p>Rather than decomposing orientation into three angles, we use a mathematical framework that treats rotation itself directly: the set of rotation matrices, written SO(3). Because this formulation has no singularities arising from how attitude is represented, the computation does not break down at any attitude.</p>
 
 <h4 id="guaranteeing-constraints-under-limited-computation">Guaranteeing constraints under limited computation</h4>
 
-<p>A straightforward approach to constraints is to add a mechanism that restricts the motion once a dangerous state is approached. Such an approach, however, provides no <strong>guarantee</strong> that the constraints hold in every situation.</p>
+<p>A quick way to handle constraints is to bolt on rules of thumb, such as slowing down when a dangerous state is near. Such rules, however, give no <strong>guarantee</strong> that the constraints hold in every situation.</p>
 
-<p>We work with the <strong>Explicit Reference Governor (ERG)</strong> and <strong>control barrier functions (CBFs)</strong>. Rather than redesigning the controller itself, these methods reshape the reference supplied to the controller so that it stays within a safe region, which allows constraint satisfaction to be guaranteed.</p>
+<p>We work with the <strong>Explicit Reference Governor (ERG)</strong> and <strong>control barrier functions (CBFs)</strong>. Neither replaces the existing controller; both are added around it. The ERG modifies the <strong>reference</strong> given to the controller, and a CBF-based safety filter modifies the <strong>command</strong> the controller issues, keeping each within what the constraints allow. Because the modification rule is constructed mathematically, constraint satisfaction can be guaranteed in theory.</p>
 
-<p>A second property is equally important: these methods require no optimization to be solved during operation.</p>
+<p>A second property is equally important: the computation is light.</p>
 
-<p>Model predictive control, the representative approach to constrained control, solves an optimization problem at every time step, which makes it difficult to run on hardware with limited computational capacity. ERG- and CBF-based methods instead evaluate expressions derived in advance, and can therefore be implemented on small computers. We are also studying this optimization-free framework in general form (<a href="https://arxiv.org/abs/2604.04001">arXiv, 2026</a>).</p>
+<p>Model predictive control, the representative approach to constrained control, predicts future motion and solves an optimization problem at every time step, which is a heavy load for hardware with limited computational capacity. The ERG instead updates the reference by evaluating expressions derived in advance, with no optimization to solve during operation, and a CBF-based safety filter can be computed in closed form for a single constraint, and otherwise requires only a small quadratic program. Both therefore fit on small computers.</p>
 
 <p><strong>Selected results</strong></p>
 
 <ul>
   <li><a href="https://doi.org/10.1016/j.automatica.2023.111103">Explicit reference governor on SO(3) for torque and pointing constraint management</a> — <em>Automatica</em>, 2023</li>
   <li><a href="https://doi.org/10.1109/CDC.2018.8618908">Attitude Constrained Control on SO(3): An Explicit Reference Governor Approach</a> — <em>IEEE CDC</em>, 2018</li>
-  <li><a href="https://arxiv.org/abs/2604.04041">Periodic Event-Triggered Explicit Reference Governor for Constrained Attitude Control on SO(3)</a> — arXiv, 2026</li>
 </ul>
 
 <h4 id="application-attitude-control-of-small-satellites">Application: attitude control of small satellites</h4>
@@ -417,18 +416,18 @@
 <p>A satellite changes its attitude while orbiting the Earth, and several constraints apply simultaneously.</p>
 
 <ul>
-  <li>The observation camera must not be pointed toward the sun, as the sensor would be damaged.</li>
-  <li>The communication antenna must remain directed at the ground station.</li>
+  <li>Telescopes and other observation sensors must not be pointed toward the Sun, as intense sunlight can damage them.</li>
+  <li>The communication antenna must point at the ground station during communication passes.</li>
   <li>The reaction wheels that reorient the spacecraft have an upper bound on the torque they can produce.</li>
 </ul>
 
-<p>Furthermore, an on-board computer must meet mass limits at launch and withstand the radiation environment of space, so its performance is considerably more limited than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.</p>
+<p>Furthermore, an on-board computer must meet launch-mass and on-board power limits and withstand the radiation environment of space, so its performance is considerably more limited than that of ground equipment. Approaches that solve an optimization problem at every time step are therefore difficult to apply.</p>
 
-<p>The optimization-free methods described above are effective in precisely this setting. We are currently working toward a framework in which several small satellites reorient cooperatively.</p>
+<p>The computationally light methods described above are effective in precisely this setting. We are currently working toward a framework in which several small satellites reorient cooperatively.</p>
 
 <figure class="media-figure">
   <img src="https://gdaclab.web.nitech.ac.jp/images/research/sun-safe-slew.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="The scene viewed from the Sun. The 25-degree keep-out cone around the Sun appears as an orange circle with the satellite at its centre. The red shortest path between two science targets runs through the circle; a second path bulges well outside it." />
-  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly on the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone projects to the orange circle, and inside the ring is a breach. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, the teal one stays outside it. The animation runs in your browser on the <a href="https://gdaclab.web.nitech.ac.jp/sun-safe-slew/">satellite that avoids the Sun</a> page.</figcaption>
+  <figcaption>A 95&deg; retargeting slew with the Sun almost exactly in the way, <strong>seen from the Sun</strong>. From that direction the 25&deg; keep-out cone appears as the orange circle, and pointing anywhere inside it violates the constraint. The lower marker is the science target the satellite starts from and the upper one is where it has to get to: the red shortest path runs through the circle, the teal one stays outside it. The animation runs in your browser on the <a href="https://gdaclab.web.nitech.ac.jp/sun-safe-slew/">satellite that avoids the Sun</a> page.</figcaption>
 </figure>
 
 <blockquote>
@@ -441,7 +440,15 @@
 
 <h4 id="application-control-design-for-three-dimensional-rotation-mechanisms">Application: control design for three-dimensional rotation mechanisms</h4>
 
-<p>We are also engaged in a collaboration on control design for mechanisms that produce three-dimensional rotation, aimed at achieving <strong>high-precision rotational control</strong>.</p>
+<p>Gimbals, with several rotation axes nested inside one another, are the usual way to turn an object mechanically. Like Euler angles, however, a gimbal has attitudes at which two axes line up and rotation in some direction becomes impossible (<strong>singular configurations</strong>).</p>
+
+<p>In a collaboration with Osaka University, we are developing a mechanism that has no singular configurations and can keep rotating in any direction. Our part is the control design that lets this mechanism achieve <strong>high-precision rotational control</strong>.</p>
+
+<blockquote>
+  <p><strong>NEDO Young Researcher Support Program, joint research formation track</strong> (selected in FY2026)</p>
+
+  <p>“Development of an omnidirectional, endlessly rotating mechanism free of singular configurations based on geometric power transmission”</p>
+</blockquote>
 
 <h3 id="2-wheeled-drones-and-infrastructure-inspection">2. Wheeled drones and infrastructure inspection</h3>
 
@@ -463,7 +470,7 @@
 
 <ul>
   <li>The wheels do not slip laterally, so the directions of motion are restricted — a <strong>nonholonomic constraint</strong>.</li>
-  <li>The <strong>pressing force against the wall</strong> must be regulated: too little and the vehicle separates from the surface, too much and it rebounds.</li>
+  <li>The <strong>pressing force against the wall</strong> must be regulated: too little and the wheels slip or the vehicle separates from the surface, too much and rolling resistance and the load on the airframe grow. Touching down too hard also makes the vehicle bounce off.</li>
   <li>Flight and ground locomotion alternate, so the nature of the dynamics itself changes.</li>
 </ul>
 
@@ -471,7 +478,7 @@
 
 <h4 id="application-infrastructure-inspection">Application: infrastructure inspection</h4>
 
-<p>Detecting loose or delaminated tiles on tunnels, bridges, and building walls relies on <strong>hammering inspection</strong>, in which the surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.</p>
+<p>Detecting loose or delaminated concrete in tunnels and bridges, and loose tiles on building walls, relies on <strong>hammering inspection</strong>, in which the surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.</p>
 
 <p>Using wheeled drones, we are developing inspection systems for locations that are difficult for people to approach: <strong>hammering inspection of wall tiles</strong>, <strong>inspection of bridge bearings</strong> (the components supporting the bridge girders), and <strong>surveys inside ceiling cavities</strong>.</p>
 
@@ -492,8 +499,8 @@
 <p>We also take part in the following themes as <strong>collaborators</strong>.</p>
 
 <ul>
-  <li><strong>Vibration control of building structures</strong> — suppressing the sway of buildings under earthquakes and wind. Disturbance estimation based on the equivalent-input-disturbance (EID) approach is applied to tuned-mass-damper design and to the control of base-isolated buildings. <a href="https://doi.org/10.1016/j.conengprac.2024.105853">Representative paper (<em>Control Engineering Practice</em>, 2024)</a></li>
-  <li><strong>Visual feedback control</strong> — estimating the position and orientation of an object from camera images and using them for control. <a href="https://doi.org/10.1080/18824889.2023.2247853">Representative paper (<em>SICE JCMSI</em>, 2023)</a></li>
+  <li><strong>Vibration control of building structures</strong> — suppressing the sway of buildings under earthquakes and wind. The equivalent-input-disturbance (EID) approach estimates the effect of wind and earthquakes from measurements, as an equivalent disturbance on the control input, and the estimate is used for active control that counteracts the motion (for example, estimating the wind load on a base-isolated building). Tuned-mass-damper (TMD) design based on robust control theory is also covered. <a href="https://doi.org/10.1016/j.conengprac.2024.105853">Representative paper (<em>Control Engineering Practice</em>, 2024)</a></li>
+  <li><strong>Visual feedback control</strong> — estimating the position and orientation of an object from camera images and using them for control, with estimation and control timed to the camera’s frame rate. <a href="https://doi.org/10.1080/18824889.2023.2247853">Representative paper (<em>SICE JCMSI</em>, 2023)</a></li>
 </ul>
 
 <p>A full list of papers is on the <a href="https://gdaclab.web.nitech.ac.jp/publications/">Publications</a> page, and our collaborators are listed under <a href="https://gdaclab.web.nitech.ac.jp/people/">People</a>. Funding, awards, and other details are on <a href="https://gdaclab.web.nitech.ac.jp/nakano/">Satoshi Nakano’s personal page</a>.</p>
@@ -539,14 +546,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-10-03 21:39 JST
+  Last updated 2026-10-03 21:56 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791031134"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791031134"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791032179"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791032179"></script>
 
 
 

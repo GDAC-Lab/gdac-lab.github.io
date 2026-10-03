@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791031134">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791032179">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791031134"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791032179"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -453,15 +453,15 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1791031134"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1791032179"></script>
 
 <h2 id="what-you-are-looking-at">What you are looking at</h2>
 
 <p>A vehicle with four rotors and two wheels. Its shape comes from measurements of the lab’s own airframe.</p>
 
-<p>To climb the wall it does nothing special: <strong>the target position is simply placed behind the wall face</strong>. The vehicle tries to reach it, the wall stops it, and the wall’s reaction becomes the force pressing the wheels into the surface. The wheels roll, so vertical motion stays free. There is no dedicated pressing controller.</p>
+<p>To climb the wall it does nothing special: <strong>the target position is simply placed behind the wall face</strong>. The vehicle tries to reach it and the wall stops it, so the effort to reach the target becomes the force pressing the wheels into the surface, balanced by the wall’s reaction. The wheels roll, so motion up and down the wall stays free. There is no dedicated pressing controller.</p>
 
-<p>Attitude is controlled without decomposing rotation into three angles; the rotation matrix is used directly. That formulation does not break down at any attitude, and it is the idea at the center of our work on rotational control. See the <a href="https://gdaclab.web.nitech.ac.jp/research/">Research</a> page for more.</p>
+<p>Attitude is controlled without decomposing rotation into three angles; the rotation matrix is used directly. That formulation has no singularities arising from how attitude is represented, so it does not break down at any attitude, and it is the idea at the center of our work on rotational control. See the <a href="https://gdaclab.web.nitech.ac.jp/research/">Research</a> page for more.</p>
 
 <h2 id="the-simulator-itself">The simulator itself</h2>
 
@@ -508,14 +508,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-10-03 21:39 JST
+  Last updated 2026-10-03 21:56 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791031134"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791031134"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791032179"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791032179"></script>
 
 
 

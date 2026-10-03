@@ -134,7 +134,7 @@
 <!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791031134">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1791032179">
 
 <meta http-equiv="cleartype" content="on">
     
@@ -142,7 +142,7 @@
 <!-- start custom head snippets -->
 
 <!-- Support for Academicons -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791031134"/>
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/academicons.css?v=1791032179"/>
 
 <!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
@@ -368,7 +368,7 @@
       <h1 class="page__title">A satellite that avoids the Sun</h1>
     
     
-<p class="notice">A satellite has to turn 95° to put its telescope on the next science target, and the Sun sits almost exactly in the way. Pointing the telescope at the Sun would destroy it, so the short way round is not available. The animation below is this lab’s controller solving that problem.</p>
+<p class="notice">A satellite has to turn 95° to put its telescope on the next science target, and the Sun sits almost exactly in the way. Pointing the telescope at the Sun could damage it, so the short way round is not available. The animation below is this lab’s controller solving that problem.</p>
 
 <figure class="slewdemo">
   <iframe class="slewdemo__frame" src="https://gdaclab.web.nitech.ac.jp/assets/demos/sun-safe-slew/" loading="lazy" title="Animation of a satellite slewing around the Sun"></iframe>
@@ -404,11 +404,11 @@
 
 <p>With this controller, the satellite never points closer to the Sun than <strong>33°</strong> — the limit is 25° — and never asks the reaction wheels for more than <strong>18 %</strong> of their torque.</p>
 
-<p>For comparison: give the same controller the final attitude directly as its target (the red path on screen), and it passes <strong>6.9°</strong> from the Sun and demands <strong>2.9 times</strong> the torque the wheels can produce. The constrained run takes five times as long to get there, which is what respecting the constraints costs.</p>
+<p>For comparison: give the same controller the final attitude directly as its target (the red path on screen), and it passes <strong>6.9°</strong> from the Sun and demands <strong>2.9 times</strong> the torque the wheels can produce. The constrained run takes about six times as long to settle within 1° (about 230 s, against 40 s without the constraints), which is what respecting the constraints costs.</p>
 
 <h2 id="what-this-is-not">What this is not</h2>
 
-<p>This is a calculation made to show how the control works. Disturbance torques, a limit on how fast the spacecraft may turn, and keep-out regions for the Earth and the Moon — all of which a real mission has to account for as well — are not part of it.</p>
+<p>This is a calculation made to show how the control works. Disturbance torques, a limit on how fast the spacecraft may turn, management of the momentum that builds up in the reaction wheels, and keep-out regions for the Earth and the Moon — all of which a real mission has to account for as well — are not part of it.</p>
 
 <h2 id="sources">Sources</h2>
 
@@ -462,14 +462,14 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-10-03 21:39 JST
+  Last updated 2026-10-03 21:56 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791031134"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791031134"></script>
+    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1791032179"></script>
+<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1791032179"></script>
 
 
 
