@@ -1,0 +1,29 @@
+# Temporary: build the site-text-refresh branch without deploying it, so the
+# rendered pages can be compared with the live build. Removed before merging.
+name: Preview build (site-text-refresh)
+
+on:
+  push:
+    branches:
+      - site-text-refresh
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
+      - name: Build the site
+        env:
+          LANG: C.UTF-8
+        run: bundle exec jekyll build 2>&1 | tee build.log
+      - name: Pack
+        run: tar -czf site.tgz _site build.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site.tgz
+          retention-days: 3
