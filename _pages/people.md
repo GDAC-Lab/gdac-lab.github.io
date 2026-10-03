@@ -65,6 +65,18 @@ Keisuke Sano
 
 Eita Sugiyama
 : from October 2025
+
+Genki Ishiwata
+: from October 2026
+
+Yuto Onogi
+: from October 2026
+
+Yoshihito Sasaki
+: from October 2026
+
+Haruto Torii
+: from October 2026
 {: .people-roster}
 
 ### Co-advised students
