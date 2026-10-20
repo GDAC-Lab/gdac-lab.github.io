@@ -11,6 +11,9 @@
 #     (佐野君); ，。 punctuation. Students are named the way the lab speaks of them,
 #     not the way a press release would.
 items:
+  - date: "2026-10-20"
+    body_en: "Satoshi gave a talk, \"Control design under constraints and safety guarantees,\" at the 2026 Industry-Academia Young Researchers' Seminar and Steelworks Tour, organized by the Young Researchers' Forum of the Instrumentation, Control and System Engineering Division, The Iron and Steel Institute of Japan."
+    body_ja: "日本鉄鋼協会 計測・制御・システム工学部会 若手フォーラム主催の「2026年度 産学若手交流セミナーおよび製鉄所見学会」で，仲野が「制約を考慮した制御系設計と安全性保証」と題して発表しました。"
   - date: "2026-10-01"
     body_en: "Four new students, Genki, Yuto, Yoshihito, and Haruto, have joined the lab."
     body_ja: "新たに石渡君，小野木君，佐々木君，鳥居君の4名が研究室に配属されました。"
