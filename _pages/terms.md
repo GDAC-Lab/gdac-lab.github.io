@@ -2,7 +2,7 @@
 permalink: /terms/
 title: "Terms and privacy policy"
 description: "Terms of use and privacy policy for the website of GDAC Lab, Nagoya Institute of Technology."
-modified: 2026-09-17
+modified: 2026-11-08
 lang: en
 lang_ref: terms
 ---
@@ -24,8 +24,10 @@ collects nothing from you. **It uses no analytics, no advertising and no cookies
 page serves its fonts, styles, scripts and images from this site itself, so simply reading
 one sends no request to any other company's server.
 
-The demos solve their physics in your own browser. No result, no interaction and no
-measurement of your device leaves it.
+The [Simulator]({{ base_path }}/simulator/) solves its physics in your own browser, and the
+[Attitude control with a keep-out direction]({{ base_path }}/sun-safe-slew/) page plays back a
+trajectory computed in advance. No result, no interaction and no measurement of your device
+leaves your browser.
 
 If you switch the site between light and dark appearance, that one choice is saved in your
 browser. It stays on your device and is removed when you clear your browser's site data.
@@ -45,7 +47,7 @@ the GDAC Lab, Nagoya Institute of Technology. **Please ask before reusing photog
 members, and before any commercial use.**
 
 Publication entries are bibliographic records compiled automatically from researchmap and
-from Crossref and arXiv metadata. The papers themselves remain under the copyright of their
+from Crossref, arXiv and DataCite metadata. The papers themselves remain under the copyright of their
 publishers and authors; follow the DOI or arXiv link on each entry for the authoritative
 version and its license terms.
 
@@ -57,12 +59,17 @@ procedures and official dates, follow the university's own announcements.
 The site is built with [Jekyll](https://jekyllrb.com) from
 [Academic Pages](https://github.com/academicpages/academicpages.github.io), a fork of
 [Minimal Mistakes](https://mademistakes.com/work/minimal-mistakes-jekyll-theme/)
-(© 2016 Michael Rose, MIT License).
+(© 2016 Michael Rose, MIT License). Its icons are from
+[Font Awesome Free](https://fontawesome.com/) (© Fonticons, Inc.; icons CC BY 4.0, font SIL
+Open Font License 1.1) and [Academicons](https://jpswalsh.github.io/academicons/) (SIL Open
+Font License 1.1), and its tab icon is the "academic" icon of
+[OOjs UI](https://www.mediawiki.org/wiki/OOUI) (© OOjs UI Team and other contributors, MIT
+License).
 
-The [Simulator]({{ base_path }}/simulator/) and
-[Attitude control with a keep-out direction]({{ base_path }}/sun-safe-slew/) pages use [MuJoCo](https://mujoco.org/) (© Google DeepMind, Apache License 2.0),
-[three.js](https://threejs.org/) (MIT License), the
-[Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)
+The [Simulator]({{ base_path }}/simulator/) page uses [MuJoCo](https://mujoco.org/)
+(© Google DeepMind, Apache License 2.0) and [three.js](https://threejs.org/) (MIT License).
+The [Attitude control with a keep-out direction]({{ base_path }}/sun-safe-slew/) page uses
+three.js, the [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch)
 (© 2018 The Chakra Petch Project Authors) and
 [IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono) (© 2017 IBM Corp.)
 typefaces under the SIL Open Font License 1.1, and a spacecraft mesh generated from

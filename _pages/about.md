@@ -13,12 +13,12 @@ redirect_from:
   - /about.html
 ---
 
-This is the site of the **Geometric Dynamics, Autonomy, and Control Laboratory (GDAC Lab)** at Nagoya Institute of Technology, led by **Satoshi Nakano**. We hope it is useful for prospective students, colleagues in academia and industry, and anyone interested in control theory, robotics, and safety-critical systems.
+This is the site of the **Geometric Dynamics, Autonomy, and Control Laboratory (GDAC Lab)** at Nagoya Institute of Technology, led by **Satoshi Nakano** (Assistant Professor). We hope it is useful for prospective students, colleagues in academia and industry, and anyone interested in control theory, robotics, and safety-critical systems.
 
-Our work combines theory and hardware experiments on constrained control of rotational motion, geometric attitude control on SO(3), and applications such as wheeled drones for infrastructure inspection. A concise overview is on the [Research]({{ site.baseurl }}/research/) page.
+Our work combines theory and hardware experiments on constrained control of rotational motion, geometric attitude control on SO(3), and applications to satellites and to wheeled drones for infrastructure inspection. A concise overview is on the [Research]({{ site.baseurl }}/research/) page.
 
 {% include home-photo.html %}
 
-{% include home-extra.html %}
-
 {% include home-news.html %}
+
+{% include home-extra.html %}
