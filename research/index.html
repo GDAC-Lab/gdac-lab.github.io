@@ -1,4 +1,4 @@
-<!doctype html><html lang="en" class="no-js">
+<!doctype html><html lang="en">
   <head>
     
 
@@ -92,22 +92,21 @@
 </script>
 
 
-
-<!-- http://t.co/dKP3o1e -->
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <script>
-  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (t === "dark" || (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  })();
 </script>
 
-<!-- For all browsers -->
 <!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
      different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794127423">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794129374">
 
-<meta http-equiv="cleartype" content="on">
     
 
 <!-- start custom head snippets -->
@@ -129,13 +128,11 @@
 
   <body>
 
-    
-
-<div class="masthead">
+    <div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
-      <nav id="site-nav" class="greedy-nav">
-        <button><div class="navicon"></div></button>
+      <nav id="site-nav" class="greedy-nav" aria-label="Main">
+        <button type="button" class="greedy-nav__toggle hidden" aria-label="Menu" aria-expanded="false" aria-controls="site-nav-more"><span class="navicon"></span></button>
         <ul class="visible-links">
           <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="https://gdaclab.web.nitech.ac.jp/">GDAC Lab</a></li>
             
@@ -143,7 +140,7 @@
             
             <li class="masthead__menu-item masthead__menu-item--group">
               <div class="masthead__group">
-                <a role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-controls="nav-group-1" class="masthead__group-toggle">Research<span class="masthead__group-caret" aria-hidden="true"></span></a>
+                <button type="button" class="masthead__button masthead__group-toggle" aria-expanded="false" aria-controls="nav-group-1">Research<span class="masthead__group-caret" aria-hidden="true"></span></button>
                 <ul class="masthead__submenu" id="nav-group-1">
                   
                     
@@ -207,16 +204,17 @@
             
             <li class="masthead__menu-item"><a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">Album (external)</a></li>
             
-          <li class="masthead__menu-item persist"><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</span><span class="masthead__lang-sep">|</span><a href="https://gdaclab.web.nitech.ac.jp/ja/research/" class="masthead__lang-link"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</a></li>
+          <li class="masthead__menu-item persist tail"><span class="masthead__lang-current"><svg class="masthead__lang-flag" viewBox="0 0 60 30" aria-hidden="true" focusable="false"><clipPath id="lang-flag-gb-clip"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#lang-flag-gb-clip)" stroke="#c8102e" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#c8102e" stroke-width="6"/></svg>EN</span><span class="masthead__lang-sep">|</span><a href="https://gdaclab.web.nitech.ac.jp/ja/research/" class="masthead__lang-link" lang="ja" hreflang="ja"><svg class="masthead__lang-flag" viewBox="0 0 30 20" aria-hidden="true" focusable="false"><rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>日本語</a></li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
-            <a role="button" aria-label="Toggle light and dark theme"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="Toggle theme"></i></a>
+            <button type="button" class="masthead__button theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme"><i class="fa-solid fa-sun theme-toggle__icon" aria-hidden="true"></i></button>
           </li>
         </ul>
-        <ul class="hidden-links hidden"></ul>
+        <ul id="site-nav-more" class="hidden-links hidden"></ul>
       </nav>
     </div>
   </div>
 </div>
+
 
     <div id="main" role="main">
   
@@ -239,8 +237,8 @@
   </div>
 
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">Links</button>
-    <ul class="author__urls social-icons">
+    <button type="button" class="btn btn--inverse" aria-expanded="false" aria-controls="author-links">Links</button>
+    <ul id="author-links" class="author__urls social-icons">
       
         <li class="author__desktop"><i class="fas fa-fw fa-location-dot icon-pad-right" aria-hidden="true"></i>Nagoya, Japan</li>
       
@@ -431,11 +429,6 @@
 
 
 
-
-
-
-
-
 <!-- end custom footer snippets -->
 
         
@@ -450,16 +443,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-11-08 17:43 JST
+  Last updated 2026-11-08 18:16 JST
 </div>
 
       </footer>
     </div>
 
-    <script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/main.min.js?v=1794127423"></script>
-<script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/nav-submenu.js?v=1794127423"></script>
-
-
+    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794129374"></script>
 
 
   </body>
