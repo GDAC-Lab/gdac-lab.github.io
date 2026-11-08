@@ -18,7 +18,7 @@ The site is bilingual: English pages live at the site root, Japanese pages under
 | Pages (JA) | `_pages/ja/` |
 | Publications | `_publications/` — **generated, see below** |
 | Header navigation | `_data/navigation.yml` — see "The header menu" below |
-| Home page news items | `_data/news.yml` |
+| Home page news items | `_data/news.yml` — newest first; the home page lists the latest five and folds the rest under "Earlier news" |
 | Collaborators shown on People | `_data/collaborators.yml` |
 | Site/author settings, publication categories | `_config.yml` |
 | Images | `images/` (group photo: `images/lab/group-photo.jpg`) |
@@ -43,7 +43,7 @@ An entry with `children:` becomes a drop-down instead of a link:
       url: /research/
 ```
 
-Three things about that are easy to break:
+Two things about that are easy to break:
 
 * **The parent is not a link.** It opens the menu, so the page it would have
   pointed at has to be the first child. The children are ordinary `<a>`
@@ -128,9 +128,10 @@ button never points at a heading that was not rendered.
   being dropped; that is a warning on the run. The run fails only when a preprint cannot be
   resolved *and* has no existing entry, because then it really is missing from the site.
   Either way the researchmap result is still committed and deployed.
-* Permalinks are keyed on the record id (`/publication/rm-<id>`, `/publication/pp-<id>`), not on
-  the publication date, because researchmap does edit dates. `redirect_from` keeps the old
-  date-based URLs working.
+* Permalinks are keyed on the record id (`/publication/rm-<id>/`, `/publication/pp-<id>/`), not
+  on the publication date, because researchmap does edit dates. They end in a slash, so any
+  static server serves them as `index.html`. `redirect_from` keeps both earlier forms working:
+  the extensionless `/publication/rm-<id>` and the date-based one (`pubsync_common.page_urls`).
 * An unmapped researchmap `published_paper_type` is reported in the log instead of being filed
   silently under Conference papers. Add new types to `TYPE_TO_CATEGORY`.
 
@@ -290,6 +291,10 @@ something, it dispatches `deploy.yml` explicitly; `workflow_dispatch` is the doc
 to that rule. A week with no publication changes therefore does not rebuild the site. Builds
 run one at a time in commit order (`concurrency: deploy`).
 
+`.github/workflows/ci.yml` runs the sync scripts' tests and the same build on every push and
+pull request, on any branch, and publishes nothing: a branch shows there whether it would
+deploy before it is merged.
+
 ### The WordPress site at /nakano/
 
 `https://gdaclab.web.nitech.ac.jp/nakano/` is the PI's own page. It is a WordPress install
@@ -312,11 +317,12 @@ the `url` of the Person in the structured data all follow from it.
 
 ## Running locally
 
-Requires Ruby (with `ruby-dev`) and Bundler.
+Needs the Ruby in `.ruby-version` (3.3) with Bundler; `Gemfile.lock` pins every gem, the same
+versions the deploy uses.
 
 ```bash
 bundle install
-bundle exec jekyll serve -l -H localhost   # http://localhost:4000
+LANG=C.UTF-8 bundle exec jekyll serve -l -H localhost   # http://localhost:4000
 ```
 
 If `bundle install` hits permission errors, install gems into the project instead:
@@ -326,48 +332,50 @@ bundle config set --local path 'vendor/bundle'
 ```
 
 Changes to Markdown/HTML rebuild automatically; changes to `_config.yml` need a restart.
+Build under a UTF-8 locale (`LANG=C.UTF-8`): some SCSS partials contain Japanese comments, and
+Jekyll's SCSS converter aborts under a US-ASCII locale.
 
-Note: build the site under a UTF-8 locale (`LANG=C.UTF-8`). Some SCSS partials contain Japanese
-comments, and Jekyll's SCSS converter aborts under a US-ASCII locale.
+The sync scripts' tests run offline: `python3 scripts/test_pubsync.py`.
 
-### Docker
+## How the theme is put together
 
-```bash
-docker compose up   # http://localhost:4000
-```
+**Styles.** `assets/css/main.scss` is the one stylesheet; it imports, in order:
 
-VS Code users can instead use the bundled dev container
-(**F1 → Dev Containers: Reopen in Container**).
+| | |
+| --- | --- |
+| `_sass/_variables.scss` | type, breakpoints (`$small` 600px, `$medium` 768px, `$large` 925px, `$x-large` 1280px), layout widths, the base palette |
+| `_sass/_colors.scss` | every colour the pages use, as custom properties: the light theme on `:root`, the dark one on `html[data-theme="dark"]` |
+| `_sass/include/` | the `breakpoint` mixin (px in, em out), utility classes, the icon rules |
+| `_sass/layout/` | one partial per component or page: reset and base elements, masthead and navigation, sidebar, footer, the prose scale, the publication lists, People, the galleries, the two demos |
 
-## Notes on this fork
+Later partials win ties, so the page-specific ones come after the shared ones they adjust. A
+colour belongs in `_colors.scss` with a value for each theme, not hard-coded in a partial: a
+fixed `#fff` is what left white panels in the dark theme.
 
-Upstream Academic Pages ships demo content (sample blog posts, talks, teaching entries, a
-portfolio, a "GitHub University" CV, a talk map, and TSV/notebook publication generators). None
-of it applied to this site and all of it was published as live pages, so it has been removed. The
-theme machinery behind those features is still in place, so a feature can be brought back by
-adding content again:
-
-- `_talks/`, `_teaching/`, `_portfolio/` are still declared as collections in `_config.yml` and
-  their layouts/includes are intact — add documents plus an index page under `_pages/` to re-enable.
-- The JSON-CV feature (`_includes/cv-template.html`, `_layouts/cv-layout.html`,
-  `_sass/layout/_json_cv.scss`) was removed entirely; restore those three files from upstream if wanted.
-
-The icon fonts (Font Awesome and Academicons) are served as `woff2` only and cut down to the
-dozen icons the site shows, about 6 kB in all. `scripts/build_icon_fonts.sh` rebuilds them; to use
+**Icons.** Font Awesome and Academicons are served as `woff2` only and cut down to the dozen
+icons the site shows, about 6 kB in all. `scripts/build_icon_fonts.sh` rebuilds them; to use
 another icon, add its code point there and its rule to `_sass/include/_icons.scss`.
 
-All the pages' behaviour is in `assets/js/site.js`, plain JavaScript with no build step: the
-theme toggle, the header's ☰ menu (items that do not fit move into it, from the right) and its
-submenus, the sidebar's Links button, and the footer that sits at the bottom of a short page.
-The theme itself is set by a few lines in `_includes/head.html`, before the page paints, so a
-dark page never flashes white. The simulator and the sun-safe slew demo have their own scripts.
+**Scripts.** All the pages' behaviour is in `assets/js/site.js`, plain JavaScript with no build
+step: the theme toggle, the header's ☰ menu (items that do not fit move into it, from the right)
+and its submenus, the sidebar's Links button, and the footer that sits at the bottom of a short
+page. The theme itself is set by a few lines in `_includes/head.html`, before the page paints, so
+a dark page never flashes white. The simulator and the sun-safe slew demo have their own scripts.
 
 MathJax is the one third-party script a page can load: opt in with `mathjax: true` in its front
 matter (`_includes/footer/custom.html`).
 
-Repo-only files (`scripts/`, `README.md`, `CONTRIBUTING.md`, Docker files, `.devcontainer`) are
-listed under `exclude:` in `_config.yml`. Anything not excluded is copied verbatim into the
-published site, so add new tooling directories there too.
+## Notes on this fork
+
+Upstream Academic Pages ships demo content (sample posts, talks, teaching, a portfolio, a JSON
+CV, a talk map, publication generators) and the theme machinery behind it: comments, analytics,
+breadcrumbs, pagination, tags, a table of contents, hero images, an Atom feed, jQuery and its
+plugins. None of it applied to this site, so all of it has been removed; restore a feature from
+upstream if it is ever wanted, rather than expecting a switch in `_config.yml` to bring it back.
+
+Repo-only files (`scripts/`, `README.md`, `Gemfile*`, `LICENSE`) are listed under `exclude:` in
+`_config.yml`. Anything not excluded is copied verbatim into the published site, so add new
+tooling directories there too.
 
 Images are committed at their delivery size — the group photo is 1600 px wide. Resize before
 committing rather than checking in camera originals; a 24-megapixel JPEG is loaded by the sidebar
