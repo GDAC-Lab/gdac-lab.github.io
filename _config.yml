@@ -1,14 +1,6 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your entire site, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# `jekyll serve -l -H localhost`. If you change this file, please restart the 
-# server process.
+# Site settings. `jekyll serve` does not reload this file: restart it after an edit.
 
-# Basic Site Settings
 locale                   : "en-US"
-site_theme               : "default" # Currently available options are "default", "air"
 title                    : "GDAC Lab"
 # The suffix on Japanese page titles. English searches look for "GDAC Lab";
 # Japanese ones look for 仲野研究室, and a title is the one line a search result
@@ -26,7 +18,6 @@ name                     : &name "GDAC Lab"
 description              : &description "Geometric Dynamics, Autonomy, and Control Laboratory, Nagoya Institute of Technology"
 url                      : https://gdaclab.web.nitech.ac.jp # Must match the live host (see CNAME). Wrong host breaks absolute links and assets.
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
-repository               : "gdac-lab/gdac-lab.github.io"
 # Source for automated _publications (scripts/fetch_researchmap_publications.py)
 researchmap_url          : "https://researchmap.jp/satoshi-nakano?lang=english"
 # Listed in the structured data as another page about the same person, alongside
@@ -42,7 +33,6 @@ author:
   avatar           : "lab/group-photo.jpg" # Sidebar image (also on home slideshow via _includes/home-slideshow.html)
   name             : "GDAC Lab"
   name_ja          : "仲野研究室"
-  pronouns         : # example: "she/her"  
   bio              : "Geometric Dynamics, Autonomy, and Control Laboratory"
   bio_ja           : "拘束を考慮した回転運動の制御と，衛星・ドローンへの応用を研究しています。"
   location         : "Nagoya, Japan"
@@ -73,53 +63,10 @@ author:
     - "Satoshi Nakano"
     - "仲野聡史"
 
-  # Academic websites
-  academia         : # URL
-  arxiv            : # URL
+  # Academic profiles and code, shown in the sidebar when set.
   googlescholar    : "https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en"
   googlescholar_ja : "https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=ja"
-  inspire-hep      : # URL
-  impactstory      : # URL
-  orcid            : # URL - Add your ORCID URL here
-  semantic         : # URL
-  pubmed           : # Removed
-  researchgate     : # URL
-  scopus           : # URL
-
-  # Repositories and software development
-  bitbucket        : # Username
-  codepen          : # Username
-  dribbble         : # Username
-  github           : "gdac-lab" # Update this with your lab's GitHub username
-  kaggle           : # Username  
-  stackoverflow    : # User number or user number and name
-
-  # Social media
-  artstation       : # Username
-  bluesky          : # Removed
-  facebook         : # Username
-  flickr           : # Username
-  foursquare       : # Username
-  goodreads        : # Username
-  google_plus      : # Username
-  keybase          : # Username
-  instagram        : # Username
-  lastfm           : # Username
-  linkedin         : # Username
-  mastodon         : # URL
-  medium           : # URL
-  pinterest        : # Username
-  soundcloud       : # Username
-  steam            : # Username
-  telegram         : # URL
-  tumblr           : # Username
-  twitter          : # Username for X / Twitter
-  vine             : # Username
-  weibo            : # Username
-  wikipedia        : # Username
-  xing             : # Username
-  youtube          : # Username
-  zhihu            : # Username
+  github           : "gdac-lab"
 
 # Publication Category - The following the list of publication categories and their headings
 publication_category:
@@ -142,41 +89,9 @@ publication_category:
 # left to researchmap_url, which the Publications page then points at.
 publication_list_last_n_years: 0
 
-# Site Settings
-teaser                   :  # filename of teaser fallback teaser image placed in /images/ for social media previews
-breadcrumbs              : false # true, false (default)
-words_per_minute         : 160
+# Publication records dated ahead of the build (a paper accepted for a later
+# issue) are still built.
 future                   : true
-read_more                : "disabled" # if enabled, adds "Read more" links to excerpts
-comments:
-  provider               : # false (default), "disqus", "discourse", "facebook", "google-plus", "staticman", "custom"
-  disqus:
-    shortname            :
-  discourse:
-    server               : # https://meta.discourse.org/t/embedding-discourse-comments-via-javascript/31963 , e.g.: meta.discourse.org
-  facebook:
-    appid                :
-    num_posts            : # 5 (default)
-    colorscheme          : # "light" (default), "dark"
-staticman:
-  allowedFields          : ['name', 'email', 'url', 'message']
-  branch                 : "gh-pages" # "master", "gh-pages"
-  commitMessage          : "New comment."
-  filename               : comment-{@timestamp}
-  format                 : "yml"
-  moderation             : true
-  path                   : "_data/comments/{options.slug}"
-  requiredFields         : ['name', 'email', 'message']
-  transforms:
-    email                : "md5"
-  generatedFields:
-    date:
-      type               : "date"
-      options:
-        format           : "iso8601" # "iso8601" (default), "timestamp-seconds", "timestamp-milliseconds"
-atom_feed:
-  hide                   : true     # change to true to hide the RSS feed in the footer
-  path                   : # blank (default) uses feed.xml
 
 
 # SEO Related
@@ -184,77 +99,36 @@ atom_feed:
 # Not a secret: seo.html puts it in the head of every page, which is the point
 # of it. Removing it un-verifies the property.
 google_site_verification : "9R2JrmzriaDdkLuCmC8LwMKuFrELVBbz8avjXg3pWUg"
-bing_site_verification   :
-alexa_site_verification  :
-yandex_site_verification :
-
-
-# Social Sharing
-twitter:
-  username               : &twitter
-facebook:
-  username               :
-  app_id                 :
-  publisher              :
 og_image                 : "lab/group-photo.jpg"  # shown when a link to this site is unfurled by a chat app or a social platform
-og_description           :  # Social media default site image description
-# For specifying social profiles
-# - https://developers.google.com/structured-data/customize/social-profiles
-# Analytics
-analytics:
-  provider               :  "false" # false (default), "google", "google-universal", "google-analytics-4", "custom"
-  google:
-    tracking_id          :
 
 
-# Reading Files
+# Reading files
 include:
   - .htaccess
   - _pages
 # Anything listed here is not copied into _site. Repo-only tooling and docs must
-# stay listed, otherwise Jekyll publishes them verbatim under the site root.
+# stay listed: Jekyll 3 replaces its default list with this one rather than
+# adding to it, so whatever is missing is published verbatim under the site root.
 exclude:
-  - "*.sublime-project"
-  - "*.sublime-workspace"
-  - .asset-cache
   - .bundle
-  - .devcontainer
   - .github
-  - .jekyll-assets-cache
   - .sass-cache
   - assets/js/_main.js
   - assets/js/plugins
+  - package.json
   # The CAD the browser demo's vehicle is built from. Kept in the repository
   # so scripts/build_drone_mesh.py can be re-run, but 8 MB of STL has no
   # business on the live site: only the built bundle beside it ships.
   - assets/models/wheeled-uav/meshes
-  - assets/js/vendor
-  - CHANGELOG
-  - Capfile
-  - config
-  - CONTRIBUTING.md
-  - docker-compose.yaml
-  - Dockerfile
   - Gemfile
   - Gemfile.lock
-  - Gruntfile.js
-  - gulpfile.js
   - LICENSE
-  - local
-  - log
   - node_modules
-  # npm is only used to rebuild assets/js/main.min.js; neither the manifest nor
-  # the lockfile npm writes beside it belongs on the live site.
-  - package.json
-  - package-lock.json
-  - Rakefile
   - README.md
   - scripts
-  - tmp
   - vendor
 keep_files:
   - .git
-  - .svn
 encoding: "utf-8"
 markdown_ext: "markdown,mkdown,mkdn,mkd,md"
 
@@ -262,12 +136,10 @@ markdown_ext: "markdown,mkdown,mkdn,mkd,md"
 # Conversion
 markdown: kramdown
 highlighter: rouge
-lsi: false
 excerpt_separator: "\n\n"
-incremental: false
 
 
-# Markdown Processing
+# Markdown processing
 kramdown:
   input: GFM
   hard_wrap: false
@@ -279,23 +151,13 @@ kramdown:
   enable_coderay: false
 
 
-# These settings control the types of collections used by the template
+# Publication records, written by the sync scripts (see README).
 collections:
-  teaching:
-    output: true
-    permalink: /:collection/:path/
   publications:
     output: true
     permalink: /:collection/:path/
-  portfolio:
-    output: true
-    permalink: /:collection/:path/
-  talks:
-    output: true
-    permalink: /:collection/:path/
 
 
-# These settings control how pages and collections are included in the site
 defaults:
   # The animation's viewer is a standalone page framed by /sun-safe-slew/, and
   # it carries a noindex meta tag. jekyll-sitemap picks up static .html files,
@@ -305,34 +167,12 @@ defaults:
       path: "assets/demos"
     values:
       sitemap: false
-  # _posts
-  - scope:
-      path: ""
-      type: posts
-    values:
-      layout: single
-      author_profile: true
-      read_time: true
-      comments: true
-      share: true
-      related: true
-  # _pages
   - scope:
       path: ""
       type: pages
     values:
       layout: single
       author_profile: true
-  # _teaching
-  - scope:
-      path: ""
-      type: teaching
-    values:
-      layout: single
-      author_profile: true
-      share: true
-      comments: true
-  # _publications
   - scope:
       path: ""
       type: publications
@@ -340,90 +180,17 @@ defaults:
       layout: single
       author_profile: true
       share: true
-      comments: true
-  # _portfolio
-  - scope:
-      path: ""
-      type: portfolio
-    values:
-      layout: single
-      author_profile: true
-      share: true
-      comment: true
-  # _talks
-  - scope:
-      path: ""
-      type: talks
-    values:
-      layout: talk
-      author_profile: true
-      share: true
 
 
 # Sass/SCSS
 sass:
   sass_dir: _sass
-  style: compressed # http://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style
+  style: compressed
 
 
-# Outputting
-permalink: /:categories/:title/
-# paginate: 5 # amount of posts to show
-# paginate_path: /page:num/
-timezone: Etc/UTC # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: Etc/UTC
 
 
-# Plugins
 plugins:
-  - jekyll-feed
-  - jekyll-gist
-  - jekyll-paginate
   - jekyll-sitemap
   - jekyll-redirect-from
-  - jemoji
-
-# Mimic GitHub Pages with --safe
-whitelist:
-  - jekyll-feed
-  - jekyll-gist
-  - jekyll-paginate
-  - jekyll-sitemap
-  - jekyll-redirect-from
-  - jemoji
-
-
-# Archives
-#  Type
-#  - GitHub Pages compatible archive pages built with Liquid ~> type: liquid (default)
-#  - Jekyll Archives plugin archive pages ~> type: jekyll-archives
-#  Path (examples)
-#  - Archive page should exist at path when using Liquid method or you can
-#    expect broken links (especially with breadcrumbs enabled)
-#  - <base_path>/tags/my-awesome-tag/index.html ~> path: /tags/
-#  - <base_path/categories/my-awesome-category/index.html ~> path: /categories/
-#  - <base_path/my-awesome-category/index.html ~> path: /
-category_archive:
-  type: liquid
-  path: /categories/
-tag_archive:
-  type: liquid
-  path: /tags/
-# https://github.com/jekyll/jekyll-archives
-# jekyll-archives:
-#   enabled:
-#     - categories
-#     - tags
-#   layouts:
-#     category: archive-taxonomy
-#     tag: archive-taxonomy
-#   permalinks:
-#     category: /categories/:name/
-#     tag: /tags/:name/
-
-
-# HTML Compression
-# - http://jch.penibelst.de/
-compress_html:
-  clippings: all
-  ignore:
-    envs: development
