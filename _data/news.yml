@@ -11,6 +11,9 @@
 #     (佐野君); ，。 punctuation. Students are named the way the lab speaks of them,
 #     not the way a press release would.
 items:
+  - date: "2026-11-07"
+    body_en: "Eita and Itsuki gave talks at the 69th Japan Joint Automatic Control Conference."
+    body_ja: "杉山君と浅田君が第69回自動制御連合講演会で発表しました。"
   - date: "2026-10-15"
     body_en: "Prof. Nakano gave a talk, \"Control design under constraints and safety guarantees,\" at the 2026 Industry-Academia Young Researchers' Seminar of The Iron and Steel Institute of Japan."
     body_ja: "日本鉄鋼協会 若手フォーラム主催の「2026年度 産学若手交流セミナー」で，仲野が「制約を考慮した制御系設計と安全性保証」と題して発表しました。"
