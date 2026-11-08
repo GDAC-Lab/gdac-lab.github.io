@@ -9,5 +9,5 @@
 {% include publication-author-names.html doc=include.doc %}
 {%- assign _pl = include.plang | default: 'en' -%}
 {% if pub_authors != "" %}
-<p class="publication-authors">{% if _pl == 'ja' %}著者:{% else %}Authors:{% endif %} {{ pub_authors }}</p>
+<p class="publication-authors">{% if _pl == 'ja' %}著者：{% else %}Authors:{% endif %} {{ pub_authors }}</p>
 {% endif %}

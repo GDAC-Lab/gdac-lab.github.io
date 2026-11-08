@@ -8,10 +8,9 @@ layout: default
   {% include sidebar.html %}
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
-    {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
     {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
-    {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%B %d, %Y" }}">{% endif %}
-    {% if page.modified %}<meta itemprop="dateModified" content="{{ page.modified | date: "%B %d, %Y" }}">{% endif %}
+    {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date: "%Y-%m-%d" }}">{% endif %}
+    {% if page.modified %}<meta itemprop="dateModified" content="{{ page.modified | date: "%Y-%m-%d" }}">{% endif %}
 
     <div class="page__inner-wrap">
       <header>
@@ -25,9 +24,9 @@ layout: default
         {% endif %}
         {% if page.collection == 'publications' and page.venue and page.date %}
           {% if page.lang == 'ja' %}
-            <p>掲載: <i>{{ page.venue }}</i>（{{ page.date | date: "%Y" }}年）</p>
+            <p>掲載：<i>{{ page.venue }}</i>（{{ page.date | date: "%Y" }}年）</p>
           {% else %}
-            <p>Published in <i>{{ page.venue }}</i>, {{ page.date | date: "%Y" }} </p>
+            <p>Published in <i>{{ page.venue }}</i>, {{ page.date | date: "%Y" }}</p>
           {% endif %}
         {% endif %}
       </header>
@@ -42,12 +41,6 @@ layout: default
         {%- endcomment -%}
         {% include publication-resource-links.html paperurl=page.paperurl slidesurl=page.slidesurl bibtexurl=page.bibtexurl plang=page.lang %}
       </section>
-
-      <footer class="page__meta">
-        {% if site.data.ui-text[site.locale].meta_label %}
-          <h4 class="page__meta-title">{{ site.data.ui-text[site.locale].meta_label }}</h4>
-        {% endif %}
-      </footer>
 
       {% if page.share %}{% include social-share.html %}{% endif %}
     </div>

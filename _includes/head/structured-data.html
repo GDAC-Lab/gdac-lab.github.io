@@ -13,7 +13,8 @@
   does not make in plain sight as well. site.author.uri is not among them: the
   PI's own page now sits at /nakano/ of this same domain, which makes it the
   Person's `url` -- the page that is about him -- rather than one more identity
-  held somewhere else.
+  held somewhere else. The GitHub account is the lab's, so it is the lab's
+  sameAs. The group photo is the lab's `image`; it is not a logo.
 {% endcomment %}
 {% include base_path %}
 {%- assign lab_ja = "仲野研究室（GDAC Lab）" -%}
@@ -32,7 +33,6 @@
 {%- if rm %}{{ rm }}|{% endif -%}
 {%- if site.author.googlescholar %}{{ site.author.googlescholar }}|{% endif -%}
 {%- if site.author.orcid %}{{ site.author.orcid }}|{% endif -%}
-{%- if site.author.github %}https://github.com/{{ site.author.github }}|{% endif -%}
 {%- endcapture -%}
 {%- assign same_as = same_as_raw | split: "|" -%}
 <script type="application/ld+json">
@@ -52,13 +52,18 @@
       },
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": {% if page.lang == 'ja' %}"昭和区御器所町"{% else %}"Gokiso-cho, Showa-ku"{% endif %},
         "addressLocality": {% if page.lang == 'ja' %}"名古屋市"{% else %}"Nagoya"{% endif %},
         "addressRegion": {% if page.lang == 'ja' %}"愛知県"{% else %}"Aichi"{% endif %},
+        "postalCode": "466-8555",
         "addressCountry": "JP"
       },
       "member": { "@id": "{{ base_path }}/#nakano" },
 {%- if site.og_image %}
-      "logo": "{{ site.og_image | prepend: "/images/" | prepend: base_path }}",
+      "image": "{{ site.og_image | prepend: "/images/" | prepend: base_path }}",
+{%- endif %}
+{%- if site.author.github %}
+      "sameAs": ["https://github.com/{{ site.author.github }}"],
 {%- endif %}
       "knowsAbout": {% if page.lang == 'ja' %}["制御理論", "拘束付き制御", "幾何学的制御", "姿勢制御", "ロボティクス", "ドローン", "人工衛星"]{% else %}["control theory", "constrained control", "geometric control", "attitude control", "robotics", "drones", "spacecraft"]{% endif %}
     },

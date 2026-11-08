@@ -21,7 +21,6 @@ The site is bilingual: English pages live at the site root, Japanese pages under
 | Home page news items | `_data/news.yml` |
 | Collaborators shown on People | `_data/collaborators.yml` |
 | Site/author settings, publication categories | `_config.yml` |
-| UI strings | `_data/ui-text.yml` |
 | Images | `images/` (group photo: `images/lab/group-photo.jpg`) |
 
 Home page composition is `_pages/about.md` (EN) / `_pages/ja/index.md` (JA), which pull in

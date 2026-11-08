@@ -48,8 +48,11 @@
   opacity: 0.7;
 }
 
+/* The dot between an entry's links, in the lists and on its own page */
 .publication-link-sep {
+  margin: 0 0.45em;
   color: var(--global-text-color-light);
+  opacity: 0.6;
 }
 
 .publication-authors {

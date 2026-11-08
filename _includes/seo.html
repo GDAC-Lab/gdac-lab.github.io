@@ -1,6 +1,6 @@
 {% include base_path %}
 
-<!-- begin SEO -->
+
 {% assign seo_url = site.url | append: site.baseurl %}
 
 {%- comment -%}
@@ -64,9 +64,9 @@
 {% if site.google_site_verification %}
   <meta name="google-site-verification" content="{{ site.google_site_verification }}" />
 {% endif %}
-<!-- end SEO -->
 
-<!-- Open Graph protocol data (https://ogp.me/), used by social media -->
+
+{%- comment -%} Open Graph protocol data (https://ogp.me/), used by social media {%- endcomment -%}
 {%- comment -%} site.locale is en-US, which was wrong on every Japanese page {%- endcomment -%}
 <meta property="og:locale" content="{% if page.lang == 'ja' %}ja_JP{% else %}{{ site.locale | default: "en" | replace: "-", "_" }}{% endif %}">
 <meta property="og:site_name" content="{{ seo_site_title }}">
@@ -90,4 +90,3 @@
   to the lab node in head/structured-data.html, which is where it now sits.
 {%- endcomment -%}
 
-<!-- end Open Graph protocol -->

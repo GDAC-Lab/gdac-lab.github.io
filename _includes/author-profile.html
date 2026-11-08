@@ -15,7 +15,7 @@
   </div>
 
   <div class="author__content">
-    <h3 class="author__name">{% if _ja and author.name_ja %}{{ author.name_ja }}{% else %}{{ author.name }}{% endif %}</h3>
+    <p class="author__name">{% if _ja and author.name_ja %}{{ author.name_ja }}{% else %}{{ author.name }}{% endif %}</p>
     {% if _ja and author.bio_ja %}
       <p class="author__bio">{{ author.bio_ja }}</p>
     {% elsif author.bio %}

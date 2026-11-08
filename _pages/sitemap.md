@@ -19,6 +19,7 @@ All pages on this site, in English and in Japanese, followed by the publication 
 </ul>
 
 ## 日本語ページ
+{: lang="ja"}
 
 {% assign _pages_ja = site.pages | where: "lang", "ja" | sort: "title" %}
 <ul>
