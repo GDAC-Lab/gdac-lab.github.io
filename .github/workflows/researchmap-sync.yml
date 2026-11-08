@@ -58,7 +58,7 @@ jobs:
       - name: Resolve preprints (arXiv, DataCite, Crossref)
         id: preprints
         continue-on-error: true
-        run: python3 scripts/sync_preprints_from_sources.py
+        run: python3 scripts/sync_preprints_from_sources.py satoshi-nakano
 
       # _cv/journals.bib and _cv/proceedings.bib for the English CV: researchmap
       # says which papers, Crossref describes them. A failure keeps last week's

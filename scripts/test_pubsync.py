@@ -333,12 +333,16 @@ class TestPreprints(TempPubDir):
 
         src = Path(self._tmp.name) / "preprint_sources.json"
         src.write_text(json.dumps({"dois": [], "arxiv_ids": arxiv_ids}), encoding="utf-8")
-        saved = (pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi)
+        saved = (pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi,
+                 pp.researchmap_arxiv_ids, pp.published_title_keys)
         pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi = src, boom, boom
+        pp.researchmap_arxiv_ids = lambda slug: []
+        pp.published_title_keys = lambda slug: {}
         try:
             return pp.main()
         finally:
-            pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi = saved
+            (pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi,
+             pp.researchmap_arxiv_ids, pp.published_title_keys) = saved
 
     def test_carried_forward_entry_does_not_fail_the_run(self):
         """An upstream outage that loses nothing must not fail CI every week."""
@@ -513,6 +517,66 @@ class TestPreprints(TempPubDir):
     def test_crossref_authors_formatting(self):
         msg = {"author": [{"given": "Ada", "family": "Lovelace"}, {"family": "Turing"}]}
         self.assertEqual(pp.crossref_authors(msg), "Ada Lovelace, Turing")
+
+
+class TestResearchmapPreprints(TempPubDir):
+    """Preprints registered in researchmap's MISC list."""
+
+    def test_arxiv_ids_are_found_in_any_link_form(self):
+        item = {"see_also": [
+            {"label": "url", "@id": "http://arxiv.org/abs/arXiv:2610.40502"},
+            {"label": "url", "@id": "https://arxiv.org/pdf/2503.16715v2"},
+            {"label": "doi", "@id": "https://doi.org/10.48550/arXiv.2604.04001"},
+            {"label": "url", "@id": "https://arxiv.org/abs/2610.40502v3"},   # duplicate
+        ]}
+        self.assertEqual(pp.arxiv_ids_in(item), ["2610.40502", "2503.16715", "2604.04001"])
+        self.assertEqual(pp.arxiv_ids_in({"see_also": [{"label": "doi", "@id": "10.1000/x"}]}), [])
+
+    def test_researchmap_outage_keeps_the_listed_preprints(self):
+        self.seed("2025-03-20-pp-arxiv-2503-16715.md", "2026-04-05-pp-arxiv-2604-04001.md",
+                  "2026-01-01-rm-123.md")
+
+        def down(slug, achievement="published_papers"):
+            raise common.SyncAbort("unreachable")
+
+        saved = pp.rm.fetch_items
+        pp.rm.fetch_items = down
+        try:
+            self.assertEqual(pp.researchmap_arxiv_ids("x"), ["2503.16715", "2604.04001"])
+            self.assertIsNone(pp.published_title_keys("x"))
+        finally:
+            pp.rm.fetch_items = saved
+
+    def _run(self, misc_ids, published_titles, resolved):
+        """main() with researchmap and the lookups replaced; returns (code, names)."""
+        src = Path(self._tmp.name) / "preprint_sources.json"
+        src.write_text(json.dumps({"dois": [], "arxiv_ids": []}), encoding="utf-8")
+
+        def resolve(aid):
+            name, content = pp.render(date_iso="2026-10-01", slug_suffix=pp.slug_for_source("arxiv", aid),
+                                      title=resolved[aid], venue="arXiv preprint", authors="S. Nakano",
+                                      paperurl=f"https://arxiv.org/abs/{aid}")
+            return name, content
+
+        saved = (pp.DATA_PATH, pp.resolve_arxiv, pp.researchmap_arxiv_ids, pp.published_title_keys)
+        pp.DATA_PATH, pp.resolve_arxiv = src, resolve
+        pp.researchmap_arxiv_ids = lambda slug: misc_ids
+        pp.published_title_keys = lambda slug: {pp._title_key(t): "9" for t in published_titles}
+        try:
+            return pp.main(), self.names()
+        finally:
+            pp.DATA_PATH, pp.resolve_arxiv, pp.researchmap_arxiv_ids, pp.published_title_keys = saved
+
+    def test_misc_preprint_is_listed(self):
+        code, names = self._run(["2610.40502"], [], {"2610.40502": "A New Preprint"})
+        self.assertEqual(code, 0)
+        self.assertEqual(names, {"2026-10-01-pp-arxiv-2610-40502.md"})
+
+    def test_published_version_replaces_the_preprint(self):
+        self.seed("2026-10-01-pp-arxiv-2610-40502.md")
+        code, names = self._run(["2610.40502"], ["A new preprint."], {"2610.40502": "A New Preprint"})
+        self.assertEqual(code, 0)
+        self.assertEqual(names, set())
 
 
 class TestRetry(unittest.TestCase):

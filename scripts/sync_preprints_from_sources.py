@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
-"""Regenerate _publications/*-pp-*.md from _data/preprint_sources.json.
+"""Regenerate _publications/*-pp-*.md from researchmap (MISC) and _data/preprint_sources.json.
 
-Edit preprint_sources.json ("dois" / "arxiv_ids"), then run this script (or let
-CI run it). A preprint that needs no external lookup can be added as an ordinary
+Usage:  python3 scripts/sync_preprints_from_sources.py [researchmap-slug]
+
+A preprint is listed when either
+* its researchmap MISC record links to arXiv (an arxiv.org/abs URL or the
+  10.48550/arXiv.* DOI) -- the usual way, nothing to edit here; or
+* its id is in preprint_sources.json ("dois" / "arxiv_ids"), for one that is
+  not on researchmap.
+Once researchmap lists a published paper with the same title, the preprint is
+dropped. If researchmap cannot be read, the preprints already on the site stay. A preprint that needs no external lookup can be added as an ordinary
 .md in _publications with `category: preprints` and no "-pp-" in the filename;
 this script only owns the "-pp-" files.
 
@@ -16,8 +23,7 @@ Where the records come from
   handled as the arXiv id it names, so it gets the same standby sources.
 
 Two invariants keep the published URLs still whichever source answers:
-* the file's slug comes from the id in preprint_sources.json, never from the
-  record, so `/publication/pp-arxiv-2503-16715` does not move; and
+* the file's slug comes from the arXiv id or DOI, never from the record, so `/publication/pp-arxiv-2503-16715` does not move; and
 * a standby source never changes the date of an entry already on disk. arXiv
   gives the submission day; DataCite may only know the year, and letting that
   through renamed three files to January 1 on 2026-09-21.
@@ -33,6 +39,7 @@ to fall back on, which does leave a preprint off the site.
 
 from __future__ import annotations
 
+import html
 import json
 import os
 import re
@@ -45,6 +52,8 @@ from pathlib import Path
 from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import fetch_researchmap_publications as rm  # noqa: E402
 
 from pubsync_common import (  # noqa: E402
     PUB_DIR,
@@ -400,6 +409,76 @@ def resolve_doi(doi: str) -> tuple[str, str] | None:
 # ---------------------------------------------------------------------------- main
 
 
+# ------------------------------------------------------------------- researchmap
+
+# An arXiv id written anywhere in a researchmap record: an abs/pdf URL (with or
+# without the "arXiv:" prefix researchmap sometimes keeps), or the arXiv DOI.
+_ARXIV_IN_TEXT = re.compile(
+    r"arxiv\.org/(?:abs|pdf)/(?:arxiv:)?(\d{4}\.\d{4,5})|10\.48550/arxiv\.(\d{4}\.\d{4,5})",
+    re.I,
+)
+
+
+def arxiv_ids_in(item: dict) -> list[str]:
+    """arXiv ids a researchmap record links to, in order, without versions."""
+    text = json.dumps(
+        {k: item.get(k) for k in ("see_also", "identifiers", "paper_title", "publication_name")},
+        ensure_ascii=False,
+    )
+    ids = [a or b for a, b in _ARXIV_IN_TEXT.findall(text)]
+    return list(dict.fromkeys(ids))
+
+
+def ids_on_disk() -> list[str]:
+    """arXiv ids of the preprint files already published."""
+    found = []
+    for path in sorted(PUB_DIR.glob("*-pp-arxiv-*.md")):
+        m = re.search(r"-pp-arxiv-(\d{4})-(\d{4,5})\.md$", path.name)
+        if m:
+            found.append(f"{m.group(1)}.{m.group(2)}")
+    return found
+
+
+def researchmap_arxiv_ids(slug: str) -> list[str]:
+    """arXiv ids of the preprints registered in researchmap's MISC list.
+
+    If researchmap cannot be read, the ids already on the site are used, so an
+    outage never removes a preprint.
+    """
+    try:
+        items = rm.fetch_items(slug, "misc")
+    except SyncAbort as exc:
+        annotate("warning", f"[preprint] researchmap misc unreadable ({exc}); keeping the preprints already listed")
+        return ids_on_disk()
+    found = [aid for item in items for aid in arxiv_ids_in(item)]
+    log(f"[preprint] researchmap misc: {len(found)} arXiv id(s)")
+    return found
+
+
+def _title_key(title: str) -> str:
+    return re.sub(r"[^0-9a-z]+", "", html.unescape(title).lower())
+
+
+def published_title_keys(slug: str) -> dict[str, str] | None:
+    """Normalised title -> rm:id of every published paper, or None if unreadable."""
+    try:
+        items = rm.fetch_items(slug)
+    except SyncAbort as exc:
+        annotate("warning", f"[preprint] researchmap papers unreadable ({exc}); not checking for published versions")
+        return None
+    keys = {}
+    for item in items:
+        for title in (item.get("paper_title") or {}).values():
+            if title:
+                keys[_title_key(str(title))] = str(item.get("rm:id"))
+    return keys
+
+
+def _front_title(content: str) -> str:
+    m = re.search(r"^title: '(.*)'$", content, re.M)
+    return m.group(1).replace("''", "'") if m else ""
+
+
 def read_sources() -> list[tuple[str, str]] | None:
     """(kind, value) pairs from preprint_sources.json; None when the file is bad."""
     try:
@@ -420,16 +499,25 @@ def read_sources() -> list[tuple[str, str]] | None:
 
 
 def main() -> int:
-    if not DATA_PATH.is_file():
-        log(f"[preprint] no {DATA_PATH.relative_to(REPO_ROOT)}; nothing to do")
-        return 0
-    sources = read_sources()
-    if sources is None:
-        return 1
+    slug = sys.argv[1] if len(sys.argv) > 1 else "satoshi-nakano"
+    sources: list[tuple[str, str]] = []
+    if DATA_PATH.is_file():
+        listed = read_sources()
+        if listed is None:
+            return 1
+        sources = listed
+    # Preprints registered in researchmap (MISC) join the hand-kept list.
+    seen = {clean_arxiv_id(v) for k, v in sources if k == "arxiv"}
+    for aid in researchmap_arxiv_ids(slug):
+        if aid not in seen:
+            seen.add(aid)
+            sources.append(("arxiv", aid))
+    published = published_title_keys(slug)
 
     generated: dict[str, str] = {}
     kept: list[str] = []   # lookup failed, the existing entry still stands
     lost: list[str] = []   # lookup failed and nothing is left to show
+    dropped = 0            # superseded by the published paper
 
     for kind, value in sources:
         try:
@@ -439,6 +527,11 @@ def main() -> int:
             result, reason = None, f"{type(exc).__name__}: {exc}"
 
         if result is not None:
+            rm_id = (published or {}).get(_title_key(_front_title(result[1])))
+            if rm_id:
+                log(f"[preprint] {kind} {value}: published as rm:{rm_id}; the preprint is no longer listed")
+                dropped += 1
+                continue
             generated[result[0]] = result[1]
             continue
         fallback = carry_forward(slug_for_source(kind, value))
@@ -458,8 +551,9 @@ def main() -> int:
         written, deleted, unchanged = apply_generated(
             pattern="*-pp-*.md",
             generated=generated,
-            min_expected=0 if not sources else 1,
-            allow_shrink=allow_shrink_from_env() or not sources,
+            min_expected=0 if len(sources) == dropped else 1,
+            # A preprint that turned into a paper leaves on purpose.
+            allow_shrink=allow_shrink_from_env() or not sources or dropped > 0,
         )
     except SyncAbort as exc:
         annotate("error", f"[preprint] {exc}")

@@ -187,15 +187,16 @@ def fetch_page(url: str) -> object:
         raise SyncAbort(f"researchmap API returned HTTP {exc.code} for {url}") from exc
 
 
-def fetch_items(slug: str) -> list[dict]:
-    """Page through published_papers until every record has been retrieved."""
+def fetch_items(slug: str, achievement: str = "published_papers") -> list[dict]:
+    """Page through one of the researchmap achievement lists (published_papers
+    by default; the preprint sync reads misc) until every record is retrieved."""
     collected: list[dict] = []
     seen_ids: set[str] = set()
     total_reported: int | None = None
 
     for page in range(MAX_PAGES):
         start = page * PAGE_SIZE + 1
-        url = f"{API_ROOT}/{slug}/published_papers?limit={PAGE_SIZE}&start={start}"
+        url = f"{API_ROOT}/{slug}/{achievement}?limit={PAGE_SIZE}&start={start}"
         payload = fetch_page(url)
 
         if not isinstance(payload, dict):
@@ -237,7 +238,7 @@ def fetch_items(slug: str) -> list[dict]:
             f"{total_reported}. Refusing to publish a truncated list."
         )
 
-    log(f"[researchmap] fetched {len(collected)} record(s)"
+    log(f"[researchmap] fetched {len(collected)} {achievement} record(s)"
         + (f" (API total: {total_reported})" if total_reported is not None else ""))
     return collected
 

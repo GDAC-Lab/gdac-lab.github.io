@@ -71,10 +71,15 @@ it.
 
 - `scripts/fetch_researchmap_publications.py` — pulls from researchmap
   (account set by `researchmap_url:` in `_config.yml`); writes `*-rm-*.md`.
-- `scripts/sync_preprints_from_sources.py` — resolves the DOI/arXiv IDs listed in
-  `_data/preprint_sources.json`; writes `*-pp-*.md`.
+- `scripts/sync_preprints_from_sources.py` — lists preprints; writes `*-pp-*.md`.
 
-To add a preprint, add its ID to `_data/preprint_sources.json` — not a file in `_publications/`.
+To add a preprint, register it in researchmap under MISC with its arXiv URL
+(`https://arxiv.org/abs/…`) or the `10.48550/arXiv.…` DOI. The sync picks up every MISC record
+that links to arXiv and reads the title, authors and date from arXiv (DataCite and Crossref
+standing in when arXiv will not answer). When researchmap lists a published paper with the same
+title, the preprint drops off the list. If researchmap cannot be read, the preprints already on
+the site stay. A preprint that is not on researchmap can instead be listed by its ID in
+`_data/preprint_sources.json` — not as a file in `_publications/`.
 A one-off preprint that needs no lookup can be a normal `.md` with `category: preprints`, as long
 as its filename contains no `-pp-`; the scripts only own the `-rm-` and `-pp-` files.
 
