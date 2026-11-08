@@ -18,6 +18,7 @@ import tempfile
 import unittest
 import urllib.error
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -285,17 +286,73 @@ class TestPagination(unittest.TestCase):
             rm.urllib.request.urlopen = orig
 
 
-class TestPreprints(TempPubDir):
-    def test_failed_lookup_keeps_existing_entry(self):
-        """A rate-limited arXiv call must not drop the preprint."""
-        existing = "2025-03-20-pp-arxiv-2503-16715.md"
-        self.seed(existing)
-        self.assertIsNotNone(pp.carry_forward("arxiv-2503-16715"))
-        name, _ = pp.carry_forward("arxiv-2503-16715")
-        self.assertEqual(name, existing)
+class TestIdentifiers(unittest.TestCase):
+    """One reading of DOIs, arXiv ids and API text for every script."""
 
-    def test_arxiv_request_sends_an_accept_header(self):
-        """The API answers 406 without one; that broke the sync on 2026-09-14."""
+    def test_arxiv_id_in_every_form(self):
+        for value in (
+            "2503.16715", "2503.16715v2", "arXiv:2503.16715", "ARXIV: 2503.16715v3",
+            "https://arxiv.org/abs/2503.16715v1", "http://arxiv.org/abs/arXiv:2503.16715",
+            "https://arxiv.org/pdf/2503.16715v2.pdf", "10.48550/arXiv.2503.16715",
+            "https://doi.org/10.48550/ARXIV.2503.16715",
+        ):
+            self.assertEqual(common.normalize_arxiv_id(value), "2503.16715", value)
+        self.assertEqual(common.normalize_arxiv_id("1404.1234"), "1404.1234")   # 4 digits until 2014
+
+    def test_what_is_not_an_arxiv_id(self):
+        # Month 13; four digits after 2014; five before 2015; no arXiv mark in a DOI.
+        for value in ("2513.16715", "2503.1671", "1404.12345", "10.1000/2503.16715", "", "arXiv"):
+            self.assertIsNone(common.normalize_arxiv_id(value), value)
+
+    def test_ids_in_text_need_an_arxiv_mark(self):
+        text = ('{"see_also": "https://arxiv.org/abs/2610.40502v2", "pages": "2503.16715", '
+                '"doi": "10.48550/arXiv.2604.04001", "again": "arXiv:2610.40502"}')
+        self.assertEqual(common.arxiv_ids_in_text(text), ["2610.40502", "2604.04001"])
+
+    def test_doi_in_every_form(self):
+        cases = {
+            "10.1000/ABC.1": "10.1000/ABC.1",
+            "https://doi.org/10.1000/ABC.1": "10.1000/ABC.1",
+            "doi:10.1000/x.": "10.1000/x",
+            "(see 10.1000/x)": "10.1000/x",
+            "https://onlinelibrary.wiley.com/doi/10.1002/rnc.6000?af=R": "10.1002/rnc.6000",
+            "https://example.org/doi/10.1000/x#abstract": "10.1000/x",
+        }
+        for value, doi in cases.items():
+            self.assertEqual(common.normalize_doi(value), doi, value)
+        self.assertIsNone(common.normalize_doi("no doi here"))
+
+    def test_clean_text(self):
+        self.assertEqual(common.clean_text("<jats:p>A &amp;\n  B</jats:p>"), "A & B")
+        self.assertEqual(common.clean_text("on <mml:math><mml:mi>S</mml:mi><mml:mi>O</mml:mi>"
+                                           "<mml:mo>(</mml:mo><mml:mn>3</mml:mn><mml:mo>)</mml:mo>"
+                                           "</mml:math>"), "on SO(3)")
+
+    def test_crossref_date_skips_null_parts(self):
+        msg = {"issued": {"date-parts": [[None]]}, "created": {"date-parts": [[2024, 5, 6]]}}
+        self.assertEqual(common.crossref_date(msg), (2024, 5, 6))
+        self.assertEqual(common.crossref_date({"issued": {"date-parts": [[2024]]}}), (2024, None, None))
+        self.assertIsNone(common.crossref_date({"issued": {"date-parts": [[None]]}}))
+
+    def test_researchmap_slug(self):
+        self.assertEqual(common.researchmap_slug(["someone"]), "someone")
+        # _config.yml: researchmap_url: "https://researchmap.jp/satoshi-nakano?lang=english"
+        self.assertEqual(common.researchmap_slug([]), "satoshi-nakano")
+
+
+class TestPreprints(TempPubDir):
+    """Looking a preprint up, and keeping its file where it is."""
+
+    @staticmethod
+    def arxiv(aid="2503.16715"):
+        return pp.make_source("arxiv", aid, "test")
+
+    @staticmethod
+    def _arxiv_406(_aid):
+        raise urllib.error.HTTPError("https://export.arxiv.org/", 406, "Not Acceptable", {}, None)
+
+    def _feed(self, body: bytes):
+        """Answer every request with `body`; returns the headers sent."""
         seen = {}
 
         class _Resp:
@@ -306,50 +363,57 @@ class TestPreprints(TempPubDir):
                 return False
 
             def read(self_inner):
-                return b"<feed xmlns='http://www.w3.org/2005/Atom'></feed>"
+                return body
 
         def fake_urlopen(req, timeout=60):
             seen["headers"] = dict(req.headers)
             return _Resp()
 
-        real_open, real_throttle = common.urllib.request.urlopen, pp._arxiv_throttle
-        common.urllib.request.urlopen, pp._arxiv_throttle = fake_urlopen, lambda: None
-        try:
-            pp.arxiv_fetch("2503.16715")
-        finally:
-            common.urllib.request.urlopen, pp._arxiv_throttle = real_open, real_throttle
+        patcher = mock.patch.object(common.urllib.request, "urlopen", fake_urlopen)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return seen
 
+    def test_failed_lookup_keeps_existing_entry(self):
+        """A rate-limited arXiv call must not drop the preprint."""
+        existing = "2025-03-20-pp-arxiv-2503-16715.md"
+        self.seed(existing)
+        name, _ = pp.carry_forward("arxiv-2503-16715")
+        self.assertEqual(name, existing)
+
+    def test_arxiv_request_sends_an_accept_header(self):
+        """The API answers 406 without one; that broke the sync on 2026-09-14."""
+        seen = self._feed(b"<feed xmlns='http://www.w3.org/2005/Atom'></feed>")
+        pp.arxiv_fetch("2503.16715")
         # urllib title-cases header names on the Request object.
-        accept = seen["headers"].get("Accept", "")
-        self.assertIn("atom+xml", accept)
+        self.assertIn("atom+xml", seen["headers"].get("Accept", ""))
         self.assertIn("User-agent", seen["headers"])
 
-    def _main_with_failing_lookup(self, arxiv_ids):
-        """Run main() with every lookup failing, against a scratch sources file."""
-        def boom(_value):
-            raise urllib.error.HTTPError(
-                "https://export.arxiv.org/", 406, "Not Acceptable", {}, None
-            )
+    def test_arxiv_entry_is_read(self):
+        self._feed(b"""<feed xmlns='http://www.w3.org/2005/Atom'><entry>
+            <id>http://arxiv.org/abs/2503.16715v2</id><published>2025-03-20T17:00:00Z</published>
+            <title>A Constrained
+              Attitude Result</title>
+            <author><name>Satoshi Nakano</name></author><author><name>Noboru Sakamoto</name></author>
+            <link href="http://arxiv.org/abs/2503.16715v2" rel="alternate" type="text/html"/>
+            </entry></feed>""")
+        self.assertEqual(pp.arxiv_fetch("2503.16715"), {
+            "title": "A Constrained Attitude Result", "date": "2025-03-20",
+            "authors": "Satoshi Nakano, Noboru Sakamoto"})
 
-        src = Path(self._tmp.name) / "preprint_sources.json"
-        src.write_text(json.dumps({"dois": [], "arxiv_ids": arxiv_ids}), encoding="utf-8")
-        saved = (pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi,
-                 pp.researchmap_arxiv_ids, pp.published_title_keys)
-        pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi = src, boom, boom
-        pp.researchmap_arxiv_ids = lambda slug: []
-        pp.published_title_keys = lambda slug: {}
-        try:
-            return pp.main()
-        finally:
-            (pp.DATA_PATH, pp.resolve_arxiv, pp.resolve_doi,
-             pp.researchmap_arxiv_ids, pp.published_title_keys) = saved
+    def test_arxiv_error_entry_is_not_a_preprint(self):
+        """arXiv answers a malformed id with HTTP 200 and an entry titled "Error"."""
+        self._feed(b"""<feed xmlns='http://www.w3.org/2005/Atom'><entry>
+            <id>http://arxiv.org/api/errors#incorrect_id_format_for_2503.1671</id>
+            <title>Error</title><summary>incorrect id format</summary></entry></feed>""")
+        self.assertIsNone(pp.arxiv_fetch("2503.1671"))
 
-    def test_carried_forward_entry_does_not_fail_the_run(self):
-        """An upstream outage that loses nothing must not fail CI every week."""
-        self.seed("2025-03-20-pp-arxiv-2503-16715.md")
-        rc = self._main_with_failing_lookup(["2503.16715"])
-        self.assertEqual(rc, 0)
-        self.assertIn("2025-03-20-pp-arxiv-2503-16715.md", self.names())
+    def test_link_has_no_version_whichever_source_answered(self):
+        """It flipped between .../2604.04001v1 and .../2604.04001 every week."""
+        with mock.patch.object(pp, "arxiv_fetch", lambda aid: {
+                "title": "T", "date": "2026-04-05", "authors": "A"}):
+            self.assertEqual(pp.resolve_arxiv(self.arxiv("2604.04001")).url,
+                             "https://arxiv.org/abs/2604.04001")
 
     # A DataCite record as arXiv actually registers one.
     DATACITE = {
@@ -364,12 +428,6 @@ class TestPreprints(TempPubDir):
         ],
     }
 
-    @staticmethod
-    def _arxiv_406(_aid):
-        raise urllib.error.HTTPError(
-            "https://export.arxiv.org/", 406, "Not Acceptable", {}, None
-        )
-
     def test_arxiv_failure_falls_back_to_datacite(self):
         """arXiv has answered 406 from CI since 2026-09-14; 10.48550 is a DataCite prefix."""
         seen = {}
@@ -378,149 +436,203 @@ class TestPreprints(TempPubDir):
             seen["doi"] = doi
             return self.DATACITE
 
-        saved = (pp.arxiv_fetch, pp.datacite_fetch)
-        pp.arxiv_fetch, pp.datacite_fetch = self._arxiv_406, fake_datacite
-        try:
-            name, content = pp.resolve_arxiv("2503.16715")
-        finally:
-            pp.arxiv_fetch, pp.datacite_fetch = saved
-
+        with mock.patch.object(pp, "arxiv_fetch", self._arxiv_406), \
+                mock.patch.object(pp, "datacite_fetch", fake_datacite):
+            name, content = pp.resolve_arxiv(self.arxiv()).render()
         self.assertEqual(seen["doi"], "10.48550/arXiv.2503.16715")
         # The slug must stay in the arXiv form, or the published URL moves and
         # carry_forward stops finding the existing file.
         self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
         self.assertIn("permalink: /publication/pp-arxiv-2503-16715", content)
-        self.assertIn("https://arxiv.org/abs/2503.16715", content)
+        self.assertIn("paperurl: 'https://arxiv.org/abs/2503.16715'", content)
         self.assertIn("Satoshi Nakano, Noboru Sakamoto", content)
         self.assertIn("A Constrained Attitude Result", content)
 
     def test_standby_source_never_moves_a_published_date(self):
         """The 2026-09-21 regression: publicationYear renamed three files to Jan 1."""
-        self.seed("2025-03-20-pp-arxiv-2503-16715.md")
-        # Overwrite the seeded stub with a realistic front matter block.
         (self.pub / "2025-03-20-pp-arxiv-2503-16715.md").write_text(
-            "---\ntitle: 'T'\npermalink: /publication/pp-arxiv-2503-16715\n"
-            "date: 2025-03-20\n---\n",
-            encoding="utf-8",
-        )
-        saved = (pp.arxiv_fetch, pp.datacite_fetch)
-        pp.arxiv_fetch = self._arxiv_406
-        pp.datacite_fetch = lambda _doi: {          # year only, as the real record was
-            "titles": [{"title": "T"}],
-            "publicationYear": 2025,
-            "creators": [{"name": "Nakano, Satoshi"}],
-        }
-        try:
-            name, content = pp.resolve_arxiv("2503.16715")
-        finally:
-            pp.arxiv_fetch, pp.datacite_fetch = saved
-
+            "---\ntitle: 'T'\npermalink: /publication/pp-arxiv-2503-16715\ndate: 2025-03-20\n---\n",
+            encoding="utf-8")
+        year_only = {"titles": [{"title": "T"}], "publicationYear": 2025,
+                     "creators": [{"name": "Nakano, Satoshi"}]}
+        with mock.patch.object(pp, "arxiv_fetch", self._arxiv_406), \
+                mock.patch.object(pp, "datacite_fetch", lambda _doi: year_only):
+            name, content = pp.resolve_arxiv(self.arxiv()).render()
         self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
         self.assertIn("date: 2025-03-20", content)
         self.assertIn("- /publication/2025-03-20-pp-arxiv-2503-16715", content)
 
-    def test_datacite_date_reads_any_dated_entry(self):
-        """Only fall back to the year when no dates[] entry carries a day."""
-        self.assertEqual(
-            pp.datacite_date({"dates": [{"date": "2025-03-20", "dateType": "Other"}],
-                              "publicationYear": 2025}),
-            "2025-03-20",
-        )
-        self.assertEqual(
-            pp.datacite_date({"published": "2025-03-20", "publicationYear": 2025}),
-            "2025-03-20",
-        )
-        self.assertEqual(pp.datacite_date({"dates": [], "publicationYear": 2025}), "2025-01-01")
+    def test_no_day_is_made_up_for_a_new_preprint(self):
+        """With only a year to go on, a new entry takes the month its id encodes."""
+        year_only = {"titles": [{"title": "T"}], "publicationYear": 2026}
+        with mock.patch.object(pp, "arxiv_fetch", self._arxiv_406), \
+                mock.patch.object(pp, "datacite_fetch", lambda _doi: year_only):
+            record = pp.resolve_arxiv(self.arxiv("2610.40502"))
+        self.assertEqual(record.date, "2026-10-01")
 
-    def test_crossref_is_tried_when_datacite_has_nothing(self):
-        saved = (pp.arxiv_fetch, pp.datacite_fetch, pp.crossref_fetch)
-        pp.arxiv_fetch = self._arxiv_406
-        pp.datacite_fetch = lambda _doi: None
-        pp.crossref_fetch = lambda _doi: {
-            "title": ["Fallback Title"],
-            "issued": {"date-parts": [[2025, 3, 20]]},
-            "author": [{"given": "Satoshi", "family": "Nakano"}],
-        }
-        try:
-            name, _ = pp.resolve_arxiv("2503.16715")
-        finally:
-            pp.arxiv_fetch, pp.datacite_fetch, pp.crossref_fetch = saved
-        self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
+    def test_datacite_date_reads_any_dated_entry(self):
+        """A whole day from any dates[] entry or timestamp; a year alone is not a day."""
+        self.assertEqual(pp.datacite_date({"dates": [{"date": "2025-03-20", "dateType": "Other"}],
+                                           "publicationYear": 2025}), "2025-03-20")
+        self.assertEqual(pp.datacite_date({"published": "2025-03-20", "publicationYear": 2025}),
+                         "2025-03-20")
+        self.assertIsNone(pp.datacite_date({"dates": [], "publicationYear": 2025}))
 
     def test_datacite_field_extraction(self):
         self.assertEqual(pp.datacite_title(self.DATACITE), "A Constrained Attitude Result")
         # Issued wins over Created even though Created comes first in the list.
         self.assertEqual(pp.datacite_date(self.DATACITE), "2025-03-20")
-        self.assertEqual(
-            pp.datacite_authors(self.DATACITE), "Satoshi Nakano, Noboru Sakamoto"
-        )
-        self.assertEqual(pp.datacite_date({"publicationYear": 2024}), "2024-01-01")
+        self.assertEqual(pp.datacite_authors(self.DATACITE), "Satoshi Nakano, Noboru Sakamoto")
         self.assertEqual(
             pp.datacite_authors({"creators": [{"name": "arXiv", "nameType": "Organizational"}]}),
-            "arXiv",
-        )
+            "arXiv")
 
-    def test_lookup_with_nothing_to_fall_back_on_fails_the_run(self):
-        """No existing entry means the preprint is missing from the site."""
-        rc = self._main_with_failing_lookup(["2604.04001"])
-        self.assertEqual(rc, 1)
+    def test_crossref_is_tried_when_datacite_has_nothing(self):
+        crossref = {"title": ["Fallback <i>Title</i>"], "issued": {"date-parts": [[2025, 3, 20]]},
+                    "author": [{"given": "Satoshi", "family": "Nakano"}]}
+        with mock.patch.object(pp, "arxiv_fetch", self._arxiv_406), \
+                mock.patch.object(pp, "datacite_fetch", lambda _doi: None), \
+                mock.patch.object(pp, "crossref_fetch", lambda _doi: crossref):
+            record = pp.resolve_arxiv(self.arxiv())
+        self.assertEqual((record.title, record.date, record.authors),
+                         ("Fallback Title", "2025-03-20", "Satoshi Nakano"))
 
-    def test_slug_matches_between_render_and_carry_forward(self):
-        """carry_forward can only work if both sides derive the same slug."""
-        name, _ = pp.render(
-            date_iso="2025-03-20", slug_suffix="arxiv-2503-16715", title="T",
-            venue="arXiv preprint", authors="A", paperurl="https://arxiv.org/abs/2503.16715",
-        )
-        self.assertEqual(name, f"2025-03-20-pp-{pp.slug_for_source('arxiv', '2503.16715')}.md")
-
-    def test_arxiv_doi_is_resolved_as_its_arxiv_id(self):
-        """A dois: entry of 10.48550/arXiv.* must get DataCite too, not just arXiv."""
-        seen = {}
-        saved = pp.resolve_arxiv
-        pp.resolve_arxiv = lambda aid: seen.setdefault("aid", aid) and ("f", "c")
-        try:
-            out = pp.resolve_doi("https://doi.org/10.48550/arXiv.2503.16715")
-        finally:
-            pp.resolve_arxiv = saved
-        self.assertEqual(seen["aid"], "2503.16715")
-        self.assertEqual(out, ("f", "c"))
+    def test_crossref_day_and_names(self):
+        self.assertIsNone(pp.crossref_day({"issued": {"date-parts": [[2024, 3]]}}))
+        self.assertEqual(pp.crossref_day({"issued": {"date-parts": [[2024, 3]]}}, whole_day=False),
+                         "2024-03-01")
+        msg = {"author": [{"given": "Ada", "family": "Lovelace"}, {"family": "Turing"},
+                          {"name": "The Consortium"}]}
+        self.assertEqual(pp.crossref_names(msg), "Ada Lovelace, Turing, The Consortium")
 
     def test_every_source_kind_shares_one_slug_rule(self):
         for kind, value in (
-            ("arxiv", "2503.16715"),
-            ("arxiv", "arxiv:2503.16715"),
-            ("doi", "10.48550/arXiv.2503.16715"),
-            ("doi", "https://doi.org/10.48550/arXiv.2503.16715"),
+            ("arxiv", "2503.16715"), ("arxiv", "arXiv:2503.16715v2"),
+            ("arxiv", "https://arxiv.org/abs/2503.16715"),
+            ("doi", "10.48550/arXiv.2503.16715"), ("doi", "https://doi.org/10.48550/arXiv.2503.16715"),
         ):
-            self.assertEqual(pp.slug_for_source(kind, value), "arxiv-2503-16715", (kind, value))
-        self.assertEqual(pp.slug_for_source("doi", "10.1000/A.B"), "doi-10-1000-a-b")
+            self.assertEqual(pp.make_source(kind, value, "t").slug, "arxiv-2503-16715", (kind, value))
+        self.assertEqual(pp.make_source("doi", "https://doi.org/10.1000/A.B", "t").slug, "doi-10-1000-a-b")
+        self.assertIsNone(pp.make_source("arxiv", "not an id", "t"))
+        self.assertIsNone(pp.make_source("doi", "not a doi", "t"))
 
-    def test_doi_slug_routes_arxiv_dois_to_arxiv_slug(self):
-        self.assertEqual(
-            pp.slug_for_source("doi", "10.48550/arXiv.2503.16715"), "arxiv-2503-16715"
-        )
+    def test_arxiv_doi_is_resolved_as_its_arxiv_id(self):
+        """A dois: entry of 10.48550/arXiv.* must get DataCite too, not just arXiv."""
+        source = pp.make_source("doi", "https://doi.org/10.48550/arXiv.2503.16715", "t")
+        self.assertEqual((source.kind, source.id), ("arxiv", "2503.16715"))
 
     def test_preprint_permalink_is_date_independent(self):
-        _, content = pp.render(
-            date_iso="2025-03-20", slug_suffix="arxiv-1", title="T",
-            venue="arXiv preprint", authors="A", paperurl="u",
-        )
-        self.assertIn("permalink: /publication/pp-arxiv-1", content)
-        self.assertIn("- /publication/2025-03-20-pp-arxiv-1", content)
-
-    def test_crossref_date_parts(self):
-        self.assertEqual(
-            pp.crossref_date({"issued": {"date-parts": [[2024, 3]]}}), "2024-03-01"
-        )
-        self.assertEqual(pp.crossref_date({"issued": {"date-parts": [[2024]]}}), "2024-01-01")
-
-    def test_crossref_authors_formatting(self):
-        msg = {"author": [{"given": "Ada", "family": "Lovelace"}, {"family": "Turing"}]}
-        self.assertEqual(pp.crossref_authors(msg), "Ada Lovelace, Turing")
+        name, content = pp.Preprint(self.arxiv(), "T", "2025-03-20", "A", pp.ARXIV_VENUE,
+                                    "https://arxiv.org/abs/2503.16715").render()
+        self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
+        self.assertIn("permalink: /publication/pp-arxiv-2503-16715", content)
+        self.assertIn("- /publication/2025-03-20-pp-arxiv-2503-16715", content)
 
 
-class TestResearchmapPreprints(TempPubDir):
-    """Preprints registered in researchmap's MISC list."""
+class TestPreprintSync(TempPubDir):
+    """main(): which preprints are listed, kept, and dropped."""
+
+    MISC = {"rm:id": "1", "see_also": [{"label": "url", "@id": "http://arxiv.org/abs/arXiv:2610.40502"}]}
+
+    def run_main(self, *, misc=(), papers=(), listed=(), titles=None, misc_down=False,
+                 papers_down=False, allow_shrink=False):
+        """main() against stand-ins for researchmap and the lookups; returns
+        (exit status, file names). `titles` maps arXiv id -> title found, and an
+        id it lacks fails to resolve."""
+        src = Path(self._tmp.name) / "preprint_sources.json"
+        src.write_text(json.dumps({"dois": [], "arxiv_ids": list(listed)}), encoding="utf-8")
+
+        def fetch(slug, achievement="published_papers"):
+            if (misc_down and achievement == "misc") or (papers_down and achievement != "misc"):
+                raise common.SyncAbort("unreachable")
+            return list(misc if achievement == "misc" else papers)
+
+        def resolve(source):
+            title = (titles or {}).get(source.id)
+            return pp.Preprint(source, title, "2026-10-01", "S. Nakano", pp.ARXIV_VENUE,
+                               pp.arxiv_abs_url(source.id)) if title else None
+
+        env = {"SYNC_ALLOW_SHRINK": "1"} if allow_shrink else {}
+        with mock.patch.object(pp, "DATA_PATH", src), mock.patch.object(pp.rm, "fetch_items", fetch), \
+                mock.patch.object(pp, "resolve", resolve), \
+                mock.patch.object(pp, "researchmap_slug", lambda: "someone"), \
+                mock.patch.dict("os.environ", env):
+            return pp.main(), self.names()
+
+    def seed_preprint(self, name, title="An Older Preprint About Control"):
+        (self.pub / name).write_text(f"---\ntitle: '{title}'\ndate: {name[:10]}\n---\n", encoding="utf-8")
+
+    def test_misc_preprint_is_listed(self):
+        code, names = self.run_main(misc=[self.MISC], titles={"2610.40502": "A New Preprint"})
+        self.assertEqual((code, names), (0, {"2026-10-01-pp-arxiv-2610-40502.md"}))
+
+    def test_listed_and_misc_ids_are_merged(self):
+        code, names = self.run_main(misc=[self.MISC], listed=["arXiv:2610.40502v2", "2503.16715"],
+                                    titles={"2610.40502": "A New Preprint", "2503.16715": "Another"})
+        self.assertEqual(names, {"2026-10-01-pp-arxiv-2610-40502.md", "2026-10-01-pp-arxiv-2503-16715.md"})
+
+    def test_carried_forward_entry_does_not_fail_the_run(self):
+        """An upstream outage that loses nothing must not fail CI every week."""
+        self.seed_preprint("2025-03-20-pp-arxiv-2503-16715.md")
+        code, names = self.run_main(listed=["2503.16715"])
+        self.assertEqual((code, names), (0, {"2025-03-20-pp-arxiv-2503-16715.md"}))
+
+    def test_lookup_with_nothing_to_fall_back_on_fails_the_run(self):
+        """No existing entry means the preprint is missing from the site."""
+        code, _ = self.run_main(listed=["2604.04001"])
+        self.assertEqual(code, 1)
+
+    def test_published_version_replaces_the_preprint(self):
+        self.seed_preprint("2026-10-01-pp-arxiv-2610-40502.md")
+        paper = {"rm:id": "9", "paper_title": {"en": "A two-wheeled quadrotor: level-attitude locomotion."}}
+        code, names = self.run_main(misc=[self.MISC], papers=[paper],
+                                    titles={"2610.40502": "A Two-Wheeled Quadrotor -- Level-Attitude Locomotion"})
+        self.assertEqual((code, names), (0, set()))
+
+    def test_a_paper_linking_the_arxiv_id_replaces_it_too(self):
+        paper = {"rm:id": "9", "paper_title": {"en": "A Retitled Journal Version"},
+                 "see_also": [{"label": "url", "@id": "https://arxiv.org/abs/2610.40502"}]}
+        code, names = self.run_main(misc=[self.MISC], papers=[paper], titles={"2610.40502": "Preprint Title"})
+        self.assertEqual(names, set())
+
+    def test_short_or_empty_titles_never_match(self):
+        """A Japanese-only or empty title reduced to "" once matched every such preprint."""
+        papers = [{"rm:id": "8", "paper_title": {"ja": "制御"}},
+                  {"rm:id": "9", "paper_title": {"en": "Explicit Reference Governor"}}]
+        self.seed_preprint("2026-04-05-pp-arxiv-2604-04001.md", title="")
+        code, names = self.run_main(listed=["2604.04001", "2503.16715"], papers=papers,
+                                    titles={"2503.16715": "Explicit reference governor on SO(3) for torque"})
+        self.assertEqual(names, {"2026-04-05-pp-arxiv-2604-04001.md", "2026-10-01-pp-arxiv-2503-16715.md"})
+
+    def test_researchmap_outage_keeps_the_listed_preprints(self):
+        self.seed_preprint("2026-10-29-pp-arxiv-2610-40502.md")
+        code, names = self.run_main(misc_down=True)
+        self.assertEqual((code, names), (0, {"2026-10-29-pp-arxiv-2610-40502.md"}))
+
+    def test_empty_misc_does_not_wipe_what_it_listed(self):
+        """A renamed field reads the same as an empty list."""
+        self.seed_preprint("2026-10-29-pp-arxiv-2610-40502.md")
+        code, names = self.run_main(misc=[{"rm:id": "1"}])
+        self.assertEqual(names, {"2026-10-29-pp-arxiv-2610-40502.md"})
+        code, names = self.run_main(misc=[{"rm:id": "1"}], allow_shrink=True)
+        self.assertEqual(names, set())
+
+    def test_unreadable_papers_leave_the_list_alone(self):
+        """Without them a superseded preprint would come back for a week."""
+        self.seed_preprint("2026-10-29-pp-arxiv-2610-40502.md")
+        code, names = self.run_main(misc=[self.MISC], papers_down=True, titles={"2610.40502": "T"})
+        self.assertEqual((code, names), (0, {"2026-10-29-pp-arxiv-2610-40502.md"}))
+
+    def test_one_drop_does_not_switch_the_guard_off(self):
+        for n in ("a", "b", "c", "d"):
+            (self.pub / f"2026-01-01-pp-{n}.md").write_text("x", encoding="utf-8")
+        with self.assertRaises(common.SyncAbort):
+            common.apply_generated(pattern="*-pp-*.md", generated={"2026-01-01-pp-a.md": "x"},
+                                   removed_on_purpose=1)
+        written, deleted, _ = common.apply_generated(
+            pattern="*-pp-*.md", generated={"2026-01-01-pp-a.md": "x", "2026-01-01-pp-b.md": "x"},
+            removed_on_purpose=1)
+        self.assertEqual(deleted, 2)
 
     def test_arxiv_ids_are_found_in_any_link_form(self):
         item = {"see_also": [
@@ -531,52 +643,6 @@ class TestResearchmapPreprints(TempPubDir):
         ]}
         self.assertEqual(pp.arxiv_ids_in(item), ["2610.40502", "2503.16715", "2604.04001"])
         self.assertEqual(pp.arxiv_ids_in({"see_also": [{"label": "doi", "@id": "10.1000/x"}]}), [])
-
-    def test_researchmap_outage_keeps_the_listed_preprints(self):
-        self.seed("2025-03-20-pp-arxiv-2503-16715.md", "2026-04-05-pp-arxiv-2604-04001.md",
-                  "2026-01-01-rm-123.md")
-
-        def down(slug, achievement="published_papers"):
-            raise common.SyncAbort("unreachable")
-
-        saved = pp.rm.fetch_items
-        pp.rm.fetch_items = down
-        try:
-            self.assertEqual(pp.researchmap_arxiv_ids("x"), ["2503.16715", "2604.04001"])
-            self.assertIsNone(pp.published_title_keys("x"))
-        finally:
-            pp.rm.fetch_items = saved
-
-    def _run(self, misc_ids, published_titles, resolved):
-        """main() with researchmap and the lookups replaced; returns (code, names)."""
-        src = Path(self._tmp.name) / "preprint_sources.json"
-        src.write_text(json.dumps({"dois": [], "arxiv_ids": []}), encoding="utf-8")
-
-        def resolve(aid):
-            name, content = pp.render(date_iso="2026-10-01", slug_suffix=pp.slug_for_source("arxiv", aid),
-                                      title=resolved[aid], venue="arXiv preprint", authors="S. Nakano",
-                                      paperurl=f"https://arxiv.org/abs/{aid}")
-            return name, content
-
-        saved = (pp.DATA_PATH, pp.resolve_arxiv, pp.researchmap_arxiv_ids, pp.published_title_keys)
-        pp.DATA_PATH, pp.resolve_arxiv = src, resolve
-        pp.researchmap_arxiv_ids = lambda slug: misc_ids
-        pp.published_title_keys = lambda slug: {pp._title_key(t): "9" for t in published_titles}
-        try:
-            return pp.main(), self.names()
-        finally:
-            pp.DATA_PATH, pp.resolve_arxiv, pp.researchmap_arxiv_ids, pp.published_title_keys = saved
-
-    def test_misc_preprint_is_listed(self):
-        code, names = self._run(["2610.40502"], [], {"2610.40502": "A New Preprint"})
-        self.assertEqual(code, 0)
-        self.assertEqual(names, {"2026-10-01-pp-arxiv-2610-40502.md"})
-
-    def test_published_version_replaces_the_preprint(self):
-        self.seed("2026-10-01-pp-arxiv-2610-40502.md")
-        code, names = self._run(["2610.40502"], ["A new preprint."], {"2610.40502": "A New Preprint"})
-        self.assertEqual(code, 0)
-        self.assertEqual(names, set())
 
 
 class TestRetry(unittest.TestCase):

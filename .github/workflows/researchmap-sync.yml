@@ -47,7 +47,7 @@ jobs:
       # A failure here stops the job: there is nothing to commit and nothing to
       # deploy, and the site keeps the list it already has.
       - name: Fetch publications from researchmap
-        run: python3 scripts/fetch_researchmap_publications.py satoshi-nakano
+        run: python3 scripts/fetch_researchmap_publications.py
 
       # The script exits non-zero only when a preprint could not be resolved
       # from any source AND there was no existing entry to carry forward — the
@@ -58,7 +58,7 @@ jobs:
       - name: Resolve preprints (arXiv, DataCite, Crossref)
         id: preprints
         continue-on-error: true
-        run: python3 scripts/sync_preprints_from_sources.py satoshi-nakano
+        run: python3 scripts/sync_preprints_from_sources.py
 
       # _cv/journals.bib and _cv/proceedings.bib for the English CV: researchmap
       # says which papers, Crossref describes them. A failure keeps last week's
@@ -66,7 +66,7 @@ jobs:
       - name: Build the CV bibliography
         id: cv
         continue-on-error: true
-        run: python3 scripts/build_cv_bib.py satoshi-nakano
+        run: python3 scripts/build_cv_bib.py
 
       - name: Heartbeat when the repository has been quiet
         run: |

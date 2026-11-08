@@ -3,6 +3,8 @@
 
 Usage:  python3 scripts/fetch_researchmap_publications.py [slug]
 
+The account defaults to the one `researchmap_url` in _config.yml names.
+
 API: https://api.researchmap.jp/{slug}/published_papers  (public read)
 
 Design notes
@@ -42,6 +44,8 @@ from pubsync_common import (  # noqa: E402
     http_get_json,
     iso_day,
     log,
+    normalize_doi,
+    researchmap_slug,
 )
 
 API_ROOT = "https://api.researchmap.jp"
@@ -143,11 +147,11 @@ def paper_url(item: dict) -> str:
                 if isinstance(entry, dict) and entry.get("label") == label and entry.get("@id"):
                     return str(entry["@id"]).strip()
     identifiers = item.get("identifiers")
-    if isinstance(identifiers, dict):
-        dois = identifiers.get("doi")
-        if isinstance(dois, list) and dois:
-            doi = str(dois[0]).strip()
-            return doi if doi.startswith("http") else f"https://doi.org/{doi}"
+    if isinstance(identifiers, dict) and isinstance(identifiers.get("doi"), list):
+        for value in identifiers["doi"]:
+            doi = normalize_doi(value)
+            if doi:
+                return f"https://doi.org/{doi}"
     return ""
 
 
@@ -282,8 +286,8 @@ def render(item: dict, unknown_types: set[str], skipped: list[str]) -> tuple[str
 
 
 def main() -> int:
-    slug = sys.argv[1] if len(sys.argv) > 1 else "satoshi-nakano"
     try:
+        slug = researchmap_slug()
         items = fetch_items(slug)
     except SyncAbort as exc:
         annotate("error", f"[researchmap] {exc}")

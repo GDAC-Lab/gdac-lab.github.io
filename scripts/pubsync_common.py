@@ -15,6 +15,8 @@ never carried the contact address.
 
 from __future__ import annotations
 
+import datetime
+import html
 import http.client
 import json
 import os
@@ -28,6 +30,21 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PUB_DIR = REPO_ROOT / "_publications"
+CONFIG_PATH = REPO_ROOT / "_config.yml"
+
+
+def researchmap_slug(argv: list[str] | None = None) -> str:
+    """The researchmap account to read: the first command-line argument if one
+    is given, otherwise the path of `researchmap_url` in _config.yml, so the
+    account is named in one place."""
+    args = sys.argv[1:] if argv is None else argv
+    if args and args[0].strip():
+        return args[0].strip()
+    m = re.search(r'^researchmap_url\s*:\s*"?https?://researchmap\.jp/([^/?"\s]+)',
+                  CONFIG_PATH.read_text(encoding="utf-8"), re.M)
+    if not m:
+        raise SyncAbort(f"no researchmap_url in {CONFIG_PATH.name}, and no account given")
+    return m.group(1)
 
 
 # ------------------------------------------------------------------ logging
@@ -128,16 +145,76 @@ def http_get_json(url: str, *, timeout: float = 60.0, tag: str = "http") -> obje
         raise SyncAbort(f"{url} returned a body that is not JSON: {exc}") from exc
 
 
+# ------------------------------------------------------------- identifiers
+#
+# One reading of a DOI and of an arXiv id for every script, whatever form it
+# arrives in: bare, behind a resolver or a publisher URL, with "doi:" or
+# "arXiv:" in front, or with an arXiv version suffix.
+
+# A DOI ends at whitespace, a quote, an angle bracket, or the query string or
+# fragment of the URL it was cut from ("…/doi/10.1002/rnc.6000?af=R").
+_DOI = re.compile(r"10\.\d{4,9}/[^\s\"'<>?#]+")
+# New-style arXiv ids (2007 onward): YYMM.NNNN until 2014, YYMM.NNNNN after.
+_ARXIV_ID = r"(\d{2})(0[1-9]|1[0-2])\.(\d{4,5})(?:v\d+)?(?!\d)"
+# In free text an id counts only where it is marked as one.
+_ARXIV_IN_TEXT = re.compile(r"(?:arxiv\.org/(?:abs|pdf)/(?:arxiv:)?|arxiv:\s*|10\.48550/arxiv\.)"
+                            + _ARXIV_ID, re.I)
+_ARXIV_ALONE = re.compile(r"^\s*(?:arxiv:\s*)?" + _ARXIV_ID + r"\s*$", re.I)
+
+
+def _arxiv_id(yy: str, mm: str, number: str) -> str | None:
+    # Four digits after the dot until 2014, five from 2015: arXiv answers any
+    # other combination with an "Error" record, not with a 404.
+    return f"{yy}{mm}.{number}" if len(number) == (5 if int(yy) >= 15 else 4) else None
+
+
+def normalize_doi(value: object) -> str | None:
+    """The DOI in `value`, without resolver or trailing punctuation; None if none."""
+    m = _DOI.search(str(value or ""))
+    return m.group(0).rstrip(".,;:)]}") if m else None
+
+
+def normalize_arxiv_id(value: object) -> str | None:
+    """The arXiv id `value` names, e.g. "2503.16715"; None if it names none.
+
+    Accepts a bare id, "arXiv:<id>", an abs/pdf URL and the 10.48550 DOI, each
+    with or without a version suffix.
+    """
+    text = str(value or "")
+    m = _ARXIV_ALONE.match(text) or _ARXIV_IN_TEXT.search(text)
+    return _arxiv_id(*m.groups()) if m else None
+
+
+def arxiv_ids_in_text(text: str) -> list[str]:
+    """Every arXiv id marked as one in `text`, in order, each once."""
+    found = [_arxiv_id(*m.groups()) for m in _ARXIV_IN_TEXT.finditer(text or "")]
+    return list(dict.fromkeys(a for a in found if a))
+
+
+_TAG = re.compile(r"<[^>]+>")
+_MATH = re.compile(r"<((?:\w+:)?math)\b[^>]*>(.*?)</\1\s*>", re.S)
+
+
+def _math_text(m: re.Match) -> str:
+    # Inline MathML puts every symbol in an element of its own: SO(3) arrives
+    # as <mi>S</mi><mi>O</mi><mo>(</mo>..., which must read "SO(3)", not
+    # "S O ( 3 )". Drop the layout whitespace between elements, keep the text.
+    return _TAG.sub("", re.sub(r">\s+<", "><", m.group(2))).strip()
+
+
+def clean_text(value: object) -> str:
+    """Plain text from an API string: entities decoded, JATS/MathML markup
+    removed, whitespace collapsed to single spaces."""
+    text = html.unescape(str(value or ""))
+    text = _MATH.sub(_math_text, text)
+    text = _TAG.sub(" ", text)
+    return " ".join(text.split())
+
+
 # ---------------------------------------------------------------- Crossref
 
-# Both the preprint script and the CV bibliography read Crossref.
+# The preprint script and the CV bibliography both read Crossref.
 CROSSREF_API = "https://api.crossref.org/works/"
-
-
-def strip_doi(doi: str) -> str:
-    doi = doi.strip()
-    prefix = "https://doi.org/"
-    return doi[len(prefix):] if doi.lower().startswith(prefix) else doi
 
 
 def crossref_fetch(doi: str) -> dict | None:
@@ -152,6 +229,41 @@ def crossref_fetch(doi: str) -> dict | None:
     if not isinstance(payload, dict) or payload.get("status") != "ok":
         return None
     return payload.get("message") or {}
+
+
+def crossref_first(msg: dict, key: str) -> str:
+    """The first entry of a Crossref list field (title, container-title), cleaned."""
+    value = msg.get(key)
+    if isinstance(value, list):
+        value = value[0] if value else ""
+    return clean_text(value)
+
+
+def crossref_date(msg: dict, keys: tuple[str, ...] = (
+        "published-print", "published-online", "issued", "created")) -> tuple[int, int | None, int | None] | None:
+    """(year, month, day) from the first of `keys` that carries a year.
+
+    Crossref leaves out what it does not know, and sometimes sends
+    [[null]] for a date it has no part of; either way the next key is tried.
+    """
+    for key in keys:
+        parts = (msg.get(key) or {}).get("date-parts")
+        if not (isinstance(parts, list) and parts and isinstance(parts[0], list)):
+            continue
+        dp = [p if isinstance(p, int) else None for p in parts[0]] + [None, None]
+        if dp[0]:
+            return dp[0], dp[1], dp[2] if dp[1] else None
+    return None
+
+
+def crossref_authors(msg: dict) -> list[tuple[str, str, str]]:
+    """(given, family, literal) for each author, cleaned; literal is the name
+    of an organisation, which has no given or family part."""
+    people = []
+    for a in msg.get("author") or []:
+        if isinstance(a, dict):
+            people.append((clean_text(a.get("given")), clean_text(a.get("family")), clean_text(a.get("name"))))
+    return [p for p in people if any(p)]
 
 
 # -------------------------------------------------------------------- text
@@ -192,12 +304,20 @@ def iso_day(raw: object, *, allow_year: bool = False) -> str | None:
     text = str(raw or "").strip()
     m = re.match(r"\d{4}-\d{2}-\d{2}", text)
     if m:
-        return m.group(0)
-    if re.fullmatch(r"\d{4}-\d{2}", text):
-        return f"{text}-01"
-    if allow_year and re.fullmatch(r"\d{4}", text):
-        return f"{text}-01-01"
-    return None
+        day = m.group(0)
+    elif re.fullmatch(r"\d{4}-\d{2}", text):
+        day = f"{text}-01"
+    elif allow_year and re.fullmatch(r"\d{4}", text):
+        day = f"{text}-01-01"
+    else:
+        return None
+    # Jekyll refuses a date that is not on the calendar, and deploy.yml builds
+    # whatever is committed, so one bad date would stop every deploy.
+    try:
+        datetime.date.fromisoformat(day)
+    except ValueError:
+        return None
+    return day
 
 
 def build_citation(authors: str, year: str, title: str, venue: str) -> str:
@@ -238,6 +358,7 @@ def apply_generated(
     min_expected: int = 1,
     shrink_floor: float = 0.5,
     allow_shrink: bool = False,
+    removed_on_purpose: int = 0,
 ) -> tuple[int, int, int]:
     """Replace every PUB_DIR file matching `pattern` with `generated`.
 
@@ -249,7 +370,9 @@ def apply_generated(
       * fewer than `min_expected` records, or
       * a drop to below `shrink_floor` of the previous count.
     `allow_shrink` (SYNC_ALLOW_SHRINK=1) overrides the shrink guard for the
-    legitimate case of genuinely removing records.
+    legitimate case of genuinely removing records. `removed_on_purpose` counts
+    records the caller dropped deliberately (a preprint replaced by its
+    published version); the guard measures the rest against what remains.
 
     Returns (written, deleted, unchanged).
     """
@@ -261,8 +384,9 @@ def apply_generated(
             f"{min_expected}. Leaving {len(existing)} existing file(s) untouched."
         )
 
-    if existing and not allow_shrink:
-        ratio = len(generated) / len(existing)
+    remaining = len(existing) - removed_on_purpose
+    if remaining > 0 and not allow_shrink:
+        ratio = len(generated) / remaining
         if ratio < shrink_floor:
             raise SyncAbort(
                 f"refusing to apply: record count would fall from {len(existing)} to "

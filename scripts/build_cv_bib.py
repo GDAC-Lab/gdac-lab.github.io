@@ -28,7 +28,6 @@ when the new lists are empty or less than half the old ones
 
 from __future__ import annotations
 
-import html
 import re
 import sys
 from pathlib import Path
@@ -41,8 +40,13 @@ from pubsync_common import (  # noqa: E402
     SyncAbort,
     allow_shrink_from_env,
     annotate,
+    clean_text,
+    crossref_authors,
+    crossref_date,
     crossref_fetch,
     log,
+    normalize_doi,
+    researchmap_slug,
 )
 
 CV_DIR = REPO_ROOT / "_cv"
@@ -101,33 +105,19 @@ def doi_of(item: dict) -> str | None:
     if isinstance(identifiers, dict) and isinstance(identifiers.get("doi"), list):
         candidates += [str(d) for d in identifiers["doi"]]
     for text in candidates:
-        m = re.search(r"10\.\d{4,9}/\S+", text or "")
-        if m:
-            return m.group(0).rstrip(".")
+        doi = normalize_doi(text)
+        if doi:
+            return doi
     return None
 
 
 # ------------------------------------------------------------------------ text
 
 
-_TAG = re.compile(r"<[^>]+>")
-_MATH = re.compile(r"<((?:\w+:)?math)\b[^>]*>(.*?)</\1\s*>", re.S)
-
-
-def _math_text(m: re.Match) -> str:
-    # Inline MathML puts every symbol in an element of its own: SO(3) arrives
-    # as <mi>S</mi><mi>O</mi><mo>(</mo>..., which must read "SO(3)", not
-    # "S O ( 3 )". Drop the layout whitespace between elements, keep the text.
-    return _TAG.sub("", re.sub(r">\s+<", "><", m.group(2))).strip()
-
-
 def _clean(value: object) -> str:
-    """Plain text from a Crossref or researchmap string: no markup, one space."""
-    text = html.unescape(str(value or ""))
-    text = _MATH.sub(_math_text, text)
-    text = _TAG.sub(" ", text)                      # JATS tags
-    text = text.replace("{", "").replace("}", "")   # would unbalance BibTeX
-    return " ".join(text.split())
+    """Plain text for a BibTeX field: no markup, one space, and no braces,
+    which would unbalance the entry."""
+    return " ".join(clean_text(value).replace("{", "").replace("}", "").split())
 
 
 def tex(value: object) -> str:
@@ -196,17 +186,9 @@ def _first(value: object) -> str:
 
 
 def fields_from_crossref(msg: dict, kind: str, doi: str, fallback_year: str) -> dict[str, str]:
-    authors = [
-        name_tex(a.get("family"), a.get("given"), a.get("name"))
-        for a in msg.get("author") or []
-        if isinstance(a, dict)
-    ]
-    year = ""
-    for key in ("issued", "published-print", "published-online"):
-        parts = (msg.get(key) or {}).get("date-parts")
-        if isinstance(parts, list) and parts and isinstance(parts[0], list) and parts[0]:
-            year = str(parts[0][0])
-            break
+    authors = [name_tex(family, given, literal) for given, family, literal in crossref_authors(msg)]
+    ymd = crossref_date(msg, ("issued", "published-print", "published-online"))
+    year = str(ymd[0]) if ymd else ""
     fields = {
         "title": title_tex(_first(msg.get("title"))),
         "author": " and ".join(a for a in authors if a),
@@ -307,9 +289,8 @@ def render_file(section: str, entries: list[str]) -> str:
 
 
 def main() -> int:
-    slug = sys.argv[1] if len(sys.argv) > 1 else "satoshi-nakano"
     try:
-        items = rm.fetch_items(slug)
+        items = rm.fetch_items(researchmap_slug())
     except SyncAbort as exc:
         annotate("error", f"[cv] {exc}")
         return 1

@@ -1,60 +1,69 @@
 #!/usr/bin/env python3
-"""Regenerate _publications/*-pp-*.md from researchmap (MISC) and _data/preprint_sources.json.
+"""Regenerate _publications/*-pp-*.md: the list of preprints.
 
 Usage:  python3 scripts/sync_preprints_from_sources.py [researchmap-slug]
 
-A preprint is listed when either
-* its researchmap MISC record links to arXiv (an arxiv.org/abs URL or the
-  10.48550/arXiv.* DOI) -- the usual way, nothing to edit here; or
-* its id is in preprint_sources.json ("dois" / "arxiv_ids"), for one that is
-  not on researchmap.
-Once researchmap lists a published paper with the same title, the preprint is
-dropped. If researchmap cannot be read, the preprints already on the site stay. A preprint that needs no external lookup can be added as an ordinary
-.md in _publications with `category: preprints` and no "-pp-" in the filename;
-this script only owns the "-pp-" files.
+The researchmap account defaults to the one `researchmap_url` in _config.yml
+names.
 
-Where the records come from
+Which preprints
+---------------
+* Every researchmap MISC record that links to arXiv (an arxiv.org/abs URL or
+  the 10.48550/arXiv.* DOI). Registering a preprint there is all it takes.
+* Any id in _data/preprint_sources.json ("dois" / "arxiv_ids"), for a preprint
+  that is not on researchmap.
+A preprint leaves the list once researchmap's papers hold its published
+version: a paper that links to the same arXiv id, or one with the same title.
+
+Where the details come from
 ---------------------------
-* A DOI is read from Crossref.
-* An arXiv id is read from arXiv's Atom API. When arXiv will not answer — it has
-  returned 406 to every request from GitHub's runners since 2026-09-14 — the
-  same record is read from DataCite, which is where arXiv registers its
-  10.48550/arXiv.* DOIs, and Crossref is tried last. A DOI of that form is
-  handled as the arXiv id it names, so it gets the same standby sources.
+* An arXiv id is read from arXiv's Atom API. When arXiv will not answer -- it
+  has returned 406 to every request from GitHub's runners since 2026-09-14 --
+  the same record is read from DataCite, which is where arXiv registers its
+  10.48550/arXiv.* DOIs, and then from Crossref.
+* Any other DOI is read from Crossref.
 
-Two invariants keep the published URLs still whichever source answers:
-* the file's slug comes from the arXiv id or DOI, never from the record, so `/publication/pp-arxiv-2503-16715` does not move; and
-* a standby source never changes the date of an entry already on disk. arXiv
+Invariants
+----------
+* The file's slug comes from the id, never from the record, so
+  /publication/pp-arxiv-2503-16715 does not move.
+* A standby source never changes the date of an entry already on disk. arXiv
   gives the submission day; DataCite may only know the year, and letting that
   through renamed three files to January 1 on 2026-09-21.
+* No day is made up: when no source gives one, a new arXiv entry is dated by
+  the month its id encodes.
+* The link is the version-less abs URL whichever source answered, so a file
+  does not flip between ".../2604.04001v1" and ".../2604.04001" week by week.
 
 Failure handling
 ----------------
 Nothing is deleted until every entry has been resolved. When a lookup fails on
-every source, the previously generated file for that entry is carried forward.
-That is reported as a warning and the script still exits 0, because nothing was
-lost. It exits non-zero only when a source fails and there is no existing entry
-to fall back on, which does leave a preprint off the site.
+every source, the file already published for it is carried forward; that is a
+warning and the exit status stays 0, because nothing was lost. The script exits
+1 only when a preprint has neither a record nor a file to fall back on, which
+does leave it off the site. If researchmap cannot be read, the preprints
+already on the site stay as they are.
 """
 
 from __future__ import annotations
 
-import html
+import http.client
 import json
 import os
 import re
 import sys
 import time
+import unicodedata
 import urllib.error
 import urllib.parse
 import xml.etree.ElementTree as ET
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import fetch_researchmap_publications as rm  # noqa: E402
-
 from pubsync_common import (  # noqa: E402
     PUB_DIR,
     REPO_ROOT,
@@ -62,14 +71,21 @@ from pubsync_common import (  # noqa: E402
     allow_shrink_from_env,
     annotate,
     apply_generated,
+    arxiv_ids_in_text,
     build_citation,
+    clean_text,
+    crossref_authors,
+    crossref_date,
     crossref_fetch,
+    crossref_first,
     front_matter,
     http_get,
     http_get_json,
     iso_day,
     log,
-    strip_doi,
+    normalize_arxiv_id,
+    normalize_doi,
+    researchmap_slug,
     title_language,
 )
 
@@ -79,7 +95,13 @@ DATACITE_API = "https://api.datacite.org/dois/"
 ARXIV_API = "https://export.arxiv.org/api/query?id_list="
 ARXIV_ACCEPT = "application/atom+xml, text/xml;q=0.9, */*;q=0.8"
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
-UNKNOWN_DATE = "1900-01-01"
+ARXIV_VENUE = "arXiv preprint"
+
+# What a lookup can run into that is not a fault in this script: trouble that
+# outlasted the retries, a refusal, a body that does not parse. Anything else
+# is a bug, and is left to fail the step rather than be carried forward quietly.
+LOOKUP_ERRORS = (SyncAbort, urllib.error.URLError, http.client.HTTPException,
+                 OSError, ET.ParseError, ValueError)
 
 # arXiv asks for no more than one request every few seconds.
 _ARXIV_MIN_INTERVAL_SEC = float(os.environ.get("ARXIV_MIN_INTERVAL_SEC", "3.5"))
@@ -94,84 +116,261 @@ def _arxiv_throttle() -> None:
     _ARXIV_NEXT_MONO = time.monotonic() + _ARXIV_MIN_INTERVAL_SEC
 
 
-# ------------------------------------------------------------------- ids and slugs
+# ------------------------------------------------------------------- sources
 
 
-def arxiv_id_from_doi(doi: str) -> str | None:
-    m = re.search(r"10\.48550/\s*arXiv\.(\d{4}\.\d{4,5})", doi, re.I)
+@dataclass(frozen=True)
+class Source:
+    """One preprint to list: an arXiv id or a DOI, already normalised."""
+
+    kind: str     # "arxiv" or "doi"
+    id: str       # "2503.16715", or "10.xxxx/..."
+    origin: str   # where it was listed, for the log
+
+    @property
+    def slug(self) -> str:
+        """The one place a file's slug is derived: the file name, the permalink
+        and carry_forward() all key on it, so a run finds the last one's file."""
+        if self.kind == "arxiv":
+            return f"arxiv-{self.id.replace('.', '-')}"
+        return f"doi-{re.sub(r'[^a-z0-9]+', '-', self.id.lower()).strip('-')[:72]}"
+
+    def __str__(self) -> str:
+        return f"{self.kind} {self.id}"
+
+
+def make_source(kind: str, value: str, origin: str) -> Source | None:
+    """A Source for a listed value, or None if it names neither an arXiv id nor
+    a DOI. An arXiv DOI becomes the arXiv id it names, so it gets the same
+    standby sources and the same slug as the id itself."""
+    aid = normalize_arxiv_id(value)
+    if aid:
+        return Source("arxiv", aid, origin)
+    doi = normalize_doi(value) if kind == "doi" else None
+    return Source("doi", doi, origin) if doi else None
+
+
+def listed_sources() -> list[Source] | None:
+    """The preprints in preprint_sources.json; None when the file is unusable."""
+    if not DATA_PATH.is_file():
+        return []
+    try:
+        raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        annotate("error", f"[preprint] {DATA_PATH.name} is not valid JSON: {exc}")
+        return None
+    if not isinstance(raw, dict):
+        annotate("error", f"[preprint] {DATA_PATH.name} must hold an object")
+        return None
+    sources = []
+    for kind, key in (("doi", "dois"), ("arxiv", "arxiv_ids")):
+        values = raw.get(key)
+        for value in values if isinstance(values, list) else []:
+            text = str(value).strip()
+            if not text or text.startswith("#"):
+                continue
+            source = make_source(kind, text, DATA_PATH.name)
+            if source:
+                sources.append(source)
+            else:
+                annotate("warning", f"[preprint] {DATA_PATH.name}: {text!r} is neither an arXiv id nor a DOI; skipped")
+    return sources
+
+
+def arxiv_ids_in(item: dict) -> list[str]:
+    """arXiv ids a researchmap record links to, in order, without versions."""
+    fields = {k: item.get(k) for k in ("see_also", "identifiers", "paper_title", "publication_name")}
+    return arxiv_ids_in_text(json.dumps(fields, ensure_ascii=False))
+
+
+def researchmap_sources(slug: str) -> list[Source] | None:
+    """The preprints researchmap's MISC list links to; None if it cannot be read."""
+    try:
+        items = rm.fetch_items(slug, "misc")
+    except SyncAbort as exc:
+        annotate("warning", f"[preprint] researchmap MISC unreadable ({exc}); the preprints already listed stay")
+        return None
+    ids = list(dict.fromkeys(aid for item in items for aid in arxiv_ids_in(item)))
+    log(f"[preprint] researchmap MISC: {len(ids)} arXiv id(s)")
+    return [Source("arxiv", aid, "researchmap MISC") for aid in ids]
+
+
+def sources_on_disk() -> list[Source]:
+    """A Source for every arXiv preprint already published."""
+    sources = []
+    for path in sorted(PUB_DIR.glob("*-pp-arxiv-*.md")):
+        m = re.search(r"-pp-arxiv-(\d{4})-(\d{4,5})\.md$", path.name)
+        if m:
+            sources.append(Source("arxiv", f"{m.group(1)}.{m.group(2)}", "already published"))
+    return sources
+
+
+def collect_sources(slug: str) -> list[Source] | None:
+    """Every preprint to list, each once; None when the list file is unusable."""
+    listed = listed_sources()
+    if listed is None:
+        return None
+    found = researchmap_sources(slug)
+    if found is None:
+        found = sources_on_disk()
+    elif not found and not allow_shrink_from_env():
+        # A record that stops matching (a renamed field, say) reads the same as
+        # an empty MISC list, so an empty list keeps what is published.
+        listed_slugs = {s.slug for s in listed}
+        found = [s for s in sources_on_disk() if s.slug not in listed_slugs]
+        if found:
+            annotate("warning",
+                     f"[preprint] researchmap MISC links to no arXiv id, but {len(found)} preprint(s) "
+                     "from it are on the site; kept them. If they were removed from researchmap on "
+                     "purpose, run the sync once with SYNC_ALLOW_SHRINK=1.")
+    unique: dict[str, Source] = {}
+    for source in listed + found:
+        unique.setdefault(source.slug, source)
+    return list(unique.values())
+
+
+# ---------------------------------------------------------- published versions
+
+
+def title_key(title: str) -> str:
+    """A title reduced for comparison: NFKC, case-folded, letters and digits
+    only. Empty when too short to identify one paper, so that an empty or
+    one-word title never matches anything."""
+    folded = unicodedata.normalize("NFKC", clean_text(title)).casefold()
+    key = "".join(ch for ch in folded if ch.isalnum())
+    return key if len(key) >= 16 else ""
+
+
+@dataclass
+class Published:
+    """researchmap's papers, indexed to recognise a preprint's published version."""
+
+    by_arxiv: dict[str, str]   # arXiv id -> rm:id of a paper that links to it
+    by_title: dict[str, str]   # title_key -> rm:id
+
+    def match(self, source: Source, title: str) -> str | None:
+        if source.kind == "arxiv" and source.id in self.by_arxiv:
+            return self.by_arxiv[source.id]
+        key = title_key(title)
+        return self.by_title.get(key) if key else None
+
+
+def published_index(slug: str) -> Published | None:
+    """researchmap's papers as a Published index; None if they cannot be read."""
+    try:
+        items = rm.fetch_items(slug)
+    except SyncAbort as exc:
+        annotate("warning", f"[preprint] researchmap papers unreadable ({exc}); the preprint list was left as it is")
+        return None
+    by_arxiv: dict[str, str] = {}
+    by_title: dict[str, str] = {}
+    for item in items:
+        rm_id = str(item.get("rm:id") or "")
+        for aid in arxiv_ids_in(item):
+            by_arxiv.setdefault(aid, rm_id)
+        titles = item.get("paper_title")
+        for title in titles.values() if isinstance(titles, dict) else [titles]:
+            key = title_key(str(title or ""))
+            if key:
+                by_title.setdefault(key, rm_id)
+    return Published(by_arxiv, by_title)
+
+
+# -------------------------------------------------------------------- records
+
+
+@dataclass
+class Preprint:
+    source: Source
+    title: str
+    date: str      # YYYY-MM-DD
+    authors: str
+    venue: str
+    url: str
+
+    def render(self) -> tuple[str, str]:
+        """(file name, content). The permalink is keyed on the id, not the date,
+        so a metadata correction cannot silently move the page."""
+        slug, authors = self.source.slug, self.authors or "—"
+        fields: list[tuple[str, object]] = [
+            ("title", self.title),
+            ("collection", "publications"),
+            ("category", "preprints"),
+            ("lang", title_language(self.title)),
+            ("permalink", f"/publication/pp-{slug}"),
+            ("redirect_from", [f"/publication/{self.date}-pp-{slug}"]),
+            ("date", self.date),
+            ("venue", self.venue),
+            ("paperurl", self.url),
+            ("authors", authors),
+            ("citation", build_citation(authors, self.date[:4], self.title, self.venue)),
+        ]
+        return f"{self.date}-pp-{slug}.md", front_matter(fields)
+
+
+def carry_forward(slug: str) -> tuple[str, str] | None:
+    """The file already published for a slug, as (name, content), if any."""
+    for path in sorted(PUB_DIR.glob(f"*-pp-{slug}.md")):
+        return path.name, path.read_text(encoding="utf-8")
+    return None
+
+
+def published_date(slug: str) -> str | None:
+    """The date of the file already published for this slug, if there is one."""
+    existing = carry_forward(slug)
+    m = re.search(r"^date:\s*(\d{4}-\d{2}-\d{2})\s*$", existing[1], re.M) if existing else None
     return m.group(1) if m else None
 
 
-def clean_arxiv_id(aid: str) -> str:
-    return aid.strip().replace("arxiv:", "")
+def front_title(content: str) -> str:
+    """The title written in a generated file's front matter."""
+    m = re.search(r"^title: '(.*)'$", content, re.M)
+    return m.group(1).replace("''", "'") if m else ""
 
 
-def slug_for_source(kind: str, value: str) -> str:
-    """The one place a slug is derived. render() and carry_forward() both key
-    on it, so a file written by one run is found by the next."""
-    if kind == "arxiv":
-        return f"arxiv-{clean_arxiv_id(value).replace('.', '-')}"
-    doi = strip_doi(value)
-    aid = arxiv_id_from_doi(doi)
-    if aid:
-        return f"arxiv-{aid.replace('.', '-')}"
-    return f"doi-{re.sub(r'[^a-z0-9]+', '-', doi.lower()).strip('-')[:72]}"
+def arxiv_abs_url(aid: str) -> str:
+    return f"https://arxiv.org/abs/{aid}"
 
 
-# ------------------------------------------------------------------------ Crossref
+def arxiv_month(aid: str) -> str:
+    """The first of the month an arXiv id encodes: 2610.40502 -> 2026-10-01."""
+    return f"20{aid[:2]}-{aid[2:4]}-01"
 
 
-def crossref_date(msg: dict) -> str:
-    for key in ("published-print", "published-online", "issued", "created"):
-        parts = (msg.get(key) or {}).get("date-parts")
-        if isinstance(parts, list) and parts and isinstance(parts[0], list) and parts[0]:
-            dp = parts[0]
-            year = int(dp[0])
-            month = int(dp[1]) if len(dp) > 1 else 1
-            day = int(dp[2]) if len(dp) > 2 else 1
-            return f"{year:04d}-{month:02d}-{day:02d}"
-    return UNKNOWN_DATE
+# ---------------------------------------------------------------------- arXiv
 
 
-def crossref_title(msg: dict) -> str:
-    titles = msg.get("title")
-    return str(titles[0]).strip() if isinstance(titles, list) and titles else ""
+def arxiv_fetch(aid: str) -> dict | None:
+    """{title, date, authors} from arXiv's Atom API; None when arXiv has no such
+    id. arXiv answers an unknown or malformed id with HTTP 200 and an entry
+    titled "Error", not with a 404."""
+    _arxiv_throttle()
+    try:
+        xml = http_get(ARXIV_API + urllib.parse.quote(aid), accept=ARXIV_ACCEPT, tag="arxiv")
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            return None
+        raise
+    entry = ET.fromstring(xml).find("atom:entry", ATOM_NS)
+    if entry is None:
+        return None
+
+    def text(tag: str) -> str:
+        el = entry.find(f"atom:{tag}", ATOM_NS)
+        return " ".join(el.text.split()) if el is not None and el.text else ""
+
+    if "/api/errors" in text("id") or text("title") == "Error":
+        return None
+    names = [
+        name_el.text.strip()
+        for author in entry.findall("atom:author", ATOM_NS)
+        for name_el in [author.find("atom:name", ATOM_NS)]
+        if name_el is not None and name_el.text
+    ]
+    return {"title": text("title"), "date": iso_day(text("published")), "authors": ", ".join(names)}
 
 
-def crossref_authors(msg: dict) -> str:
-    names: list[str] = []
-    for author in msg.get("author") or []:
-        if not isinstance(author, dict):
-            continue
-        family = (author.get("family") or "").strip()
-        given = (author.get("given") or "").strip()
-        if family and given:
-            names.append(f"{given} {family}")
-        elif family:
-            names.append(family)
-        elif author.get("name"):
-            names.append(str(author["name"]).strip())
-    return ", ".join(names)
-
-
-def crossref_venue(msg: dict) -> str:
-    container = msg.get("container-title")
-    if isinstance(container, list) and container:
-        return str(container[0]).strip()
-    publisher = msg.get("publisher")
-    if isinstance(publisher, str) and publisher.strip():
-        return publisher.strip()
-    return "Preprint"
-
-
-def crossref_url(msg: dict, doi: str) -> str:
-    if msg.get("URL"):
-        return str(msg["URL"])
-    doi = doi.strip()
-    return doi if doi.lower().startswith("http") else f"https://doi.org/{doi}"
-
-
-# ------------------------------------------------------------------------ DataCite
+# ------------------------------------------------------------------- DataCite
 
 
 def datacite_fetch(doi: str) -> dict | None:
@@ -190,370 +389,196 @@ def datacite_fetch(doi: str) -> dict | None:
 
 def datacite_title(attrs: dict) -> str:
     for t in attrs.get("titles") or []:
-        title = str(t.get("title") or "").strip()
+        title = clean_text(t.get("title") if isinstance(t, dict) else "")
         if title:
-            return " ".join(title.split())
+            return title
     return ""
 
 
-def datacite_date(attrs: dict) -> str:
-    """The submission day if the record carries one anywhere, else the year."""
-    entries = attrs.get("dates") or []
+def datacite_date(attrs: dict) -> str | None:
+    """The submission day, if the record carries a whole date anywhere."""
+    entries = [d for d in attrs.get("dates") or [] if isinstance(d, dict)]
     for want in ("Issued", "Submitted", "Available", "Accepted", "Created"):
         for d in entries:
-            if str(d.get("dateType") or "") == want:
-                day = iso_day(d.get("date"))
-                if day:
-                    return day
-    for d in entries:  # any type, rather than invent a date
-        day = iso_day(d.get("date"))
-        if day:
-            return day
+            if str(d.get("dateType") or "") == want and iso_day(d.get("date")):
+                return iso_day(d.get("date"))
+    for d in entries:  # any type, rather than settle for the year
+        if iso_day(d.get("date")):
+            return iso_day(d.get("date"))
     for key in ("published", "created", "registered", "updated"):
-        day = iso_day(attrs.get(key))
-        if day:
-            return day
-    year = attrs.get("publicationYear")
-    return f"{int(year):04d}-01-01" if str(year or "").isdigit() else UNKNOWN_DATE
+        if iso_day(attrs.get(key)):
+            return iso_day(attrs.get(key))
+    return None
 
 
 def datacite_authors(attrs: dict) -> str:
     names: list[str] = []
     for c in attrs.get("creators") or []:
-        given = str(c.get("givenName") or "").strip()
-        family = str(c.get("familyName") or "").strip()
+        if not isinstance(c, dict):
+            continue
+        given, family = clean_text(c.get("givenName")), clean_text(c.get("familyName"))
         if given and family:
             names.append(f"{given} {family}")
             continue
-        raw = str(c.get("name") or "").strip()
-        if not raw:
-            continue
+        raw = clean_text(c.get("name"))
         # DataCite stores personal names as "Family, Given".
-        if c.get("nameType") != "Organizational" and raw.count(",") == 1:
+        if raw and c.get("nameType") != "Organizational" and raw.count(",") == 1:
             fam, _, giv = raw.partition(",")
             raw = f"{giv.strip()} {fam.strip()}".strip()
-        names.append(raw)
+        if raw:
+            names.append(raw)
+    return ", ".join(names)
+
+
+# ------------------------------------------------------------------- Crossref
+
+
+def crossref_day(msg: dict, *, whole_day: bool = True) -> str | None:
+    """The record's date as YYYY-MM-DD; with `whole_day`, only if Crossref
+    gives the day, otherwise the missing parts count as the first."""
+    ymd = crossref_date(msg)
+    if not ymd:
+        return None
+    year, month, day = ymd
+    if whole_day and not (month and day):
+        return None
+    return iso_day(f"{year:04d}-{month or 1:02d}-{day or 1:02d}")
+
+
+def crossref_names(msg: dict) -> str:
+    names = []
+    for given, family, literal in crossref_authors(msg):
+        names.append(f"{given} {family}".strip() if family else literal)
     return ", ".join(n for n in names if n)
 
 
-# --------------------------------------------------------------------------- arXiv
+def crossref_venue(msg: dict) -> str:
+    return crossref_first(msg, "container-title") or clean_text(msg.get("publisher")) or "Preprint"
 
 
-def arxiv_fetch(arxiv_id: str) -> dict | None:
-    """The arXiv Atom record, or None when arXiv has no such id."""
-    _arxiv_throttle()
-    aid = clean_arxiv_id(arxiv_id)
-    try:
-        xml = http_get(ARXIV_API + urllib.parse.quote(aid), accept=ARXIV_ACCEPT, tag="arxiv")
-    except urllib.error.HTTPError as exc:
-        if exc.code == 404:
-            return None
-        raise
-    entry = ET.fromstring(xml).find("atom:entry", ATOM_NS)
-    if entry is None:
-        return None
-
-    def text(tag: str) -> str:
-        el = entry.find(f"atom:{tag}", ATOM_NS)
-        return " ".join(el.text.split()) if el is not None and el.text else ""
-
-    names = [
-        name_el.text.strip()
-        for author in entry.findall("atom:author", ATOM_NS)
-        for name_el in [author.find("atom:name", ATOM_NS)]
-        if name_el is not None and name_el.text
-    ]
-    href = f"https://arxiv.org/abs/{aid}"
-    for link in entry.findall("atom:link", ATOM_NS):
-        if link.get("rel") == "alternate" and link.get("type") == "text/html" and link.get("href"):
-            href = link.get("href")
-            break
-    return {
-        "title": text("title"),
-        "date": iso_day(text("published")) or UNKNOWN_DATE,
-        "authors": ", ".join(names),
-        "url": href,
-        "arxiv_id": aid,
-    }
+def crossref_url(msg: dict, doi: str) -> str:
+    return str(msg.get("URL") or f"https://doi.org/{doi}")
 
 
-# -------------------------------------------------------------------------- render
+# -------------------------------------------------------------------- resolve
+
+# (name, fetch, title, whole day or None, authors)
+Standby = tuple[str, Callable[[str], "dict | None"], Callable[[dict], str],
+                Callable[[dict], "str | None"], Callable[[dict], str]]
 
 
-def render(
-    *,
-    date_iso: str,
-    slug_suffix: str,
-    title: str,
-    venue: str,
-    authors: str,
-    paperurl: str,
-) -> tuple[str, str]:
-    """Return (filename, content). Permalinks are keyed on the source id, not the
-    date, so a metadata correction cannot silently move the page."""
-    fields: list[tuple[str, object]] = [
-        ("title", title),
-        ("collection", "publications"),
-        ("category", "preprints"),
-        ("lang", title_language(title)),
-        ("permalink", f"/publication/pp-{slug_suffix}"),
-        ("redirect_from", [f"/publication/{date_iso}-pp-{slug_suffix}"]),
-        ("date", date_iso),
-        ("venue", venue),
-        ("paperurl", paperurl),
-        ("authors", authors or "—"),
-        ("citation", build_citation(authors or "—", date_iso[:4], title, venue)),
-    ]
-    return f"{date_iso}-pp-{slug_suffix}.md", front_matter(fields)
-
-
-def carry_forward(slug_suffix: str) -> tuple[str, str] | None:
-    """The previously generated file for a slug, as (name, content), if any."""
-    for path in sorted(PUB_DIR.glob(f"*-pp-{slug_suffix}.md")):
-        return path.name, path.read_text(encoding="utf-8")
-    return None
-
-
-def published_date(slug_suffix: str) -> str | None:
-    """The date already published for this slug, if there is a file on disk."""
-    existing = carry_forward(slug_suffix)
-    if not existing:
-        return None
-    m = re.search(r"^date:\s*(\d{4}-\d{2}-\d{2})\s*$", existing[1], re.M)
-    return m.group(1) if m else None
-
-
-_Standby = tuple[str, Callable[[str], dict | None], Callable[[dict], str],
-                 Callable[[dict], str], Callable[[dict], str]]
-
-
-def arxiv_standby_sources() -> tuple[_Standby, ...]:
-    """Where an arXiv record is read when arXiv itself will not answer: how to
-    fetch its 10.48550 DOI record and read the title, date and authors out of
-    it, in the order tried. Looked up at call time, not bound at import, so
-    the tests can stand in for any one of them."""
+def arxiv_standby_sources() -> tuple[Standby, ...]:
+    """Where an arXiv record is read when arXiv itself will not answer, in the
+    order tried. Looked up at call time, not bound at import, so the tests can
+    stand in for any one of them."""
     return (
         ("DataCite", datacite_fetch, datacite_title, datacite_date, datacite_authors),
-        ("Crossref", crossref_fetch, crossref_title, crossref_date, crossref_authors),
+        ("Crossref", crossref_fetch, lambda m: crossref_first(m, "title"), crossref_day, crossref_names),
     )
 
 
-def resolve_arxiv(arxiv_id: str) -> tuple[str, str] | None:
-    """Render an arXiv preprint from arXiv, or from a standby source."""
-    aid = clean_arxiv_id(arxiv_id)
-    slug = slug_for_source("arxiv", aid)
-
+def resolve_arxiv(source: Source) -> Preprint | None:
+    """The preprint as arXiv describes it, or as a standby source does."""
+    aid = source.id
     try:
         meta = arxiv_fetch(aid)
-    except Exception as exc:  # 406, a rate limit past its retries, a parse error
+    except LOOKUP_ERRORS as exc:
         log(f"[preprint] arxiv {aid}: {type(exc).__name__}: {exc}; trying a standby source")
         meta = None
-    if meta:
-        return render(
-            date_iso=meta["date"],
-            slug_suffix=slug,
-            title=meta["title"],
-            venue="arXiv preprint",
-            authors=meta["authors"],
-            paperurl=meta["url"],
-        )
+    if meta and meta["title"] and meta["date"]:
+        return Preprint(source, meta["title"], meta["date"], meta["authors"], ARXIV_VENUE, arxiv_abs_url(aid))
 
     doi = f"10.48550/arXiv.{aid}"
-    for source, fetch, get_title, get_date, get_authors in arxiv_standby_sources():
+    for name, fetch, title_of, day_of, authors_of in arxiv_standby_sources():
         try:
-            rec = fetch(doi)
-        except Exception as exc:
-            log(f"[preprint] arxiv {aid}: {source}: {type(exc).__name__}: {exc}")
+            record = fetch(doi)
+        except LOOKUP_ERRORS as exc:
+            log(f"[preprint] arxiv {aid}: {name}: {type(exc).__name__}: {exc}")
             continue
-        title = get_title(rec) if rec else ""
+        title = title_of(record) if record else ""
         if not title:
             continue
-        # arXiv gave the submission day; a standby source may only know the year.
         # Keeping the published date keeps the file name, the redirect from the
-        # old date-based URL and the ordering on the page where they are.
-        date_iso = published_date(slug) or get_date(rec)
-        log(f"[preprint] arxiv {aid}: resolved via {source} ({doi}), date {date_iso}")
-        return render(
-            date_iso=date_iso,
-            slug_suffix=slug,
-            title=title,
-            venue="arXiv preprint",
-            authors=get_authors(rec),
-            paperurl=f"https://arxiv.org/abs/{aid}",
-        )
+        # old date-based URL and the place in the list where they are.
+        date = published_date(source.slug) or day_of(record) or arxiv_month(aid)
+        log(f"[preprint] arxiv {aid}: resolved via {name} ({doi}), date {date}")
+        return Preprint(source, title, date, authors_of(record), ARXIV_VENUE, arxiv_abs_url(aid))
     return None
 
 
-def resolve_doi(doi: str) -> tuple[str, str] | None:
-    """Render a DOI preprint from Crossref. An arXiv DOI is the arXiv id it
-    names, and goes through resolve_arxiv so it gets the same standby sources."""
-    doi = strip_doi(doi)
-    aid = arxiv_id_from_doi(doi)
-    if aid:
-        return resolve_arxiv(aid)
-
-    msg = crossref_fetch(doi)
-    title = crossref_title(msg) if msg else ""
-    if not title:
+def resolve_doi(source: Source) -> Preprint | None:
+    """The preprint as Crossref describes it."""
+    msg = crossref_fetch(source.id)
+    title = crossref_first(msg, "title") if msg else ""
+    date = crossref_day(msg, whole_day=False) if msg else None
+    if not (title and date):
         return None
-    return render(
-        date_iso=crossref_date(msg),
-        slug_suffix=slug_for_source("doi", doi),
-        title=title,
-        venue=crossref_venue(msg),
-        authors=crossref_authors(msg),
-        paperurl=crossref_url(msg, doi),
-    )
+    return Preprint(source, title, date, crossref_names(msg), crossref_venue(msg), crossref_url(msg, source.id))
 
 
-# ---------------------------------------------------------------------------- main
+def resolve(source: Source) -> Preprint | None:
+    return resolve_arxiv(source) if source.kind == "arxiv" else resolve_doi(source)
 
 
-# ------------------------------------------------------------------- researchmap
-
-# An arXiv id written anywhere in a researchmap record: an abs/pdf URL (with or
-# without the "arXiv:" prefix researchmap sometimes keeps), or the arXiv DOI.
-_ARXIV_IN_TEXT = re.compile(
-    r"arxiv\.org/(?:abs|pdf)/(?:arxiv:)?(\d{4}\.\d{4,5})|10\.48550/arxiv\.(\d{4}\.\d{4,5})",
-    re.I,
-)
-
-
-def arxiv_ids_in(item: dict) -> list[str]:
-    """arXiv ids a researchmap record links to, in order, without versions."""
-    text = json.dumps(
-        {k: item.get(k) for k in ("see_also", "identifiers", "paper_title", "publication_name")},
-        ensure_ascii=False,
-    )
-    ids = [a or b for a, b in _ARXIV_IN_TEXT.findall(text)]
-    return list(dict.fromkeys(ids))
-
-
-def ids_on_disk() -> list[str]:
-    """arXiv ids of the preprint files already published."""
-    found = []
-    for path in sorted(PUB_DIR.glob("*-pp-arxiv-*.md")):
-        m = re.search(r"-pp-arxiv-(\d{4})-(\d{4,5})\.md$", path.name)
-        if m:
-            found.append(f"{m.group(1)}.{m.group(2)}")
-    return found
-
-
-def researchmap_arxiv_ids(slug: str) -> list[str]:
-    """arXiv ids of the preprints registered in researchmap's MISC list.
-
-    If researchmap cannot be read, the ids already on the site are used, so an
-    outage never removes a preprint.
-    """
-    try:
-        items = rm.fetch_items(slug, "misc")
-    except SyncAbort as exc:
-        annotate("warning", f"[preprint] researchmap misc unreadable ({exc}); keeping the preprints already listed")
-        return ids_on_disk()
-    found = [aid for item in items for aid in arxiv_ids_in(item)]
-    log(f"[preprint] researchmap misc: {len(found)} arXiv id(s)")
-    return found
-
-
-def _title_key(title: str) -> str:
-    return re.sub(r"[^0-9a-z]+", "", html.unescape(title).lower())
-
-
-def published_title_keys(slug: str) -> dict[str, str] | None:
-    """Normalised title -> rm:id of every published paper, or None if unreadable."""
-    try:
-        items = rm.fetch_items(slug)
-    except SyncAbort as exc:
-        annotate("warning", f"[preprint] researchmap papers unreadable ({exc}); not checking for published versions")
-        return None
-    keys = {}
-    for item in items:
-        for title in (item.get("paper_title") or {}).values():
-            if title:
-                keys[_title_key(str(title))] = str(item.get("rm:id"))
-    return keys
-
-
-def _front_title(content: str) -> str:
-    m = re.search(r"^title: '(.*)'$", content, re.M)
-    return m.group(1).replace("''", "'") if m else ""
-
-
-def read_sources() -> list[tuple[str, str]] | None:
-    """(kind, value) pairs from preprint_sources.json; None when the file is bad."""
-    try:
-        raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        annotate("error", f"[preprint] {DATA_PATH.name} is not valid JSON: {exc}")
-        return None
-    if not isinstance(raw, dict):
-        annotate("error", f"[preprint] {DATA_PATH.name} must hold an object")
-        return None
-
-    def listed(key: str) -> list[str]:
-        values = raw.get(key)
-        return [str(v) for v in values] if isinstance(values, list) else []
-
-    sources = [("doi", d) for d in listed("dois")] + [("arxiv", a) for a in listed("arxiv_ids")]
-    return [(k, v.strip()) for k, v in sources if v.strip() and not v.strip().startswith("#")]
+# ----------------------------------------------------------------------- main
 
 
 def main() -> int:
-    slug = sys.argv[1] if len(sys.argv) > 1 else "satoshi-nakano"
-    sources: list[tuple[str, str]] = []
-    if DATA_PATH.is_file():
-        listed = read_sources()
-        if listed is None:
-            return 1
-        sources = listed
-    # Preprints registered in researchmap (MISC) join the hand-kept list.
-    seen = {clean_arxiv_id(v) for k, v in sources if k == "arxiv"}
-    for aid in researchmap_arxiv_ids(slug):
-        if aid not in seen:
-            seen.add(aid)
-            sources.append(("arxiv", aid))
-    published = published_title_keys(slug)
+    try:
+        slug = researchmap_slug()
+    except SyncAbort as exc:
+        annotate("error", f"[preprint] {exc}")
+        return 1
+    sources = collect_sources(slug)
+    if sources is None:
+        return 1
+    published = published_index(slug)
+    if published is None:
+        # Without the papers there is no telling which preprints were published
+        # since; putting those back for a week is worse than waiting a week.
+        return 0
 
     generated: dict[str, str] = {}
-    kept: list[str] = []   # lookup failed, the existing entry still stands
-    lost: list[str] = []   # lookup failed and nothing is left to show
-    dropped = 0            # superseded by the published paper
+    kept: list[str] = []   # lookup failed, the published file still stands
+    lost: list[str] = []   # lookup failed and there is nothing to show
+    dropped = 0            # files removed because the paper is out
 
-    for kind, value in sources:
+    for source in sources:
         try:
-            result = resolve_doi(value) if kind == "doi" else resolve_arxiv(value)
+            record = resolve(source)
             reason = "no record found"
-        except Exception as exc:  # network, rate limit, malformed response
-            result, reason = None, f"{type(exc).__name__}: {exc}"
-
-        if result is not None:
-            rm_id = (published or {}).get(_title_key(_front_title(result[1])))
-            if rm_id:
-                log(f"[preprint] {kind} {value}: published as rm:{rm_id}; the preprint is no longer listed")
-                dropped += 1
-                continue
-            generated[result[0]] = result[1]
+        except LOOKUP_ERRORS as exc:
+            record, reason = None, f"{type(exc).__name__}: {exc}"
+        existing = carry_forward(source.slug)
+        title = record.title if record else front_title(existing[1]) if existing else ""
+        rm_id = published.match(source, title)
+        if rm_id:
+            log(f"[preprint] {source}: published as rm:{rm_id}; the preprint is no longer listed")
+            dropped += 1 if existing else 0
             continue
-        fallback = carry_forward(slug_for_source(kind, value))
-        if fallback:
-            generated[fallback[0]] = fallback[1]
-            kept.append(f"{kind} {value}: {reason} — kept the existing entry")
+        if record:
+            name, content = record.render()
+            generated[name] = content
+        elif existing:
+            generated[existing[0]] = existing[1]
+            kept.append(f"{source}: {reason} — kept the existing entry")
         else:
-            lost.append(f"{kind} {value}: {reason} — no existing entry to keep")
+            lost.append(f"{source}: {reason} — no existing entry to keep")
 
     for note in kept:
         annotate("warning", f"[preprint] {note}")
     for note in lost:
         annotate("error", f"[preprint] {note}")
 
-    # An empty sources list legitimately means "no preprints"; allow the clear-out.
     try:
         written, deleted, unchanged = apply_generated(
             pattern="*-pp-*.md",
             generated=generated,
-            min_expected=0 if len(sources) == dropped else 1,
-            # A preprint that turned into a paper leaves on purpose.
-            allow_shrink=allow_shrink_from_env() or not sources or dropped > 0,
+            # No sources at all is a real "no preprints"; the guard is for runs
+            # that had sources and still produced nothing.
+            min_expected=1 if generated or lost or kept else 0,
+            allow_shrink=allow_shrink_from_env() or not sources,
+            removed_on_purpose=dropped,
         )
     except SyncAbort as exc:
         annotate("error", f"[preprint] {exc}")
@@ -563,8 +588,6 @@ def main() -> int:
         f"[preprint] {len(generated)} entr(ies) from {len(sources)} source(s): "
         f"{written} written, {deleted} removed, {unchanged} unchanged"
     )
-    # A lookup that failed while the published entry still stands loses nothing.
-    # A source with nothing to fall back on means the site is missing a preprint.
     return 1 if lost else 0
 
 
