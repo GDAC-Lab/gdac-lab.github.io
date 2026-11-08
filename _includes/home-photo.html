@@ -1,0 +1,6 @@
+{% include base_path %}
+{%- comment -%} The group photo on the home page, with its caption. {%- endcomment %}
+<figure class="home-photo">
+  <img src="{{ base_path }}/images/lab/group-photo.jpg" alt="{% if page.lang == 'ja' %}GDAC Lab のメンバー集合写真{% else %}GDAC Lab group photo{% endif %}" width="1600" height="900" decoding="async">
+  <figcaption>{% if page.lang == 'ja' %}研究室メンバーの集合写真{% else %}Group photo of lab members{% endif %}</figcaption>
+</figure>

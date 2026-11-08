@@ -202,7 +202,7 @@ h3.publication-entry__title {
    their list than prose section spacing. */
 h2.publications-page__category-heading {
   margin-bottom: 0.6rem;
-  scroll-margin-top: calc(#{$masthead-height} + 0.75rem);
+  scroll-margin-top: 0.75rem;   /* below the masthead (html's scroll-padding) */
   max-width: none;
 }
 

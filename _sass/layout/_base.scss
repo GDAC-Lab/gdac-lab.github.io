@@ -6,6 +6,13 @@ html {
   /* sticky footer: .page__footer is absolutely positioned at the bottom */
   position: relative;
   min-height: 100%;
+  /* An in-page link lands below the fixed masthead, not under it.
+     assets/js/site.js keeps --masthead-height to the masthead's height. */
+  scroll-padding-top: var(--masthead-height, #{$masthead-height});
+
+  @media (prefers-reduced-motion: no-preference) {
+    scroll-behavior: smooth;
+  }
 }
 
 body {

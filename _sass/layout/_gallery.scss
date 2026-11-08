@@ -25,7 +25,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  scroll-margin-top: calc(#{$masthead-height} + 1rem);
+  scroll-margin-top: 1rem;   /* below the masthead (html's scroll-padding) */
 }
 
 .gallery__figure {

@@ -1,31 +1,35 @@
 {% include base_path %}
+{%- assign _ja = false -%}{%- if page.lang == 'ja' -%}{%- assign _ja = true -%}{%- endif -%}
 
 <div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
-      <nav id="site-nav" class="greedy-nav">
-        <button><div class="navicon"></div></button>
+      <nav id="site-nav" class="greedy-nav" aria-label="{% if _ja %}メイン{% else %}Main{% endif %}">
+        {%- comment -%}
+          assets/js/site.js moves the items that do not fit into .hidden-links
+          and shows this button for them. It starts hidden, so a wide screen
+          never sees it.
+        {%- endcomment %}
+        <button type="button" class="greedy-nav__toggle hidden" aria-label="{% if _ja %}メニュー{% else %}Menu{% endif %}" aria-expanded="false" aria-controls="site-nav-more"><span class="navicon"></span></button>
         <ul class="visible-links">
-          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{% if page.lang == 'ja' %}{{ base_path }}/ja/{% else %}{{ base_path }}/{% endif %}">{% if page.lang == 'ja' and site.title_ja_short %}{{ site.title_ja_short }}{% else %}{{ site.title }}{% endif %}</a></li>
+          <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="{% if _ja %}{{ base_path }}/ja/{% else %}{{ base_path }}/{% endif %}">{% if _ja and site.title_ja_short %}{{ site.title_ja_short }}{% else %}{{ site.title }}{% endif %}</a></li>
           {%- comment -%}
-            An entry with `children:` in navigation.yml becomes a menu. Its
-            toggle is an <a role="button"> rather than a <button>, because
-            greedy-nav claims every <button> inside #site-nav as its own
-            overflow control. assets/js/nav-submenu.js opens and closes it.
+            An entry with `children:` in navigation.yml becomes a menu, opened
+            and closed by assets/js/site.js.
           {%- endcomment -%}
           {% for link in site.data.navigation.main %}
             {% assign nav_label = link.title %}
-            {% if page.lang == 'ja' and link.title_ja %}
+            {% if _ja and link.title_ja %}
               {% assign nav_label = link.title_ja %}
             {% endif %}
             {% if link.children %}
             <li class="masthead__menu-item masthead__menu-item--group">
               <div class="masthead__group">
-                <a role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-controls="nav-group-{{ forloop.index }}" class="masthead__group-toggle">{{ nav_label }}<span class="masthead__group-caret" aria-hidden="true"></span></a>
+                <button type="button" class="masthead__button masthead__group-toggle" aria-expanded="false" aria-controls="nav-group-{{ forloop.index }}">{{ nav_label }}<span class="masthead__group-caret" aria-hidden="true"></span></button>
                 <ul class="masthead__submenu" id="nav-group-{{ forloop.index }}">
                   {% for child in link.children %}
                     {% assign child_label = child.title %}
-                    {% if page.lang == 'ja' and child.title_ja %}
+                    {% if _ja and child.title_ja %}
                       {% assign child_label = child.title_ja %}
                     {% endif %}
                     {% include nav-url.html url=child.url %}
@@ -42,15 +46,16 @@
           {%- comment -%}
             Language switcher. Each page links to its counterpart in the other
             language; lang-urls.html works out which URL that is, and the hreflang
-            links in the head read the same answer from it.
+            links in the head read the same answer from it. It and the theme
+            toggle are .tail: they stay at the end of the bar.
           {%- endcomment -%}
           {%- include lang-urls.html -%}
-          <li class="masthead__menu-item persist">{% if lang_is_ja %}<a href="{{ base_path }}{{ lang_url_en }}" class="masthead__lang-link">{% include lang-flag.html code="gb" %}EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current">{% include lang-flag.html code="jp" %}日本語</span>{% else %}<span class="masthead__lang-current">{% include lang-flag.html code="gb" %}EN</span><span class="masthead__lang-sep">|</span><a href="{{ base_path }}{{ lang_url_ja }}" class="masthead__lang-link">{% include lang-flag.html code="jp" %}日本語</a>{% endif %}</li>
+          <li class="masthead__menu-item persist tail">{% if lang_is_ja %}<a href="{{ base_path }}{{ lang_url_en }}" class="masthead__lang-link" lang="en" hreflang="en">{% include lang-flag.html code="gb" %}EN</a><span class="masthead__lang-sep">|</span><span class="masthead__lang-current">{% include lang-flag.html code="jp" %}日本語</span>{% else %}<span class="masthead__lang-current">{% include lang-flag.html code="gb" %}EN</span><span class="masthead__lang-sep">|</span><a href="{{ base_path }}{{ lang_url_ja }}" class="masthead__lang-link" lang="ja" hreflang="ja">{% include lang-flag.html code="jp" %}日本語</a>{% endif %}</li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
-            <a role="button" aria-label="{% if page.lang == 'ja' %}表示テーマを切り替える{% else %}Toggle light and dark theme{% endif %}"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="{% if page.lang == 'ja' %}表示テーマの切り替え{% else %}Toggle theme{% endif %}"></i></a>
+            <button type="button" class="masthead__button theme-toggle" aria-label="{% if _ja %}表示テーマを切り替える{% else %}Toggle light and dark theme{% endif %}" title="{% if _ja %}表示テーマの切り替え{% else %}Toggle theme{% endif %}"><i class="fa-solid fa-sun theme-toggle__icon" aria-hidden="true"></i></button>
           </li>
         </ul>
-        <ul class="hidden-links hidden"></ul>
+        <ul id="site-nav-more" class="hidden-links hidden"></ul>
       </nav>
     </div>
   </div>

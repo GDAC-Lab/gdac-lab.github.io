@@ -30,7 +30,7 @@ nitech_faculty_url       : "https://www.nitech.ac.jp/faculty/nakano-satoshi.html
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "lab/group-photo.jpg" # Sidebar image (also on home slideshow via _includes/home-slideshow.html)
+  avatar           : "lab/group-photo.jpg" # Sidebar image (also the photo on the home page, _includes/home-photo.html)
   name             : "GDAC Lab"
   name_ja          : "仲野研究室"
   bio              : "Geometric Dynamics, Autonomy, and Control Laboratory"
@@ -113,9 +113,6 @@ exclude:
   - .bundle
   - .github
   - .sass-cache
-  - assets/js/_main.js
-  - assets/js/plugins
-  - package.json
   # The CAD the browser demo's vehicle is built from. Kept in the repository
   # so scripts/build_drone_mesh.py can be re-run, but 8 MB of STL has no
   # business on the live site: only the built bundle beside it ships.

@@ -17,7 +17,7 @@ This is the site of the **Geometric Dynamics, Autonomy, and Control Laboratory (
 
 Our work combines theory and hardware experiments on constrained control of rotational motion, geometric attitude control on SO(3), and applications such as wheeled drones for infrastructure inspection. A concise overview is on the [Research]({{ site.baseurl }}/research/) page.
 
-{% include home-slideshow.html %}
+{% include home-photo.html %}
 
 {% include home-extra.html %}
 

@@ -1,4 +1,36 @@
-/* Home page (EN and JA): the site guide, the note for students, the photo note */
+/* Home page (EN and JA): the group photo, the site guide, the note for
+   students, the photo note */
+
+/* The photo in a frame, its caption on a band below it */
+figure.home-photo {
+  display: block;
+  margin: 1.75rem 0 1.5rem;
+  border: 1px solid var(--global-border-color);
+  border-radius: $border-radius;
+  overflow: hidden;
+  background: var(--global-thead-color);
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 26rem;
+    margin: 0;
+    object-fit: cover;
+    border-radius: 0;
+  }
+
+  figcaption {
+    margin: 0;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--global-text-color-light);
+    border-top: 1px solid var(--global-border-color);
+    background: var(--global-bg-color);
+  }
+}
+
 .home-at-a-glance {
   margin: 1.75rem 0 1.25rem;
 }

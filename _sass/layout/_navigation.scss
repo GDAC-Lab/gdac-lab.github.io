@@ -11,7 +11,8 @@
   min-width: 250px;
   background: var(--global-bg-color);
 
-  a {
+  a,
+  .masthead__button {
     display: block;
     margin: 0 1rem;
     padding: 0.5rem 0;
@@ -23,17 +24,39 @@
     }
   }
 
-  button {
+  /* The submenu and theme toggles are <button>s drawn like the links */
+  .masthead__button {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    transition: $global-transition;
+
+    &:focus-visible {
+      @extend %tab-focus;
+    }
+  }
+
+  /* The overflow menu's toggle (☰, an X while open) */
+  .greedy-nav__toggle {
     position: absolute;
     height: 2.5rem;
     right: 0;
     padding: 0 0.5rem;
     border: 0;
-    outline: none;
     background-color: var(--global-base-color);
     color: #fff;
     cursor: pointer;
     z-index: 100;
+
+    &:focus-visible {
+      @extend %tab-focus;
+    }
   }
 
   /* The overflow button is absolutely positioned over the nav's right edge and
@@ -41,7 +64,7 @@
      width, so it stretched the full nav width and put its last cell — the
      theme toggle — underneath the button, where it could not be tapped.
      Reserve the button's width while the button is shown. */
-  button:not(.hidden) ~ .visible-links {
+  .greedy-nav__toggle:not(.hidden) ~ .visible-links {
     width: calc(100% - #{$navicon-width} - 1.75rem);
   }
 
@@ -68,25 +91,24 @@
       }
 
       &:last-child {
-        a {
+        a,
+        .masthead__button {
           margin-right: 0;
         }
       }
     }
 
-    #theme-toggle {
-      a {
-        width: 25px;
-        display: flex;
-        justify-content: center;
-        cursor: pointer;
-      }
+    .theme-toggle {
+      width: 25px;
+      display: flex;
+      justify-content: center;
     }
 
-    a {
+    a,
+    .masthead__button {
       position: relative;
 
-      &:before {
+      &::before {
         content: "";
         position: absolute;
         left: 0;
@@ -98,7 +120,7 @@
         transform: scaleX(0); /* hide*/
       }
 
-      &:hover:before {
+      &:hover::before {
         transform: scaleX(1); /* reveal*/
       }
     }
@@ -115,7 +137,8 @@
     background: var(--global-bg-color);
     box-shadow: 0 0 10px rgba(#000, 0.25);
 
-    a {
+    a,
+    .masthead__button {
       margin: 0;
       padding: 10px 20px;
       font-size: $type-size-5;
@@ -126,7 +149,12 @@
       }
     }
 
-    &:before {
+    /* a <button> is only as wide as its text; the row is the whole menu */
+    .masthead__button {
+      width: 100%;
+    }
+
+    &::before {
       content: "";
       position: absolute;
       top: -11px;
@@ -139,7 +167,7 @@
       z-index: 0;
     }
 
-    &:after {
+    &::after {
       content: "";
       position: absolute;
       top: -10px;
@@ -163,13 +191,18 @@
   }
 }
 
+/* The sun in the light theme, the moon in the dark */
+html[data-theme="dark"] .theme-toggle__icon::before {
+  content: "\f186";
+}
+
 
 /*
    Header submenu
    ========================================================================== */
 
 /* One header entry opens a menu rather than going somewhere (see
-   _data/navigation.yml and assets/js/nav-submenu.js). Two things shape the
+   _data/navigation.yml and assets/js/site.js). Two things shape the
    rules below:
 
    - .visible-links lays its items out as a table, and the theme writes
@@ -228,7 +261,7 @@
 
   /* .visible-links a carries an underline that slides in from the left on
      hover. Under every row of a panel it reads as a set of dividers. */
-  &:before {
+  &::before {
     display: none;
   }
 

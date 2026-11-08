@@ -18,7 +18,7 @@ redirect_from:
 
 拘束を考慮した回転運動の制御，回転行列（SO(3)）を直接扱う幾何学的な姿勢制御，車輪付きドローンによるインフラ点検などの概要は，[研究内容]({{ site.baseurl }}/ja/research/)のページでご覧いただけます。
 
-{% include home-slideshow.html %}
+{% include home-photo.html %}
 
 {% include home-extra.html %}
 

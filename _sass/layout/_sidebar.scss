@@ -173,6 +173,12 @@
   box-shadow: 0 0 10px rgba(#000, 0.25);
   cursor: default;
 
+  /* opened by the Links button (assets/js/site.js) */
+  &.is-open {
+    display: block;
+    animation: intro 0.2s both;
+  }
+
   @include breakpoint($large) {
     display: block;
     position: relative;

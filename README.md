@@ -25,7 +25,7 @@ The site is bilingual: English pages live at the site root, Japanese pages under
 | Images | `images/` (group photo: `images/lab/group-photo.jpg`) |
 
 Home page composition is `_pages/about.md` (EN) / `_pages/ja/index.md` (JA), which pull in
-`_includes/home-slideshow.html`, `home-extra.html` and `home-news.html`.
+`_includes/home-photo.html`, `home-extra.html` and `home-news.html`.
 
 ## The header menu
 
@@ -50,15 +50,11 @@ Three things about that are easy to break:
   pointed at has to be the first child. The children are ordinary `<a>`
   elements present in the markup of every page whether the menu is open or not,
   so they are links a crawler follows, not something JavaScript conjures up.
-* **The toggle is an `<a role="button">`, not a `<button>`.** greedy-nav — the
-  script that moves overflowing items into the ☰ menu — claims every `<button>`
-  inside `#site-nav` as its own overflow control, so a real button here breaks
-  the header.
 * **The same markup renders in two places.** In the header bar the menu is a
-  panel floating under its parent; once greedy-nav has moved the item into the
-  ☰ list it is an indented list in the flow. Both are styled at the end of
-  `_sass/layout/_navigation.scss`; `assets/js/nav-submenu.js` decides when it
-  is open, and is the single source of truth for that, hover included.
+  panel floating under its parent; once the item has moved into the ☰ menu
+  (see below) it is an indented list in the flow. Both are styled at the end of
+  `_sass/layout/_navigation.scss`; `assets/js/site.js` decides when it is open,
+  and is the single source of truth for that, hover included.
 
 Header items are dropped from the end when the window is too narrow, so what
 goes last is what disappears first on a small laptop. One page stays out of the
@@ -361,27 +357,14 @@ The icon fonts (Font Awesome and Academicons) are served as `woff2` only and cut
 dozen icons the site shows, about 6 kB in all. `scripts/build_icon_fonts.sh` rebuilds them; to use
 another icon, add its code point there and its rule to `_sass/include/_icons.scss`.
 
-MathJax, Plotly and Mermaid used to load from CDNs on *every* page, several megabytes of
-JavaScript for features no page used. They are now loaded per page in
-`_includes/footer/custom.html`:
+All the pages' behaviour is in `assets/js/site.js`, plain JavaScript with no build step: the
+theme toggle, the header's ☰ menu (items that do not fit move into it, from the right) and its
+submenus, the sidebar's Links button, and the footer that sits at the bottom of a short page.
+The theme itself is set by a few lines in `_includes/head.html`, before the page paints, so a
+dark page never flashes white. The simulator and the sun-safe slew demo have their own scripts.
 
-- **MathJax** — opt in with `mathjax: true` in a page's front matter.
-- **Plotly** and **Mermaid** — detected automatically from a <code>```plotly</code> or
-  <code>```mermaid</code> code block in the page.
-
-`assets/js/theme.js` — 14 kB of Plotly light/dark layout templates — is imported the same way.
-It used to be a static `import` in `assets/js/_main.js`, which made every page fetch it on top of
-the bundle; it is now an `import('./theme.js')` inside the branch that runs only when a
-<code>```plotly</code> block is present.
-
-`assets/js/main.min.js` is generated, not written: it is jQuery + fitvids + jquery-smooth-scroll
-+ `assets/js/plugins/jquery.greedy-navigation.js` + `assets/js/_main.js` run through uglify-js.
-After editing `_main.js`, rebuild it and commit both files:
-
-```bash
-npm install          # once
-npm run build:js     # rewrites assets/js/main.min.js
-```
+MathJax is the one third-party script a page can load: opt in with `mathjax: true` in its front
+matter (`_includes/footer/custom.html`).
 
 Repo-only files (`scripts/`, `README.md`, `CONTRIBUTING.md`, Docker files, `.devcontainer`) are
 listed under `exclude:` in `_config.yml`. Anything not excluded is copied verbatim into the

@@ -24,8 +24,8 @@
   </div>
 
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">{% if _ja %}関連リンク{% else %}Links{% endif %}</button>
-    <ul class="author__urls social-icons">
+    <button type="button" class="btn btn--inverse" aria-expanded="false" aria-controls="author-links">{% if _ja %}関連リンク{% else %}Links{% endif %}</button>
+    <ul id="author-links" class="author__urls social-icons">
       {% if author.location %}
         <li class="author__desktop"><i class="fas fa-fw fa-location-dot icon-pad-right" aria-hidden="true"></i>{% if _ja and author.location_ja %}{{ author.location_ja }}{% else %}{{ author.location }}{% endif %}</li>
       {% endif %}

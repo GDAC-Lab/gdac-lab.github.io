@@ -18,37 +18,14 @@
 </p>
 
 {% comment %}
-  MathJax / Plotly / Mermaid are large third-party bundles. They used to load on every
-  page; now each one loads only where it is actually needed, so ordinary pages pull none
-  of them.
-
-  - MathJax: opt in per page with `mathjax: true` in the front matter.
-  - Plotly and Mermaid: detected automatically from a ```plotly / ```mermaid code block.
-
-  No page uses any of them today, which is why /terms/ is able to say plainly
-  that every page serves its fonts, styles, scripts and images from this site.
-  Turning one on makes that sentence untrue: update /terms/ in both languages
-  at the same time.
+  MathJax, for a page that sets `mathjax: true` in its front matter. It is a
+  large third-party script, so no page loads it unless it asks. No page does
+  today, which is why /terms/ can say plainly that every page serves its
+  fonts, styles, scripts and images from this site. Turning it on makes that
+  sentence untrue: update /terms/ in both languages at the same time.
 {% endcomment %}
-
 {% if page.mathjax %}
-<!-- Support for MathJax (enabled by `mathjax: true` in the page front matter) -->
-<script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
-{% endif %}
-
-{% if content contains "language-plotly" %}
-<!-- Support for Plotly (rendered by assets/js/_main.js) -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.0.1/plotly.min.js"></script>
-{% endif %}
-
-{% if content contains "language-mermaid" %}
-<!-- Support for Mermaid -->
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({startOnLoad:true, theme:'default'});
-    await mermaid.run({querySelector:'code.language-mermaid'});
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" id="MathJax-script"></script>
 {% endif %}
 
 <!-- end custom footer snippets -->
