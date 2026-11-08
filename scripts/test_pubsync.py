@@ -131,12 +131,12 @@ class TestResearchmapParsing(unittest.TestCase):
     def test_permalink_is_date_independent(self):
         a = rm.render(paper("42", date="2024-05-06"), set(), [])
         b = rm.render(paper("42", date="2024-11-30"), set(), [])
-        self.assertIn("permalink: /publication/rm-42", a[1])
-        self.assertIn("permalink: /publication/rm-42", b[1])
+        self.assertIn("permalink: /publication/rm-42/\n", a[1])
+        self.assertIn("permalink: /publication/rm-42/\n", b[1])
 
-    def test_old_date_url_is_redirected(self):
+    def test_earlier_urls_are_redirected(self):
         _, content = rm.render(paper("42", date="2024-05-06"), set(), [])
-        self.assertIn("- /publication/2024-05-06-rm-42", content)
+        self.assertIn("redirect_from:\n  - /publication/rm-42\n  - /publication/2024-05-06-rm-42\n", content)
 
     def test_doi_preferred_over_url_regardless_of_order(self):
         item = paper("1", see_also=[
@@ -443,7 +443,7 @@ class TestPreprints(TempPubDir):
         # The slug must stay in the arXiv form, or the published URL moves and
         # carry_forward stops finding the existing file.
         self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
-        self.assertIn("permalink: /publication/pp-arxiv-2503-16715", content)
+        self.assertIn("permalink: /publication/pp-arxiv-2503-16715/\n", content)
         self.assertIn("paperurl: 'https://arxiv.org/abs/2503.16715'", content)
         self.assertIn("Satoshi Nakano, Noboru Sakamoto", content)
         self.assertIn("A Constrained Attitude Result", content)
@@ -525,8 +525,9 @@ class TestPreprints(TempPubDir):
         name, content = pp.Preprint(self.arxiv(), "T", "2025-03-20", "A", pp.ARXIV_VENUE,
                                     "https://arxiv.org/abs/2503.16715").render()
         self.assertEqual(name, "2025-03-20-pp-arxiv-2503-16715.md")
-        self.assertIn("permalink: /publication/pp-arxiv-2503-16715", content)
-        self.assertIn("- /publication/2025-03-20-pp-arxiv-2503-16715", content)
+        self.assertIn("permalink: /publication/pp-arxiv-2503-16715/\n", content)
+        self.assertIn("  - /publication/pp-arxiv-2503-16715\n", content)
+        self.assertIn("  - /publication/2025-03-20-pp-arxiv-2503-16715\n", content)
 
 
 class TestPreprintSync(TempPubDir):
@@ -975,6 +976,13 @@ class TestFrontMatter(unittest.TestCase):
     def test_list_renders_as_yaml_list(self):
         out = common.front_matter([("redirect_from", ["/a", "/b"])])
         self.assertIn("redirect_from:\n  - /a\n  - /b", out)
+
+    def test_page_urls(self):
+        """A directory URL that any static server can serve, and both earlier forms."""
+        self.assertEqual(common.page_urls("rm-7", "2020-02-03"), [
+            ("permalink", "/publication/rm-7/"),
+            ("redirect_from", ["/publication/rm-7", "/publication/2020-02-03-rm-7"]),
+        ])
 
     def test_citation_escapes_html(self):
         cite = common.build_citation("A & B", "2024", 'He said "hi"', "V<x>")

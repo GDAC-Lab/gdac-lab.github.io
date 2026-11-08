@@ -85,6 +85,7 @@ from pubsync_common import (  # noqa: E402
     log,
     normalize_arxiv_id,
     normalize_doi,
+    page_urls,
     researchmap_slug,
     title_language,
 )
@@ -297,8 +298,7 @@ class Preprint:
             ("collection", "publications"),
             ("category", "preprints"),
             ("lang", title_language(self.title)),
-            ("permalink", f"/publication/pp-{slug}"),
-            ("redirect_from", [f"/publication/{self.date}-pp-{slug}"]),
+            *page_urls(f"pp-{slug}", self.date),
             ("date", self.date),
             ("venue", self.venue),
             ("paperurl", self.url),

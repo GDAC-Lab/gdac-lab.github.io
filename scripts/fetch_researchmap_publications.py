@@ -22,8 +22,8 @@ Design notes
   closed connection without response", 2026-09-05).
 * Permalinks are keyed on the researchmap record id alone. The publication date
   is metadata that researchmap does edit, and folding it into the URL meant a
-  date correction silently moved the page. `redirect_from` keeps the previous
-  date-based URL working.
+  date correction silently moved the page. `redirect_from` keeps the earlier
+  URLs working (pubsync_common.page_urls).
 """
 
 from __future__ import annotations
@@ -45,6 +45,7 @@ from pubsync_common import (  # noqa: E402
     iso_day,
     log,
     normalize_doi,
+    page_urls,
     researchmap_slug,
 )
 
@@ -273,9 +274,7 @@ def render(item: dict, unknown_types: set[str], skipped: list[str]) -> tuple[str
         ("collection", "publications"),
         ("category", category_for(item, unknown_types)),
         ("lang", record_language(item.get("paper_title"))),
-        ("permalink", f"/publication/rm-{rm_id}"),
-        # Keeps the previous date-based URL working after the permalink change.
-        ("redirect_from", [f"/publication/{date_iso}-rm-{rm_id}"]),
+        *page_urls(f"rm-{rm_id}", date_iso),
         ("date", date_iso),
         ("venue", venue),
         ("paperurl", paper_url(item)),

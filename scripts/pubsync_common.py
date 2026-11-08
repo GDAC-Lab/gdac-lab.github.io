@@ -327,6 +327,21 @@ def build_citation(authors: str, year: str, title: str, venue: str) -> str:
     )
 
 
+def page_urls(stem: str, date_iso: str) -> list[tuple[str, object]]:
+    """The permalink and redirect_from fields of a publication page.
+
+    The page lives at /publication/<stem>/ (a directory, served as its
+    index.html by any static server). The two earlier forms still redirect
+    there: /publication/<stem>, which only resolved where the server mapped an
+    extensionless URL to its .html file, and /publication/<date>-<stem>, from
+    before the URL stopped depending on the publication date.
+    """
+    return [
+        ("permalink", f"/publication/{stem}/"),
+        ("redirect_from", [f"/publication/{stem}", f"/publication/{date_iso}-{stem}"]),
+    ]
+
+
 def front_matter(fields: list[tuple[str, object]]) -> str:
     """Render front matter. Values of None/'' are dropped; lists become YAML lists."""
     lines = ["---"]
