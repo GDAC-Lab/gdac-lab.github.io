@@ -22,9 +22,12 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-  # The engine and the vendored libraries are versioned by content, never edited
-  # in place, so they can be cached hard. Everything else keeps the default.
+  # The engine is 9.7 MB, so a returning visitor should not fetch it again.
+  # A week, not a year with `immutable`: its URL carries no version, and an
+  # updated mujoco.js meeting a year-old cached mujoco.wasm would break the
+  # simulator. After a week the browser revalidates, and an unchanged file
+  # costs a 304, not a download. Everything else keeps the default.
   <FilesMatch "\.(wasm)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
+    Header set Cache-Control "public, max-age=604800"
   </FilesMatch>
 </IfModule>
