@@ -21,7 +21,9 @@
     --global-link-color                 : #1f7490;
     --global-link-color-hover           : #{mix(#000, #1f7490, 30%)};
     --global-masthead-link-color        : #{$dark-gray};
-    --global-masthead-link-color-hover  : mix(#000, #{$gray}, 25%);
+    --global-masthead-link-color-hover  : #{$dark-gray};
+    /* Ground of a menu row under the pointer */
+    --global-menu-hover-bg              : #{$lighter-gray};
     --global-text-color                 : #{$dark-gray};
     --global-text-color-strong          : #{$darker-gray};
     --global-text-color-light           : #{$muted-gray};
@@ -70,6 +72,8 @@ html[data-theme="dark"] {
     --global-link-color-hover           : #{$link-hover};
     --global-masthead-link-color        : #{$text};
     --global-masthead-link-color-hover  : #{$background-light};
+    /* the border grey would leave the light text almost unreadable */
+    --global-menu-hover-bg              : #{mix(#fff, $background, 12%)};
     --global-text-color                 : #{$text-body};
     --global-text-color-strong          : #{$text};
     --global-text-color-light           : #{$text-muted};

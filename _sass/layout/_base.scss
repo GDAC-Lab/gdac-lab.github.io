@@ -216,8 +216,8 @@ figcaption {
     transition: $global-transition;
 
     &:hover {
-      color: #000;
-      border-bottom-color: #000;
+      color: var(--global-text-color-strong);
+      border-bottom-color: currentColor;
     }
   }
 }

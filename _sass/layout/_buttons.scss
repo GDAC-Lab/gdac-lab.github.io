@@ -49,6 +49,15 @@
       }
     }
   }
+
+  /* X's colour is black, which darkening cannot show: lighten on hover */
+  &--x {
+    background-color: #000;
+
+    &:hover {
+      background-color: #333;
+    }
+  }
 }
 
 /* Both content wrappers underline every link inside them — `.page__content a`

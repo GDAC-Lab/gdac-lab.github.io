@@ -27,6 +27,11 @@
 
 .social-icons .fa-github {
   color: $github-color;
+
+  /* near-black: on the dark ground it takes the text colour like the rest */
+  html[data-theme="dark"] & {
+    color: inherit;
+  }
 }
 
 

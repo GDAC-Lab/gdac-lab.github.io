@@ -35,7 +35,8 @@ video {
 a {
   color: var(--global-link-color);
 
-  &:focus {
+  /* keyboard focus only: a click leaves no ring */
+  &:focus-visible {
     @extend %tab-focus;
   }
 
