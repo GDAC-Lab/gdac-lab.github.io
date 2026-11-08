@@ -6,7 +6,7 @@
 
 
 
-<!-- begin SEO -->
+
 
 
 
@@ -20,10 +20,7 @@
 
 <link rel="canonical" href="https://gdaclab.web.nitech.ac.jp/">
   <meta name="google-site-verification" content="9R2JrmzriaDdkLuCmC8LwMKuFrELVBbz8avjXg3pWUg" />
-
-<!-- end SEO -->
-
-<!-- Open Graph protocol data (https://ogp.me/), used by social media --><meta property="og:locale" content="en_US">
+<meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="GDAC Lab">
 <meta property="og:title" content="GDAC Lab">
   <meta property="og:description" content="The laboratory of Satoshi Nakano at Nagoya Institute of Technology: constrained control of rotational motion, geometric attitude control on SO(3), and applications to satellites and wheeled drones.">
@@ -32,7 +29,7 @@
 
   <meta property="og:image" content="https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg">
 
-<meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/"><!-- end Open Graph protocol -->
+<meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/">
 
 
 <link rel="alternate" hreflang="ja" href="https://gdaclab.web.nitech.ac.jp/ja/">
@@ -56,12 +53,15 @@
       },
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Gokiso-cho, Showa-ku",
         "addressLocality": "Nagoya",
         "addressRegion": "Aichi",
+        "postalCode": "466-8555",
         "addressCountry": "JP"
       },
       "member": { "@id": "https://gdaclab.web.nitech.ac.jp/#nakano" },
-      "logo": "https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg",
+      "image": "https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg",
+      "sameAs": ["https://github.com/gdac-lab"],
       "knowsAbout": ["control theory", "constrained control", "geometric control", "attitude control", "robotics", "drones", "spacecraft"]
     },
     {
@@ -77,7 +77,7 @@
         "url": "https://www.nitech.ac.jp/"
       },
       "url": "https://gdaclab.web.nitech.ac.jp/nakano/",
-      "sameAs": ["https://www.nitech.ac.jp/faculty/nakano-satoshi.html","https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/","https://researchmap.jp/satoshi-nakano","https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en","https://github.com/gdac-lab"]
+      "sameAs": ["https://www.nitech.ac.jp/faculty/nakano-satoshi.html","https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/","https://researchmap.jp/satoshi-nakano","https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en"]
     },
     {
       "@type": "WebSite",
@@ -102,27 +102,17 @@
     }
   })();
 </script>
-
-<!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
-     different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794129374">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794130444">
 
     
-
-<!-- start custom head snippets -->
-
-<!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
-<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
-<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg"/>
-<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32"/>
-<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192"/>
-<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json"/>
-<link rel="icon" href="https://gdaclab.web.nitech.ac.jp/images/favicon.ico"/>
-<meta name="theme-color" content="#ffffff"/>
-
-<!-- Language switcher icon styles live in _sass/layout/_masthead.scss -->
-
-<!-- end custom head snippets -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg">
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192">
+<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json">
+<link rel="icon" href="https://gdaclab.web.nitech.ac.jp/images/favicon.ico">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#474747" media="(prefers-color-scheme: dark)">
 
   </head>
 
@@ -232,7 +222,7 @@
   </div>
 
   <div class="author__content">
-    <h3 class="author__name">GDAC Lab</h3>
+    <p class="author__name">GDAC Lab</p>
     
       <p class="author__bio">Geometric Dynamics, Autonomy, and Control Laboratory</p>
     
@@ -274,7 +264,6 @@
 
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
-    <meta itemprop="headline" content="GDAC Lab">
     
     
     
@@ -289,14 +278,105 @@
       </header>
 
       <section class="page__content" itemprop="text">
-        <p>This is the site of the <strong>Geometric Dynamics, Autonomy, and Control Laboratory (GDAC Lab)</strong> at Nagoya Institute of Technology, led by <strong>Satoshi Nakano</strong>. We hope it is useful for prospective students, colleagues in academia and industry, and anyone interested in control theory, robotics, and safety-critical systems.</p>
+        <p>This is the site of the <strong>Geometric Dynamics, Autonomy, and Control Laboratory (GDAC Lab)</strong> at Nagoya Institute of Technology, led by <strong>Satoshi Nakano</strong> (Assistant Professor). We hope it is useful for prospective students, colleagues in academia and industry, and anyone interested in control theory, robotics, and safety-critical systems.</p>
 
-<p>Our work combines theory and hardware experiments on constrained control of rotational motion, geometric attitude control on SO(3), and applications such as wheeled drones for infrastructure inspection. A concise overview is on the <a href="/research/">Research</a> page.</p>
+<p>Our work combines theory and hardware experiments on constrained control of rotational motion, geometric attitude control on SO(3), and applications to satellites and to wheeled drones for infrastructure inspection. A concise overview is on the <a href="/research/">Research</a> page.</p>
 
 <figure class="home-photo">
   <img src="https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg" alt="GDAC Lab group photo" width="1600" height="900" decoding="async" />
   <figcaption>Group photo of lab members</figcaption>
 </figure>
+
+<section class="home-news" aria-labelledby="home-news-heading">
+  <h2 id="home-news-heading" class="home-news__heading">News</h2>
+  <ul class="home-news__list">
+    <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-11-07">2026-11-07</time>
+      
+      <div class="home-news__body"><p>Eita and Itsuki gave talks at the 69th Japan Joint Automatic Control Conference.</p>
+</div>
+      
+    </li>
+
+    <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-10-15">2026-10-15</time>
+      
+      <div class="home-news__body"><p>Prof. Nakano gave a talk, “Control design under constraints and safety guarantees,” at the 2026 Industry-Academia Young Researchers’ Seminar of The Iron and Steel Institute of Japan.</p>
+</div>
+      
+    </li>
+
+    <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-10-01">2026-10-01</time>
+      
+      <div class="home-news__body"><p>Four new students, Genki, Yuto, Yoshihito, and Haruto, have joined the lab.</p>
+</div>
+      
+    </li>
+
+    <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-09-03">2026-09-03</time>
+      
+      <div class="home-news__body"><p>Keisuke gave a talk at RSJ2026.</p>
+</div>
+      
+    </li>
+
+    <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-08-26">2026-08-26</time>
+      
+      <div class="home-news__body"><p>Our joint research project with Osaka University, “Development of an omnidirectional, endlessly rotating mechanism free of singular configurations based on geometric power transmission,” was selected for NEDO’s Young Researcher Support Program (joint research formation track).</p>
+</div>
+      <p class="home-news__link-wrap"><a href="https://www.nedo.go.jp/koubo/SM3_100001_00119.html" class="home-news__more">NEDO announcement</a></p>
+    </li>
+
+  </ul>
+  <details class="home-news__older">
+    <summary>Earlier news</summary>
+    <ul class="home-news__list">
+      <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-06-20">2026-06-20</time>
+      
+      <div class="home-news__body"><p>Yuki gave a talk at ASCC 2026.</p>
+</div>
+      
+    </li>
+
+      <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-06-10">2026-06-10</time>
+      
+      <div class="home-news__body"><p>The lab was awarded a laboratory infrastructure grant (electrical and electronic engineering) by the Murata Science and Education Foundation.</p>
+</div>
+      <p class="home-news__link-wrap"><a href="https://corporate.murata.com/ja-jp/group/zaidan/requirement/grant-target" class="home-news__more">Awardee list</a></p>
+    </li>
+
+      <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-04-24">2026-04-24</time>
+      
+      <div class="home-news__body"><p>Yuki’s paper has been accepted to ASCC 2026.</p>
+</div>
+      
+    </li>
+
+      <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-04-24">2026-04-24</time>
+      
+      <div class="home-news__body"><p>A group photo of lab members is now on the home page and in the sidebar.</p>
+</div>
+      
+    </li>
+
+      <li class="home-news__item">
+      <time class="home-news__date" datetime="2026-03-30">2026-03-30</time>
+      
+      <div class="home-news__body"><p>The lab website is now public. Publications, members, and news will be updated here.</p>
+</div>
+      
+    </li>
+
+    </ul>
+  </details>
+</section>
 
 <section class="home-at-a-glance" aria-labelledby="home-at-a-glance-heading">
   <h2 id="home-at-a-glance-heading" class="home-at-a-glance__title">On this site</h2>
@@ -306,7 +386,7 @@
     <li><a href="https://gdaclab.web.nitech.ac.jp/people/">People</a> — faculty, students, and collaborators</li>
     <li><a href="https://gdaclab.web.nitech.ac.jp/facilities/">Facilities</a> — vehicles, the experiment room, and apparatus</li>
     <li><a href="https://gdaclab.web.nitech.ac.jp/simulator/">Simulator</a> — our public simulator, running in your browser</li>
-    <li><a href="https://gdaclab.web.nitech.ac.jp/sun-safe-slew/">Attitude control with a keep-out direction</a> — a spacecraft turning without pointing its camera at the Sun, animated</li>
+    <li><a href="https://gdaclab.web.nitech.ac.jp/sun-safe-slew/">Attitude control with a keep-out direction</a> — a spacecraft turning without pointing its telescope at the Sun, animated</li>
     <li><a href="https://gdaclab.web.nitech.ac.jp/publications/">Publications</a> — papers in English, and the <a href="https://gdaclab.web.nitech.ac.jp/ja/publications/">Japanese list</a></li>
     <li><a href="https://gdaclab.web.nitech.ac.jp/access/">Access</a> — address and directions</li>
   </ul>
@@ -322,121 +402,6 @@
   <p class="home-visuals-note__text"><strong>Photos and media</strong>: photographs of our equipment and experimental environments are on the <a href="https://gdaclab.web.nitech.ac.jp/facilities/">Facilities</a> page. Lab activities are posted on our <a href="https://gdaclab.blogspot.com/" target="_blank" rel="noopener noreferrer">external album</a> (in Japanese).</p>
 </section>
 
-<section class="home-news" aria-labelledby="home-news-heading">
-  <h2 id="home-news-heading" class="home-news__heading">News</h2>
-  <ul class="home-news__list">
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-11-07">2026-11-07</time>
-      
-      <div class="home-news__body"><p>Eita and Itsuki gave talks at the 69th Japan Joint Automatic Control Conference.</p>
-</div>
-      
-    </li>
-        
-      
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-10-15">2026-10-15</time>
-      
-      <div class="home-news__body"><p>Prof. Nakano gave a talk, “Control design under constraints and safety guarantees,” at the 2026 Industry-Academia Young Researchers’ Seminar of The Iron and Steel Institute of Japan.</p>
-</div>
-      
-    </li>
-        
-      
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-10-01">2026-10-01</time>
-      
-      <div class="home-news__body"><p>Four new students, Genki, Yuto, Yoshihito, and Haruto, have joined the lab.</p>
-</div>
-      
-    </li>
-        
-      
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-09-03">2026-09-03</time>
-      
-      <div class="home-news__body"><p>Keisuke gave a talk at RSJ2026.</p>
-</div>
-      
-    </li>
-        
-      
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-08-26">2026-08-26</time>
-      
-      <div class="home-news__body"><p>Our joint research project with Osaka University, “Development of an omnidirectional, endlessly rotating mechanism free of singular configurations based on geometric power transmission,” was selected for NEDO’s Young Researcher Support Program (joint research formation track).</p>
-</div>
-      
-        <p class="home-news__link-wrap"><a href="https://www.nedo.go.jp/koubo/SM3_100001_00119.html" class="home-news__more">NEDO announcement</a></p>
-      
-    </li>
-        
-      
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-06-20">2026-06-20</time>
-      
-      <div class="home-news__body"><p>Yuki gave a talk at ASCC 2026.</p>
-</div>
-      
-    </li>
-        
-      
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-06-10">2026-06-10</time>
-      
-      <div class="home-news__body"><p>The lab was awarded a laboratory infrastructure grant (electrical and electronic engineering) by the Murata Science and Education Foundation.</p>
-</div>
-      
-        <p class="home-news__link-wrap"><a href="https://corporate.murata.com/ja-jp/group/zaidan/requirement/grant-target" class="home-news__more">Awardee list</a></p>
-      
-    </li>
-        
-      
-    
-      
-      
-        
-    <li class="home-news__item">
-      <time class="home-news__date" datetime="2026-04-24">2026-04-24</time>
-      
-      <div class="home-news__body"><p>A group photo of lab members is now on the home page and in the sidebar.</p>
-</div>
-      
-    </li>
-        
-      
-    
-  </ul>
-</section>
-
 
 
 
@@ -446,10 +411,6 @@
 
       </section>
 
-      <footer class="page__meta">
-        
-      </footer>
-
       
     </div>
   </article>
@@ -458,8 +419,7 @@
 
     <div class="page__footer">
       <footer>
-        <!-- start custom footer snippets -->
-<p class="page__footer-links">
+        <p class="page__footer-links">
   <a href="https://gdaclab.web.nitech.ac.jp/sitemap/">Sitemap</a>
   <span class="page__footer-links-sep" aria-hidden="true">·</span>
   <a href="https://gdaclab.web.nitech.ac.jp/terms/">Terms and privacy</a>
@@ -470,7 +430,6 @@
 
 
 
-<!-- end custom footer snippets -->
 
         
 
@@ -484,13 +443,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-11-08 18:16 JST
+  Last updated 2026-11-08 18:34 JST
 </div>
 
       </footer>
     </div>
 
-    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794129374"></script>
+    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794130444"></script>
 
 
   </body>

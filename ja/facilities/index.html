@@ -6,7 +6,7 @@
 
 
 
-<!-- begin SEO -->
+
 
 
 
@@ -20,10 +20,7 @@
 
 <link rel="canonical" href="https://gdaclab.web.nitech.ac.jp/ja/facilities/">
   <meta name="google-site-verification" content="9R2JrmzriaDdkLuCmC8LwMKuFrELVBbz8avjXg3pWUg" />
-
-<!-- end SEO -->
-
-<!-- Open Graph protocol data (https://ogp.me/), used by social media --><meta property="og:locale" content="ja_JP">
+<meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="仲野研究室（GDAC Lab）">
 <meta property="og:title" content="実験装置・設備">
   <meta property="og:description" content="名古屋工業大学 仲野研究室（GDAC Lab）の実験装置・設備。車輪付きドローンの実機，モーションキャプチャを備えた飛行スペース，実験に用いる装置を紹介します。">
@@ -32,7 +29,7 @@
 
   <meta property="og:image" content="https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg">
 
-<meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/ja/facilities/"><!-- end Open Graph protocol -->
+<meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/ja/facilities/">
 
 
 <link rel="alternate" hreflang="ja" href="https://gdaclab.web.nitech.ac.jp/ja/facilities/">
@@ -56,12 +53,15 @@
       },
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "昭和区御器所町",
         "addressLocality": "名古屋市",
         "addressRegion": "愛知県",
+        "postalCode": "466-8555",
         "addressCountry": "JP"
       },
       "member": { "@id": "https://gdaclab.web.nitech.ac.jp/#nakano" },
-      "logo": "https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg",
+      "image": "https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg",
+      "sameAs": ["https://github.com/gdac-lab"],
       "knowsAbout": ["制御理論", "拘束付き制御", "幾何学的制御", "姿勢制御", "ロボティクス", "ドローン", "人工衛星"]
     },
     {
@@ -77,7 +77,7 @@
         "url": "https://www.nitech.ac.jp/"
       },
       "url": "https://gdaclab.web.nitech.ac.jp/nakano/",
-      "sameAs": ["https://www.nitech.ac.jp/faculty/nakano-satoshi.html","https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/","https://researchmap.jp/satoshi-nakano","https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en","https://github.com/gdac-lab"]
+      "sameAs": ["https://www.nitech.ac.jp/faculty/nakano-satoshi.html","https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/","https://researchmap.jp/satoshi-nakano","https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en"]
     },
     {
       "@type": "WebSite",
@@ -102,27 +102,17 @@
     }
   })();
 </script>
-
-<!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
-     different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794129374">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794130444">
 
     
-
-<!-- start custom head snippets -->
-
-<!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
-<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
-<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg"/>
-<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32"/>
-<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192"/>
-<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json"/>
-<link rel="icon" href="https://gdaclab.web.nitech.ac.jp/images/favicon.ico"/>
-<meta name="theme-color" content="#ffffff"/>
-
-<!-- Language switcher icon styles live in _sass/layout/_masthead.scss -->
-
-<!-- end custom head snippets -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg">
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192">
+<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json">
+<link rel="icon" href="https://gdaclab.web.nitech.ac.jp/images/favicon.ico">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#474747" media="(prefers-color-scheme: dark)">
 
   </head>
 
@@ -230,7 +220,7 @@
   </div>
 
   <div class="author__content">
-    <h3 class="author__name">仲野研究室</h3>
+    <p class="author__name">仲野研究室</p>
     
       <p class="author__bio">拘束を考慮した回転運動の制御と，衛星・ドローンへの応用を研究しています。</p>
     
@@ -290,7 +280,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/wheeled-drone.jpg" alt="床に置かれた車輪付きドローン。左右に大きな車輪が付いている" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">車輪付きドローン</h3>
+            <h2 class="gallery__title">車輪付きドローン</h2>
             <p class="gallery__body">ドローンの両側に車輪を取り付けた機体です。壁や天井に押し付けて車輪で走行でき，壁のそばや狭い空間でも姿勢を保てます。</p>
           </figcaption>
         </figure>
@@ -308,7 +298,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/quadrotors-qav250.jpg" alt="送信機と，マーカを付けた数機の QAV250 ドローン" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">研究用ドローン（QAV250）</h3>
+            <h2 class="gallery__title">研究用ドローン（QAV250）</h2>
             <p class="gallery__body">制御対象として用いている QAV250 ベースのドローンです。モーションキャプチャ用のマーカを取り付けて飛行させます。</p>
           </figcaption>
         </figure>
@@ -326,7 +316,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/stampfly.jpg" alt="手のひらに載せた小型ドローン StampFly" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">小型ドローン（StampFly）</h3>
+            <h2 class="gallery__title">小型ドローン（StampFly）</h2>
             <p class="gallery__body">重さ約 37 g の小型ドローン StampFly です。手のひらに載る大きさで，屋内の実験に用いています。</p>
           </figcaption>
         </figure>
@@ -344,7 +334,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/experiment-room.jpg" alt="黒い幕とモーションキャプチャカメラに囲まれた実験室の飛行スペース" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">実験室</h3>
+            <h2 class="gallery__title">実験室</h2>
             <p class="gallery__body">山田研究室と共同で使用している実験室です。モーションキャプチャのカメラを備え，ドローンの飛行実験を行います。</p>
           </figcaption>
         </figure>
@@ -362,7 +352,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/motion-capture-vicon.jpg" alt="天井のレールに取り付けられた Vicon のモーションキャプチャカメラ" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">モーションキャプチャ</h3>
+            <h2 class="gallery__title">モーションキャプチャ</h2>
             <p class="gallery__body">Vicon と Qualisys の2種類のモーションキャプチャを，用途に応じて使い分けています。機体の位置と姿勢を計測し，制御に用います。</p>
           </figcaption>
         </figure>
@@ -380,7 +370,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/thrust-test-stand.jpg" alt="アルミフレームの推力試験機に固定されたドローン" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">推力試験機</h3>
+            <h2 class="gallery__title">推力試験機</h2>
             <p class="gallery__body">ロータの推力と反トルクを，電圧・電流に対して計測する試験機です。力覚センサには Leptrino 製のものを用いています。</p>
           </figcaption>
         </figure>
@@ -398,7 +388,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/3d-printers.jpg" alt="実験室に置かれた 3D プリンタ" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">3D プリンタ</h3>
+            <h2 class="gallery__title">3D プリンタ</h2>
             <p class="gallery__body">機体の部品を製作するための 3D プリンタです。3台を用途に応じて使い分けています。</p>
           </figcaption>
         </figure>
@@ -424,8 +414,7 @@
 
     <div class="page__footer">
       <footer>
-        <!-- start custom footer snippets -->
-<p class="page__footer-links">
+        <p class="page__footer-links">
   <a href="https://gdaclab.web.nitech.ac.jp/sitemap/">サイトマップ</a>
   <span class="page__footer-links-sep" aria-hidden="true">·</span>
   <a href="https://gdaclab.web.nitech.ac.jp/ja/terms/">利用規約・プライバシー</a>
@@ -436,7 +425,6 @@
 
 
 
-<!-- end custom footer snippets -->
 
         
 
@@ -450,13 +438,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-11-08 18:16 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-11-08 18:34 JST
 </div>
 
       </footer>
     </div>
 
-    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794129374"></script>
+    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794130444"></script>
 
 
   </body>

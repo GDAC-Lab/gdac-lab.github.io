@@ -6,7 +6,7 @@
 
 
 
-<!-- begin SEO -->
+
 
 
 
@@ -20,10 +20,7 @@
 
 <link rel="canonical" href="https://gdaclab.web.nitech.ac.jp/facilities/">
   <meta name="google-site-verification" content="9R2JrmzriaDdkLuCmC8LwMKuFrELVBbz8avjXg3pWUg" />
-
-<!-- end SEO -->
-
-<!-- Open Graph protocol data (https://ogp.me/), used by social media --><meta property="og:locale" content="en_US">
+<meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="GDAC Lab">
 <meta property="og:title" content="Facilities">
   <meta property="og:description" content="Experimental facilities at GDAC Lab, Nagoya Institute of Technology: wheeled drones, the motion-capture flight space and the apparatus used in our experiments.">
@@ -32,7 +29,7 @@
 
   <meta property="og:image" content="https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg">
 
-<meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/facilities/"><!-- end Open Graph protocol -->
+<meta property="og:url" content="https://gdaclab.web.nitech.ac.jp/facilities/">
 
 
 <link rel="alternate" hreflang="ja" href="https://gdaclab.web.nitech.ac.jp/ja/facilities/">
@@ -56,12 +53,15 @@
       },
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Gokiso-cho, Showa-ku",
         "addressLocality": "Nagoya",
         "addressRegion": "Aichi",
+        "postalCode": "466-8555",
         "addressCountry": "JP"
       },
       "member": { "@id": "https://gdaclab.web.nitech.ac.jp/#nakano" },
-      "logo": "https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg",
+      "image": "https://gdaclab.web.nitech.ac.jp/images/lab/group-photo.jpg",
+      "sameAs": ["https://github.com/gdac-lab"],
       "knowsAbout": ["control theory", "constrained control", "geometric control", "attitude control", "robotics", "drones", "spacecraft"]
     },
     {
@@ -77,7 +77,7 @@
         "url": "https://www.nitech.ac.jp/"
       },
       "url": "https://gdaclab.web.nitech.ac.jp/nakano/",
-      "sameAs": ["https://www.nitech.ac.jp/faculty/nakano-satoshi.html","https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/","https://researchmap.jp/satoshi-nakano","https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en","https://github.com/gdac-lab"]
+      "sameAs": ["https://www.nitech.ac.jp/faculty/nakano-satoshi.html","https://pure.nitech.ac.jp/ja/persons/satoshi-nakano/","https://researchmap.jp/satoshi-nakano","https://scholar.google.com/citations?user=uUvDkIkAAAAJ&hl=en"]
     },
     {
       "@type": "WebSite",
@@ -102,27 +102,17 @@
     }
   })();
 </script>
-
-<!-- ?v= busts the cache on each deploy: HTML and CSS must never be served from
-     different builds, or markup gets styled by rules that no longer exist. -->
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794129374">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794130444">
 
     
-
-<!-- start custom head snippets -->
-
-<!-- favicon from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_academic-progressive.svg -->
-<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png"/>
-<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg"/>
-<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32"/>
-<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192"/>
-<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json"/>
-<link rel="icon" href="https://gdaclab.web.nitech.ac.jp/images/favicon.ico"/>
-<meta name="theme-color" content="#ffffff"/>
-
-<!-- Language switcher icon styles live in _sass/layout/_masthead.scss -->
-
-<!-- end custom head snippets -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/svg+xml" href="https://gdaclab.web.nitech.ac.jp/images/favicon.svg">
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://gdaclab.web.nitech.ac.jp/images/favicon-192x192.png" sizes="192x192">
+<link rel="manifest" href="https://gdaclab.web.nitech.ac.jp/images/manifest.json">
+<link rel="icon" href="https://gdaclab.web.nitech.ac.jp/images/favicon.ico">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#474747" media="(prefers-color-scheme: dark)">
 
   </head>
 
@@ -230,7 +220,7 @@
   </div>
 
   <div class="author__content">
-    <h3 class="author__name">GDAC Lab</h3>
+    <p class="author__name">GDAC Lab</p>
     
       <p class="author__bio">Geometric Dynamics, Autonomy, and Control Laboratory</p>
     
@@ -290,7 +280,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/wheeled-drone.jpg" alt="A wheeled drone on the floor, with a large wheel on each side" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">Wheeled drone</h3>
+            <h2 class="gallery__title">Wheeled drone</h2>
             <p class="gallery__body">A drone with a wheel on each side. Pressed against a wall or ceiling, it travels on its wheels and holds its attitude close to walls and in narrow spaces.</p>
           </figcaption>
         </figure>
@@ -308,7 +298,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/quadrotors-qav250.jpg" alt="A transmitter and several QAV250 drones fitted with motion-capture markers" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">Research drones (QAV250)</h3>
+            <h2 class="gallery__title">Research drones (QAV250)</h2>
             <p class="gallery__body">QAV250-based drones used as the controlled vehicles. They fly with motion-capture markers attached.</p>
           </figcaption>
         </figure>
@@ -326,7 +316,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/stampfly.jpg" alt="The StampFly small drone resting in a palm" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">Small drone (StampFly)</h3>
+            <h2 class="gallery__title">Small drone (StampFly)</h2>
             <p class="gallery__body">StampFly, a small drone weighing about 37 g. It fits in the palm of a hand and is used for indoor experiments.</p>
           </figcaption>
         </figure>
@@ -344,7 +334,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/experiment-room.jpg" alt="The flight space of the experiment room, ringed by black curtains and motion-capture cameras" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">Experiment room</h3>
+            <h2 class="gallery__title">Experiment room</h2>
             <p class="gallery__body">The experiment room shared with the Yamada Laboratory. It is equipped with motion-capture cameras and is where the drones fly.</p>
           </figcaption>
         </figure>
@@ -362,7 +352,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/motion-capture-vicon.jpg" alt="A Vicon motion-capture camera mounted on a ceiling rail" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">Motion capture</h3>
+            <h2 class="gallery__title">Motion capture</h2>
             <p class="gallery__body">Two motion-capture systems, Vicon and Qualisys, are used depending on the experiment. They measure the position and attitude of the vehicles for control.</p>
           </figcaption>
         </figure>
@@ -380,7 +370,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/thrust-test-stand.jpg" alt="A drone fixed to the aluminum-frame thrust test stand" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">Thrust test stand</h3>
+            <h2 class="gallery__title">Thrust test stand</h2>
             <p class="gallery__body">A stand that measures rotor thrust and reaction torque against voltage and current, using a Leptrino force sensor.</p>
           </figcaption>
         </figure>
@@ -398,7 +388,7 @@
             <img src="https://gdaclab.web.nitech.ac.jp/images/facilities/3d-printers.jpg" alt="One of the 3D printers in the experiment room" width="1424" height="1068" loading="lazy" decoding="async" />
           </a>
           <figcaption class="gallery__caption">
-            <h3 class="gallery__title">3D printers</h3>
+            <h2 class="gallery__title">3D printers</h2>
             <p class="gallery__body">3D printers for making airframe parts. Three machines are used according to the job.</p>
           </figcaption>
         </figure>
@@ -424,8 +414,7 @@
 
     <div class="page__footer">
       <footer>
-        <!-- start custom footer snippets -->
-<p class="page__footer-links">
+        <p class="page__footer-links">
   <a href="https://gdaclab.web.nitech.ac.jp/sitemap/">Sitemap</a>
   <span class="page__footer-links-sep" aria-hidden="true">·</span>
   <a href="https://gdaclab.web.nitech.ac.jp/terms/">Terms and privacy</a>
@@ -436,7 +425,6 @@
 
 
 
-<!-- end custom footer snippets -->
 
         
 
@@ -450,13 +438,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-11-08 18:16 JST
+  Last updated 2026-11-08 18:34 JST
 </div>
 
       </footer>
     </div>
 
-    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794129374"></script>
+    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794130444"></script>
 
 
   </body>
