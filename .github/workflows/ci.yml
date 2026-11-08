@@ -1,0 +1,42 @@
+# Test the sync scripts and build the site on every push and pull request, so a
+# branch shows whether it would deploy before it reaches master. Nothing is
+# published from here: deploy.yml does that, for master only.
+name: Check
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Test the sync scripts
+        run: python3 scripts/test_pubsync.py
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Build the site
+        env:
+          LANG: C.UTF-8
+        run: bundle exec jekyll build
+
+      # The same guard as deploy.yml: /nakano/ on the server is a separate
+      # WordPress site that a page built here must never shadow.
+      - name: Nothing is built at /nakano/
+        run: |
+          if [ -e _site/nakano ]; then
+            echo "::error title=/nakano/ would be overwritten::The build produced _site/nakano, which on the server is a separate WordPress site."
+            exit 1
+          fi

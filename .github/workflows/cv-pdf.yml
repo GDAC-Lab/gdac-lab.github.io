@@ -32,6 +32,7 @@ jobs:
   build:
     # Pinned: the TeX Live packages below were chosen against 24.04's TeX Live.
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     permissions:
       contents: write   # commit the PDF
       actions: write    # dispatch deploy.yml afterwards

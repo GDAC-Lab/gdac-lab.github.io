@@ -23,13 +23,17 @@ on:
     - cron: "0 0 * * 1"
   workflow_dispatch:
 
+# A second run waits for the first rather than cancelling it: cancelled
+# half-way, a run can leave a commit pushed but not deployed, or Overleaf
+# not updated.
 concurrency:
   group: researchmap-sync
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     permissions:
       contents: write   # push the refreshed publication files
       actions: write    # dispatch deploy.yml afterwards
