@@ -2,21 +2,17 @@
 ---
 
 /*
- * This file controls what is imported from /_sass
+ * The site's one stylesheet, compiled by Jekyll from _sass. The front matter
+ * above (the two dashed lines) is what makes Jekyll process this file.
  *
- * Note that the files are processed in the order they are imported, so they are partly
-   sorted by the dependencies. Also, the first two lines of the file are required by Jekyll.
+ * Order matters: later files win ties, so the page-specific partials come
+ * after the shared ones they adjust, and the sidebar after the page.
  */
 
 @import
-    "vendor/breakpoint/breakpoint",
-
-    "themes",
-    "theme/{{ site.site_theme | default: 'default' | append: '_light' }}",
-    "theme/{{ site.site_theme | default: 'default' | append: '_dark' }}",
-
+    "variables",
+    "colors",
     "include/mixins",
-    "vendor/susy/susy",
 
     "layout/reset",
     "layout/base",
@@ -28,8 +24,6 @@
     "layout/masthead",
     "layout/navigation",
     "layout/footer",
-    "syntax",
-
     "layout/forms",
 
     "layout/page",
@@ -45,7 +39,5 @@
     "layout/slew-demo",
     "layout/sidebar",
 
-    "vendor/font-awesome/fontawesome",
-    "vendor/font-awesome/solid",
-    "vendor/font-awesome/brands"
+    "include/icons"
 ;

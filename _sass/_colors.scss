@@ -1,12 +1,42 @@
 /* ==========================================================================
-   DARK THEME
+   COLOURS
+   Every colour the pages use is a custom property, set here for the light
+   theme and overridden for the dark one. The dark theme applies when <html>
+   carries data-theme="dark", which the theme toggle sets (and, until the
+   reader picks one, the operating system's preference).
    ========================================================================== */
 
-/* Color codes used for the theme */
-$gray                       : #7a8288;
-$dark-gray                  : mix(#000, $gray, 40%);
-$darker-gray                : mix(#000, $gray, 60%);
-$light-gray                 : mix(#fff, $gray, 50%);
+:root {
+    --global-base-color                 : #{$gray};
+    --global-bg-color                   : #fff;
+    --global-footer-bg-color            : #f2f3f3;
+    --global-border-color               : #{$lighter-gray};
+    --global-dark-border-color          : #bdc1c4;
+    --global-code-background-color      : #fafafa;
+    --global-code-text-color            : #{$darker-gray};
+    --global-fig-caption-color          : #{$muted-gray};
+    /* Content images (maps, photos in prose). A white map on the dark ground glares; dim it a little. */
+    --global-image-filter               : none;
+    /* Deeper than the upstream #52adc8, which reaches only 2.6:1 on white. */
+    --global-link-color                 : #1f7490;
+    --global-link-color-hover           : #{mix(#000, #1f7490, 30%)};
+    --global-masthead-link-color        : #{$dark-gray};
+    --global-masthead-link-color-hover  : mix(#000, #{$gray}, 25%);
+    --global-text-color                 : #{$dark-gray};
+    --global-text-color-strong          : #{$darker-gray};
+    --global-text-color-light           : #{$muted-gray};
+    --global-thead-color                : #{$lighter-gray};
+    /* Notices / email callout: explicit pairing for readability */
+    --global-callout-bg                 : #{$lighter-gray};
+    --global-callout-text               : #{$dark-gray};
+    --global-callout-text-strong        : #{$darker-gray};
+    --global-callout-text-muted         : #{$muted-gray};
+    /* Buttons carry white text, so the ground has to be dark enough for it. */
+    --global-button-bg                  : #{mix(#000, $gray, 25%)};
+    --global-button-bg-hover            : #{mix(#000, $gray, 45%)};
+}
+
+/* Dark theme */
 
 $background                 : #474747;
 $background-light           : mix(#fff, $background, 80%);
@@ -22,30 +52,10 @@ $text                       : #ffffff;
 $text-body                  : #e0e0e0;
 $text-muted                 : #b8b8b8;
 /* Lighter than the upstream #0ea1c5, which reaches only 3.1:1 on $background.
-   Hover and visited both go lighter — going darker loses contrast on a dark
-   ground. */
+   Hover goes lighter too — going darker loses contrast on a dark ground. */
 $link                       : #4ec3e2;
 $link-hover                 : mix(#fff, $link, 35%);
-$link-visited               : mix(#fff, $link, 18%);
 
-/* Color codes used for the site */
-$danger-color               : #ee5f5b;
-$info-color                 : #2f7f93;
-$notice-color               : #7a8288;
-$success-color              : #62c462;
-$warning-color              : #f89406;
-
-/* Other basic settings for the template */
-$border-radius              : 4px;
-$box-shadow                 : 0 1px 1px rgba(0, 0, 0, 0.125);
-$global-transition          : all 0.2s ease-in-out;
-$masthead-height            : 70px;
-$navicon-width              : 28px;
-$navicon-height             : 4px;
-$sidebar-link-max-width     : 250px;
-$sidebar-screen-min-width   : 1024px;
-
-/* Dark theme for the site */
 html[data-theme="dark"] {
     --global-base-color                 : #{$background};
     --global-bg-color                   : #{$background};
@@ -55,11 +65,9 @@ html[data-theme="dark"] {
     --global-code-background-color      : #fafafa;
     --global-code-text-color            : #{$darker-gray};
     --global-fig-caption-color          : #{$light-gray};
-    /* Content images (maps, photos in prose). A white map on the dark ground glares; dim it a little. */
     --global-image-filter               : brightness(0.88);
     --global-link-color                 : #{$link};
     --global-link-color-hover           : #{$link-hover};
-    --global-link-color-visited         : #{$link-visited};
     --global-masthead-link-color        : #{$text};
     --global-masthead-link-color-hover  : #{$background-light};
     --global-text-color                 : #{$text-body};
@@ -71,7 +79,6 @@ html[data-theme="dark"] {
     --global-callout-text               : #{$text-body};
     --global-callout-text-strong        : #{$text};
     --global-callout-text-muted         : #{$text-muted};
-    --global-toc-header-bg              : #{$background};
     /* $background is the page itself: a button painted with it disappears. */
     --global-button-bg                  : #{mix(#fff, $background, 25%)};
     --global-button-bg-hover            : #{mix(#fff, $background, 40%)};

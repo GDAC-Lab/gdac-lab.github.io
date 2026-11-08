@@ -11,37 +11,30 @@
 }
 
 /*
-   em function
+   Media queries
    ========================================================================== */
 
-@function em($target, $context: $doc-font-size) {
-  @return ($target / $context) * 1em;
+/* `@include breakpoint($large)` is a min-width query; `breakpoint(max-width
+   $small)` a max-width one. The width is given in px and written out in em
+   (16px each), so the layout changes where the reader's text size says it
+   should rather than at a fixed pixel count. */
+@mixin breakpoint($query) {
+  $feature: min-width;
+  $width: $query;
+  @if length($query) == 2 {
+    $feature: nth($query, 1);
+    $width: nth($query, 2);
+  }
+  @media (#{$feature}: #{$width / 16px * 1em}) {
+    @content;
+  }
 }
 
-
 /*
-   Bourbon clearfix
+   Clearfix
    ========================================================================== */
 
-/*
-  * Provides an easy way to include a clearfix for containing floats.
-  * link http://cssmojo.com/latest_new_clearfix_so_far/
-  *
-  * example scss - Usage
-  *
-  * .element {
-  *   @include clearfix;
-  * }
-  *
-  * example css - CSS Output
-  *
-  * .element::after {
-  *   clear: both;
-  *   content: "";
-  *   display: table;
-  * }
-*/
-
+/* Contains the floats inside an element (http://cssmojo.com/latest_new_clearfix_so_far/) */
 @mixin clearfix {
   clear: both;
 

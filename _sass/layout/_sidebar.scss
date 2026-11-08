@@ -1,14 +1,11 @@
 /* ==========================================================================
    SIDEBAR
-   ========================================================================== */
-
-/*
-   Default
+   The lab's photo, name and links: a row above the content on a phone, a
+   column beside it from $large up.
    ========================================================================== */
 
 .sidebar {
-  -webkit-transform: translate3d(0, 0 , 0);
-          transform: translate3d(0, 0 , 0);
+  transform: translate3d(0, 0, 0);
 
   @include clearfix();
   margin-bottom: 1em;
@@ -17,7 +14,7 @@
     margin-top: 1em;
   }
 
-  @media screen and (min-width: $sidebar-screen-min-width) {
+  @media screen and (min-width: $sidebar-fixed-min-width) {
     height: 100vh;
     overflow-y: auto;               // Add scrollbar if the sidebar is too long
     position: fixed;
@@ -25,24 +22,19 @@
   }
 
   @include breakpoint($large) {
-    @include span(2 of 12);
-    opacity: 1;
-    -webkit-transition: opacity 0.2s ease-in-out;
-            transition: opacity 0.2s ease-in-out;
-
-    &:hover {
-      opacity: 1;
-    }
+    width: $sidebar-width;
+    float: left;
+    margin-right: $sidebar-gutter;
   }
 
   @include breakpoint($x-large) {
-    max-width: $sidebar-link-max-width;
+    max-width: $sidebar-max-width;
     padding-right: 0;
   }
 
   h2, h3, h4, h5, h6 {
     margin-bottom: 0;
-    font-family: $sans-serif-narrow;
+    font-family: $sans-serif;
   }
 
   h3, h4 {
@@ -57,22 +49,6 @@
 
   img {
     width: 100%;
-  }
-}
-
-.sidebar__right {
-  margin-bottom: 1em;
-
-  @include breakpoint($large) {
-    position: relative;
-    float: right;
-    width: $right-sidebar-width-narrow;
-    margin-left: span(0.5 of 12);
-    z-index: 10;
-  }
-
-  @include breakpoint($x-large) {
-    width: $right-sidebar-width;
   }
 }
 
@@ -138,17 +114,8 @@
 
 .sidebar .author__desktop {
   display: none;
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: $sidebar-fixed-min-width) {
     display: block;
-  }
-}
-
-.author__pronouns {
-  margin: 0;
-
-  @include breakpoint($large) {
-    margin-top: 10px;
-    margin-bottom: 10px;
   }
 }
 

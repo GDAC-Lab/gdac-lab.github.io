@@ -206,10 +206,7 @@
   }
 }
 
-.page__content {
-  @include prose;
-}
-
+.page__content,
 .archive {
   @include prose;
 }

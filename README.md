@@ -357,8 +357,9 @@ adding content again:
 - The JSON-CV feature (`_includes/cv-template.html`, `_layouts/cv-layout.html`,
   `_sass/layout/_json_cv.scss`) was removed entirely; restore those three files from upstream if wanted.
 
-Web fonts are served as `woff2` only (plus a `woff` fallback for Academicons). Legacy `eot`,
-`svg` and `ttf` faces were dropped — they were dead weight for any browser released since ~2016.
+The icon fonts (Font Awesome and Academicons) are served as `woff2` only and cut down to the
+dozen icons the site shows, about 6 kB in all. `scripts/build_icon_fonts.sh` rebuilds them; to use
+another icon, add its code point there and its rule to `_sass/include/_icons.scss`.
 
 MathJax, Plotly and Mermaid used to load from CDNs on *every* page, several megabytes of
 JavaScript for features no page used. They are now loaded per page in

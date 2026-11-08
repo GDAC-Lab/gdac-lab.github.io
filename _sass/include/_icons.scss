@@ -1,0 +1,104 @@
+/*!
+ * Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ * Copyright 2024 Fonticons, Inc.
+ *
+ * Academicons 1.9.5 by James Walsh and Katja Bercic - https://jpswalsh.github.io/academicons/
+ * License - Font: SIL OFL 1.1, CSS: MIT License
+ */
+
+/* ==========================================================================
+   ICONS
+   The two icon sets' base rules, and only the icons this site shows. The
+   fonts are cut down to the same glyphs by scripts/build_icon_fonts.sh; an
+   icon added here needs its code point added there too.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url("../webfonts/fa-solid-900.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Font Awesome 6 Brands';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../webfonts/fa-brands-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Academicons';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../fonts/academicons.woff2") format("woff2");
+}
+
+.fa {
+  font-family: var(--fa-style-family, "Font Awesome 6 Free");
+  font-weight: var(--fa-style, 900);
+}
+
+.fa,
+.fas,
+.fa-solid,
+.fab,
+.fa-brands,
+.ai {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: var(--fa-display, inline-block);
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+}
+
+.fas,
+.fa-solid {
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+}
+
+.fab,
+.fa-brands {
+  font-family: 'Font Awesome 6 Brands';
+  font-weight: 400;
+}
+
+.ai {
+  font-family: 'Academicons';
+  font-weight: 400;
+}
+
+.fa-fw,
+.ai-fw {
+  text-align: center;
+  width: 1.25em;
+}
+
+/* solid */
+.fa-sun::before { content: "\f185"; }
+.fa-moon::before { content: "\f186"; }
+.fa-location-dot::before { content: "\f3c5"; }
+.fa-link::before { content: "\f0c1"; }
+.fa-id-card::before { content: "\f2c2"; }
+.fa-building-columns::before { content: "\f19c"; }
+.fa-address-card::before { content: "\f2bb"; }
+.fa-calendar::before { content: "\f133"; }
+.fa-envelope::before { content: "\f0e0"; }
+.fa-camera::before { content: "\f030"; }
+
+/* brands */
+.fa-github::before { content: "\f09b"; }
+.fa-x-twitter::before { content: "\e61b"; }
+.fa-linkedin::before { content: "\f08c"; }
+.fa-facebook::before { content: "\f09a"; }
+.fa-bluesky::before { content: "\e671"; }
+
+/* academicons */
+.ai-google-scholar::before { content: "\e9d4"; }

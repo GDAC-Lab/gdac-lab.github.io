@@ -1,20 +1,13 @@
 /* ==========================================================================
-   SHARED THEME SETTINGS
+   VARIABLES
+   Type, breakpoints, sizes and the base palette. The colours the pages use
+   are custom properties in _colors.scss, so the dark theme can swap them.
    ========================================================================== */
 
 /* ==========================================================================
-   TYPOGRAPHY
+   Typography
    ========================================================================== */
 
-/* Used to set the size for <em> */
-$doc-font-size              : 16;
-
-/* Paragraph indention */
-$paragraph-indent           : false; // true, false (default)
-$indent-var                 : 1.3em;
-
-/* System typefaces */
-$serif                      : Georgia, Times, serif;
 /* System faces first, then the Japanese system faces so that Japanese text on
    any page (the navigation carries some on every page) is set in a proper
    Japanese font rather than whatever the browser falls back to. "Yu Gothic
@@ -24,16 +17,9 @@ $serif                      : Georgia, Times, serif;
 $sans-serif                 : -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "BIZ UDPGothic", "Yu Gothic Medium", "Yu Gothic", Meiryo, "Noto Sans JP", "Noto Sans CJK JP", Arial, sans-serif;
 $monospace                  : Monaco, Consolas, "Lucida Console", monospace;
 
-/* Sans serif typefaces */
-$sans-serif-narrow          : $sans-serif;
-$helvetica                  : Helvetica, "Helvetica Neue", Arial, sans-serif;
-
-/* Serif typefaces */
-$georgia                    : Georgia, serif;
-$times                      : Times, serif;
-$bodoni                     : "Bodoni MT", serif;
-$calisto                    : "Calisto MT", serif;
-$garamond                   : Garamond, serif;
+$global-font-family         : $sans-serif;
+$header-font-family         : $sans-serif;
+$caption-font-family        : $sans-serif;   /* a serif caption would put Japanese captions in Mincho */
 
 /* Type scale */
 $type-size-1                : 2.441em;  // ~39.056px
@@ -43,7 +29,6 @@ $type-size-4                : 1.25em;   // ~20px
 $type-size-5                : 1em;      // ~16px
 $type-size-6                : 0.75em;   // ~12px
 $type-size-7                : 0.6875em; // ~11px
-$type-size-8                : 0.625em;  // ~10px
 
 /* Prose (hand-written body copy). The root is 16px on phones and 18px from
    $medium up (see layout/reset), so rem-based sizes scale with the viewport.
@@ -52,67 +37,62 @@ $type-size-8                : 0.625em;  // ~10px
 $prose-font-size            : 1rem;   // 16px / 18px
 $prose-measure              : 44rem;
 
-$global-font-family         : $sans-serif;
-$header-font-family         : $sans-serif;
-$caption-font-family        : $sans-serif;   /* a serif caption would put Japanese captions in Mincho */
-
 /* ==========================================================================
-   Breakpoints
+   Breakpoints (min-width, written in px; the breakpoint mixin turns them
+   into em so they follow the reader's font-size setting)
    ========================================================================== */
 
-@include breakpoint-set("to ems", true);
-
-$small                      : 600px !default;
-$medium                     : 768px !default;
-$medium-wide                : 900px !default;
-$large                      : 925px !default;
-$x-large                    : 1280px !default;
+$small                      : 600px;
+$medium                     : 768px;
+$large                      : 925px;
+$x-large                    : 1280px;
 
 /* ==========================================================================
-   Grid
+   Layout
    ========================================================================== */
 
-$right-sidebar-width-narrow : auto;
-$right-sidebar-width        : auto;
-$right-sidebar-width-wide   : auto;
+/* Below $large the sidebar sits above the content; from $large up the two sit
+   side by side in a $large-wide container (wider from $x-large). The widths
+   are fractions of that container: the sidebar takes 2 of 12 columns and the
+   content 10, with a quarter-column gutter (the grid the theme was built on). */
+$container-width            : $large;
+$sidebar-width              : 15.2542372881%;
+$sidebar-gutter             : 1.6949152542%;
+$content-width              : 83.0508474576%;
+$content-padding-left       : 4.2372881356%;
+$content-padding-right      : 16.9491525424%;
+$sidebar-max-width          : 250px;   /* from $x-large */
+/* The sidebar is fixed (scrolls on its own) from this width up. */
+$sidebar-fixed-min-width    : 1024px;
 
-$susy: (
-    columns: 12,
-    column-width: 120px,
-    gutters: 1/4,
-    math: fluid,
-    output: float,
-    gutter-position: after,
-    container: $large,
-    global-box-sizing: border-box,
-);
+$masthead-height            : 70px;
+$navicon-width              : 28px;
+$navicon-height             : 4px;
+
+$border-radius              : 4px;
+$box-shadow                 : 0 1px 1px rgba(0, 0, 0, 0.125);
+$global-transition          : all 0.2s ease-in-out;
 
 /* ==========================================================================
-   BRAND COLORS
+   Palette
    ========================================================================== */
 
-$behance-color              : #1769FF;
+$gray                       : #7a8288;
+$dark-gray                  : mix(#000, $gray, 40%);
+$darker-gray                : mix(#000, $gray, 60%);
+/* Secondary text. $light-gray (#bdc1c4) only reaches 1.8:1 on white — it was
+   used for publication authors, dates and captions, which is most of the
+   metadata on the site. This tier clears WCAG AA on white and on the callout
+   panel while staying clearly lighter than body text. */
+$muted-gray                 : mix(#000, $gray, 18%);
+$light-gray                 : mix(#fff, $gray, 50%);
+$lighter-gray               : mix(#fff, $gray, 90%);
+
+$notice-color               : #7a8288;
+$warning-color              : #f89406;
+
+/* Brand colours of the share buttons and the GitHub icon */
 $bluesky-color              : #1184fe;
-$dribbble-color             : #ea4c89;
 $facebook-color             : #3b5998;
-$flickr-color               : #ff0084;
-$foursquare-color           : #0072b1;
 $github-color               : #171516;
-$google-plus-color          : #dd4b39;
-$instagram-color            : #517fa4;
-$kaggle-color               : #20c0ff;
-$lastfm-color               : #d51007;
 $linkedin-color             : #007bb6;
-$mastodon-color             : #6364ff;
-$orcid-color                : #a6ce39;
-$pinterest-color            : #cb2027;
-$rss-color                  : #fa9b39;
-$soundcloud-color           : #ff3300;
-$stackoverflow-color        : #fe7a15;
-$tumblr-color               : #32506d;
-$twitter-color              : #55acee;
-$vimeo-color                : #1ab7ea;
-$vine-color                 : #00bf8f;
-$youtube-color              : #bb0000;
-$xing-color                 : #006567;
-   
