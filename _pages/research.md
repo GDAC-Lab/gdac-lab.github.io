@@ -106,6 +106,20 @@ From a control standpoint, this vehicle presents the following difficulties.
 
 Constraints are again central. To handle the pressing force, the attitudes admissible during contact, and limits on flight altitude, we combine **control barrier functions**, **input–output linearization**, **passivity-based methods**, and **model predictive path integral (MPPI) control**.
 
+#### Moving along a surface without tilting: the 4P two-wheeled drone
+
+A conventional wheeled quadrotor has to tilt its body to generate a lateral force, which makes it hard to hold a desired attitude while moving sideways. This limits tasks that need a particular attitude, such as inspection with the camera kept level.
+
+With [Takumi Ito](https://takumito.github.io/) of the National Institute of Advanced Industrial Science and Technology (AIST), we have proposed a two-wheeled quadrotor whose four rotors are tilted by a fixed angle about the wheel axle. The wheels are passive: propulsion along the surface comes from the rotor thrust alone. Using the contact with the surface as a constraint, the vehicle generates propulsion along that surface without tilting.
+
+In this work we analyzed the forces the vehicle can generate and its controllability while in contact with a surface, and optimized its design over different rotor-spin configurations. The optimization shows that the configuration in which all four rotors spin clockwise — the **4P configuration**, P denoting a clockwise rotor — can generate a larger force along the contact surface than the conventional alternating-spin configuration.
+
+The approach enables both flight and locomotion in contact with a surface, without additional actuators or mechanisms to tilt the rotors. In simulation it hovers in free space and moves horizontally on a floor while keeping a level attitude.
+
+**Related result**
+
+- [A Two-Wheeled Quadrotor with All-Clockwise Tilted Rotors for Level-Attitude Surface Locomotion](https://arxiv.org/abs/2610.40502) — arXiv preprint, 2026
+
 #### Application: infrastructure inspection
 
 Detecting loose or delaminated concrete in tunnels and bridges, and loose tiles on building walls, relies on **hammering inspection**, in which the surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.
