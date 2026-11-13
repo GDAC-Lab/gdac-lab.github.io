@@ -14,7 +14,7 @@
 <title>シミュレータ - 仲野研究室（GDAC Lab）</title>
 
 
-<meta name="description" content="名古屋工業大学 仲野研究室（GDAC Lab）が公開している車輪付きドローンのシミュレータ。MuJoCo の物理計算をブラウザ上でそのまま実行するデモを掲載しています。">
+<meta name="description" content="名古屋工業大学 仲野研究室（GDAC Lab）が公開している車輪付きドローンのシミュレータです。MuJoCo の物理計算をブラウザ上で実行するデモを掲載しています。">
 
 
 
@@ -23,7 +23,7 @@
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="仲野研究室（GDAC Lab）">
 <meta property="og:title" content="シミュレータ">
-  <meta property="og:description" content="名古屋工業大学 仲野研究室（GDAC Lab）が公開している車輪付きドローンのシミュレータ。MuJoCo の物理計算をブラウザ上でそのまま実行するデモを掲載しています。">
+  <meta property="og:description" content="名古屋工業大学 仲野研究室（GDAC Lab）が公開している車輪付きドローンのシミュレータです。MuJoCo の物理計算をブラウザ上で実行するデモを掲載しています。">
 
 <meta property="og:type" content="website">
 
@@ -102,7 +102,7 @@
     }
   })();
 </script>
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794143504">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794554761">
 
     
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png">
@@ -121,7 +121,7 @@
     <div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
-      <nav id="site-nav" class="greedy-nav" aria-label="メイン">
+      <nav id="site-nav" class="greedy-nav" aria-label="メインメニュー">
         <button type="button" class="greedy-nav__toggle hidden" aria-label="メニュー" aria-expanded="false" aria-controls="site-nav-more"><span class="navicon"></span></button>
         <ul class="visible-links">
           <li class="masthead__menu-item masthead__menu-item--lg persist"><a href="https://gdaclab.web.nitech.ac.jp/ja/">仲野研究室</a></li>
@@ -264,9 +264,9 @@
   <div class="archive">
     <h1 class="page__title">シミュレータ</h1>
     
-<p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは録画ではありません。そのシミュレータの物理計算を，いまブラウザの中で解いています。</p>
+<p class="notice">車輪付きドローンのシミュレータを公開しています。下のデモは録画ではありません。シミュレータの物理計算を，いまお使いのブラウザの中で実行しています。</p>
 
-<div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-mesh="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav/drone-mesh.bin" data-sim-strings="{&quot;loading&quot;:&quot;物理エンジンを読み込んでいます…&quot;,&quot;ready&quot;:&quot;準備完了。&quot;,&quot;play&quot;:&quot;再生&quot;,&quot;pause&quot;:&quot;一時停止&quot;,&quot;contactYes&quot;:&quot;壁に接触中&quot;,&quot;contactNo&quot;:&quot;非接触&quot;,&quot;failed&quot;:&quot;このブラウザではデモを開始できませんでした。&quot;,&quot;meteredNote&quot;:&quot;モバイル回線または通信量節約モードのようです。Wi-Fi でのご利用をおすすめします。&quot;}">
+<div class="simdemo" data-sim-root="" data-sim-state="idle" data-sim-model="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav-wall-demo.xml" data-sim-mesh="https://gdaclab.web.nitech.ac.jp/assets/models/wheeled-uav/drone-mesh.bin" data-sim-strings="{&quot;loading&quot;:&quot;物理エンジンを読み込んでいます…&quot;,&quot;ready&quot;:&quot;準備ができました。&quot;,&quot;play&quot;:&quot;再生&quot;,&quot;pause&quot;:&quot;一時停止&quot;,&quot;contactYes&quot;:&quot;壁に接触中&quot;,&quot;contactNo&quot;:&quot;非接触&quot;,&quot;failed&quot;:&quot;このブラウザではデモを開始できませんでした。&quot;,&quot;meteredNote&quot;:&quot;モバイル回線か，データ通信量を節約する設定が有効になっているようです。Wi-Fi でのご利用をおすすめします。&quot;}">
 
   <div class="simdemo__stage">
     <canvas class="simdemo__canvas" data-sim-canvas="" aria-label="車輪付きドローンが壁面を登るシミュレーションの3D表示" role="img"></canvas>
@@ -276,7 +276,7 @@
       <div class="simdemo__gate-card">
         <p class="simdemo__gate-title">物理エンジンを読み込みますか？</p>
         <p class="simdemo__gate-text">
-          デモの実行には MuJoCo の WebAssembly 版（<b>約 3.5〜12 MB</b>，サーバの圧縮設定によります）を転送します。ブラウザにキャッシュされるので，転送は初回のみです。
+          デモを実行するには，MuJoCo の WebAssembly 版（<b>約 3.5〜12 MB</b>。サーバの圧縮設定によって異なります）をダウンロードします。ブラウザに保存されるため，ダウンロードは初回だけです。
         </p>
         <p class="simdemo__gate-note" data-sim-metered="" hidden=""></p>
         <button type="button" class="btn simdemo__gate-btn" data-sim-load="">読み込んで実行する</button>
@@ -328,7 +328,7 @@
     <div class="simdemo__row simdemo__row--scenarios">
       <span class="simdemo__row-label">シナリオ</span>
       <button type="button" class="simdemo__chip" data-sim-scenario="wall-climb">壁面を登る</button>
-      <button type="button" class="simdemo__chip" data-sim-scenario="wall-hold">壁際で保持</button>
+      <button type="button" class="simdemo__chip" data-sim-scenario="wall-hold">壁際で静止</button>
       <button type="button" class="simdemo__chip" data-sim-scenario="hover">空中で静止</button>
     </div>
 
@@ -340,7 +340,7 @@
     </dl>
 
     <p class="simdemo__hint" id="simdemo-pad-help">
-      目標は，3D 表示の<b>緑の球を直接ドラッグ</b>するか，左下の<b>パッド</b>をドラッグして動かします（パッドにフォーカスがあれば矢印キー，Shift で大きく）。3D 表示のそれ以外の場所はドラッグで視点回転，ホイールで拡大縮小です。
+      目標位置は，3D 表示の<b>緑の球を直接ドラッグ</b>するか，左下の<b>パッド</b>をドラッグして動かします（パッドを選択しているときは矢印キーでも動かせ，Shift キーを押すと大きく動きます）。3D 表示のそれ以外の場所では，ドラッグで視点を回転し，ホイールで拡大・縮小します。
     </p>
   </div>
 </div>
@@ -349,19 +349,19 @@
 {"imports": {"three": "https://gdaclab.web.nitech.ac.jp/assets/vendor/three/three.module.min.js"}}
 </script>
 
-<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1794143504"></script>
+<script type="module" src="https://gdaclab.web.nitech.ac.jp/assets/js/simulator/demo.js?v=1794554761"></script>
 
-<h2 id="何を見ているか">何を見ているか</h2>
+<h2 id="デモの内容">デモの内容</h2>
 
-<p>4つのロータと2つの車輪を持つ機体です。形は，研究室の実機を採寸して起こしたものです。</p>
+<p>4つのロータと2つの車輪を持つ機体です。機体の形状は，研究室の実機を採寸して作成しました。</p>
 
-<p>壁面を登るときも，特別なことはしていません。<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが，壁に阻まれます。目標へ向かおうとする力がそのまま車輪を壁に押し付ける力になり，壁からはそれと釣り合う反力が返ってきます。車輪は壁の上を転がるので，壁に沿った上下方向には自由に動けます。押し付けのための専用の制御は入っていません。</p>
+<p>壁面を登るときも，特別なことはしていません。<strong>壁の奥に目標位置を置くだけ</strong>です。機体はそこへ向かおうとしますが，壁に阻まれます。目標へ向かおうとする力がそのまま車輪を壁に押し付ける力になり，壁からはそれと釣り合う反力を受けます。車輪は壁の上を転がるので，壁に沿った上下方向には自由に動けます。押し付けるための専用の制御は組み込んでいません。</p>
 
-<p>姿勢の制御には，回転を3つの角度に分解せず，回転行列のまま扱う定式化を用いています。姿勢の表し方に由来する特異点がなく，どの姿勢でも計算が破綻しないという利点があり，本研究室の研究の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
+<p>姿勢の制御には，回転を3つの角度に分解せず，回転行列のまま扱う定式化を用いています。この定式化には，姿勢の表し方に由来する特異点がなく，どの姿勢でも計算が破綻しないという利点があります。本研究室の研究の中心にある考え方です。詳しくは<a href="https://gdaclab.web.nitech.ac.jp/ja/research/">研究内容</a>のページをご覧ください。</p>
 
 <h2 id="シミュレータ本体">シミュレータ本体</h2>
 
-<p>単機・複数機，壁面や曲面地形に対応し，実機のフライトコントローラを組み込んだ試験も行えます。ソースコード・ライセンス・引用情報は <a href="https://github.com/GDAC-Lab/mujoco-wheeled-uav-simulator">GitHub</a> で公開しています。</p>
+<p>単機・複数機のシミュレーションや，壁面・曲面地形での走行に対応しており，実機のフライトコントローラを組み込んだ試験も行えます。ソースコード・ライセンス・引用情報は <a href="https://github.com/GDAC-Lab/mujoco-wheeled-uav-simulator">GitHub</a> で公開しています。</p>
 
   </div>
 </div>
@@ -393,13 +393,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab<br />
-  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-11-08 22:11 JST
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> と <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>（<a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> のフォーク）で構築しています。最終更新：2026-11-13 16:26 JST
 </div>
 
       </footer>
     </div>
 
-    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794143504"></script>
+    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794554761"></script>
 
 
   </body>

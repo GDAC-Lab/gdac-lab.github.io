@@ -102,7 +102,7 @@
     }
   })();
 </script>
-<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794143504">
+<link rel="stylesheet" href="https://gdaclab.web.nitech.ac.jp/assets/css/main.css?v=1794554761">
 
     
 <link rel="apple-touch-icon" sizes="180x180" href="https://gdaclab.web.nitech.ac.jp/images/apple-touch-icon-180x180.png">
@@ -372,6 +372,22 @@
 
 <p>Constraints are again central. To handle the pressing force, the attitudes admissible during contact, and limits on flight altitude, we combine <strong>control barrier functions</strong>, <strong>input–output linearization</strong>, <strong>passivity-based methods</strong>, and <strong>model predictive path integral (MPPI) control</strong>.</p>
 
+<h4 id="moving-along-a-surface-without-tilting-the-4p-two-wheeled-drone">Moving along a surface without tilting: the 4P two-wheeled drone</h4>
+
+<p>A conventional wheeled quadrotor has to tilt its body to generate a lateral force, which makes it hard to hold a desired attitude while moving sideways. This limits tasks that need a particular attitude, such as inspection with the camera kept level.</p>
+
+<p>With <a href="https://takumito.github.io/">Takumi Ito</a> of the National Institute of Advanced Industrial Science and Technology (AIST), we have proposed a two-wheeled quadrotor whose four rotors are tilted by a fixed angle about the wheel axle. The wheels are passive: propulsion along the surface comes from the rotor thrust alone. Using the contact with the surface as a constraint, the vehicle generates propulsion along that surface without tilting.</p>
+
+<p>In this work we analyzed the forces the vehicle can generate and its controllability while in contact with a surface, and optimized its design over different rotor-spin configurations. The optimization shows that the configuration in which all four rotors spin clockwise — the <strong>4P configuration</strong>, P denoting a clockwise rotor — can generate a larger force along the contact surface than the conventional alternating-spin configuration.</p>
+
+<p>The approach enables both flight and locomotion in contact with a surface, without additional actuators or mechanisms to tilt the rotors. In simulation it hovers in free space and moves horizontally on a floor while keeping a level attitude.</p>
+
+<p><strong>Related result</strong></p>
+
+<ul>
+  <li><a href="https://arxiv.org/abs/2610.40502">A Two-Wheeled Quadrotor with All-Clockwise Tilted Rotors for Level-Attitude Surface Locomotion</a> — arXiv preprint, 2026</li>
+</ul>
+
 <h4 id="application-infrastructure-inspection">Application: infrastructure inspection</h4>
 
 <p>Detecting loose or delaminated concrete in tunnels and bridges, and loose tiles on building walls, relies on <strong>hammering inspection</strong>, in which the surface is struck and the resulting sound is assessed. At height this requires scaffolding, with the associated cost and risk.</p>
@@ -431,13 +447,13 @@
 
 <div class="page__footer-copyright">
   &copy; 2026 GDAC Lab. Built with <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> and <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.<br />
-  Last updated 2026-11-08 22:11 JST
+  Last updated 2026-11-13 16:26 JST
 </div>
 
       </footer>
     </div>
 
-    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794143504"></script>
+    <script defer src="https://gdaclab.web.nitech.ac.jp/assets/js/site.js?v=1794554761"></script>
 
 
   </body>
