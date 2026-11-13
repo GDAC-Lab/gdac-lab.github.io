@@ -15,7 +15,7 @@
 {% if site.publication_category %}
 {%- assign _jump_ja = false -%}
 {%- if page.lang == 'ja' %}{% assign _jump_ja = true %}{% endif -%}
-<nav class="publications-page__jump" aria-label="{% if _jump_ja %}セクションへ移動{% else %}Jump to section{% endif %}">
+<nav class="publications-page__jump" aria-label="{% if _jump_ja %}区分ごとの一覧へ移動{% else %}Jump to section{% endif %}">
   {%- for category in site.publication_category -%}
     {%- assign cat_key = category[0] -%}
     {%- if _jump_ja -%}

@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: "メンバー"
-description: "名古屋工業大学 仲野研究室（GDAC Lab）のメンバー。仲野 聡史（助教），事務，大学院生・学部生，および共同研究者の一覧です。"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）のメンバー紹介です。教員の仲野 聡史（助教），事務補佐員，大学院生・学部生，研究協力者を掲載しています。"
 permalink: /ja/people/
 author_profile: true
 lang: ja
@@ -83,11 +83,11 @@ CV（英文）
 ### 副指導学生
 
 浅田 樹
-: 主指導：山田 学 教授 · 2025年4月〜
+: 2025年4月〜（主指導：山田 学 教授）
 : 学部生として在籍：2023年10月〜2025年3月
 
 堂高 友樹
-: 主指導：山田 学 教授 · 2025年4月〜
+: 2025年4月〜（主指導：山田 学 教授）
 {: .people-roster}
 
 {% include people-collaborators.html %}
@@ -126,7 +126,7 @@ CV（英文）
 
   副指導学生:
   氏名
-  : 主指導：○○ ○○ 教授 · YYYY年M月〜
+  : YYYY年M月〜（主指導：○○ ○○ 教授）
   {: .people-roster}
 
   集合写真: `people-group-photo.html` は `## 研究室メンバー` の直後・`### 大学院生（修士課程）` の前。

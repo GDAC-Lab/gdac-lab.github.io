@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: "アクセス"
-description: "名古屋工業大学 仲野研究室（GDAC Lab）へのアクセス。所在地，キャンパス内の場所，交通機関のご案内です。"
+description: "名古屋工業大学 仲野研究室（GDAC Lab）へのアクセスです。所在地，キャンパス内の場所，最寄り駅からの行き方をご案内します。"
 permalink: /ja/access/
 author_profile: true
 lang: ja

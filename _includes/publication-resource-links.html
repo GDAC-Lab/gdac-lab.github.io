@@ -32,7 +32,7 @@
     {% elsif _doi_id != "" %}
       {% capture _doi_resolved %}https://doi.org/{{ _doi_id }}{% endcapture %}
       {% if _pl == 'ja' %}
-        <a href="{{ pu }}">出版元ページ</a><span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
+        <a href="{{ pu }}">出版社のページ</a><span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
       {% else %}
         <a href="{{ pu }}">Publisher page</a><span class="publication-link-sep" aria-hidden="true">&#8288;·&#8203;</span><span class="publication-doi-inline">DOI <a href="{{ _doi_resolved }}">{{ _doi_id }}</a></span>
       {% endif %}
@@ -40,7 +40,7 @@
       <a href="{{ pu }}">arXiv</a>
     {% else %}
       {% if _pl == 'ja' %}
-        <a href="{{ pu }}">全文・公式ページ</a>
+        <a href="{{ pu }}">掲載ページ</a>
       {% else %}
         <a href="{{ pu }}">Full text</a>
       {% endif %}

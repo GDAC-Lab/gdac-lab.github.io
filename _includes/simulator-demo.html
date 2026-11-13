@@ -10,7 +10,7 @@
 {% if page.lang == 'ja' %}{% assign _ja = true %}{% endif %}
 
 {% if _ja %}
-  {% capture _strings %}{"loading":"物理エンジンを読み込んでいます…","ready":"準備完了。","play":"再生","pause":"一時停止","contactYes":"壁に接触中","contactNo":"非接触","failed":"このブラウザではデモを開始できませんでした。","meteredNote":"モバイル回線または通信量節約モードのようです。Wi-Fi でのご利用をおすすめします。"}{% endcapture %}
+  {% capture _strings %}{"loading":"物理エンジンを読み込んでいます…","ready":"準備ができました。","play":"再生","pause":"一時停止","contactYes":"壁に接触中","contactNo":"非接触","failed":"このブラウザではデモを開始できませんでした。","meteredNote":"モバイル回線か，データ通信量を節約する設定が有効になっているようです。Wi-Fi でのご利用をおすすめします。"}{% endcapture %}
 {% else %}
   {% capture _strings %}{"loading":"Loading the physics engine…","ready":"Ready.","play":"Play","pause":"Pause","contactYes":"touching the wall","contactNo":"not touching","failed":"The demo could not start in this browser.","meteredNote":"This looks like a mobile connection or data-saver mode. Wi-Fi is recommended."}{% endcapture %}
 {% endif %}
@@ -36,7 +36,7 @@
       <div class="simdemo__gate-card">
         <p class="simdemo__gate-title">{% if _ja %}物理エンジンを読み込みますか？{% else %}Load the physics engine?{% endif %}</p>
         <p class="simdemo__gate-text">
-          {% if _ja %}デモの実行には MuJoCo の WebAssembly 版（<b>約 3.5〜12 MB</b>，サーバの圧縮設定によります）を転送します。ブラウザにキャッシュされるので，転送は初回のみです。{% else %}Running the demo transfers the WebAssembly build of MuJoCo (<b>about 3.5–12 MB</b>, depending on the server's compression). Your browser caches it, so this happens once.{% endif %}
+          {% if _ja %}デモを実行するには，MuJoCo の WebAssembly 版（<b>約 3.5〜12 MB</b>。サーバの圧縮設定によって異なります）をダウンロードします。ブラウザに保存されるため，ダウンロードは初回だけです。{% else %}Running the demo transfers the WebAssembly build of MuJoCo (<b>about 3.5–12 MB</b>, depending on the server's compression). Your browser caches it, so this happens once.{% endif %}
         </p>
         <p class="simdemo__gate-note" data-sim-metered hidden></p>
         <button type="button" class="btn simdemo__gate-btn" data-sim-load>{% if _ja %}読み込んで実行する{% else %}Load and run{% endif %}</button>
@@ -95,7 +95,7 @@
     <div class="simdemo__row simdemo__row--scenarios">
       <span class="simdemo__row-label">{% if _ja %}シナリオ{% else %}Scenario{% endif %}</span>
       <button type="button" class="simdemo__chip" data-sim-scenario="wall-climb">{% if _ja %}壁面を登る{% else %}Climb the wall{% endif %}</button>
-      <button type="button" class="simdemo__chip" data-sim-scenario="wall-hold">{% if _ja %}壁際で保持{% else %}Hold at the wall{% endif %}</button>
+      <button type="button" class="simdemo__chip" data-sim-scenario="wall-hold">{% if _ja %}壁際で静止{% else %}Hold at the wall{% endif %}</button>
       <button type="button" class="simdemo__chip" data-sim-scenario="hover">{% if _ja %}空中で静止{% else %}Hover in free air{% endif %}</button>
     </div>
 
@@ -107,7 +107,7 @@
     </dl>
 
     <p class="simdemo__hint" id="simdemo-pad-help">
-      {% if _ja %}目標は，3D 表示の<b>緑の球を直接ドラッグ</b>するか，左下の<b>パッド</b>をドラッグして動かします（パッドにフォーカスがあれば矢印キー，Shift で大きく）。3D 表示のそれ以外の場所はドラッグで視点回転，ホイールで拡大縮小です。{% else %}Move the target by <b>dragging the green sphere</b> in the 3D view or by dragging on the <b>pad</b> in the lower left (arrow keys when the pad has focus, Shift for bigger steps). Elsewhere in the 3D view, drag to orbit and scroll to zoom.{% endif %}
+      {% if _ja %}目標位置は，3D 表示の<b>緑の球を直接ドラッグ</b>するか，左下の<b>パッド</b>をドラッグして動かします（パッドを選択しているときは矢印キーでも動かせ，Shift キーを押すと大きく動きます）。3D 表示のそれ以外の場所では，ドラッグで視点を回転し，ホイールで拡大・縮小します。{% else %}Move the target by <b>dragging the green sphere</b> in the 3D view or by dragging on the <b>pad</b> in the lower left (arrow keys when the pad has focus, Shift for bigger steps). Elsewhere in the 3D view, drag to orbit and scroll to zoom.{% endif %}
     </p>
   </div>
 </div>

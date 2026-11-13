@@ -5,7 +5,7 @@ items:
   - name_en: "Emanuele Garone"
     name_ja: "Emanuele Garone"
     affiliation_en: "Université libre de Bruxelles, Belgium"
-    affiliation_ja: "Université libre de Bruxelles, Belgium"
+    affiliation_ja: "ブリュッセル自由大学（ベルギー）"
 
   - name_en: "Kazumune Hashimoto"
     name_ja: "橋本 和宗"
@@ -37,7 +37,7 @@ items:
   - name_en: "Gennaro Notomista"
     name_ja: "Gennaro Notomista"
     affiliation_en: "University of Waterloo, Canada"
-    affiliation_ja: "University of Waterloo, Canada"
+    affiliation_ja: "ウォータールー大学（カナダ）"
     url: "https://www.gnotomista.com/"
 
   - name_en: "Noboru Sakamoto"
@@ -109,4 +109,4 @@ items:
   - name_en: "Sheikh A. Tahmid"
     name_ja: "Sheikh A. Tahmid"
     affiliation_en: "University of Waterloo, Canada"
-    affiliation_ja: "University of Waterloo, Canada"
+    affiliation_ja: "ウォータールー大学（カナダ）"
