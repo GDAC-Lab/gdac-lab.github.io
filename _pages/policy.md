@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: "How the lab works"
-description: "How GDAC Lab at Nagoya Institute of Technology is run: research supervision, day-to-day activity, how topics are chosen, and how to apply from abroad."
+description: "How GDAC Lab at Nagoya Institute of Technology is run: research supervision, day-to-day life in the lab, how topics are chosen, and how to apply from abroad."
 permalink: /policy/
 author_profile: true
 lang: en
@@ -10,7 +10,7 @@ lang_ref: lab_policy
 
 {% include base_path %}
 
-When you choose a lab, the research topic matters — but so does the way it works day to day. This page describes how GDAC Lab is run.
+When you choose a lab, the research topic matters, but so does how the lab works from day to day. This page describes how GDAC Lab is run.
 
 {% comment %}
 The Japanese version is _pages/ja/policy.md. The two have different readers, so
@@ -27,43 +27,43 @@ messages -- are not stated here. They are covered after a student joins.
 
 ## What the lab values
 
-The aim is to work control theory out properly and put it on the record, as conference talks and papers. We do not stop at "it ran" or "the numbers came out": what matters is making clear what is new, and why the method works.
+Our aim is to develop control theory rigorously and to share it through conference presentations and papers. We are not satisfied with "it worked" or "the simulation ran": we want to make clear what is new, and why the method works.
 
-At the same time, **laying out an environment in which ordinary effort produces a real result is the supervisor's responsibility too**. Excessive workloads and unreasonable demands are not the premise here. Time goes into the choice of topic, the reading and the daily discussion for exactly that reason.
+At the same time, **the supervisor is also responsible for providing an environment in which steady, ordinary effort leads to solid results**. Excessive workloads and unreasonable demands have no place here. Choosing a suitable topic, studying the fundamentals and discussing the work every day are how we make that possible.
 
-Experiments on real hardware matter as well. Tools have made it quicker than it used to be to work a theory through or run a simulation, which raises the value of what you find out by building something and switching it on. Running the hardware is not the point in itself, though. What counts is experimenting with a proper grasp of the theory, so that when it misbehaves you can **pin down for yourself whether the theory or the hardware is at fault**.
+We also value experiments on real hardware. Better tools have made theoretical work and simulation faster than they used to be, and that makes the insight you can only gain by actually building something and running it all the more valuable. That said, getting the hardware to run is not the goal in itself. We want you to go into experiments with a solid grasp of the theory, so that when things do not behave as expected you can **work out for yourself whether the cause lies in the theory or in the hardware**.
 
-In research, the answer is almost never known at the outset. You look things up, cut a problem into pieces small enough to attack, try them, and explain what came out. That way of working outlasts any particular topic.
+In research, the answer is almost never known at the outset. You look things up, break the problem into pieces small enough to tackle, work through them by trial and error, and explain the results to others. The skills you build along the way outlast any particular topic and stay with you long after you graduate.
 
-Research is not easy, and it does not always go as planned. Even so, working at a hard problem and becoming able to do something you could not do before is the interesting part. One goal is that nobody leaves with regrets, and that they leave thinking the research they did here was worth doing.
+The path of research is never smooth, and things do not always go as planned. Even so, taking on a hard problem and becoming able to do what you could not do before is what makes research rewarding. One of our goals is for everyone to graduate without regrets, genuinely glad that they did their research here.
 
 ## Life in the lab
 
-Students come to the lab on weekdays as a rule, because being able to see the supervisor and the other members, and talk things over, matters too. There is **no core time**, though. If you need a day off, that is fine as long as you say so in advance.
+As a rule, students come to the lab every weekday, because we value talking things over face to face with the supervisor and the other members. There are **no fixed core hours**, however, and taking a day off because you are unwell or have other commitments is fine as long as you let us know beforehand.
 
-Research reports and seminars are held regularly. A report is not only for sharing progress: it is where we sort out what is giving trouble and what comes next. Students who have just started get close support from the supervisor and from senior students.
+Progress meetings and study seminars are held regularly. A progress meeting is more than a status check: it is where we share what is causing difficulty and sort out the next steps. Students who have just started get close support from the supervisor and from senior students.
 
-You are not expected to sit on a problem alone. Thinking it through yourself matters, but when you are stuck, just ask.
+You do not have to struggle with a problem alone. Thinking it through yourself first matters, but when you are stuck, do not hesitate to ask.
 
-For job hunting, tell me once your plans firm up. If I know when you will be away and roughly for how long, the research schedule can be arranged around it. Rather than settling it in advance, we talk it over as it comes up and find an arrangement that lets both move.
+If you are job hunting, let me know once your plans are settled. If I know when you will be busy with it and roughly how much time it will take, we can plan the research around it. We talk it over as things come up and find an arrangement that lets both the research and the job search move forward.
 
 ## How research topics are chosen
 
 Topics start from a broad direction suggested by the supervisor and take shape through discussion.
 
-A fourth-year project begins with understanding control theory the lab has already built and checking it in simulation and on real hardware. **Building a new control theory single-handedly is not asked for.** What counts instead is:
+A fourth-year undergraduate project begins with understanding the control theory the lab has already developed and verifying it in simulation and on real hardware. **You will not be asked to build a new theory from scratch right away.** Instead, the emphasis is on three things:
 
 - understanding the theory you are working with well enough to explain it in your own words
-- picking up the related background
-- getting an experiment working yourself
+- steadily acquiring the related specialist knowledge
+- building the experimental setup with your own hands
 
-As you get used to research, you take on a growing share of finding the weaknesses in existing methods and deciding what to try next. The aim, in the end, is that you can carry the research on your own.
+As the research progresses, you take on a growing share of the thinking yourself: where the open problems lie, and what to test next. The goal, in the end, is for you to be able to carry research forward on your own.
 
 ## Conferences and papers
 
-Results are presented at domestic and international conferences and published as papers.
+We actively present our results at conferences in Japan and abroad and publish them as papers.
 
-You do not need to know how to read or write a paper, or give a talk, when you start. Finding the literature, writing results up and presenting them are all taught here.
+You do not need to know how to read or write papers, or how to give a talk, when you join. You will be guided through everything from finding the relevant literature to writing manuscripts, making slides and presenting.
 
 Past work is listed on the [Publications]({{ base_path }}/publications/) page.
 
@@ -71,10 +71,10 @@ Past work is listed on the [Publications]({{ base_path }}/publications/) page.
 
 If you are thinking of joining from outside Japan, email me{% if site.author.email_as_text and site.author.email_text %} at [{{ site.author.email_text }}](mailto:{{ site.author.email_text }}){% endif %} with your CV, your transcript, and a short account of what you would like to work on. I will normally suggest an online meeting first, so we can both judge honestly whether the fit is right, and whether the topic you have in mind is one this lab can support well.
 
-Admission goes through the university rather than the lab: the application routes and the entrance examination are set by Nagoya Institute of Technology, and the outcome is not mine to decide. What I can do is talk it through with you beforehand and point you at the right route.
+Admission goes through the university rather than the lab: the application routes and the entrance examination are set by Nagoya Institute of Technology, and the outcome is not mine to decide. What I can do is talk it through with you beforehand and point you to the right route.
 
 ## Visits and contact
 
 If you have questions about the research or about how the lab is run, get in touch at any time — write to me{% if site.author.email_as_text and site.author.email_text %} at [{{ site.author.email_text }}](mailto:{{ site.author.email_text }}){% endif %}. You are welcome to visit; the location is on the [Access]({{ base_path }}/access/) page.
 
-When enquiries arrive in a cluster, around the graduate entrance examination for instance, I may propose a few set times rather than answering each one separately.
+When many inquiries arrive at once, for example before the graduate entrance examination, I may offer a few fixed dates for visits or meetings rather than arranging each one separately.
